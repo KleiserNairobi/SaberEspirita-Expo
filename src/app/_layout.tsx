@@ -61,3 +61,7 @@ export default function RootLayout() {
     </AuthProvider>
   );
 }
+
+if (__DEV__) {
+  require("../../ReactotronConfig");
+}

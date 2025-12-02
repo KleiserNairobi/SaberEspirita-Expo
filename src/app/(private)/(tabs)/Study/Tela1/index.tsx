@@ -1,32 +1,71 @@
 import { Carousel } from "@/components/Carousel";
+import { useAuth } from "@/contexts/AuthContext";
 import { Biblioteca } from "@/data/Biblioteca";
 import React from "react";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "./styles";
 
 export default function Tela1() {
+  const { user, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
   const renderHeader = () => (
     <View>
-      <Text
+      <View
         style={{
-          fontSize: 28,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
           marginHorizontal: 20,
-          fontFamily: "BarlowCondensed_600SemiBold",
         }}
       >
-        Olá, Nairobi!
-      </Text>
-      <Text
-        style={{
-          fontSize: 20,
-          color: "#565551",
-          marginHorizontal: 20,
-          fontFamily: "BarlowCondensed_400Regular",
-        }}
-      >
-        Vamos começar sua jornada de conhecimento?
-      </Text>
+        <View>
+          <Text
+            style={{
+              fontSize: 28,
+              fontFamily: "BarlowCondensed_600SemiBold",
+            }}
+          >
+            Olá, {user?.email?.split("@")[0] || "Usuário"}!
+          </Text>
+          <Text
+            style={{
+              fontSize: 20,
+              color: "#565551",
+              fontFamily: "BarlowCondensed_400Regular",
+            }}
+          >
+            Vamos começar sua jornada de conhecimento?
+          </Text>
+        </View>
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={{
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            backgroundColor: "#ff3b30",
+            borderRadius: 6,
+          }}
+        >
+          <Text
+            style={{
+              color: "#fff",
+              fontSize: 14,
+              fontFamily: "BarlowCondensed_600SemiBold",
+            }}
+          >
+            Sair
+          </Text>
+        </TouchableOpacity>
+      </View>
       <View
         style={[styles.rowBetween, { marginTop: 30, marginHorizontal: 20 }]}
       >
