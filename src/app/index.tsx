@@ -6,17 +6,6 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 export default function Index() {
   const { user, loading, initialized } = useAuth();
 
-  console.log("PASSANDO PELO INDEX");
-
-  console.log(
-    "User in Index:",
-    user,
-    "Loading:",
-    loading,
-    "Initialized:",
-    initialized
-  );
-
   // Mostra um loading screen enquanto o auth está sendo inicializado
   if (loading || !initialized) {
     return (

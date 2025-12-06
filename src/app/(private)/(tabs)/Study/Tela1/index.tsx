@@ -30,7 +30,7 @@ export default function Tela1() {
           marginHorizontal: 20,
         }}
       >
-        <View>
+        <View style={{ flexDirection: "column" }}>
           <Text
             style={{
               fontSize: 28,
@@ -50,55 +50,57 @@ export default function Tela1() {
             Vamos começar sua jornada de conhecimento?
           </Text>
         </View>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <TouchableOpacity
-            onPress={toggleTheme}
-            style={{
-              paddingHorizontal: 12,
-              paddingVertical: 6,
-              backgroundColor: theme.colors.secondary,
-              borderRadius: 6,
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 6,
-            }}
-          >
-            <Ionicons
-              name={themeType === "light" ? "moon-outline" : "sunny-outline"}
-              size={18}
-              color="#FFFFFF"
-            />
-            <Text
-              style={{
-                color: "#FFFFFF",
-                fontSize: 14,
-                fontFamily: "BarlowCondensed_600SemiBold",
-              }}
-            >
-              {themeType === "light" ? "Escuro" : "Claro"}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleLogout}
-            style={{
-              paddingHorizontal: 12,
-              paddingVertical: 6,
-              backgroundColor: "#ff3b30",
-              borderRadius: 6,
-            }}
-          >
-            <Text
-              style={{
-                color: "#fff",
-                fontSize: 14,
-                fontFamily: "BarlowCondensed_600SemiBold",
-              }}
-            >
-              Sair
-            </Text>
-          </TouchableOpacity>
-        </View>
       </View>
+
+      <View style={{ flexDirection: "row", justifyContent: "center", gap: 10 }}>
+        <TouchableOpacity
+          onPress={toggleTheme}
+          style={{
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            backgroundColor: theme.colors.secondary,
+            borderRadius: 6,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 6,
+          }}
+        >
+          <Ionicons
+            name={themeType === "light" ? "moon-outline" : "sunny-outline"}
+            size={18}
+            color="#FFFFFF"
+          />
+          <Text
+            style={{
+              color: "#FFFFFF",
+              fontSize: 14,
+              fontFamily: "BarlowCondensed_600SemiBold",
+            }}
+          >
+            {themeType === "light" ? "Escuro" : "Claro"}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={{
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            backgroundColor: "#ff3b30",
+            borderRadius: 6,
+          }}
+        >
+          <Text
+            style={{
+              color: "#fff",
+              fontSize: 14,
+              fontFamily: "BarlowCondensed_600SemiBold",
+            }}
+          >
+            Sair
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <View
         style={[styles.rowBetween, { marginTop: 30, marginHorizontal: 20 }]}
       >
@@ -112,15 +114,6 @@ export default function Tela1() {
         >
           Populares
         </Text>
-        {/* <Text
-          style={{
-            fontFamily: "Oswald_300Light",
-            fontSize: 16,
-            color: "#565551",
-          }}
-        >
-          Ver todos
-        </Text> */}
       </View>
 
       <Carousel />
@@ -138,15 +131,6 @@ export default function Tela1() {
         >
           Explore a Biblioteca
         </Text>
-        {/* <Text
-          style={{
-            fontFamily: "Oswald_300Light",
-            fontSize: 16,
-            color: "#565551",
-          }}
-        >
-          Ver todos
-        </Text> */}
       </View>
     </View>
   );

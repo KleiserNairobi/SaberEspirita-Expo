@@ -6,6 +6,7 @@ import {
   ClipboardCheck,
   ClipboardClock,
   HeartHandshake,
+  UserPen,
 } from "lucide-react-native";
 
 export default function TabsLayout() {
@@ -49,6 +50,15 @@ export default function TabsLayout() {
           title: "Ore",
           tabBarIcon: ({ color, size }) => (
             <HeartHandshake size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="Profile"
+        options={{
+          title: "Perfil",
+          tabBarIcon: ({ color, size }) => (
+            <UserPen size={size} color={color} />
           ),
         }}
       />
