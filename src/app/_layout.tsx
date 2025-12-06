@@ -1,5 +1,6 @@
-import { AuthProvider } from "@/contexts/AuthContext";
-import { Stack } from "expo-router";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
+import { Stack, useRouter, useSegments } from "expo-router";
 import React, { useEffect, useState } from "react";
 
 import {
@@ -17,6 +18,34 @@ import {
 } from "@expo-google-fonts/barlow-condensed";
 
 import { StatusBar } from "expo-status-bar";
+
+function AppLayout() {
+  const { user, initialized } = useAuth();
+  const { themeType } = useTheme();
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!initialized) return;
+    const inAuthGroup = segments[0] === "(private)";
+    if (user && !inAuthGroup) {
+      router.replace("/(private)/(tabs)/Study");
+    } else if (!user && inAuthGroup) {
+      router.replace("/(public)/Login");
+    }
+  }, [user, initialized, segments]);
+
+  return (
+    <>
+      <StatusBar style={themeType === "dark" ? "light" : "dark"} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(public)" />
+        <Stack.Screen name="(private)" />
+      </Stack>
+    </>
+  );
+}
 
 export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -51,14 +80,11 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="(public)" />
-        <Stack.Screen name="(private)" />
-      </Stack>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppLayout />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

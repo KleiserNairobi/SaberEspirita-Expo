@@ -1,15 +1,48 @@
 // themes/dark.ts
 export const DarkTheme = {
   colors: {
-    background: "#1A1A1A",
-    card: "#222222",
-    primary: "#FFFFFF",
-    secondary: "#D7B084", // mantém o tom amarronzado, mas mais vivo no dark
-    accent: "#3A3A3A",
-    text: "#FFFFFF",
-    textSecondary: "#C7C7C7",
-    border: "#333333",
-    icon: "#9EB49A", // mesmo verde, mais claro
+    // Cor de fundo principal da tela (verde bem claro da imagem)
+    background: "#F0F6E8", // OK
+
+    // Fundo dos cards/brancos de conteúdo
+    card: "#FFFFFF", // OK
+
+    // Texto forte: títulos, headings ("Populares", "Explore a Biblioteca")
+    primary: "#101010", // OK
+
+    // Cor para botões de ação, CTA ou elementos de maior destaque
+    secondary: "#6F7C60",
+
+    // Detalhes suaves: badges, chips, pequenos backgrounds
+    accent: "#D9E4CC",
+
+    // Texto padrão sobre fundo claro
+    text: "#222222",
+
+    // Subtítulos e descrições ("Vamos começar sua jornada de conhecimento?")
+    textSecondary: "#565551", // OK
+
+    // Linhas divisórias, bordas de cards e inputs
+    border: "#E3E2DA", // OK
+
+    // Ícones em geral (mesma família da bottom tab verde-acinzentada)
+    icon: "#839278", // OK
+
+    // Fundo da bottom tab (o verde mais escuro arredondado)
+    tabBar: "#5E6A52",
+
+    // Cor para estados desabilitados / texto menos importante
+    muted: "#A3B09A",
+
+    // Feedback de erro (para formulários, quizzes etc.)
+    error: "#C94B4B",
+
+    // Feedback de sucesso (acertos em quizzes, ações concluídas)
+    success: "#5C8A5C",
+
+    // icon: "#7C8C76",
+    // cores dos ícones na tabBar
+    // color: isFocused ? "#FFFFFF" : "#D8D6C9",
   },
 
   spacing: {
@@ -32,20 +65,24 @@ export const DarkTheme = {
     title: {
       fontSize: 32,
       fontWeight: "700",
+      fontFamily: "Oswald_700Bold",
       color: "#FFFFFF",
     },
     subtitle: {
       fontSize: 20,
       fontWeight: "600",
+      fontFamily: "Oswald_600SemiBold",
       color: "#C7C7C7",
     },
     body: {
       fontSize: 16,
       fontWeight: "400",
+      fontFamily: "BarlowCondensed_400Regular",
       color: "#FFFFFF",
     },
     caption: {
       fontSize: 12,
+      fontFamily: "BarlowCondensed_400Regular",
       color: "#C7C7C7",
     },
   },

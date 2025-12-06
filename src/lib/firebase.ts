@@ -16,13 +16,6 @@ const firebaseConfig = {
 
 // Inicializando o Firebase
 const app = initializeApp(firebaseConfig);
-
-// Configurar auth - o Firebase deve detectar automaticamente o AsyncStorage
-// em ambientes React Native quando a biblioteca está instalada
 export const auth = getAuth(app);
-
-// Nota: A partir do Firebase v9+, a persistência é configurada automaticamente
-// para React Native quando @react-native-async-storage/async-storage está instalado
-
 export const db = getFirestore(app);
 export default app;

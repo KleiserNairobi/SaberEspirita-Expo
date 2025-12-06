@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "saberespirita.app"
-               BlueprintName = "saberespirita"
-               ReferencedContainer = "container:saberespirita.xcodeproj">
+               BuildableName = "SaberEsprita.app"
+               BlueprintName = "SaberEsprita"
+               ReferencedContainer = "container:SaberEsprita.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "saberespiritaTests.xctest"
-               BlueprintName = "saberespiritaTests"
-               ReferencedContainer = "container:saberespirita.xcodeproj">
+               BuildableName = "SaberEspritaTests.xctest"
+               BlueprintName = "SaberEspritaTests"
+               ReferencedContainer = "container:SaberEsprita.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "saberespirita.app"
-            BlueprintName = "saberespirita"
-            ReferencedContainer = "container:saberespirita.xcodeproj">
+            BuildableName = "SaberEsprita.app"
+            BlueprintName = "SaberEsprita"
+            ReferencedContainer = "container:SaberEsprita.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "saberespirita.app"
-            BlueprintName = "saberespirita"
-            ReferencedContainer = "container:saberespirita.xcodeproj">
+            BuildableName = "SaberEsprita.app"
+            BlueprintName = "SaberEsprita"
+            ReferencedContainer = "container:SaberEsprita.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

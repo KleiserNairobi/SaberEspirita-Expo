@@ -1,6 +1,8 @@
 import { Carousel } from "@/components/Carousel";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Biblioteca } from "@/data/Biblioteca";
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,6 +10,7 @@ import styles from "./styles";
 
 export default function Tela1() {
   const { user, signOut } = useAuth();
+  const { themeType, toggleTheme, theme } = useTheme();
 
   const handleLogout = async () => {
     try {
@@ -32,6 +35,7 @@ export default function Tela1() {
             style={{
               fontSize: 28,
               fontFamily: "BarlowCondensed_600SemiBold",
+              color: theme.colors.text,
             }}
           >
             Olá, {user?.email?.split("@")[0] || "Usuário"}!
@@ -39,32 +43,61 @@ export default function Tela1() {
           <Text
             style={{
               fontSize: 20,
-              color: "#565551",
+              color: theme.colors.textSecondary,
               fontFamily: "BarlowCondensed_400Regular",
             }}
           >
             Vamos começar sua jornada de conhecimento?
           </Text>
         </View>
-        <TouchableOpacity
-          onPress={handleLogout}
-          style={{
-            paddingHorizontal: 12,
-            paddingVertical: 6,
-            backgroundColor: "#ff3b30",
-            borderRadius: 6,
-          }}
-        >
-          <Text
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <TouchableOpacity
+            onPress={toggleTheme}
             style={{
-              color: "#fff",
-              fontSize: 14,
-              fontFamily: "BarlowCondensed_600SemiBold",
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+              backgroundColor: theme.colors.secondary,
+              borderRadius: 6,
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 6,
             }}
           >
-            Sair
-          </Text>
-        </TouchableOpacity>
+            <Ionicons
+              name={themeType === "light" ? "moon-outline" : "sunny-outline"}
+              size={18}
+              color="#FFFFFF"
+            />
+            <Text
+              style={{
+                color: "#FFFFFF",
+                fontSize: 14,
+                fontFamily: "BarlowCondensed_600SemiBold",
+              }}
+            >
+              {themeType === "light" ? "Escuro" : "Claro"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleLogout}
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+              backgroundColor: "#ff3b30",
+              borderRadius: 6,
+            }}
+          >
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: 14,
+                fontFamily: "BarlowCondensed_600SemiBold",
+              }}
+            >
+              Sair
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <View
         style={[styles.rowBetween, { marginTop: 30, marginHorizontal: 20 }]}
@@ -74,6 +107,7 @@ export default function Tela1() {
             fontSize: 26,
             marginBottom: 10,
             fontFamily: "Oswald_400Regular",
+            color: theme.colors.text,
           }}
         >
           Populares
@@ -99,6 +133,7 @@ export default function Tela1() {
             fontSize: 26,
             marginBottom: 10,
             fontFamily: "Oswald_400Regular",
+            color: theme.colors.text,
           }}
         >
           Explore a Biblioteca
@@ -118,7 +153,7 @@ export default function Tela1() {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#F0F6E8" }}
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
       edges={["top"]}
     >
       <FlatList
@@ -135,9 +170,9 @@ export default function Tela1() {
               style={{
                 flex: 1,
                 height: 110,
-                backgroundColor: "#FFFFFF",
+                backgroundColor: theme.colors.card,
                 borderWidth: 1,
-                borderColor: "#E3E2DA",
+                borderColor: theme.colors.border,
                 borderRadius: 10,
                 alignItems: "flex-start",
                 marginBottom: 10,
@@ -145,8 +180,14 @@ export default function Tela1() {
                 gap: 8,
               }}
             >
-              <IconComponent size={24} color="#839278" />
-              <Text style={{ fontFamily: "Oswald_300Light", fontSize: 16 }}>
+              <IconComponent size={24} color={theme.colors.icon} />
+              <Text
+                style={{
+                  fontFamily: "Oswald_300Light",
+                  fontSize: 16,
+                  color: theme.colors.text,
+                }}
+              >
                 {item.title}
               </Text>
             </View>

@@ -1,14 +1,47 @@
 export const LightTheme = {
   colors: {
-    background: "#F7F3EE", // fundo bege claro da imagem
-    card: "#FFFFFF",
-    primary: "#1D1D1D", // preto suave para textos
-    secondary: "#C49A6C", // tom amarronzado igual ao “Learning”
-    accent: "#E8DCC5", // tons bem suaves
-    text: "#1D1D1D",
-    textSecondary: "#6B6B6B",
-    border: "#E5E2DE",
-    icon: "#7C8C76", // verde acinzentado igual aos botões da imagem
+    // Cor de fundo principal da tela (verde bem claro da imagem)
+    background: "#F0F6E8", // OK
+
+    // Fundo dos cards/brancos de conteúdo
+    card: "#FFFFFF", // OK
+
+    // Texto forte: títulos, headings ("Populares", "Explore a Biblioteca")
+    primary: "#101010", // OK
+
+    // Cor para botões de ação, CTA ou elementos de maior destaque
+    secondary: "#6F7C60",
+
+    // Detalhes suaves: badges, chips, pequenos backgrounds
+    accent: "#D9E4CC",
+
+    // Texto padrão sobre fundo claro
+    text: "#222222",
+
+    // Subtítulos e descrições ("Vamos começar sua jornada de conhecimento?")
+    textSecondary: "#565551", // OK
+
+    // Linhas divisórias, bordas de cards e inputs
+    border: "#E3E2DA", // OK
+
+    // Ícones em geral (mesma família da bottom tab verde-acinzentada)
+    icon: "#839278", // OK
+
+    // Fundo da bottom tab (o verde mais escuro arredondado)
+    tabBar: "#5E6A52",
+
+    // Cor para estados desabilitados / texto menos importante
+    muted: "#A3B09A",
+
+    // Feedback de erro (para formulários, quizzes etc.)
+    error: "#C94B4B",
+
+    // Feedback de sucesso (acertos em quizzes, ações concluídas)
+    success: "#5C8A5C",
+
+    // icon: "#7C8C76",
+    // cores dos ícones na tabBar
+    // color: isFocused ? "#FFFFFF" : "#D8D6C9",
   },
 
   spacing: {

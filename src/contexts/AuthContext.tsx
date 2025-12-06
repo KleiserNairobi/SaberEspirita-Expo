@@ -1,5 +1,7 @@
+import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 import { auth } from "@/lib/firebase";
 import { AUTH_KEYS, load, remove, save } from "@/utils/Storage";
+
 import {
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
@@ -7,7 +9,13 @@ import {
   signInWithEmailAndPassword,
   User,
 } from "firebase/auth";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 interface AuthContextData {
   user: User | null;
@@ -17,6 +25,7 @@ interface AuthContextData {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   clearError: () => void;
 }
 
@@ -48,6 +57,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true); // Inicia como true para indicar restauração
   const [initialized, setInitialized] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { promptAsync } = useGoogleAuth();
+  const promptAsyncRef = useRef(promptAsync);
+
+  // Atualizar a ref quando promptAsync mudar
+  useEffect(() => {
+    promptAsyncRef.current = promptAsync;
+  }, [promptAsync]);
 
   // Função para converter User do Firebase para StoredUser
   const userToStoredUser = (user: User): StoredUser => {
@@ -77,8 +93,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const storedUser = load<StoredUser>(AUTH_KEYS.USER);
     if (storedUser) {
       console.log("Usuário carregado do MMKV:", storedUser.uid);
-      // Converter StoredUser para um objeto compatível com User do Firebase
-      // Nota: Esta é uma representação parcial, suficiente para a UI
       return {
         uid: storedUser.uid,
         email: storedUser.email,
@@ -99,15 +113,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.log("AuthProvider: Usuário encontrado no MMKV:", storedUser.uid);
       setUser(storedUser);
       setInitialized(true);
-      setLoading(false); // Já temos usuário, pode mostrar a UI
+      setLoading(false);
     } else {
       console.log("AuthProvider: Nenhum usuário encontrado no MMKV");
     }
 
     // 2. Depois verifica com Firebase (validação em background)
+    let unsubscribe: (() => void) | null = null;
     const timer = setTimeout(() => {
       console.log("AuthProvider: Iniciando listener do Firebase...");
-      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
         console.log(
           "AuthProvider: Estado do Firebase:",
           firebaseUser ? `Usuário logado (${firebaseUser.uid})` : "Sem usuário"
@@ -118,23 +133,38 @@ export function AuthProvider({ children }: AuthProviderProps) {
           console.log("AuthProvider: Sincronizando com MMKV...");
           setUser(firebaseUser);
           saveUserToStorage(firebaseUser); // Sincroniza com MMKV
-        } else if (!storedUser) {
-          // Nenhum usuário local nem no Firebase
-          console.log("AuthProvider: Limpando estado (sem usuário)");
-          setUser(null);
-          saveUserToStorage(null);
+        } else {
+          // Firebase retornou null. Verificamos se há usuário no MMKV manualmente.
+          // Como não estamos usando persistência nativa do Firebase (AsyncStorage),
+          // o onAuthStateChanged retorna null ao reiniciar o app.
+          // Se tivermos um usuário salvo localmente, mantemos a sessão "viva" para o app.
+          const localUser = loadUserFromStorage();
+
+          if (localUser) {
+            console.log(
+              "AuthProvider: Firebase null, mas usuário encontrado no MMKV. Mantendo sessão."
+            );
+            // Opcional: Aqui poderíamos tentar reautenticar silenciosamente se tivéssemos credenciais
+            setUser(localUser);
+          } else {
+            // Nenhum usuário local nem no Firebase
+            console.log("AuthProvider: Limpando estado (sem usuário)");
+            setUser(null);
+            saveUserToStorage(null);
+          }
         }
 
         setInitialized(true);
         setLoading(false);
       });
-
-      return unsubscribe;
     }, 500);
 
     return () => {
       console.log("AuthProvider: Limpando timer e unsubscribe");
       clearTimeout(timer);
+      if (unsubscribe) {
+        unsubscribe();
+      }
     };
   }, []);
 
@@ -222,11 +252,50 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await promptAsyncRef.current();
+    } catch (error: any) {
+      let errorMessage = "Erro ao fazer login com Google";
+
+      // Verificar se o usuário cancelou o login
+      if (
+        error?.message?.includes("canceled") ||
+        error?.code === "ERR_CANCELED"
+      ) {
+        errorMessage = "Login com Google cancelado pelo usuário.";
+        setLoading(false);
+        return;
+      }
+
+      if (error.code === "auth/account-exists-with-different-credential") {
+        errorMessage =
+          "Já existe uma conta com este e-mail, mas com credenciais diferentes.";
+      } else if (error.code === "auth/popup-closed-by-user") {
+        errorMessage = "Login com Google cancelado pelo usuário.";
+      } else {
+        console.error("Erro detalhado no Google Sign-In:", error);
+        errorMessage =
+          error.message || "Erro desconhecido ao fazer login com Google.";
+      }
+
+      setError(errorMessage);
+      setLoading(false);
+      throw error;
+    }
+  };
+
   const signOut = async () => {
     setLoading(true);
     setError(null);
     try {
       await firebaseSignOut(auth);
+      // Opcional: Desconectar do Google para garantir que a próxima tela de login mostre a seleção de conta
+      // await GoogleSignin.revokeAccess();
+      // await GoogleSignin.signOut();
+
       setUser(null);
       saveUserToStorage(null); // Remove do MMKV
       setLoading(false);
@@ -245,6 +314,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     signIn,
     signUp,
     signOut,
+    signInWithGoogle,
     clearError,
   };
 

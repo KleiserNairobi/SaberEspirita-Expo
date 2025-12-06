@@ -1,5 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -14,8 +14,8 @@ import {
 } from "react-native";
 
 export default function Login() {
-  const { signIn, loading, error, clearError } = useAuth();
-  const router = useRouter();
+  const { signIn, signInWithGoogle, loading, error, clearError } = useAuth();
+  // const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -28,10 +28,17 @@ export default function Login() {
     try {
       clearError();
       await signIn(email.trim(), password);
-      router.replace("/(private)/(tabs)/Study");
     } catch (err) {
-      // Error is already set in the context
       console.error("Login error:", err);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      clearError();
+      await signInWithGoogle();
+    } catch (err) {
+      console.error("Google Login error:", err);
     }
   };
 
@@ -76,6 +83,19 @@ export default function Login() {
             <ActivityIndicator color="#fff" />
           ) : (
             <Text style={styles.buttonText}>Entrar</Text>
+          )}
+        </TouchableOpacity>
+
+        {/* Novo botão de login com Google */}
+        <TouchableOpacity
+          onPress={handleGoogleLogin}
+          style={[styles.googleButton, loading && styles.buttonDisabled]}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#000" />
+          ) : (
+            <Text style={styles.googleButtonText}>Entrar com Google</Text>
           )}
         </TouchableOpacity>
 
@@ -136,6 +156,23 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  // Estilos para o botão do Google
+  googleButton: {
+    width: "100%",
+    height: 50,
+    backgroundColor: "#fff", // Fundo branco
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 16, // Espaçamento maior
+    borderWidth: 1,
+    borderColor: "#ddd", // Borda sutil
+  },
+  googleButtonText: {
+    color: "#000", // Texto preto
     fontSize: 16,
     fontWeight: "600",
   },

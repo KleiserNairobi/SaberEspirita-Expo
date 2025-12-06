@@ -1,4 +1,4 @@
-package com.anonymous.saberespirita
+package app.saberespirita
 
 import android.app.Application
 import android.content.res.Configuration

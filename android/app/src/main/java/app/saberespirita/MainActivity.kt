@@ -1,4 +1,4 @@
-package com.anonymous.saberespirita
+package app.saberespirita
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
