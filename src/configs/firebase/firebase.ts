@@ -4,14 +4,14 @@ import { getFirestore } from "firebase/firestore";
 
 // Configurando o Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyCnoAUmWP2Hhu3yHCv7rm2pILsFUinGdWI",
-  authDomain: "saber-espirita.firebaseapp.com",
-  databaseURL: "https://saber-espirita.firebaseio.com",
-  projectId: "saber-espirita",
-  storageBucket: "saber-espirita.firebasestorage.app",
-  messagingSenderId: "280205524209",
-  appId: "1:280205524209:web:889baa34bb3004389f3d50",
-  measurementId: "G-65YMZ4PKGY",
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.EXPO_PUBLIC_FIREBASE_DATABASE_URL,
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 // Inicializando o Firebase
