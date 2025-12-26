@@ -1,0 +1,25 @@
+# Dependências
+node_modules/
+.expo/
+.expo-shared/
+
+# Build
+dist/
+build/
+android/
+ios/
+
+# Cache
+.cache/
+*.log
+
+# Arquivos gerados
+*.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Outros
+coverage/
+.vscode/
+.idea/

@@ -1,6 +1,6 @@
 import { createMMKV } from "react-native-mmkv";
 
-const storage = createMMKV({ id: "saber-espirita" });
+export const storage = createMMKV({ id: "saber-espirita" });
 
 // Funções síncronas (MMKV é síncrono)
 export function load<T = any>(key: string): T | null {
@@ -45,8 +45,7 @@ export function saveString(key: string, value: string): boolean {
   try {
     // Garantir que o valor seja uma string
     // Se for um objeto, converter para string JSON
-    const stringValue =
-      typeof value === "string" ? value : JSON.stringify(value);
+    const stringValue = typeof value === "string" ? value : JSON.stringify(value);
     storage.set(key, stringValue);
     return true;
   } catch (error) {

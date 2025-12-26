@@ -1,5 +1,5 @@
 import { ImageSliderType } from "@/data/SliderData";
-import { Ionicons } from "@expo/vector-icons";
+import { Heart } from "lucide-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
@@ -21,11 +21,7 @@ const { width } = Dimensions.get("window");
 
 export function SliderItem({ index, item, scrollX }: Props) {
   const rnAnimatedStyle = useAnimatedStyle(() => {
-    const inputRange = [
-      (index - 1) * width,
-      index * width,
-      (index + 1) * width,
-    ];
+    const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
 
     return {
       transform: [
@@ -52,9 +48,7 @@ export function SliderItem({ index, item, scrollX }: Props) {
   return (
     <Animated.View style={[styles.container, rnAnimatedStyle, { width }]}>
       <Image
-        source={
-          typeof item.image === "string" ? { uri: item.image } : item.image
-        }
+        source={typeof item.image === "string" ? { uri: item.image } : item.image}
         style={{
           width: 280,
           height: 400,
@@ -67,7 +61,7 @@ export function SliderItem({ index, item, scrollX }: Props) {
       >
         <View style={{ alignItems: "flex-end" }}>
           <TouchableOpacity style={styles.icon}>
-            <Ionicons name="heart-outline" size={28} color="white" />
+            <Heart size={28} color="white" />
           </TouchableOpacity>
         </View>
         <View style={{ gap: 10 }}>

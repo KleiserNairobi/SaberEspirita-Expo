@@ -21,7 +21,7 @@ interface CarouselProps {
   scrollX: SharedValue<number>;
 }
 
-const CarouselItem = ({ index, item, scrollX }: CarouselProps) => {
+function CarouselItem({ index, item, scrollX }: CarouselProps) {
   const inputRange = [
     (index! - 2) * ITEM_SIZE,
     (index! - 1) * ITEM_SIZE,
@@ -67,7 +67,7 @@ const CarouselItem = ({ index, item, scrollX }: CarouselProps) => {
       </Animated.View>
     </View>
   );
-};
+}
 
 export function Carousel() {
   const scrollX = useSharedValue(0);
@@ -95,14 +95,7 @@ export function Carousel() {
         if (index === 0 || index === DATA_LENGTH - 1) {
           return <View style={{ width: SPACER_ITEM_SIZE }} />;
         }
-        return (
-          <CarouselItem
-            key={index}
-            index={index}
-            item={item}
-            scrollX={scrollX}
-          />
-        );
+        return <CarouselItem key={index} index={index} item={item} scrollX={scrollX} />;
       }}
     />
   );

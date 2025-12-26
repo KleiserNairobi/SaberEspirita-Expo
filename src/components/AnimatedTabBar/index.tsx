@@ -1,12 +1,6 @@
 import { BlurView } from "expo-blur";
 import React, { useEffect, useRef } from "react";
-import {
-  Animated,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface TabBarProps {
@@ -43,12 +37,7 @@ interface TabItemProps {
   onPress: () => void;
 }
 
-const TabItem: React.FC<TabItemProps> = ({
-  route,
-  options,
-  isFocused,
-  onPress,
-}) => {
+const TabItem: React.FC<TabItemProps> = ({ route, options, isFocused, onPress }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -72,8 +61,8 @@ const TabItem: React.FC<TabItemProps> = ({
     options.tabBarLabel !== undefined
       ? options.tabBarLabel
       : options.title !== undefined
-      ? options.title
-      : route.name;
+        ? options.title
+        : route.name;
 
   return (
     <TouchableOpacity
@@ -104,11 +93,7 @@ const TabItem: React.FC<TabItemProps> = ({
   );
 };
 
-export const AnimatedTabBar = ({
-  state,
-  descriptors,
-  navigation,
-}: TabBarProps) => {
+export const AnimatedTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
   const insets = useSafeAreaInsets();
   const BASE_HEIGHT = 78;
   const safeBottom =
@@ -132,7 +117,7 @@ export const AnimatedTabBar = ({
             const { options } = descriptors[route.key];
             const isFocused = state.index === index;
 
-            const onPress = () => {
+            function onPress() {
               const event = navigation.emit({
                 type: "tabPress",
                 target: route.key,
@@ -141,7 +126,7 @@ export const AnimatedTabBar = ({
               if (!isFocused && !event.defaultPrevented) {
                 navigation.navigate(route.name);
               }
-            };
+            }
 
             return (
               <TabItem

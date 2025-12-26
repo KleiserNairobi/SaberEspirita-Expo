@@ -1,0 +1,62 @@
+import { ITheme } from "./types";
+
+export const DarkTheme: ITheme = {
+  isDark: true,
+  colors: {
+    gradientStart: "#121E31",
+    gradientEnd: "#0C1624",
+    background: "#121E31", //"#0C1624",
+    card: "#162235",
+    primary: "#8F9D7E",
+    secondary: "#FFFFFF",
+    accent: "#2A3645",
+    text: "#E0E0E0",
+    textSecondary: "#A0A0A0",
+    border: "#2A3645",
+    icon: "#A3B09A",
+    tabBar: "#1E2A3C",
+    muted: "#546072",
+    error: "#CF6679",
+    success: "#81C784",
+    onPrimary: "#0C1624",
+    onSecondary: "#FFFFFF",
+  },
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32,
+    xxl: 48,
+  },
+  radius: {
+    xs: 4,
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32,
+    full: 999,
+  },
+  typography: {
+    weights: {
+      regular: "BarlowCondensed_400Regular",
+      medium: "BarlowCondensed_500Medium",
+      semibold: "BarlowCondensed_600SemiBold",
+      bold: "Oswald_700Bold",
+    },
+    sizes: {
+      xs: 12,
+      sm: 14,
+      md: 16,
+      lg: 18,
+      xl: 20,
+      xxl: 24,
+      xxxl: 32,
+    },
+  },
+  text: (size, weight, color) => ({
+    fontSize: DarkTheme.typography.sizes[size],
+    fontFamily: DarkTheme.typography.weights[weight],
+    color: color || DarkTheme.colors.text,
+  }),
+};
