@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useQuery } from "@tanstack/react-query";
 import {
   Clock,
   User,
@@ -19,10 +20,11 @@ import {
 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { getReflectionById } from "@/data/reflections.mock";
+import { getReflectionById } from "@/services/firebase/reflectionService";
 import { REFLECTION_TOPICS } from "@/types/reflection";
 import { MeditateStackParamList } from "@/routers/types";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
+import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
 import { speakText, stopSpeaking, isSpeaking } from "@/utils/tts";
 import { shareReflection } from "@/utils/sharing";
 import { createStyles } from "./styles";
@@ -35,13 +37,23 @@ export default function ReflectionScreen() {
   const route = useRoute<ReflectionScreenRouteProp>();
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
 
-  const [isFavorite, setIsFavorite] = useState(false);
   const [isNarrating, setIsNarrating] = useState(false);
 
   const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } =
     usePrayerPreferencesStore();
 
-  const reflection = getReflectionById(route.params.id);
+  const { isFavorite, toggleFavorite } = useReflectionFavoritesStore();
+
+  // Buscar reflexão do Firestore usando React Query
+  const {
+    data: reflection,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["reflection", route.params.id],
+    queryFn: () => getReflectionById(route.params.id),
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
 
   async function handleShare() {
     if (!reflection) return;
@@ -65,7 +77,7 @@ export default function ReflectionScreen() {
       } else {
         setIsNarrating(true);
         await speakText(
-          `${reflection.title}. ${reflection.subtitle}. ${reflection.content}`
+          `${reflection.title}. ${reflection.subtitle || ""}. ${reflection.content}`
         );
         setIsNarrating(false);
       }
@@ -76,15 +88,27 @@ export default function ReflectionScreen() {
   }
 
   function handleToggleFavorite() {
-    // TODO: Implementar favoritos com store
-    setIsFavorite(!isFavorite);
+    if (!reflection) return;
+    toggleFavorite(reflection.id);
   }
 
   function handleGoBack() {
     navigation.goBack();
   }
 
-  if (!reflection) {
+  // Estado de loading
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Carregando...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Estado de erro ou reflexão não encontrada
+  if (isError || !reflection) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.errorContainer}>
@@ -182,7 +206,7 @@ export default function ReflectionScreen() {
               <Heart
                 size={20}
                 color={theme.colors.primary}
-                fill={isFavorite ? theme.colors.primary : "transparent"}
+                fill={isFavorite(route.params.id) ? theme.colors.primary : "transparent"}
               />
             </TouchableOpacity>
 

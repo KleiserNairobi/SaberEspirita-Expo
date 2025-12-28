@@ -1,12 +1,18 @@
 import React from "react";
-import { ScrollView, Text, View, ActivityIndicator } from "react-native";
+import {
+  ScrollView,
+  Text,
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
-import { DailyMessageCard } from "@/components/DailyMessageCard";
+import { DailyThoughtCard } from "@/components/DailyThoughtCard";
 import { AskGuideCard } from "@/components/AskGuideCard";
 import { ReflectionCard } from "./components/ReflectionCard";
 import { useFeaturedReflections } from "./hooks/useFeaturedReflections";
@@ -39,16 +45,17 @@ export default function MeditateScreen() {
           <Text style={styles.subtitle}>Encontre paz e orientação interior</Text>
         </View>
 
-        {/* Seção: Mensagem do Dia */}
-        <Text style={styles.sectionTitle}>Mensagem do Dia</Text>
-        <DailyMessageCard />
-
-        {/* Seção: Pergunte ao Guia */}
-        <Text style={styles.sectionTitle}>Pergunte ao Guia</Text>
-        <AskGuideCard />
+        {/* Seção: Pensamento do Dia */}
+        <Text style={styles.sectionTitle}>Pensamento do Dia</Text>
+        <DailyThoughtCard />
 
         {/* Seção: Textos para Reflexão */}
-        <Text style={styles.sectionTitle}>Textos para Reflexão</Text>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitleInHeader}>Textos para Reflexão</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("AllReflections")}>
+            <Text style={styles.viewAllButton}>Ver todos</Text>
+          </TouchableOpacity>
+        </View>
 
         {reflectionsLoading ? (
           <View style={styles.loadingContainer}>
@@ -56,7 +63,7 @@ export default function MeditateScreen() {
           </View>
         ) : featuredReflections && featuredReflections.length > 0 ? (
           <View style={styles.reflectionsContainer}>
-            {featuredReflections.map((reflection) => (
+            {featuredReflections.slice(0, 3).map((reflection) => (
               <ReflectionCard
                 key={reflection.id}
                 reflection={reflection}
@@ -69,6 +76,10 @@ export default function MeditateScreen() {
             <Text style={styles.emptyText}>Nenhuma reflexão em destaque no momento</Text>
           </View>
         )}
+
+        {/* Seção: Pergunte ao Guia */}
+        <Text style={styles.sectionTitle}>Pergunte ao Guia</Text>
+        <AskGuideCard />
       </ScrollView>
     </SafeAreaView>
   );

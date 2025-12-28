@@ -89,6 +89,15 @@ export const createStyles = (theme: ITheme) =>
     },
     prayerAuthor: {
       ...theme.text("sm", "regular", theme.colors.textSecondary),
+      flex: 1,
+    },
+    metadataRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginTop: 4,
+    },
+    favoriteIconInline: {
+      marginRight: 6,
     },
     favoriteButton: {
       padding: 8,

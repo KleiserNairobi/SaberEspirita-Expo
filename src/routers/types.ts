@@ -33,6 +33,7 @@ export type PrayStackParamList = {
 
 export type MeditateStackParamList = {
   MeditateHome: undefined;
+  AllReflections: undefined;
   Reflection: { id: string };
 };
 

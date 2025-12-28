@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
-import { Clock, ChevronRight } from "lucide-react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { ChevronRight, Heart } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { IReflection } from "@/types/reflection";
+import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
 import { createStyles } from "./styles";
 
 interface ReflectionCardProps {
@@ -14,40 +15,40 @@ interface ReflectionCardProps {
 export function ReflectionCard({ reflection, onPress }: ReflectionCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
+  const isFavorite = useReflectionFavoritesStore((state) =>
+    state.isFavorite(reflection.id)
+  );
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
-      {/* Imagem */}
-      {reflection.imageUrl && (
-        <Image source={{ uri: reflection.imageUrl }} style={styles.image} />
-      )}
-
       {/* Conteúdo */}
       <View style={styles.content}>
-        <View style={styles.textContainer}>
-          <Text style={styles.title} numberOfLines={2}>
-            {reflection.title}
+        <Text style={styles.title} numberOfLines={2}>
+          {reflection.title}
+        </Text>
+        {reflection.subtitle && (
+          <Text style={styles.subtitle} numberOfLines={2}>
+            {reflection.subtitle}
           </Text>
-          {reflection.subtitle && (
-            <Text style={styles.subtitle} numberOfLines={2}>
-              {reflection.subtitle}
-            </Text>
-          )}
+        )}
 
-          {/* Tempo de leitura */}
-          <View style={styles.footer}>
-            <View style={styles.readingTime}>
-              <Clock size={14} color={theme.colors.muted} />
-              <Text style={styles.readingTimeText}>
-                Leitura: {reflection.readingTimeMinutes}min
-              </Text>
-            </View>
-          </View>
+        {/* Autor e Fonte com ícone de favorito */}
+        <View style={styles.metaContainer}>
+          <Heart
+            size={14}
+            color={theme.colors.primary}
+            fill={isFavorite ? theme.colors.primary : "transparent"}
+            style={styles.favoriteIcon}
+          />
+          <Text style={styles.metaText} numberOfLines={1}>
+            {reflection.author}
+            {reflection.source && ` • ${reflection.source}`}
+          </Text>
         </View>
-
-        {/* Ícone de navegação */}
-        <ChevronRight size={20} color={theme.colors.muted} />
       </View>
+
+      {/* Ícone de navegação */}
+      <ChevronRight size={20} color={theme.colors.muted} />
     </TouchableOpacity>
   );
 }

@@ -28,6 +28,21 @@ export const createStyles = (theme: ITheme) =>
       marginHorizontal: 20,
       marginTop: 20,
     },
+    sectionHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginHorizontal: 20,
+      marginTop: 20,
+      marginBottom: 16,
+    },
+    viewAllButton: {
+      ...theme.text("md", "medium"),
+      color: theme.colors.primary,
+    },
+    sectionTitleInHeader: {
+      ...theme.text("xxl", "regular"),
+    },
     loadingContainer: {
       padding: 40,
       alignItems: "center",

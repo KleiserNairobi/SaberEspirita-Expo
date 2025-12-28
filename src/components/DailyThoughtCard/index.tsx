@@ -4,14 +4,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Share2 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { getDailyMessage } from "@/utils/dailyMessage";
+import { getDailyThought } from "@/utils/dailyThought";
 import { createStyles } from "./styles";
 
-export function DailyMessageCard() {
+export function DailyThoughtCard() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const { quote, author, backgroundImage } = getDailyMessage();
+  const { quote, author, backgroundImage } = getDailyThought();
 
   async function handleShare() {
     try {

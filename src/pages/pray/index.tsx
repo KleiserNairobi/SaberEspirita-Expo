@@ -21,6 +21,7 @@ import {
   HandHeart,
   BookOpen,
   Sparkles,
+  ChevronRight,
 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -144,20 +145,18 @@ export default function PrayScreen() {
                   <View style={styles.prayerInfo}>
                     <Text style={styles.prayerTitle}>{prayer.title}</Text>
                     {metadataText && (
-                      <Text style={styles.prayerAuthor}>{metadataText}</Text>
+                      <View style={styles.metadataRow}>
+                        <Heart
+                          size={14}
+                          color={theme.colors.primary}
+                          fill={isFav ? theme.colors.primary : "transparent"}
+                          style={styles.favoriteIconInline}
+                        />
+                        <Text style={styles.prayerAuthor}>{metadataText}</Text>
+                      </View>
                     )}
                   </View>
-                  <TouchableOpacity
-                    style={styles.favoriteButton}
-                    onPress={() => toggleFavorite(prayer.id)}
-                    activeOpacity={0.7}
-                  >
-                    <Heart
-                      size={20}
-                      color={isFav ? theme.colors.error : theme.colors.icon}
-                      fill={isFav ? theme.colors.error : "transparent"}
-                    />
-                  </TouchableOpacity>
+                  <ChevronRight size={20} color={theme.colors.muted} />
                 </TouchableOpacity>
               );
             })}

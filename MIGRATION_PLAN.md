@@ -279,7 +279,7 @@ src/
   - **Plano Detalhado**: Ver `implementation_plan.md` (criado em 23/12/2025)
   - **Estrutura Simplificada Aprovada**:
     1. ✅ **Header**: "Medite" + subtítulo "Encontre paz e orientação interior"
-    2. ✅ **Mensagem do Dia**: Card premium implementado
+    2. ✅ **Pensamento do Dia**: Card premium implementado
        - ✅ Componente `DailyMessageCard` criado
        - ✅ Sistema de mensagens diárias baseado no dia do ano
        - ✅ 7 imagens de fundo rotativas (JPEG 1280x720px)
@@ -300,8 +300,8 @@ src/
        - [ ] Definir estrutura de dados
        - [ ] Popular conteúdo inicial
   - **Decisões de Design**:
-    - Remover botão "favoritar" de Mensagem do Dia (sem tela de favoritos)
-    - Remover "Coleção de Pensamentos" (redundante com Mensagem do Dia)
+    - Remover botão "favoritar" de Pensamento do Dia (sem tela de favoritos)
+    - Remover "Coleção de Pensamentos" (redundante com Pensamento do Dia)
     - Reutilizar componentes de lista do módulo ORE
   - **Implementações Concluídas**:
     - ✅ Página `meditate/index.tsx` criada com ScrollView

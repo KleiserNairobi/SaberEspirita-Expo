@@ -11,7 +11,6 @@ export const createStyles = (theme: ITheme) =>
     container: {
       flex: 1,
     },
-    // Header: Layout de 3 Colunas (Voltar | Ícone | Espaço)
     header: {
       paddingHorizontal: theme.spacing.lg,
       paddingTop: theme.spacing.xl,
@@ -24,7 +23,7 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.md,
     },
     headerSide: {
-      width: 40, // Largura fixa para simetria
+      width: 40,
       height: 40,
       alignItems: "center",
       justifyContent: "center",
@@ -66,32 +65,29 @@ export const createStyles = (theme: ITheme) =>
       alignItems: "center",
       justifyContent: "center",
     },
-    // Anel interno - LARGO para efeito de vibração
     ringInner: {
       position: "absolute",
-      width: 88, // 80 (ícone) + 2*4 (borda) = sem espaço branco
+      width: 88,
       height: 88,
       borderRadius: 44,
-      borderWidth: 4, // Mais largo
-      borderColor: theme.colors.primary + "40", // 40% opacidade
+      borderWidth: 4,
+      borderColor: theme.colors.primary + "40",
     },
-    // Anel médio - transição do degradê
     ringMiddle: {
       position: "absolute",
-      width: 96, // Mais próximo do anel interno
+      width: 96,
       height: 96,
       borderRadius: 48,
       borderWidth: 2,
-      borderColor: theme.colors.primary + "25", // 25% opacidade
+      borderColor: theme.colors.primary + "25",
     },
-    // Anel externo - mais sutil
     ringOuter: {
       position: "absolute",
-      width: 104, // Mais próximo do anel médio
+      width: 104,
       height: 104,
       borderRadius: 52,
       borderWidth: 1,
-      borderColor: theme.colors.primary + "15", // 15% opacidade
+      borderColor: theme.colors.primary + "15",
     },
     iconLargeContainer: {
       width: 80,
@@ -113,12 +109,10 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("md", "regular", theme.colors.textSecondary),
       textAlign: "center",
     },
-    // Toolbar: Apenas SearchBar
     toolbar: {
       paddingHorizontal: theme.spacing.lg,
       paddingBottom: theme.spacing.md,
     },
-    // Lista de Orações
     list: {
       flex: 1,
     },
@@ -126,41 +120,6 @@ export const createStyles = (theme: ITheme) =>
       paddingHorizontal: theme.spacing.lg,
       paddingBottom: 150,
     },
-    // Card de Oração (SEM ícone)
-    prayerCard: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      backgroundColor: theme.colors.card,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      borderRadius: 10,
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.xs + 4,
-      marginBottom: theme.spacing.sm,
-    },
-    prayerContent: {
-      flex: 1,
-    },
-    prayerTitle: {
-      ...theme.text("lg", "semibold"),
-    },
-    prayerMetadata: {
-      ...theme.text("sm", "regular", theme.colors.textSecondary),
-      flex: 1,
-    },
-    metadataRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginTop: 4,
-    },
-    favoriteIconInline: {
-      marginRight: 6,
-    },
-    favoriteButton: {
-      padding: 8,
-    },
-    // Estados
     loadingContainer: {
       flex: 1,
       alignItems: "center",

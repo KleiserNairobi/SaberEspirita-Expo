@@ -17,6 +17,7 @@ import {
   BookOpen,
   Sparkles,
   SlidersHorizontal,
+  ChevronRight,
 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -234,20 +235,18 @@ export function PrayCategoryScreen() {
                 <View style={styles.prayerContent}>
                   <Text style={styles.prayerTitle}>{item.title}</Text>
                   {metadataText && (
-                    <Text style={styles.prayerMetadata}>{metadataText}</Text>
+                    <View style={styles.metadataRow}>
+                      <Heart
+                        size={14}
+                        color={theme.colors.primary}
+                        fill={isFav ? theme.colors.primary : "transparent"}
+                        style={styles.favoriteIconInline}
+                      />
+                      <Text style={styles.prayerMetadata}>{metadataText}</Text>
+                    </View>
                   )}
                 </View>
-                <TouchableOpacity
-                  style={styles.favoriteButton}
-                  onPress={() => toggleFavorite(item.id)}
-                  activeOpacity={0.7}
-                >
-                  <Heart
-                    size={20}
-                    color={isFav ? theme.colors.error : theme.colors.textSecondary}
-                    fill={isFav ? theme.colors.error : "transparent"}
-                  />
-                </TouchableOpacity>
+                <ChevronRight size={20} color={theme.colors.muted} />
               </TouchableOpacity>
             );
           }}
