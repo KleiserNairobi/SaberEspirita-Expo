@@ -15,6 +15,15 @@ export type AppStackParamList = {
   Privacy: undefined;
   Terms: undefined;
   EmotionalChat: undefined;
+  ScientificChat: {
+    initialMessage?: string;
+  };
+  Glossary: undefined;
+};
+
+export type GlossaryStackParamList = {
+  AllTerms: undefined;
+  TermDetail: { id: string };
 };
 
 export type TabParamList = {

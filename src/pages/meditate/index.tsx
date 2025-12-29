@@ -78,7 +78,7 @@ export default function MeditateScreen() {
         )}
 
         {/* Seção: Pergunte ao Guia */}
-        <Text style={styles.sectionTitle}>Pergunte ao Guia</Text>
+        <Text style={styles.sectionTitle}>Converse com o Guia</Text>
         <AskGuideCard />
       </ScrollView>
     </SafeAreaView>

@@ -17,17 +17,17 @@ export type Biblioteca = {
 export const Biblioteca: Biblioteca[] = [
   {
     id: "1",
-    title: "Cursos",
+    title: "Cursos\nEspíritas",
     icon: NotebookText,
   },
   {
     id: "2",
-    title: "Conceitos",
+    title: "Glossário\nEspírita",
     icon: BookA,
   },
   {
     id: "3",
-    title: "Quizzes",
+    title: "Teste seu\nConhecimento",
     icon: ClipboardCheck,
   },
   {

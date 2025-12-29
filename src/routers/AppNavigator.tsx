@@ -6,7 +6,9 @@ import { TabNavigator } from "./TabNavigator";
 import { FAQScreen } from "@/pages/account/faq";
 import { PrivacyScreen } from "@/pages/account/privacy";
 import { TermsScreen } from "@/pages/account/terms";
-import EmotionalChatScreen from "@/pages/emotional-chat";
+import { EmotionalChatScreen } from "@/pages/chat/emotional";
+import { ScientificChatScreen } from "@/pages/chat/scientific";
+import { GlossaryNavigator } from "./GlossaryNavigator";
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -22,6 +24,8 @@ export function AppNavigator() {
       <Stack.Screen name="Privacy" component={PrivacyScreen} />
       <Stack.Screen name="Terms" component={TermsScreen} />
       <Stack.Screen name="EmotionalChat" component={EmotionalChatScreen} />
+      <Stack.Screen name="ScientificChat" component={ScientificChatScreen} />
+      <Stack.Screen name="Glossary" component={GlossaryNavigator} />
     </Stack.Navigator>
   );
 }

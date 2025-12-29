@@ -1,53 +1,94 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { FlatList, Text, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+import { Carousel } from "@/components/Carousel";
+import { Biblioteca } from "@/data/Biblioteca";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useAuthStore } from "@/stores/authStore";
+import { AppStackParamList } from "@/routers/types";
 
-export default function StudyPlaceholderScreen() {
+import { createStyles } from "./styles";
+
+type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
+
+export function StudyScreen() {
   const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+  const user = useAuthStore((state) => state.user);
+  const navigation = useNavigation<NavigationProp>();
+
+  function handleLibraryItemPress(itemId: string) {
+    switch (itemId) {
+      case "2": // Glossário Espírita
+        navigation.navigate("Glossary");
+        break;
+      case "5": // Converse com o Guia
+        navigation.navigate("EmotionalChat");
+        break;
+      case "6": // Pergunte ao Sr. Allan
+        navigation.navigate("ScientificChat");
+        break;
+      default:
+        console.log(`Item ${itemId} clicado - navegação pendente`);
+    }
+  }
+
+  function renderHeader() {
+    return (
+      <View>
+        {/* Header com saudação */}
+        <View style={styles.headerContainer}>
+          <Text style={styles.greetingText}>
+            Olá, {user?.email?.split("@")[0] || "Usuário"}!
+          </Text>
+          <Text style={styles.subtitleText}>
+            Vamos começar sua jornada de conhecimento?
+          </Text>
+        </View>
+
+        {/* Seção Populares */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Populares</Text>
+        </View>
+
+        <Carousel />
+
+        {/* Seção Biblioteca */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Explore a Biblioteca</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
-      <View style={styles.content}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>Estude</Text>
-        <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
-          Módulo em desenvolvimento
-        </Text>
-        <Text style={[styles.description, { color: theme.colors.muted }]}>
-          Em breve você poderá acessar cursos e conteúdos educacionais sobre Espiritismo.
-        </Text>
-      </View>
+    <SafeAreaView style={styles.container} edges={["top"]}>
+      <FlatList
+        data={Biblioteca}
+        numColumns={3}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={renderHeader}
+        contentContainerStyle={styles.contentContainer}
+        columnWrapperStyle={styles.libraryColumnWrapper}
+        renderItem={({ item }) => {
+          const IconComponent = item.icon;
+          return (
+            <TouchableOpacity
+              style={styles.libraryItem}
+              onPress={() => handleLibraryItemPress(item.id)}
+              activeOpacity={0.7}
+            >
+              <View style={styles.iconContainer}>
+                <IconComponent size={20} color={theme.colors.primary} />
+              </View>
+              <Text style={styles.libraryItemText}>{item.title}</Text>
+            </TouchableOpacity>
+          );
+        }}
+      />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 32,
-  },
-  title: {
-    fontSize: 32,
-    fontFamily: "Oswald_700Bold",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 18,
-    fontFamily: "Oswald_400Regular",
-    marginBottom: 16,
-  },
-  description: {
-    fontSize: 14,
-    fontFamily: "BarlowCondensed_400Regular",
-    textAlign: "center",
-    lineHeight: 20,
-  },
-});

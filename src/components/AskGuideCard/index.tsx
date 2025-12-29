@@ -25,7 +25,7 @@ export function AskGuideCard() {
 
         {/* Texto + Botão */}
         <View style={styles.textColumn}>
-          <Text style={styles.title}>Pergunte ao Guia</Text>
+          <Text style={styles.title}>Converse com o Guia</Text>
           <Text style={styles.description}>
             Converse com nosso assistente espiritual baseado nos ensinamentos de Kardec.
           </Text>

@@ -1,9 +1,8 @@
 import { StyleSheet } from "react-native";
-
 import { ITheme } from "@/configs/theme/types";
 
-export const createStyles = (theme: ITheme) =>
-  StyleSheet.create({
+export function createStyles(theme: ITheme) {
+  return StyleSheet.create({
     container: {
       flexDirection: "row",
       alignItems: "center",
@@ -30,29 +29,16 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: 6,
       lineHeight: 18,
     },
-    metaContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    favoriteIcon: {
-      marginRight: 6,
-    },
-    metaText: {
-      ...theme.text("xs", "regular"),
-      color: theme.colors.muted,
-      flex: 1,
-    },
-    topicContainer: {
+    categoryContainer: {
       flexDirection: "row",
       alignItems: "center",
       marginTop: 4,
     },
-    topicIcon: {
-      marginRight: 6,
-    },
-    topicText: {
+    category: {
       ...theme.text("xs", "regular"),
       color: theme.colors.muted,
+      marginLeft: 6,
       flex: 1,
     },
   });
+}

@@ -107,6 +107,17 @@ src/
 │   │   │   └── index.tsx
 │   │   └── register/
 │   │       └── index.tsx
+│   ├── chat/                        # ✅ Módulo CHAT (Completo)
+│   │   ├── components/              # Componentes compartilhados entre chats
+│   │   │   ├── ChatHeader/
+│   │   │   ├── ChatInput/
+│   │   │   ├── MessageBubble/
+│   │   │   ├── TypingIndicator/
+│   │   │   └── styles.ts
+│   │   ├── emotional/               # Chat emocional (O Guia)
+│   │   │   └── index.tsx
+│   │   └── scientific/              # Chat científico (Sr. Allan)
+│   │       └── index.tsx
 │   ├── study/                       # ⏳ Módulo ESTUDE (Placeholder)
 │   │   └── index.tsx
 │   ├── fix/                         # ⏳ Módulo FIXE (Placeholder)
@@ -207,6 +218,7 @@ src/
 
 - ✅ **Navegação modular** com React Navigation v7
 - ✅ **Separação clara**: `routers/` para navegação, `pages/` para implementação
+- ✅ **Módulo CHAT completo**: 2 telas (Emotional/Scientific), 4 componentes compartilhados
 - ✅ **Módulo ORE completo**: 3 telas, 5 componentes, 4 hooks, serviço Firebase
 - ✅ **Módulo CONTA completo**: Account, FAQ, Terms, Privacy
 - ✅ **Sistema de temas** completo com Light/Dark mode
@@ -257,17 +269,39 @@ src/
 
 ### Fase 3: Módulo ESTUDE (Cursos & Home)
 
+- [/] **Tela ESTUDE (Dashboard)** - 🚧 **40% Concluído**:
+  - [x] **Estrutura Base Implementada** (29/12/2025):
+    - [x] Componente `StudyScreen` migrado do backup Expo Router
+    - [x] Arquivo `styles.ts` com `createStyles(theme)`
+    - [x] Named export e function declarations
+    - [x] Uso de tokens do tema (sem valores hardcoded)
+    - [x] Integração com `useAuthStore()` e `useAppTheme()`
+    - [x] Atualizado `TabNavigator.tsx` para usar `StudyScreen`
+  - [x] **Header Personalizado**:
+    - [x] Saudação com nome do usuário (extraído do email)
+    - [x] Subtítulo: "Vamos começar sua jornada de conhecimento?"
+    - [x] Removidos botões redundantes de tema/logout (já existem na aba Conta)
+  - [x] **Seção "Populares"**:
+    - [x] Componente `Carousel` reutilizado
+    - [x] Carrossel horizontal com animações (Reanimated)
+    - [x] Dados de `src/data/SliderData.tsx`
+  - [x] **Seção "Explore a Biblioteca"**:
+    - [x] Grade de 3 colunas com 6 itens
+    - [x] Ícones Lucide React Native
+    - [x] Dados de `src/data/Biblioteca.tsx`
+    - [x] Cards: Cursos, Conceitos, Quizzes, Verdade ou Mentira, Converse com o Guia, Pergunte ao Sr. Allan
+  - [ ] **Lógica Condicional** (Pendente):
+    - [ ] Detectar se usuário tem progresso em cursos
+    - [ ] _Com Progresso_: Exibir "Em Andamento" e "Continue de Onde Parou"
+    - [ ] _Sem Progresso_: Manter layout atual de descoberta
+  - [ ] **Componentes Adicionais** (Pendente):
+    - [ ] `ProgressCarousel`: Lista horizontal de cursos iniciados
+    - [ ] `ResumeCard`: Card de ação rápida para última aula
+    - [ ] `LibraryGrid`: Navegação funcional (atualmente apenas visual)
+  - [ ] **Navegação dos Cards** (Pendente):
+    - [ ] Implementar `onPress` nos cards da biblioteca
+    - [ ] Criar telas de destino (Cursos, Conceitos, Quizzes, etc.)
 - [ ] **Definição de Dados**: Modelos para `Course`, `Lesson`, `UserProgress`.
-- [ ] **Tela ESTUDE (Dashboard)**:
-  - **Lógica Condicional**:
-    - _Com Progresso_: Exibe "Em Andamento" e "Continue de Onde Parou".
-    - _Sem Progresso_: Exibe "Populares" (Layout de Descoberta).
-  - **Componentes**:
-    - `Header`: "Olá, [Nome]!" (Subtítulo varia conforme estado).
-    - `ProgressCarousel`: Lista horizontal de cursos iniciados (Img, Título, Barra de Progresso, Botão Continuar).
-    - `ResumeCard`: Card de ação rápida para a última aula vista.
-    - `LibraryGrid`: Grade de navegação rápida (4 itens: Cursos, Conceitos, Verdade ou Mentira, Sr. Allan [Em Breve]).
-    - `DiscoveryCarousel`: (Apenas sem progresso) Cursos populares para iniciar.
 - [ ] **Player de Aula**:
   - Suporte a Texto (Markdown/HTML), Vídeo (Expo Video) e Áudio.
   - Navegação entre aulas (Anterior/Próximo).
@@ -275,14 +309,16 @@ src/
 ### Fase 4: Módulos MEDITE e ORE (Novas Features)
 
 - [x] **Módulo ORE**: ✅ **98% Concluído** (apenas Firebase Storage de áudios pendente)
-- [/] **Módulo MEDITE**: 🚧 **Em Implementação** (40% concluído)
+- [/] **Módulo MEDITE**: 🚧 **95% Concluído** (apenas imagens de Pensamento do Dia pendentes)
   - **Plano Detalhado**: Ver `implementation_plan.md` (criado em 23/12/2025)
   - **Estrutura Simplificada Aprovada**:
     1. ✅ **Header**: "Medite" + subtítulo "Encontre paz e orientação interior"
     2. ✅ **Pensamento do Dia**: Card premium implementado
        - ✅ Componente `DailyMessageCard` criado
        - ✅ Sistema de mensagens diárias baseado no dia do ano
-       - ✅ 7 imagens de fundo rotativas (JPEG 1280x720px)
+       - ⏳ **PENDENTE**: 7 imagens de fundo rotativas (JPEG 1280x720px, elementos naturais puros)
+         - 📄 Prompts detalhados criados em `prompts_imagens_pensamento_dia.md`
+         - Temas: Segunda (Recomeço), Terça (Força), Quarta (Equilíbrio), Quinta (Crescimento), Sexta (Gratidão), Sábado (Descanso), Domingo (Espiritualidade)
        - ✅ Parsing de citação + autor
        - ✅ Botão de compartilhar integrado
        - ✅ Design premium com gradiente e texto em itálico
@@ -295,27 +331,93 @@ src/
        - ✅ Análise completa do módulo EmotionalChat do CLI documentada
        - 📄 Documentação: `emotional_chat_analysis.md`
     4. ❌ ~~Coleção de Pensamentos~~: Removida (redundante)
-    5. ⏳ **Textos para Reflexão**: Pendente
-       - [ ] Criar componente de lista
-       - [ ] Definir estrutura de dados
-       - [ ] Popular conteúdo inicial
+    5. ✅ **Textos para Reflexão**: **IMPLEMENTADO COMPLETAMENTE**
+       - ✅ **Navegação**: MeditateNavigator com 3 telas (MeditateHome, AllReflections, Reflection)
+       - ✅ **Arquitetura de Dados**:
+         - ✅ Interfaces TypeScript (`IReflection`, `ReflectionTopic`, `REFLECTION_TOPICS`)
+         - ✅ Serviço Firebase (`reflectionService.ts`) com 3 funções
+         - ✅ 2 Custom Hooks React Query (`useReflections`, `useFeaturedReflections`)
+       - ✅ **Store Zustand**: `reflectionFavoritesStore` (persistido com MMKV)
+       - ✅ **Tela 1: MeditateHome** - Dashboard com Pensamento do Dia, Pergunte ao Guia e Reflexões em destaque
+       - ✅ **Tela 2: AllReflections** - Lista completa com busca e 5 filtros (Todos, Favoritos, Por Autor, Por Fonte, **Por Tópico**)
+       - ✅ **Tela 3: Reflection** - Detalhes com imagem, metadados (2 linhas), ações e TTS
+       - ✅ **Componente**: `ReflectionCard` com título, subtítulo, favorito, autor, fonte e 🏷️ tópico
+       - ✅ **Componente Genérico**: `FilterBottomSheet` reutilizável (Orações 4 opções, Reflexões 5 opções)
+       - ✅ **Backend**: Coleção `reflections` criada e populada (4 reflexões iniciais)
+       - ✅ **10 Tópicos**: Espiritualidade, Autoconhecimento, Amor, Caridade, Fé, Perdão, Gratidão, Reencarnação, Mediunidade, Evangelho
   - **Decisões de Design**:
     - Remover botão "favoritar" de Pensamento do Dia (sem tela de favoritos)
     - Remover "Coleção de Pensamentos" (redundante com Pensamento do Dia)
     - Reutilizar componentes de lista do módulo ORE
+    - Adicionar filtro "Por Tópico" específico para reflexões
+    - Exibir tópico nos cards de reflexão para melhor navegação
   - **Implementações Concluídas**:
     - ✅ Página `meditate/index.tsx` criada com ScrollView
     - ✅ Componente `DailyMessageCard` com design premium
     - ✅ Componente `AskGuideCard` seguindo padrão do app
+    - ✅ Componente `ReflectionCard` com favorito, autor, fonte e tópico
     - ✅ Utilitário `getDailyMessage()` para seleção de mensagem
-    - ✅ 7 imagens de fundo para dias da semana
     - ✅ Sistema de compartilhamento nativo
+    - ✅ Navegador `MeditateNavigator` com 3 telas
+    - ✅ Serviço `reflectionService` conectado ao Firestore
+    - ✅ Hooks React Query para reflexões
+    - ✅ Store de favoritos com persistência MMKV
+    - ✅ Sistema de filtros genérico e reutilizável
+
+- [x] **Módulo CHAT**: ✅ **100% Concluído** (29/12/2025)
+  - **Arquitetura Unificada**: `src/pages/chat/`
+    - `components/`: Componentes compartilhados entre chats
+    - `emotional/`: Chat emocional (O Guia)
+    - `scientific/`: Chat científico (Sr. Allan)
+  - **Componentes Compartilhados** (4):
+    - ✅ `ChatHeader`: Header com título, subtítulo e botão limpar
+    - ✅ `ChatInput`: Input de texto com botão enviar e placeholder customizável
+    - ✅ `MessageBubble`: Balões de mensagem com suporte a Markdown
+    - ✅ `TypingIndicator`: Indicador de digitação animado
+    - ✅ `styles.ts`: Estilos compartilhados para telas de chat
+  - **Chat Emocional (O Guia)**:
+    - ✅ Persona: Apoio emocional e consolo espiritual
+    - ✅ Prompt: `chatEmotional.ts` com diretrizes de empatia
+    - ✅ Serviço: `emotionalChatService.ts` com streaming DeepSeek
+    - ✅ Filtros: Bloqueia questões doutrinárias e off-topic
+    - ✅ Ícone: `Compass` 🧭
+    - ✅ Navegação: Study → "Converse com o Guia"
+  - **Chat Científico (Sr. Allan)**:
+    - ✅ Persona: Esclarecimentos doutrinários precisos
+    - ✅ Prompt: `chatScientific.ts` com foco em obras de Kardec
+    - ✅ Serviço: `scientificChatService.ts` com streaming DeepSeek
+    - ✅ Filtros: Bloqueia apoio emocional e off-topic
+    - ✅ Ícone: `BookOpen` 📚
+    - ✅ Navegação: Study → "Pergunte ao Sr. Allan"
+  - **Infraestrutura Compartilhada**:
+    - ✅ Hook: `useDeepSeekChat` com suporte a múltiplos tipos
+    - ✅ Detector de intenção: `intentionDetector.ts` com 6 tipos
+    - ✅ Serviço unificado: `chatService.ts` com filtros inteligentes
+    - ✅ Tipos: `chat.ts` com interfaces completas
+    - ✅ API DeepSeek: `deepseek/api.ts` com streaming
+  - **Filtros Inteligentes**:
+    - ✅ Saudações simples (sem gastar créditos)
+    - ✅ Despedidas/agradecimentos (sem gastar créditos)
+    - ✅ Redirecionamentos entre chats (doutrinário ↔ emocional)
+    - ✅ Bloqueio de off-topic
+  - **UX/UI**:
+    - ✅ Markdown customizado (títulos, listas, código, blockquotes)
+    - ✅ Limpeza automática do input após envio
+    - ✅ Auto-scroll para última mensagem
+    - ✅ Indicador de digitação contextual
+    - ✅ Tema dinâmico (light/dark)
+  - **Documentação**:
+    - ✅ `walkthrough.md`: Implementação completa documentada
+    - ✅ Comparação de personas (Guia vs Sr. Allan)
+    - ✅ Estatísticas: 80% de reutilização de código
+    - ✅ Text-to-Speech para narração de reflexões
   - **Pendências**:
+    - ⏳ **Gerar/Selecionar 7 imagens de fundo para Pensamento do Dia**
+      - Usar prompts em `prompts_imagens_pensamento_dia.md`
+      - Ferramentas sugeridas: DALL-E, Midjourney, Unsplash, Pexels
+      - Especificações: JPEG, 1280x720px, elementos naturais puros
     - [ ] Implementar tela de chat EmotionalChat
     - [ ] Migrar serviços do CLI (DeepSeek API, intention detector)
-    - [ ] Criar coleção Firestore: `reflections`
-    - [ ] Popular conteúdo de textos para reflexão
-    - [ ] Implementar lista de "Textos para Reflexão"
 - [ ] **Integração de Conteúdo**: Definir fonte de dados (Firestore ou JSON estático inicial) para Mensagens e Textos.
   - Ações de Curtir (Favoritar) e Compartilhar.
   - **Seção 2: Pergunte ao Guia**:

@@ -15,7 +15,6 @@ export function useDeepSeekChat(chatType: ChatType = ChatType.EMOTIONAL): UseCha
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sessionActive, setSessionActive] = useState(false);
 
   /**
    * Simula streaming palavra por palavra para respostas locais
@@ -57,51 +56,7 @@ export function useDeepSeekChat(chatType: ChatType = ChatType.EMOTIONAL): UseCha
       setMessages((prev) => [...prev, userMsg]);
 
       try {
-        // Detecta intenção
-        const intention = detectIntention(userMessage);
-
-        // Verifica se é encerramento
-        if (intention.type === IntentionType.END_CONVERSATION) {
-          const farewellMsg: Message = {
-            id: (Date.now() + 1).toString(),
-            text: "",
-            isUser: false,
-            timestamp: new Date(),
-          };
-
-          setMessages((prev) => [...prev, farewellMsg]);
-
-          const farewell = `Que a paz te acompanhe, meu amigo. 🌿  
-Estarei aqui quando o coração desejar conversar novamente.`;
-
-          await simulateStreaming(farewell, farewellMsg.id);
-          setSessionActive(false);
-          setIsLoading(false);
-          return;
-        }
-
-        // Verifica se é saudação inicial
-        if (intention.type === IntentionType.GREETING && !sessionActive) {
-          const greetingMsg: Message = {
-            id: (Date.now() + 1).toString(),
-            text: "",
-            isUser: false,
-            timestamp: new Date(),
-          };
-
-          setMessages((prev) => [...prev, greetingMsg]);
-
-          const greeting = `Olá, meu amigo. 🌿  
-Vejo que há algo inquietando seu coração...  
-Se desejar, posso ser uma presença de calma e luz neste momento.`;
-
-          await simulateStreaming(greeting, greetingMsg.id);
-          setSessionActive(true);
-          setIsLoading(false);
-          return;
-        }
-
-        // Verifica bloqueios
+        // Verifica bloqueios (saudações, despedidas, off-topic, etc.)
         const blockCheck = shouldBlockMessage(userMessage, chatType);
         if (blockCheck.blocked && blockCheck.response) {
           const blockMsg: Message = {
@@ -167,7 +122,7 @@ Se desejar, posso ser uma presença de calma e luz neste momento.`;
         setIsLoading(false);
       }
     },
-    [chatType, sessionActive, simulateStreaming]
+    [chatType, simulateStreaming]
   );
 
   /**
@@ -175,7 +130,6 @@ Se desejar, posso ser uma presença de calma e luz neste momento.`;
    */
   const clearChat = useCallback(() => {
     setMessages([]);
-    setSessionActive(false);
     setError(null);
   }, []);
 

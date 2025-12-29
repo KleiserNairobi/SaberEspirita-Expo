@@ -1,4 +1,5 @@
 import emotionalChatPrompt from "./chatEmotional";
+import scientificChatPrompt from "./chatScientific";
 
 /**
  * Tipos de chat disponíveis
@@ -16,8 +17,7 @@ export function getSystemPrompt(chatType: ChatType): string {
     case ChatType.EMOTIONAL:
       return emotionalChatPrompt;
     case ChatType.SCIENTIFIC:
-      // TODO: Implementar prompt científico no futuro
-      return "Você é um assistente científico especializado em Espiritismo.";
+      return scientificChatPrompt;
     default:
       return emotionalChatPrompt;
   }

@@ -1,9 +1,9 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { ChevronRight, Heart } from "lucide-react-native";
+import { ChevronRight, Heart, Tag } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { IReflection } from "@/types/reflection";
+import { IReflection, REFLECTION_TOPICS } from "@/types/reflection";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
 import { createStyles } from "./styles";
 
@@ -43,6 +43,14 @@ export function ReflectionCard({ reflection, onPress }: ReflectionCardProps) {
           <Text style={styles.metaText} numberOfLines={1}>
             {reflection.author}
             {reflection.source && ` • ${reflection.source}`}
+          </Text>
+        </View>
+
+        {/* Tópico */}
+        <View style={styles.topicContainer}>
+          <Tag size={14} color={theme.colors.primary} style={styles.topicIcon} />
+          <Text style={styles.topicText} numberOfLines={1}>
+            {REFLECTION_TOPICS[reflection.topic]?.label || reflection.topic}
           </Text>
         </View>
       </View>

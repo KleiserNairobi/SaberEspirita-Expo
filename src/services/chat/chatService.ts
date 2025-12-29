@@ -1,6 +1,7 @@
 import { ChatService } from "@/types/chat";
 import { ChatType } from "../prompt";
 import { emotionalChatService } from "./emotionalChatService";
+import { scientificChatService } from "./scientificChatService";
 import { detectIntention, IntentionType } from "./intentionDetector";
 
 /**
@@ -11,8 +12,7 @@ export function getChatService(chatType: ChatType): ChatService {
     case ChatType.EMOTIONAL:
       return emotionalChatService;
     case ChatType.SCIENTIFIC:
-      // TODO: Implementar serviço científico
-      return emotionalChatService;
+      return scientificChatService;
     default:
       return emotionalChatService;
   }
@@ -28,7 +28,50 @@ export function shouldBlockMessage(
 ): { blocked: boolean; response?: string } {
   const intention = detectIntention(message);
 
-  // Para chat emocional, bloqueia off-topic e questões doutrinárias
+  // Filtros comuns para ambos os chats
+  // Bloqueia saudações simples (sem conteúdo adicional)
+  if (intention.type === IntentionType.GREETING) {
+    const greetingResponse =
+      chatType === ChatType.EMOTIONAL
+        ? `Olá, meu amigo! 🕊️
+
+Seja bem-vindo. Estou aqui para oferecer apoio emocional e consolo espiritual.
+
+Como posso ajudar seu coração hoje?`
+        : `Olá! 📚
+
+Seja bem-vindo. Estou aqui para esclarecer suas dúvidas sobre a Doutrina Espírita.
+
+Qual é sua pergunta?`;
+
+    return {
+      blocked: true,
+      response: greetingResponse,
+    };
+  }
+
+  // Bloqueia mensagens de despedida/agradecimento
+  if (intention.type === IntentionType.END_CONVERSATION) {
+    const farewellResponse =
+      chatType === ChatType.EMOTIONAL
+        ? `Que a paz esteja com você, meu amigo. 🙏
+
+Estarei aqui sempre que precisar de apoio e consolo.
+
+Até breve!`
+        : `Foi um prazer esclarecer suas dúvidas! 📚
+
+Que a luz do conhecimento ilumine seu caminho.
+
+Até a próxima!`;
+
+    return {
+      blocked: true,
+      response: farewellResponse,
+    };
+  }
+
+  // Filtros específicos para chat emocional
   if (chatType === ChatType.EMOTIONAL) {
     if (intention.type === IntentionType.OFF_TOPIC) {
       return {
@@ -54,6 +97,35 @@ Como posso oferecer conforto ao seu coração hoje?`,
 Para questões sobre os ensinamentos espíritas, recomendo conversar com o **Sr. Allan Kardec**, nosso assistente especializado em doutrina.
 
 Estou aqui para oferecer **apoio emocional e consolo espiritual**. Há algo que inquieta seu coração neste momento?`,
+      };
+    }
+  }
+
+  // Filtros específicos para chat científico
+  if (chatType === ChatType.SCIENTIFIC) {
+    if (intention.type === IntentionType.OFF_TOPIC) {
+      return {
+        blocked: true,
+        response: `Perdão, mas minha especialidade é a Doutrina Espírita. 📚
+
+Posso ajudá-lo com questões sobre:
+- As obras básicas do Espiritismo
+- Conceitos doutrinários
+- Princípios espíritas
+- Ensinamentos de Allan Kardec
+
+Qual é sua dúvida doutrinária?`,
+      };
+    }
+
+    if (intention.type === IntentionType.EMOTIONAL_SUPPORT) {
+      return {
+        blocked: true,
+        response: `Percebo que você está buscando apoio emocional. 🕊️
+
+Para questões de consolo e apoio espiritual, recomendo conversar com **O Guia**, nosso assistente especializado em apoio emocional.
+
+Estou aqui para esclarecer **dúvidas doutrinárias**. Tem alguma pergunta sobre os ensinamentos espíritas?`,
       };
     }
   }

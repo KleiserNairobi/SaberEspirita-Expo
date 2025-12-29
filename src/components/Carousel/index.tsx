@@ -1,6 +1,13 @@
 import { ImageSlider } from "@/data/SliderData";
 import React from "react";
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -62,6 +69,13 @@ function CarouselItem({ index, item, scrollX }: CarouselProps) {
                 {item.description}
               </Text>
             )}
+            <TouchableOpacity
+              style={styles.button}
+              activeOpacity={0.8}
+              onPress={() => console.log("Iniciar curso:", item.title)}
+            >
+              <Text style={styles.buttonText}>INICIAR CURSO</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Animated.View>
@@ -154,9 +168,23 @@ const styles = StyleSheet.create({
     fontFamily: "Oswald_300Light",
     fontSize: 16,
     color: "rgba(255, 255, 255, 0.9)",
-    // textAlign: "center",
+    marginBottom: 16,
     textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
+  },
+  button: {
+    alignSelf: "stretch",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  buttonText: {
+    fontFamily: "Oswald_600SemiBold",
+    fontSize: 14,
+    color: "#FFFFFF",
+    letterSpacing: 0.5,
+    textAlign: "center",
   },
 });

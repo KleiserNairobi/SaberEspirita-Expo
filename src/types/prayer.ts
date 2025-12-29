@@ -31,6 +31,15 @@ export type PrayerMoment =
   | "POR-GRATIDAO"
   | "POR-PAZ";
 
+// Tipo genérico de filtro para conteúdos (Orações e Reflexões)
+export type ContentFilterType =
+  | "ALL"
+  | "FAVORITES"
+  | "BY_AUTHOR"
+  | "BY_SOURCE"
+  | "BY_TOPIC"; // Usado para reflexões
+
+// Mantido para compatibilidade com código existente de orações
 export type PrayerFilterType = "ALL" | "FAVORITES" | "BY_AUTHOR" | "BY_SOURCE";
 
 export interface IAmbientAudio {

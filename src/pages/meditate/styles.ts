@@ -34,7 +34,7 @@ export const createStyles = (theme: ITheme) =>
       alignItems: "center",
       marginHorizontal: 20,
       marginTop: 20,
-      marginBottom: 16,
+      marginBottom: 10,
     },
     viewAllButton: {
       ...theme.text("md", "medium"),

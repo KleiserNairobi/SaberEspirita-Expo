@@ -6,15 +6,34 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MeditateStackParamList } from "@/routers/types";
-import { ArrowLeft, BookHeart, SlidersHorizontal } from "lucide-react-native";
+import {
+  ArrowLeft,
+  BookHeart,
+  SlidersHorizontal,
+  BookOpen,
+  Heart,
+  User,
+  Sparkles,
+  Tag,
+} from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
 import { ReflectionCard } from "../components/ReflectionCard";
 import { useReflections } from "../hooks/useReflections";
-import { PrayerFilterType } from "@/types/prayer";
+import { ContentFilterType } from "@/types/prayer";
+import { REFLECTION_TOPICS } from "@/types/reflection";
 import { createStyles } from "./styles";
+
+// Opções de filtro específicas para reflexões (inclui "Por Tópico")
+const REFLECTION_FILTER_OPTIONS = [
+  { id: "ALL" as ContentFilterType, label: "Todos", icon: BookOpen },
+  { id: "FAVORITES" as ContentFilterType, label: "Apenas Favoritos", icon: Heart },
+  { id: "BY_AUTHOR" as ContentFilterType, label: "Por Autor", icon: User },
+  { id: "BY_SOURCE" as ContentFilterType, label: "Por Fonte", icon: Sparkles },
+  { id: "BY_TOPIC" as ContentFilterType, label: "Por Tópico", icon: Tag },
+] as const;
 
 export default function AllReflectionsScreen() {
   const { theme } = useAppTheme();
@@ -22,7 +41,7 @@ export default function AllReflectionsScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterType, setFilterType] = useState<PrayerFilterType>("ALL");
+  const [filterType, setFilterType] = useState<ContentFilterType>("ALL");
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   const { data: reflections, isLoading } = useReflections();
@@ -52,6 +71,13 @@ export default function AllReflectionsScreen() {
             const sourceB = b.source?.toLowerCase() || "";
             return sourceA.localeCompare(sourceB);
           });
+        break;
+      case "BY_TOPIC":
+        result = result.sort((a, b) => {
+          const topicA = REFLECTION_TOPICS[a.topic]?.label || a.topic;
+          const topicB = REFLECTION_TOPICS[b.topic]?.label || b.topic;
+          return topicA.localeCompare(topicB);
+        });
         break;
       case "ALL":
       default:
@@ -180,6 +206,8 @@ export default function AllReflectionsScreen() {
           ref={bottomSheetRef}
           filterType={filterType}
           onFilterChange={setFilterType}
+          title="Filtrar Reflexões"
+          filterOptions={REFLECTION_FILTER_OPTIONS}
         />
       </View>
     </SafeAreaView>

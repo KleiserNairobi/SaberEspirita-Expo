@@ -6,32 +6,42 @@ import BottomSheet, {
   BottomSheetView,
   BottomSheetModal,
 } from "@gorhom/bottom-sheet";
-import { BookOpen, Heart, Sparkles, User, RotateCcw } from "lucide-react-native";
+import { BookOpen, Heart, Sparkles, User, RotateCcw, Tag } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { PrayerFilterType } from "@/types/prayer";
+import { PrayerFilterType, ContentFilterType } from "@/types/prayer";
 import { createStyles } from "@/pages/pray/components/FilterBottomSheet/styles";
 
 interface FilterBottomSheetProps {
-  filterType: PrayerFilterType;
-  onFilterChange: (filter: PrayerFilterType) => void;
+  filterType: ContentFilterType;
+  onFilterChange: (filter: ContentFilterType) => void;
+  title?: string; // Título customizável
+  filterOptions?: readonly { id: ContentFilterType; label: string; icon: any }[]; // Opções customizáveis
 }
 
 const FILTER_OPTIONS = [
-  { id: "ALL" as PrayerFilterType, label: "Todos", icon: BookOpen },
-  { id: "FAVORITES" as PrayerFilterType, label: "Apenas Favoritos", icon: Heart },
-  { id: "BY_AUTHOR" as PrayerFilterType, label: "Por Autor", icon: User },
-  { id: "BY_SOURCE" as PrayerFilterType, label: "Por Fonte", icon: Sparkles },
+  { id: "ALL" as ContentFilterType, label: "Todos", icon: BookOpen },
+  { id: "FAVORITES" as ContentFilterType, label: "Apenas Favoritos", icon: Heart },
+  { id: "BY_AUTHOR" as ContentFilterType, label: "Por Autor", icon: User },
+  { id: "BY_SOURCE" as ContentFilterType, label: "Por Fonte", icon: Sparkles },
 ] as const;
 
 export const FilterBottomSheet = forwardRef<BottomSheetModal, FilterBottomSheetProps>(
-  ({ filterType, onFilterChange }, ref) => {
+  (
+    {
+      filterType,
+      onFilterChange,
+      title = "Filtrar Orações",
+      filterOptions = FILTER_OPTIONS,
+    },
+    ref
+  ) => {
     const { theme } = useAppTheme();
     const styles = createStyles(theme);
 
     const snapPoints = useMemo(() => ["60%"], []);
 
-    function handleFilterSelect(filter: PrayerFilterType) {
+    function handleFilterSelect(filter: ContentFilterType) {
       onFilterChange(filter);
       // @ts-ignore
       ref?.current?.close();
@@ -58,9 +68,9 @@ export const FilterBottomSheet = forwardRef<BottomSheetModal, FilterBottomSheetP
         handleIndicatorStyle={styles.handleIndicator}
       >
         <BottomSheetView style={styles.container}>
-          <Text style={styles.title}>Filtrar Orações</Text>
+          <Text style={styles.title}>{title}</Text>
 
-          {FILTER_OPTIONS.map((option, index) => {
+          {filterOptions.map((option, index) => {
             const Icon = option.icon;
             const isSelected = filterType === option.id;
 
@@ -98,7 +108,7 @@ export const FilterBottomSheet = forwardRef<BottomSheetModal, FilterBottomSheetP
                   {isSelected && <View style={styles.selectedDot} />}
                 </TouchableOpacity>
 
-                {index < FILTER_OPTIONS.length - 1 && <View style={styles.separator} />}
+                {index < filterOptions.length - 1 && <View style={styles.separator} />}
               </View>
             );
           })}

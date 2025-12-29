@@ -13,7 +13,7 @@ import { AnimatedTabBar } from "@/components/AnimatedTabBar";
 import { PrayNavigator } from "./PrayNavigator";
 import { MeditateNavigator } from "./MeditateNavigator";
 import AccountScreen from "@/pages/account";
-import StudyPlaceholder from "@/pages/study";
+import { StudyScreen } from "@/pages/study";
 import FixPlaceholder from "@/pages/fix";
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -28,7 +28,7 @@ export function TabNavigator() {
     >
       <Tab.Screen
         name="StudyTab"
-        component={StudyPlaceholder}
+        component={StudyScreen}
         options={{
           title: "Estude",
           tabBarIcon: ({ color, size }) => <ClipboardClock size={size} color={color} />,
