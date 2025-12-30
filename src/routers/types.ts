@@ -46,6 +46,18 @@ export type MeditateStackParamList = {
   Reflection: { id: string };
 };
 
+export type FixStackParamList = {
+  FixHome: undefined;
+  TruthOrFalseHome: undefined;
+  TruthOrFalseQuestion: undefined;
+  TruthOrFalseResult: {
+    userAnswer: boolean;
+    isCorrect: boolean;
+    questionId: string;
+  };
+  TruthOrFalseHistory: undefined;
+};
+
 // Tipos auxiliares para navegação
 declare global {
   namespace ReactNavigation {

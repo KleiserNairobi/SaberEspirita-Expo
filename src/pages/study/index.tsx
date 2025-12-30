@@ -25,6 +25,10 @@ export function StudyScreen() {
       case "2": // Glossário Espírita
         navigation.navigate("Glossary");
         break;
+      case "4": // Verdade ou Mentira
+        // @ts-ignore - navegação composta entre stacks
+        navigation.navigate("FixTab", { screen: "TruthOrFalseHome" });
+        break;
       case "5": // Converse com o Guia
         navigation.navigate("EmotionalChat");
         break;

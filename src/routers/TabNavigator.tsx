@@ -12,9 +12,9 @@ import { TabParamList } from "./types";
 import { AnimatedTabBar } from "@/components/AnimatedTabBar";
 import { PrayNavigator } from "./PrayNavigator";
 import { MeditateNavigator } from "./MeditateNavigator";
+import { FixNavigator } from "./FixNavigator";
 import AccountScreen from "@/pages/account";
 import { StudyScreen } from "@/pages/study";
-import FixPlaceholder from "@/pages/fix";
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
@@ -36,7 +36,7 @@ export function TabNavigator() {
       />
       <Tab.Screen
         name="FixTab"
-        component={FixPlaceholder}
+        component={FixNavigator}
         options={{
           title: "Fixe",
           tabBarIcon: ({ color, size }) => <ClipboardCheck size={size} color={color} />,

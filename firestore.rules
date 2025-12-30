@@ -1,0 +1,71 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ============================================
+    // VERDADE OU MENTIRA - Respostas do Usuário
+    // ============================================
+    match /users/{userId}/truthOrFalseResponses/{responseId} {
+      
+      // Função auxiliar para verificar autenticação
+      function isAuthenticated() {
+        return request.auth != null;
+      }
+      
+      // Função auxiliar para verificar se é o próprio usuário
+      function isOwner() {
+        return request.auth.uid == userId;
+      }
+      
+      // Função auxiliar para validar estrutura da resposta
+      function isValidResponse() {
+        let data = request.resource.data;
+        return data.keys().hasAll(['id', 'userId', 'date', 'questionId', 'userAnswer', 'isCorrect', 'timeSpent', 'respondedAt', 'savedToLibrary'])
+          && data.id is string
+          && data.userId is string
+          && data.userId == userId
+          && data.date is string
+          && data.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') // YYYY-MM-DD
+          && data.questionId is string
+          && data.userAnswer is bool
+          && data.isCorrect is bool
+          && data.timeSpent is number
+          && data.timeSpent >= 0
+          && data.respondedAt is timestamp
+          && data.savedToLibrary is bool;
+      }
+      
+      // Leitura: usuário só pode ler suas próprias respostas
+      allow read: if isAuthenticated() && isOwner();
+      
+      // Criação: usuário só pode criar suas próprias respostas com dados válidos
+      allow create: if isAuthenticated() 
+                    && isOwner() 
+                    && isValidResponse();
+      
+      // Atualização: usuário só pode atualizar o campo savedToLibrary
+      allow update: if isAuthenticated() 
+                    && isOwner()
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['savedToLibrary']);
+      
+      // Deleção: usuário pode deletar suas próprias respostas
+      allow delete: if isAuthenticated() && isOwner();
+    }
+    
+    // ============================================
+    // OUTRAS COLEÇÕES (exemplo - ajustar conforme necessário)
+    // ============================================
+    
+    // Exemplo: Dados de perfil do usuário
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+  }
+  
+  // Função auxiliar global para verificar autenticação
+  function isAuthenticated() {
+    return request.auth != null;
+  }
+}

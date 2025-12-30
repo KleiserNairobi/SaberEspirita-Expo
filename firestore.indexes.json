@@ -1,0 +1,47 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "truthOrFalseResponses",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "date",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "truthOrFalseResponses",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isCorrect",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "truthOrFalseResponses",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "savedToLibrary",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "date",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
