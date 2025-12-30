@@ -29,7 +29,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
   async function handleShare() {
     try {
       await Share.share({
-        message: `📚 Resposta do Sr. Allan:\n\n${message.text}\n\n---\nCompartilhado via Saber Espírita`,
+        message: `📚 Resposta do Sr. Allan:\n\n${message.text}\n\n---\nCompartilhado via App Saber Espírita`,
       });
     } catch (error) {
       Alert.alert("Erro", "Não foi possível compartilhar a mensagem");

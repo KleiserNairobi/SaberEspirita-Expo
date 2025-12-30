@@ -41,7 +41,7 @@ export function DailyThoughtCard() {
             onPress={handleShare}
             activeOpacity={0.7}
           >
-            <Share2 size={20} color="#fff" />
+            <Share2 size={14} color="#fff" />
           </TouchableOpacity>
 
           {/* Citação */}

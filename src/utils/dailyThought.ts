@@ -8,13 +8,13 @@ interface DailyThought {
 
 // Imagens de fundo por dia da semana
 const BACKGROUNDS = [
-  require("@/assets/images/meditate/sunday.jpg"), // 0 - Domingo
-  require("@/assets/images/meditate/monday.jpg"), // 1 - Segunda
-  require("@/assets/images/meditate/tuesday.jpg"), // 2 - Terça
-  require("@/assets/images/meditate/wednesday.jpg"), // 3 - Quarta
-  require("@/assets/images/meditate/thursday.jpg"), // 4 - Quinta
-  require("@/assets/images/meditate/friday.jpg"), // 5 - Sexta
-  require("@/assets/images/meditate/saturday.jpg"), // 6 - Sábado
+  require("@/assets/images/meditate/sunday.jpeg"), // 0 - Domingo
+  require("@/assets/images/meditate/monday.jpeg"), // 1 - Segunda
+  require("@/assets/images/meditate/tuesday.jpeg"), // 2 - Terça
+  require("@/assets/images/meditate/wednesday.jpeg"), // 3 - Quarta
+  require("@/assets/images/meditate/thursday.jpeg"), // 4 - Quinta
+  require("@/assets/images/meditate/friday.jpeg"), // 5 - Sexta
+  require("@/assets/images/meditate/saturday.jpeg"), // 6 - Sábado
 ];
 
 /**
