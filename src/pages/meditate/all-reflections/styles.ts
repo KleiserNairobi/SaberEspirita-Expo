@@ -12,7 +12,6 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
     },
     header: {
-      paddingHorizontal: theme.spacing.lg,
       paddingTop: theme.spacing.xl,
       paddingBottom: theme.spacing.lg,
     },
@@ -110,7 +109,6 @@ export const createStyles = (theme: ITheme) =>
       textAlign: "center",
     },
     toolbar: {
-      paddingHorizontal: theme.spacing.lg,
       paddingBottom: theme.spacing.md,
     },
     list: {

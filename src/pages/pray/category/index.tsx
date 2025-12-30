@@ -141,72 +141,79 @@ export function PrayCategoryScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <View style={styles.container}>
-        {/* Header: Layout de 3 Colunas (Voltar | Ícone | Espaço) */}
-        <View style={styles.header}>
-          {/* Linha 1: Botão Voltar | Ícone | Espaço */}
-          <View style={styles.headerRow}>
-            {/* Coluna Esquerda: Botão Voltar */}
-            <View style={styles.headerSide}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => navigation.goBack()}
-                activeOpacity={0.7}
-              >
-                <ArrowLeft size={20} color={theme.colors.primary} />
-              </TouchableOpacity>
-            </View>
-
-            {/* Coluna Central: Ícone com Anéis */}
-            <View style={styles.iconRingsContainer}>
-              <View style={styles.ringOuter} />
-              <View style={styles.ringMiddle} />
-              <View style={styles.ringInner} />
-              <View style={styles.iconLargeContainer}>
-                <IconComponent size={40} color={theme.colors.background} />
-              </View>
-            </View>
-
-            {/* Coluna Direita: Botão de Filtro */}
-            <View style={styles.headerSide}>
-              <TouchableOpacity
-                style={[
-                  styles.filterButton,
-                  filterType !== "ALL" && styles.filterButtonActive,
-                ]}
-                onPress={() => bottomSheetRef.current?.present()}
-                activeOpacity={0.7}
-              >
-                <SlidersHorizontal
-                  size={20}
-                  color={
-                    filterType !== "ALL" ? theme.colors.background : theme.colors.primary
-                  }
-                />
-                {filterType !== "ALL" && <View style={styles.filterDot} />}
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Linha 2: Título e Subtítulo */}
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.title}>{categoryTitle}</Text>
-            {categorySubtitle && <Text style={styles.subtitle}>{categorySubtitle}</Text>}
-          </View>
-        </View>
-
-        {/* Toolbar: Apenas SearchBar */}
-        <View style={styles.toolbar}>
-          <SearchBar
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Buscar uma oração..."
-          />
-        </View>
-
-        {/* Lista de Orações - Cards SEM Ícone */}
+        {/* Lista de Orações - Header e Toolbar agora rolam junto */}
         <FlatList
           data={filteredPrayers}
           keyExtractor={(item) => item.id}
+          ListHeaderComponent={
+            <>
+              {/* Header: Layout de 3 Colunas (Voltar | Ícone | Espaço) */}
+              <View style={styles.header}>
+                {/* Linha 1: Botão Voltar | Ícone | Espaço */}
+                <View style={styles.headerRow}>
+                  {/* Coluna Esquerda: Botão Voltar */}
+                  <View style={styles.headerSide}>
+                    <TouchableOpacity
+                      style={styles.backButton}
+                      onPress={() => navigation.goBack()}
+                      activeOpacity={0.7}
+                    >
+                      <ArrowLeft size={20} color={theme.colors.primary} />
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Coluna Central: Ícone com Anéis */}
+                  <View style={styles.iconRingsContainer}>
+                    <View style={styles.ringOuter} />
+                    <View style={styles.ringMiddle} />
+                    <View style={styles.ringInner} />
+                    <View style={styles.iconLargeContainer}>
+                      <IconComponent size={40} color={theme.colors.background} />
+                    </View>
+                  </View>
+
+                  {/* Coluna Direita: Botão de Filtro */}
+                  <View style={styles.headerSide}>
+                    <TouchableOpacity
+                      style={[
+                        styles.filterButton,
+                        filterType !== "ALL" && styles.filterButtonActive,
+                      ]}
+                      onPress={() => bottomSheetRef.current?.present()}
+                      activeOpacity={0.7}
+                    >
+                      <SlidersHorizontal
+                        size={20}
+                        color={
+                          filterType !== "ALL"
+                            ? theme.colors.background
+                            : theme.colors.primary
+                        }
+                      />
+                      {filterType !== "ALL" && <View style={styles.filterDot} />}
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                {/* Linha 2: Título e Subtítulo */}
+                <View style={styles.headerTextContainer}>
+                  <Text style={styles.title}>{categoryTitle}</Text>
+                  {categorySubtitle && (
+                    <Text style={styles.subtitle}>{categorySubtitle}</Text>
+                  )}
+                </View>
+              </View>
+
+              {/* Toolbar: Apenas SearchBar */}
+              <View style={styles.toolbar}>
+                <SearchBar
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  placeholder="Buscar uma oração..."
+                />
+              </View>
+            </>
+          }
           renderItem={({ item }) => {
             const isFav = isFavorite(item.id);
 
@@ -268,7 +275,11 @@ export function PrayCategoryScreen() {
         <FilterBottomSheet
           ref={bottomSheetRef}
           filterType={filterType}
-          onFilterChange={setFilterType}
+          onFilterChange={(filter) => {
+            if (filter !== "BY_TOPIC") {
+              setFilterType(filter);
+            }
+          }}
         />
       </View>
     </SafeAreaView>

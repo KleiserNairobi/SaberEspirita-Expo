@@ -116,71 +116,78 @@ export default function AllReflectionsScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerRow}>
-            {/* Botão Voltar */}
-            <View style={styles.headerSide}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => navigation.goBack()}
-                activeOpacity={0.7}
-              >
-                <ArrowLeft size={20} color={theme.colors.primary} />
-              </TouchableOpacity>
-            </View>
-
-            {/* Ícone Central com Anéis */}
-            <View style={styles.iconRingsContainer}>
-              <View style={styles.ringOuter} />
-              <View style={styles.ringMiddle} />
-              <View style={styles.ringInner} />
-              <View style={styles.iconLargeContainer}>
-                <BookHeart size={40} color={theme.colors.background} />
-              </View>
-            </View>
-
-            {/* Botão de Filtro */}
-            <View style={styles.headerSide}>
-              <TouchableOpacity
-                style={[
-                  styles.filterButton,
-                  filterType !== "ALL" && styles.filterButtonActive,
-                ]}
-                onPress={() => bottomSheetRef.current?.present()}
-                activeOpacity={0.7}
-              >
-                <SlidersHorizontal
-                  size={20}
-                  color={
-                    filterType !== "ALL" ? theme.colors.background : theme.colors.primary
-                  }
-                />
-                {filterType !== "ALL" && <View style={styles.filterDot} />}
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Título e Subtítulo */}
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.title}>Textos para Reflexão</Text>
-            <Text style={styles.subtitle}>Aprofunde seu conhecimento espiritual</Text>
-          </View>
-        </View>
-
-        {/* Barra de Busca */}
-        <View style={styles.toolbar}>
-          <SearchBar
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Buscar reflexão..."
-          />
-        </View>
-
-        {/* Lista de Reflexões */}
+        {/* Lista de Reflexões - Header e Toolbar agora rolam junto */}
         <FlatList
           data={filteredReflections}
           keyExtractor={(item) => item.id}
+          ListHeaderComponent={
+            <>
+              {/* Header */}
+              <View style={styles.header}>
+                <View style={styles.headerRow}>
+                  {/* Botão Voltar */}
+                  <View style={styles.headerSide}>
+                    <TouchableOpacity
+                      style={styles.backButton}
+                      onPress={() => navigation.goBack()}
+                      activeOpacity={0.7}
+                    >
+                      <ArrowLeft size={20} color={theme.colors.primary} />
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Ícone Central com Anéis */}
+                  <View style={styles.iconRingsContainer}>
+                    <View style={styles.ringOuter} />
+                    <View style={styles.ringMiddle} />
+                    <View style={styles.ringInner} />
+                    <View style={styles.iconLargeContainer}>
+                      <BookHeart size={40} color={theme.colors.background} />
+                    </View>
+                  </View>
+
+                  {/* Botão de Filtro */}
+                  <View style={styles.headerSide}>
+                    <TouchableOpacity
+                      style={[
+                        styles.filterButton,
+                        filterType !== "ALL" && styles.filterButtonActive,
+                      ]}
+                      onPress={() => bottomSheetRef.current?.present()}
+                      activeOpacity={0.7}
+                    >
+                      <SlidersHorizontal
+                        size={20}
+                        color={
+                          filterType !== "ALL"
+                            ? theme.colors.background
+                            : theme.colors.primary
+                        }
+                      />
+                      {filterType !== "ALL" && <View style={styles.filterDot} />}
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                {/* Título e Subtítulo */}
+                <View style={styles.headerTextContainer}>
+                  <Text style={styles.title}>Textos para Reflexão</Text>
+                  <Text style={styles.subtitle}>
+                    Aprofunde seu conhecimento espiritual
+                  </Text>
+                </View>
+              </View>
+
+              {/* Barra de Busca */}
+              <View style={styles.toolbar}>
+                <SearchBar
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  placeholder="Buscar reflexão..."
+                />
+              </View>
+            </>
+          }
           renderItem={({ item }) => (
             <ReflectionCard
               reflection={item}

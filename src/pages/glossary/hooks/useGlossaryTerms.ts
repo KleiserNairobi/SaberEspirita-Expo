@@ -1,26 +1,28 @@
-import { useState, useMemo } from "react";
-import { MOCK_GLOSSARY } from "@/data/mockGlossary";
-import { IGlossaryTerm, GlossaryCategory } from "@/types/glossary";
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+import { IGlossaryTerm } from "@/types/glossary";
 import { GlossaryFilterType } from "@/types/glossaryFilter";
+import {
+  getAllGlossaryTerms,
+  getGlossaryTermById,
+} from "@/services/firebase/glossaryService";
 
 export function useGlossaryTerms() {
-  // Por enquanto retorna dados mock
-  // Futuramente será substituído por React Query + Firestore
-  return {
-    data: MOCK_GLOSSARY,
-    isLoading: false,
-    error: null,
-  };
+  return useQuery({
+    queryKey: ["glossary", "all"],
+    queryFn: getAllGlossaryTerms,
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
 }
 
 export function useGlossaryTerm(id: string) {
-  const term = MOCK_GLOSSARY.find((t) => t.id === id);
-
-  return {
-    data: term || null,
-    isLoading: false,
-    error: term ? null : "Termo não encontrado",
-  };
+  return useQuery({
+    queryKey: ["glossary", "term", id],
+    queryFn: () => getGlossaryTermById(id),
+    enabled: !!id,
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
 }
 
 export function useFilteredGlossaryTerms(

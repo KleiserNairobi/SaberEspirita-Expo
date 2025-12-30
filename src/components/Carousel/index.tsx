@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingVertical: 8,
     borderRadius: 8,
   },
   buttonText: {

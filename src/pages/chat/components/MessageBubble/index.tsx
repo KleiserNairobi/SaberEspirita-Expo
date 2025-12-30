@@ -38,13 +38,15 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
   return (
     <View style={[styles.container, message.isUser && styles.userContainer]}>
-      {/* Avatar */}
-      <View style={styles.avatar}>
-        {message.isUser ? (
-          <User size={18} color={theme.colors.primary} />
-        ) : (
-          <Compass size={18} color={theme.colors.primary} strokeWidth={2} />
-        )}
+      {/* Avatar acima do balão */}
+      <View style={styles.avatarContainer}>
+        <View style={styles.avatar}>
+          {message.isUser ? (
+            <User size={18} color={theme.colors.primary} />
+          ) : (
+            <Compass size={18} color={theme.colors.primary} strokeWidth={2} />
+          )}
+        </View>
       </View>
 
       {/* Bolha de mensagem */}

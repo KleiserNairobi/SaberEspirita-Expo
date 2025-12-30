@@ -13,7 +13,6 @@ export const createStyles = (theme: ITheme) =>
     },
     // Header: Layout de 3 Colunas (Voltar | Ícone | Espaço)
     header: {
-      paddingHorizontal: theme.spacing.lg,
       paddingTop: theme.spacing.xl,
       paddingBottom: theme.spacing.lg,
     },
@@ -115,7 +114,6 @@ export const createStyles = (theme: ITheme) =>
     },
     // Toolbar: Apenas SearchBar
     toolbar: {
-      paddingHorizontal: theme.spacing.lg,
       paddingBottom: theme.spacing.md,
     },
     // Lista de Orações

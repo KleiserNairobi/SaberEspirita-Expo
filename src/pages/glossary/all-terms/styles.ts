@@ -12,7 +12,6 @@ export function createStyles(theme: ITheme) {
     },
     // Header: Layout de 3 Colunas (Voltar | Ícone | Espaço)
     header: {
-      paddingHorizontal: theme.spacing.lg,
       paddingTop: theme.spacing.xl,
       paddingBottom: theme.spacing.lg,
     },
@@ -114,7 +113,6 @@ export function createStyles(theme: ITheme) {
       textAlign: "center",
     },
     searchContainer: {
-      paddingHorizontal: theme.spacing.lg,
       paddingBottom: theme.spacing.md,
     },
     list: {

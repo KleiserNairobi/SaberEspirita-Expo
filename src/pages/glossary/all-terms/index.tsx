@@ -56,73 +56,78 @@ export function AllTermsScreen() {
       <StatusBar style={theme.isDark ? "light" : "dark"} />
 
       <View style={styles.container}>
-        {/* Header: Layout de 3 Colunas (Voltar | Ícone | Filtro) */}
-        <View style={styles.header}>
-          {/* Linha 1: Botão Voltar | Ícone | Botão Filtro */}
-          <View style={styles.headerRow}>
-            {/* Coluna Esquerda: Botão Voltar */}
-            <View style={styles.headerSide}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => navigation.goBack()}
-                activeOpacity={0.7}
-              >
-                <ArrowLeft size={20} color={theme.colors.primary} />
-              </TouchableOpacity>
-            </View>
-
-            {/* Coluna Central: Ícone com Anéis */}
-            <View style={styles.iconRingsContainer}>
-              <View style={styles.ringOuter} />
-              <View style={styles.ringMiddle} />
-              <View style={styles.ringInner} />
-              <View style={styles.iconLargeContainer}>
-                <BookA size={40} color={theme.colors.background} />
-              </View>
-            </View>
-
-            {/* Coluna Direita: Botão de Filtro */}
-            <View style={styles.headerSide}>
-              <TouchableOpacity
-                style={[
-                  styles.filterButton,
-                  filterType !== "ALL" && styles.filterButtonActive,
-                ]}
-                onPress={() => bottomSheetRef.current?.present()}
-                activeOpacity={0.7}
-              >
-                <SlidersHorizontal
-                  size={20}
-                  color={
-                    filterType !== "ALL" ? theme.colors.background : theme.colors.primary
-                  }
-                />
-                {filterType !== "ALL" && <View style={styles.filterDot} />}
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Linha 2: Título e Subtítulo */}
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.title}>Glossário Espírita</Text>
-            <Text style={styles.subtitle}>Dicionário de termos</Text>
-          </View>
-        </View>
-
-        {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <SearchBar
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Buscar termo..."
-          />
-        </View>
-
-        {/* Lista de termos */}
+        {/* Lista de termos - Header e SearchBar agora rolam junto */}
         <FlatList
           data={filteredTerms}
           renderItem={renderTerm}
           keyExtractor={(item) => item.id}
+          ListHeaderComponent={
+            <>
+              {/* Header: Layout de 3 Colunas (Voltar | Ícone | Filtro) */}
+              <View style={styles.header}>
+                {/* Linha 1: Botão Voltar | Ícone | Botão Filtro */}
+                <View style={styles.headerRow}>
+                  {/* Coluna Esquerda: Botão Voltar */}
+                  <View style={styles.headerSide}>
+                    <TouchableOpacity
+                      style={styles.backButton}
+                      onPress={() => navigation.goBack()}
+                      activeOpacity={0.7}
+                    >
+                      <ArrowLeft size={20} color={theme.colors.primary} />
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Coluna Central: Ícone com Anéis */}
+                  <View style={styles.iconRingsContainer}>
+                    <View style={styles.ringOuter} />
+                    <View style={styles.ringMiddle} />
+                    <View style={styles.ringInner} />
+                    <View style={styles.iconLargeContainer}>
+                      <BookA size={40} color={theme.colors.background} />
+                    </View>
+                  </View>
+
+                  {/* Coluna Direita: Botão de Filtro */}
+                  <View style={styles.headerSide}>
+                    <TouchableOpacity
+                      style={[
+                        styles.filterButton,
+                        filterType !== "ALL" && styles.filterButtonActive,
+                      ]}
+                      onPress={() => bottomSheetRef.current?.present()}
+                      activeOpacity={0.7}
+                    >
+                      <SlidersHorizontal
+                        size={20}
+                        color={
+                          filterType !== "ALL"
+                            ? theme.colors.background
+                            : theme.colors.primary
+                        }
+                      />
+                      {filterType !== "ALL" && <View style={styles.filterDot} />}
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                {/* Linha 2: Título e Subtítulo */}
+                <View style={styles.headerTextContainer}>
+                  <Text style={styles.title}>Glossário Espírita</Text>
+                  <Text style={styles.subtitle}>Dicionário de termos</Text>
+                </View>
+              </View>
+
+              {/* Search Bar */}
+              <View style={styles.searchContainer}>
+                <SearchBar
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  placeholder="Buscar termo..."
+                />
+              </View>
+            </>
+          }
           contentContainerStyle={styles.list}
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}

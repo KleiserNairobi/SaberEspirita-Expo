@@ -5,13 +5,15 @@ import { ITheme } from "@/configs/theme/types";
 export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
-      flexDirection: "row",
       marginVertical: 8,
-      marginHorizontal: 16,
-      alignItems: "flex-start",
+      paddingHorizontal: 16,
+      width: "100%",
     },
     userContainer: {
-      flexDirection: "row-reverse",
+      alignItems: "flex-end",
+    },
+    avatarContainer: {
+      marginBottom: 4,
     },
     avatar: {
       width: 32,
@@ -19,13 +21,12 @@ export const createStyles = (theme: ITheme) =>
       borderRadius: 16,
       alignItems: "center",
       justifyContent: "center",
-      marginHorizontal: 8,
     },
     avatarText: {
       fontSize: 18,
     },
     bubble: {
-      maxWidth: "75%",
+      maxWidth: "100%",
       paddingHorizontal: 14,
       paddingVertical: 10,
       borderRadius: 18,
@@ -67,6 +68,6 @@ export const createStyles = (theme: ITheme) =>
       marginTop: theme.spacing.xs,
     },
     shareButton: {
-      padding: 4,
+      padding: 8,
     },
   });
