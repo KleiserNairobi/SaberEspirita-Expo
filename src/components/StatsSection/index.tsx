@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Flame, Trophy, Target, TrendingUp } from "lucide-react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { StatCard } from "../StatCard";
 import { ITruthOrFalseStats } from "@/types/truthOrFalseStats";
+import { createStyles } from "./styles";
 
 interface StatsSectionProps {
   stats: ITruthOrFalseStats;
@@ -11,6 +12,7 @@ interface StatsSectionProps {
 
 export function StatsSection({ stats }: StatsSectionProps) {
   const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const accuracyPercentage =
     stats.totalResponses > 0
@@ -19,7 +21,7 @@ export function StatsSection({ stats }: StatsSectionProps) {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { color: theme.colors.text }]}>Suas Estatísticas</Text>
+      <Text style={styles.title}>Suas Estatísticas</Text>
 
       <View style={styles.grid}>
         <View style={styles.row}>
@@ -63,23 +65,3 @@ export function StatsSection({ stats }: StatsSectionProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    gap: 16,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  grid: {
-    gap: 12,
-  },
-  row: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  card: {
-    flex: 1,
-  },
-});

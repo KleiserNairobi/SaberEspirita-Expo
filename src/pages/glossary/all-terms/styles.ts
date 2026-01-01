@@ -14,6 +14,7 @@ export function createStyles(theme: ITheme) {
     header: {
       paddingTop: theme.spacing.xl,
       paddingBottom: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.lg,
     },
     headerRow: {
       flexDirection: "row",
@@ -112,11 +113,17 @@ export function createStyles(theme: ITheme) {
       color: theme.colors.textSecondary,
       textAlign: "center",
     },
-    searchContainer: {
+    stickyHeader: {
+      backgroundColor: theme.colors.background,
+      paddingTop: theme.spacing.sm,
       paddingBottom: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      width: "100%",
+    },
+    searchContainer: {
+      width: "100%",
     },
     list: {
-      paddingHorizontal: theme.spacing.lg,
       paddingBottom: theme.spacing.xl,
       gap: theme.spacing.sm,
     },

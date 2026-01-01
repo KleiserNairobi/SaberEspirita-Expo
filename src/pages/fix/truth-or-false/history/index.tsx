@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ArrowLeft, Filter } from "lucide-react-native";
+import { ArrowLeft } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
@@ -18,11 +11,13 @@ import { TruthOrFalseService } from "@/services/firebase/truthOrFalseService";
 import { truthOrFalseQuestions } from "@/data/truthOrFalseQuestions";
 import { HistoryCard } from "@/components/HistoryCard";
 import { IUserTruthOrFalseResponse } from "@/types/userTruthOrFalseResponse";
+import { createStyles } from "./styles";
 
 type NavigationProp = NativeStackNavigationProp<FixStackParamList>;
 
 export function TruthOrFalseHistoryScreen() {
   const { theme } = useAppTheme();
+  const styles = createStyles(theme);
   const navigation = useNavigation<NavigationProp>();
   const [loading, setLoading] = useState(true);
   const [history, setHistory] = useState<IUserTruthOrFalseResponse[]>([]);
@@ -70,12 +65,11 @@ export function TruthOrFalseHistoryScreen() {
   function renderEmpty() {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
-          Você ainda não respondeu nenhuma pergunta.
-        </Text>
+        <Text style={styles.emptyText}>Você ainda não respondeu nenhuma pergunta.</Text>
         <TouchableOpacity
-          style={[styles.emptyButton, { backgroundColor: theme.colors.primary }]}
+          style={styles.emptyButton}
           onPress={() => navigation.navigate("TruthOrFalseHome")}
+          activeOpacity={0.8}
         >
           <Text style={styles.emptyButtonText}>Começar Agora</Text>
         </TouchableOpacity>
@@ -85,9 +79,7 @@ export function TruthOrFalseHistoryScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView
-        style={[styles.container, { backgroundColor: theme.colors.background }]}
-      >
+      <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
@@ -96,32 +88,22 @@ export function TruthOrFalseHistoryScreen() {
   }
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
+    <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
-          style={[styles.backButton, { backgroundColor: theme.colors.card }]}
+          style={styles.backButton}
           onPress={() => navigation.goBack()}
+          activeOpacity={0.7}
         >
-          <ArrowLeft size={24} color={theme.colors.text} />
+          <ArrowLeft size={20} color={theme.colors.muted} />
         </TouchableOpacity>
         <View style={styles.headerText}>
-          <Text style={[styles.title, { color: theme.colors.text }]}>Histórico</Text>
-          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+          <Text style={styles.title}>Histórico</Text>
+          <Text style={styles.subtitle}>
             {history.length} {history.length === 1 ? "resposta" : "respostas"}
           </Text>
         </View>
-        <TouchableOpacity
-          style={[styles.filterButton, { backgroundColor: theme.colors.card }]}
-          onPress={() => {
-            // TODO: Implementar filtros
-            console.log("Filtros");
-          }}
-        >
-          <Filter size={24} color={theme.colors.text} />
-        </TouchableOpacity>
       </View>
 
       {/* Lista */}
@@ -136,73 +118,3 @@ export function TruthOrFalseHistoryScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 20,
-    gap: 12,
-  },
-  backButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerText: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "700",
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  filterButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  listContent: {
-    padding: 20,
-    paddingTop: 0,
-    gap: 12,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 60,
-    gap: 16,
-  },
-  emptyText: {
-    fontSize: 16,
-    fontWeight: "500",
-    textAlign: "center",
-  },
-  emptyButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 12,
-  },
-  emptyButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-});

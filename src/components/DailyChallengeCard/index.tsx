@@ -1,9 +1,9 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Calendar, ArrowRight, BookOpen } from "lucide-react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { Calendar, ArrowRight, BookOpen, Tag } from "lucide-react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { DifficultyBadge } from "../DifficultyBadge";
-import { TopicTag } from "../TopicTag";
+import { createStyles } from "./styles";
 
 interface DailyChallengeCardProps {
   topic: string;
@@ -19,6 +19,7 @@ export function DailyChallengeCard({
   onPress,
 }: DailyChallengeCardProps) {
   const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const Icon = hasAnswered ? BookOpen : Calendar;
   const buttonText = hasAnswered ? "Ver Explicação" : "Responder Agora";
@@ -51,14 +52,17 @@ export function DailyChallengeCard({
         </View>
         <View style={styles.headerText}>
           <Text style={[styles.title, { color: theme.colors.text }]}>{cardTitle}</Text>
-          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+          <Text style={styles.subtitle}>
             {hasAnswered ? "Você já respondeu hoje" : "Uma nova pergunta te aguarda"}
           </Text>
         </View>
       </View>
 
-      <View style={styles.badges}>
-        <TopicTag topic={topic} />
+      <View style={styles.metadata}>
+        <View style={styles.metadataItem}>
+          <Tag size={16} color={theme.colors.muted} />
+          <Text style={styles.metadataText}>{topic}</Text>
+        </View>
         <DifficultyBadge level={difficulty} />
       </View>
 
@@ -67,7 +71,7 @@ export function DailyChallengeCard({
           style={[
             styles.buttonText,
             {
-              color: hasAnswered ? theme.colors.primary : theme.colors.primary,
+              color: hasAnswered ? theme.colors.text : theme.colors.primary,
             },
           ]}
         >
@@ -75,57 +79,9 @@ export function DailyChallengeCard({
         </Text>
         <ArrowRight
           size={20}
-          color={hasAnswered ? theme.colors.primary : theme.colors.primary}
+          color={hasAnswered ? theme.colors.text : theme.colors.primary}
         />
       </View>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    borderRadius: 16,
-    borderWidth: 2,
-    gap: 16,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerText: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 13,
-    fontWeight: "500",
-  },
-  badges: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  footer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingTop: 4,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "700",
-  },
-});

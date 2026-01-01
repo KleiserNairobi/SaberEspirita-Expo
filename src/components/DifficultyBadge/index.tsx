@@ -2,71 +2,63 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Star } from "lucide-react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { ITheme } from "@/configs/theme/types";
 
 interface DifficultyBadgeProps {
   level: "Fácil" | "Médio" | "Difícil";
 }
 
 export function DifficultyBadge({ level }: DifficultyBadgeProps) {
-  const { colors } = useAppTheme();
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
-  const getDifficultyConfig = () => {
+  const getStarsCount = () => {
     switch (level) {
       case "Fácil":
-        return {
-          stars: 1,
-          color: "#10B981", // green
-          bgColor: "#10B98115",
-        };
+        return 1;
       case "Médio":
-        return {
-          stars: 2,
-          color: "#F59E0B", // amber
-          bgColor: "#F59E0B15",
-        };
+        return 2;
       case "Difícil":
-        return {
-          stars: 3,
-          color: "#EF4444", // red
-          bgColor: "#EF444415",
-        };
+        return 3;
     }
   };
 
-  const config = getDifficultyConfig();
+  const starsCount = getStarsCount();
 
   return (
-    <View style={[styles.container, { backgroundColor: config.bgColor }]}>
+    <View style={styles.container}>
       <View style={styles.starsContainer}>
         {Array.from({ length: 3 }).map((_, index) => (
           <Star
             key={index}
             size={12}
-            color={config.color}
-            fill={index < config.stars ? config.color : "transparent"}
+            color={theme.colors.muted}
+            fill={index < starsCount ? theme.colors.muted : "transparent"}
           />
         ))}
       </View>
-      <Text style={[styles.label, { color: config.color }]}>{level}</Text>
+      <Text style={styles.label}>{level}</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 12,
-    gap: 6,
-  },
-  starsContainer: {
-    flexDirection: "row",
-    gap: 2,
-  },
-  label: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 12,
+      gap: 6,
+      backgroundColor: theme.colors.accent, // Mesma cor do botão Conversar
+    },
+    starsContainer: {
+      flexDirection: "row",
+      gap: 2,
+    },
+    label: {
+      ...theme.text("sm", "regular"),
+      color: theme.colors.muted, // Mesma cor das estrelas
+    },
+  });

@@ -3,7 +3,6 @@ import {
   View,
   Text,
   ScrollView,
-  StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
@@ -20,11 +19,13 @@ import { getDayOfYear } from "@/utils/truthOrFalseUtils";
 import { StatsSection } from "@/components/StatsSection";
 import { DailyChallengeCard } from "@/components/DailyChallengeCard";
 import { getDefaultStats } from "@/types/truthOrFalseStats";
+import { createStyles } from "./styles";
 
 type NavigationProp = NativeStackNavigationProp<FixStackParamList>;
 
 export function TruthOrFalseHomeScreen() {
   const { theme } = useAppTheme();
+  const styles = createStyles(theme);
   const navigation = useNavigation<NavigationProp>();
   const [loading, setLoading] = useState(true);
   const [hasAnswered, setHasAnswered] = useState(false);
@@ -63,9 +64,7 @@ export function TruthOrFalseHomeScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView
-        style={[styles.container, { backgroundColor: theme.colors.background }]}
-      >
+      <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
@@ -74,9 +73,7 @@ export function TruthOrFalseHomeScreen() {
   }
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
+    <SafeAreaView style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -84,24 +81,22 @@ export function TruthOrFalseHomeScreen() {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
-            style={[styles.backButton, { backgroundColor: theme.colors.card }]}
+            style={styles.backButton}
             onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
           >
-            <ArrowLeft size={24} color={theme.colors.text} />
+            <ArrowLeft size={20} color={theme.colors.muted} />
           </TouchableOpacity>
           <View style={styles.headerText}>
-            <Text style={[styles.title, { color: theme.colors.text }]}>
-              Verdade ou Mentira
-            </Text>
-            <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
-              Teste seus conhecimentos espíritas
-            </Text>
+            <Text style={styles.title}>Verdade ou Mentira</Text>
+            <Text style={styles.subtitle}>Teste seus conhecimentos espíritas</Text>
           </View>
           <TouchableOpacity
-            style={[styles.historyButton, { backgroundColor: theme.colors.card }]}
+            style={styles.historyButton}
             onPress={handleHistoryPress}
+            activeOpacity={0.7}
           >
-            <History size={24} color={theme.colors.primary} />
+            <History size={20} color={theme.colors.muted} />
           </TouchableOpacity>
         </View>
 
@@ -123,52 +118,3 @@ export function TruthOrFalseHomeScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  scrollContent: {
-    padding: 20,
-    gap: 24,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  backButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerText: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "700",
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  historyButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  section: {
-    gap: 16,
-  },
-});

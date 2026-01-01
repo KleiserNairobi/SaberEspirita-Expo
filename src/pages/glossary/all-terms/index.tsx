@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, FlatList, Text, TouchableOpacity } from "react-native";
+import { View, SectionList, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
@@ -38,7 +38,11 @@ export function AllTermsScreen() {
   }
 
   function renderTerm({ item }: { item: IGlossaryTerm }) {
-    return <GlossaryCard term={item} onPress={() => handleTermPress(item)} />;
+    return (
+      <View style={{ paddingHorizontal: theme.spacing.lg }}>
+        <GlossaryCard term={item} onPress={() => handleTermPress(item)} />
+      </View>
+    );
   }
 
   function renderEmpty() {
@@ -57,10 +61,11 @@ export function AllTermsScreen() {
 
       <View style={styles.container}>
         {/* Lista de termos - Header e SearchBar agora rolam junto */}
-        <FlatList
-          data={filteredTerms}
+        <SectionList
+          sections={[{ data: filteredTerms }]}
           renderItem={renderTerm}
           keyExtractor={(item) => item.id}
+          stickySectionHeadersEnabled={true}
           ListHeaderComponent={
             <>
               {/* Header: Layout de 3 Colunas (Voltar | Ícone | Filtro) */}
@@ -117,8 +122,11 @@ export function AllTermsScreen() {
                   <Text style={styles.subtitle}>Dicionário de termos</Text>
                 </View>
               </View>
-
-              {/* Search Bar */}
+            </>
+          }
+          renderSectionHeader={() => (
+            /* Search BarSticky HeaderWrapper */
+            <View style={styles.stickyHeader}>
               <View style={styles.searchContainer}>
                 <SearchBar
                   value={searchQuery}
@@ -126,8 +134,8 @@ export function AllTermsScreen() {
                   placeholder="Buscar termo..."
                 />
               </View>
-            </>
-          }
+            </View>
+          )}
           contentContainerStyle={styles.list}
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}

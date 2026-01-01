@@ -858,6 +858,80 @@ export default function MyScreen() {
 <Text style={theme.font.caption}>Legenda</Text>
 ```
 
+---
+
+### ⚠️ ATENÇÃO CRÍTICA: Tipografia no Tema
+
+**A interface `ITheme` NÃO possui a propriedade `font`!**
+
+A interface possui:
+
+- ✅ `typography`: Objeto com `weights` e `sizes`
+- ✅ `text()`: Função helper para criar estilos de texto
+
+**❌ INCORRETO - NÃO FUNCIONA:**
+
+```typescript
+// ERRO: theme.font não existe!
+const styles = StyleSheet.create({
+  title: {
+    ...theme.font.h1, // ❌ ERRO!
+    color: theme.colors.text,
+  },
+});
+```
+
+**✅ CORRETO - USE theme.text():**
+
+```typescript
+// Use a função helper theme.text(size, weight, color?)
+const styles = StyleSheet.create({
+  title: {
+    ...theme.text("xxl", "semibold"), // ✅ CORRETO!
+  },
+  subtitle: {
+    ...theme.text("lg", "regular", theme.colors.textSecondary), // ✅ CORRETO!
+  },
+  body: {
+    ...theme.text("md", "regular"), // ✅ CORRETO!
+  },
+});
+```
+
+**Parâmetros de `theme.text()`:**
+
+1. **size**: `"xs"` | `"sm"` | `"md"` | `"lg"` | `"xl"` | `"xxl"` | `"xxxl"`
+2. **weight**: `"regular"` | `"medium"` | `"semibold"` | `"bold"`
+3. **color** (opcional): Cor do texto (padrão: `theme.colors.text`)
+
+**Exemplo completo correto:**
+
+```typescript
+import { StyleSheet } from "react-native";
+import { ITheme } from "@/configs/theme/types";
+
+export const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    header: {
+      ...theme.text("xxxl", "semibold"),
+      marginBottom: theme.spacing.lg,
+    },
+    subtitle: {
+      ...theme.text("lg", "regular", theme.colors.textSecondary),
+      marginBottom: theme.spacing.md,
+    },
+    body: {
+      ...theme.text("md", "regular"),
+      lineHeight: 24,
+    },
+    caption: {
+      ...theme.text("sm", "regular", theme.colors.muted),
+    },
+  });
+```
+
+---
+
 #### Espaçamento (`theme.spacing.*`)
 
 - `xs` (4), `sm` (8), `md` (16)
