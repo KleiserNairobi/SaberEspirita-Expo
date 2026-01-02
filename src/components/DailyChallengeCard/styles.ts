@@ -5,7 +5,8 @@ import { ITheme } from "@/configs/theme/types";
 export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
-      padding: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       borderRadius: theme.radius.lg,
       borderWidth: 1,
       gap: theme.spacing.md,
@@ -26,7 +27,7 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
     },
     title: {
-      ...theme.text("lg", "bold"),
+      ...theme.text("lg", "semibold"), // Reduced from bold
       marginBottom: 2,
     },
     subtitle: {
@@ -37,6 +38,7 @@ export const createStyles = (theme: ITheme) =>
     metadata: {
       flexDirection: "row",
       alignItems: "center",
+      justifyContent: "space-between", // Added alignment
       gap: theme.spacing.md,
     },
     metadataItem: {
@@ -52,7 +54,7 @@ export const createStyles = (theme: ITheme) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      marginTop: 4,
+      // marginTop: 4,
     },
     buttonText: {
       ...theme.text("md", "bold"),
@@ -60,6 +62,6 @@ export const createStyles = (theme: ITheme) =>
     buttonContainer: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 8,
+      // gap: 8,
     },
   });

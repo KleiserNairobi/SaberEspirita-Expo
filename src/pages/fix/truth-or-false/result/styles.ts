@@ -55,10 +55,9 @@ export const createStyles = (theme: ITheme) =>
       justifyContent: "center",
     },
     // Metadados - Estilo Medite
+    // Metadados - Estilo Medite
     metadata: {
       flexDirection: "row",
-      gap: theme.spacing.md,
-      marginTop: theme.spacing.sm,
       justifyContent: "space-between",
       alignItems: "center",
     },
@@ -66,10 +65,12 @@ export const createStyles = (theme: ITheme) =>
       flexDirection: "row",
       alignItems: "center",
       gap: 6,
+      flex: 1,
     },
     metadataText: {
       ...theme.text("sm", "regular"),
       color: theme.colors.muted,
+      flexShrink: 1,
     },
     // Pergunta Card - Estilo FAQ
     questionCard: {
@@ -78,11 +79,12 @@ export const createStyles = (theme: ITheme) =>
       borderWidth: 1,
       borderColor: theme.colors.border,
       overflow: "hidden",
+      padding: theme.spacing.lg,
+      gap: theme.spacing.md,
     },
     questionHeader: {
       flexDirection: "row",
       alignItems: "flex-start",
-      padding: theme.spacing.lg,
       gap: theme.spacing.md,
     },
     iconContainer: {
@@ -100,7 +102,6 @@ export const createStyles = (theme: ITheme) =>
     question: {
       ...theme.text("lg", "regular"),
       lineHeight: 24,
-      marginBottom: theme.spacing.xs,
     },
     // Explicação
     explanationCard: {

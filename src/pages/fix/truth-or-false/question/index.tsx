@@ -3,14 +3,13 @@ import {
   View,
   Text,
   ScrollView,
-  StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ArrowLeft, Check, X } from "lucide-react-native";
+import { ArrowLeft, Check, X, HelpCircle, Tag } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
@@ -18,13 +17,14 @@ import { TruthOrFalseService } from "@/services/firebase/truthOrFalseService";
 import { truthOrFalseQuestions } from "@/data/truthOrFalseQuestions";
 import { getDayOfYear, getTodayString } from "@/utils/truthOrFalseUtils";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
-import { TopicTag } from "@/components/TopicTag";
 import { AnswerButton } from "@/components/AnswerButton";
+import { createStyles } from "./styles";
 
 type NavigationProp = NativeStackNavigationProp<FixStackParamList>;
 
 export function TruthOrFalseQuestionScreen() {
   const { theme } = useAppTheme();
+  const styles = createStyles(theme);
   const navigation = useNavigation<NavigationProp>();
   const [loading, setLoading] = useState(true);
   const [hasAnswered, setHasAnswered] = useState(false);
@@ -50,6 +50,7 @@ export function TruthOrFalseQuestionScreen() {
             userAnswer: response.userAnswer,
             isCorrect: response.isCorrect,
             questionId: response.questionId,
+            origin: "home",
           });
         }
       }
@@ -83,6 +84,7 @@ export function TruthOrFalseQuestionScreen() {
         userAnswer,
         isCorrect,
         questionId: todayQuestion.id,
+        origin: "home",
       });
     } catch (error) {
       console.error("Erro ao salvar resposta:", error);
@@ -93,9 +95,7 @@ export function TruthOrFalseQuestionScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView
-        style={[styles.container, { backgroundColor: theme.colors.background }]}
-      >
+      <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
@@ -104,9 +104,7 @@ export function TruthOrFalseQuestionScreen() {
   }
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
+    <SafeAreaView style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -114,27 +112,38 @@ export function TruthOrFalseQuestionScreen() {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
-            style={[styles.backButton, { backgroundColor: theme.colors.card }]}
+            style={styles.backButton}
             onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
           >
-            <ArrowLeft size={24} color={theme.colors.text} />
+            <ArrowLeft size={20} color={theme.colors.muted} />
           </TouchableOpacity>
-          <Text style={[styles.title, { color: theme.colors.text }]}>
-            Desafio de Hoje
-          </Text>
+          <Text style={styles.title}>Desafio de Hoje</Text>
         </View>
 
-        {/* Badges */}
-        <View style={styles.badges}>
-          <TopicTag topic={todayQuestion.topic} />
-          <DifficultyBadge level={todayQuestion.difficulty} />
-        </View>
+        {/* Question Card - FAQ Style */}
+        <View style={styles.questionCard}>
+          <View style={styles.questionHeader}>
+            <View style={styles.iconContainer}>
+              <HelpCircle size={20} color={theme.colors.icon} />
+            </View>
+            <View style={styles.questionTextContainer}>
+              <Text style={styles.question}>{todayQuestion.question}</Text>
+            </View>
+          </View>
 
-        {/* Pergunta */}
-        <View style={[styles.questionCard, { backgroundColor: theme.colors.card }]}>
-          <Text style={[styles.question, { color: theme.colors.text }]}>
-            {todayQuestion.question}
-          </Text>
+          <View style={styles.metadata}>
+            {/* Tópico */}
+            <View style={styles.metadataItem}>
+              <Tag size={16} color={theme.colors.muted} />
+              <Text style={styles.metadataText} numberOfLines={1}>
+                {todayQuestion.topic}
+              </Text>
+            </View>
+
+            {/* Dificuldade */}
+            <DifficultyBadge level={todayQuestion.difficulty} />
+          </View>
         </View>
 
         {/* Botões de Resposta */}
@@ -158,73 +167,10 @@ export function TruthOrFalseQuestionScreen() {
         {answering && (
           <View style={styles.answeringContainer}>
             <ActivityIndicator size="small" color={theme.colors.primary} />
-            <Text style={[styles.answeringText, { color: theme.colors.textSecondary }]}>
-              Salvando resposta...
-            </Text>
+            <Text style={styles.answeringText}>Salvando resposta...</Text>
           </View>
         )}
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  scrollContent: {
-    padding: 20,
-    gap: 24,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  backButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "700",
-  },
-  badges: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  questionCard: {
-    padding: 24,
-    borderRadius: 16,
-    minHeight: 200,
-    justifyContent: "center",
-  },
-  question: {
-    fontSize: 18,
-    lineHeight: 28,
-    textAlign: "center",
-  },
-  answersContainer: {
-    gap: 16,
-  },
-  answeringContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    paddingVertical: 12,
-  },
-  answeringText: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-});

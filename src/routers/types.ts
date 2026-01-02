@@ -54,6 +54,7 @@ export type FixStackParamList = {
     userAnswer: boolean;
     isCorrect: boolean;
     questionId: string;
+    origin?: "home" | "history";
   };
   TruthOrFalseHistory: undefined;
 };

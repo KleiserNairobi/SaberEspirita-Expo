@@ -19,9 +19,17 @@ export function ResultFeedback({
   const styles = createStyles(theme);
 
   const Icon = isCorrect ? CheckCircle2 : XCircle;
-  const iconColor = isCorrect ? "#10B981" : "#EF4444";
-  const bgColor = isCorrect ? "#10B98115" : "#EF444415";
-  const borderColor = isCorrect ? "#10B98130" : "#EF444430";
+  // Usando cores do tema
+  const mainColor = isCorrect ? theme.colors.success : theme.colors.error;
+
+  // Background com opacidade (simulada ou definida)
+  // Como as cores do tema são hex, podemos anexar opacidade se necessário
+  // Mas para consistência, vamos usar mainColor e um bg suave do próprio tema se existir,
+  // ou manter a lógica de adicionar '20' se garantir que é hex.
+  // Assumindo que theme.colors.success/error são HEX (como visto no arquivo de tema), o sufixo funciona.
+  const bgColor = mainColor + "15";
+  const borderColor = mainColor + "30";
+
   const title = isCorrect ? "Parabéns! Você acertou!" : "Ops! Você errou.";
 
   const getUserAnswerText = () => {
@@ -38,10 +46,10 @@ export function ResultFeedback({
     >
       <View style={styles.header}>
         <View style={[styles.iconContainer, { backgroundColor: bgColor }]}>
-          <Icon size={20} color={iconColor} />
+          <Icon size={20} color={mainColor} />
         </View>
         <View style={styles.headerTextContainer}>
-          <Text style={[styles.title, { color: iconColor }]}>{title}</Text>
+          <Text style={[styles.title, { color: mainColor }]}>{title}</Text>
           <View style={styles.answersContainer}>
             <View style={styles.answerRow}>
               <Text style={styles.answerLabel}>Sua resposta:</Text>
@@ -49,7 +57,7 @@ export function ResultFeedback({
                 style={[
                   styles.answerValue,
                   {
-                    color: isCorrect ? iconColor : "#EF4444",
+                    color: isCorrect ? mainColor : theme.colors.error,
                   },
                 ]}
               >
@@ -60,7 +68,7 @@ export function ResultFeedback({
             {!isCorrect && (
               <View style={styles.answerRow}>
                 <Text style={styles.answerLabel}>Resposta correta:</Text>
-                <Text style={[styles.answerValue, { color: "#10B981" }]}>
+                <Text style={[styles.answerValue, { color: theme.colors.success }]}>
                   {getCorrectAnswerText()}
                 </Text>
               </View>

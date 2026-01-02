@@ -51,7 +51,7 @@ const createStyles = (theme: ITheme) =>
       paddingVertical: 6,
       borderRadius: 12,
       gap: 6,
-      backgroundColor: theme.colors.accent, // Mesma cor do botão Conversar
+      backgroundColor: `${theme.colors.primary}20`,
     },
     starsContainer: {
       flexDirection: "row",
@@ -59,6 +59,7 @@ const createStyles = (theme: ITheme) =>
     },
     label: {
       ...theme.text("sm", "regular"),
-      color: theme.colors.muted, // Mesma cor das estrelas
+      // color: theme.colors.muted, // Mesma cor das estrelas
+      color: theme.colors.primary,
     },
   });

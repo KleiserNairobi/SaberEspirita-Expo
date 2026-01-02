@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { CheckCircle2, XCircle, Tag } from "lucide-react-native";
+import { CheckCircle2, XCircle, Tag, Calendar } from "lucide-react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { IUserTruthOrFalseResponse } from "@/types/userTruthOrFalseResponse";
 import { DifficultyBadge } from "../DifficultyBadge";
@@ -25,13 +25,29 @@ export function HistoryCard({
   const styles = createStyles(theme);
 
   const Icon = response.isCorrect ? CheckCircle2 : XCircle;
-  const iconColor = response.isCorrect ? "#10B981" : "#EF4444";
+  const iconColor = response.isCorrect ? theme.colors.success : theme.colors.error;
+  const bgColor = iconColor + "20"; // Background com opacidade
+
+  // Formatação da data para exibição (dd/mm/yyyy às HH:mm)
+  const formatDate = (timestamp: any) => {
+    if (!timestamp) return "";
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const formattedDate = formatDate(response.respondedAt || response.date);
 
   const content = (
     <>
       {/* Header: Ícone + Pergunta */}
       <View style={styles.topSection}>
-        <View style={[styles.iconContainer, { backgroundColor: iconColor + "20" }]}>
+        <View style={[styles.iconContainer, { backgroundColor: bgColor }]}>
           <Icon size={20} color={iconColor} />
         </View>
         <View style={styles.contentContainer}>
@@ -41,16 +57,29 @@ export function HistoryCard({
         </View>
       </View>
 
-      {/* Footer: Badges (Tópico + Dificuldade) */}
+      {/* Footer: Metadados (2 Colunas) */}
       <View style={styles.footer}>
-        {/* Tópico */}
-        <View style={styles.metadataItem}>
-          <Tag size={16} color={theme.colors.muted} />
-          <Text style={styles.metadataText}>{questionTopic}</Text>
+        {/* Coluna Esquerda: Tópico e Data */}
+        <View style={styles.footerLeft}>
+          {/* Tópico */}
+          <View style={styles.metadataItem}>
+            <Tag size={14} color={theme.colors.muted} />
+            <Text style={styles.metadataText} numberOfLines={1}>
+              {questionTopic}
+            </Text>
+          </View>
+
+          {/* Data */}
+          <View style={styles.metadataItem}>
+            <Calendar size={14} color={theme.colors.muted} />
+            <Text style={styles.metadataText}>{formattedDate}</Text>
+          </View>
         </View>
 
-        {/* Dificuldade */}
-        <DifficultyBadge level={questionDifficulty} />
+        {/* Coluna Direita: Dificuldade */}
+        <View style={styles.footerRight}>
+          <DifficultyBadge level={questionDifficulty} />
+        </View>
       </View>
     </>
   );

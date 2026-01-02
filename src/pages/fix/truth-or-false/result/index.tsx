@@ -26,34 +26,19 @@ export function TruthOrFalseResultScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RoutePropType>();
 
-  const { userAnswer, isCorrect, questionId } = route.params;
+  const { userAnswer, isCorrect, questionId, origin } = route.params;
   const question = truthOrFalseQuestions.find((q) => q.id === questionId);
 
-  // TODO: Funcionalidade "Salvar para Revisar" comentada temporariamente
-  // Aguardando implementação da tela "Biblioteca" para exibir perguntas salvas
-  // Esta funcionalidade será implementada junto com "Teste seu Conhecimento"
-  // const [isSaved, setIsSaved] = useState(false);
-  // const [isSaving, setIsSaving] = useState(false);
-
-  // TODO: Handler "Salvar para Revisar" comentado temporariamente
-  // async function handleSaveToLibrary() {
-  //   if (isSaved || isSaving) return;
-  //
-  //   try {
-  //     setIsSaving(true);
-  //     await TruthOrFalseService.markAsSaved(question.id);
-  //     setIsSaved(true);
-  //     Alert.alert("Sucesso", "Pergunta salva na biblioteca!");
-  //   } catch (error) {
-  //     console.error("Erro ao salvar pergunta:", error);
-  //     Alert.alert("Erro", "Não foi possível salvar a pergunta.");
-  //   } finally {
-  //     setIsSaving(false);
-  //   }
-  // }
+  // ...
 
   function handleGoBack() {
-    navigation.goBack();
+    if (origin === "history") {
+      navigation.goBack();
+    } else {
+      // Padrão (home) ou se origin não for especificado
+      // Força a navegação para Home para garantir atualização dos dados
+      navigation.navigate("TruthOrFalseHome");
+    }
   }
 
   function handleGoHome() {
@@ -125,17 +110,20 @@ export function TruthOrFalseResultScreen() {
             </View>
             <View style={styles.questionTextContainer}>
               <Text style={styles.question}>{question.question}</Text>
-              <View style={styles.metadata}>
-                {/* Tópico - Estilo Medite */}
-                <View style={styles.metadataItem}>
-                  <Tag size={16} color={theme.colors.muted} />
-                  <Text style={styles.metadataText}>{question.topic}</Text>
-                </View>
-
-                {/* Dificuldade - Badge com Estrelas */}
-                <DifficultyBadge level={question.difficulty} />
-              </View>
             </View>
+          </View>
+
+          <View style={styles.metadata}>
+            {/* Tópico - Estilo Medite */}
+            <View style={styles.metadataItem}>
+              <Tag size={16} color={theme.colors.muted} />
+              <Text style={styles.metadataText} numberOfLines={1}>
+                {question.topic}
+              </Text>
+            </View>
+
+            {/* Dificuldade - Badge com Estrelas */}
+            <DifficultyBadge level={question.difficulty} />
           </View>
         </View>
 

@@ -30,8 +30,9 @@ export function DailyChallengeCard({
       style={[
         styles.container,
         {
-          backgroundColor: hasAnswered ? theme.colors.card : theme.colors.primary + "10",
-          borderColor: hasAnswered ? theme.colors.border : theme.colors.primary,
+          // Mantendo o estilo "Desafio de Hoje" (fundo verde) mesmo quando respondido
+          backgroundColor: theme.colors.primary + "10",
+          borderColor: theme.colors.primary,
         },
       ]}
       onPress={onPress}
@@ -71,16 +72,14 @@ export function DailyChallengeCard({
           style={[
             styles.buttonText,
             {
-              color: hasAnswered ? theme.colors.text : theme.colors.primary,
+              // Mantendo a cor primária para consistência visual com o fundo
+              color: theme.colors.primary,
             },
           ]}
         >
           {buttonText}
         </Text>
-        <ArrowRight
-          size={20}
-          color={hasAnswered ? theme.colors.text : theme.colors.primary}
-        />
+        <ArrowRight size={20} color={theme.colors.primary} />
       </View>
     </TouchableOpacity>
   );

@@ -33,11 +33,20 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("md", "regular"),
       lineHeight: 20,
     },
-    // Footer: Badges (Tópico + Dificuldade)
+    // Footer: Metadados (2 Colunas)
     footer: {
       flexDirection: "row",
-      alignItems: "center",
+      alignItems: "flex-end", // Alinha a badge com a parte de baixo do texto se necessário, ou center
       justifyContent: "space-between",
+      marginTop: 2,
+    },
+    footerLeft: {
+      flex: 1,
+      gap: 4, // Espaçamento vertical entre Tópico e Data
+      marginRight: theme.spacing.md,
+    },
+    footerRight: {
+      flexShrink: 0,
     },
     metadataItem: {
       flexDirection: "row",
@@ -45,7 +54,7 @@ export const createStyles = (theme: ITheme) =>
       gap: 6,
     },
     metadataText: {
-      ...theme.text("sm", "regular"),
+      ...theme.text("xs", "regular"), // Reduzido para xs para caber melhor
       color: theme.colors.muted,
     },
   });

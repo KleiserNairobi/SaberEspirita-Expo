@@ -25,10 +25,10 @@ export const createStyles = (theme: ITheme) =>
       gap: 4,
     },
     label: {
-      ...theme.text("xs", "medium"), // 12px
+      ...theme.text("md", "regular"),
       color: theme.colors.textSecondary,
     },
     value: {
-      ...theme.text("xl", "bold"), // 20px - Ajustado para ser grande como no screenshot
+      ...theme.text("xl", "medium"),
     },
   });

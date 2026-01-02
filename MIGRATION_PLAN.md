@@ -557,6 +557,135 @@ Aproveitar a migração para limpar o visual.
 
 ## 📝 Histórico de Atualizações
 
+### 02/01/2026 - Refinamento Final e Correção de Navegação (Verdade ou Mentira)
+
+- ✅ **Conclusão do Módulo VERDADE OU MENTIRA**
+- **Objetivo**: Polimento final de UI/UX para garantir consistência visual e correção de fluxos.
+
+#### **Refinamentos Visuais**
+
+- **Home**: Card "Desafio de Hoje" unificado visualmente (fundo verde constante), tipografia ajustada, metadados alinhados e reload automático (`useFocusEffect`).
+- **Pergunta**: Card replicando estilo "FAQ" (metadados full-width), botões preenchidos sem borda e cores semânticas.
+- **Resultado**: Layout de metadados alinhado, cores do tema aplicadas no feedback.
+- **Histórico**: Footer do card refatorado (1 linha, 2 colunas: Tópico/Data à esq, Dificuldade à dir), data formatada adicionada.
+
+#### **Correções de Navegação**
+
+- **Fluxo Quiz**: Home -> Pergunta -> Resultado -> (Voltar) -> Home (Refresh de dados).
+- **Fluxo Histórico**: Histórico -> Resultado -> (Voltar) -> Histórico (Voltar padrão).
+- **Implementação**: Uso de parâmetro `origin: 'home' | 'history'` na rota.
+
+### 01/01/2026 - Refinamento UI/UX da Tela de Resultado (Verdade ou Mentira)
+
+- ✅ **Tela de Resultado - Refinamento Premium Completo**
+- **Objetivo**: Elevar a qualidade visual da tela de resultado para padrão premium, consistente com o restante do app
+
+#### **Refinamentos Implementados**
+
+##### **1. Card da Pergunta - Estilo FAQ** 🎯
+
+- **Layout horizontal**: Ícone circular (HelpCircle) à esquerda + conteúdo à direita
+- **Ícone circular**: 40x40, fundo `accent` (verde claro)
+- **Borda sutil**: `borderWidth: 1`, `borderColor: border`
+- **Metadados estilo Medite**:
+  - Tópico: Ícone `Tag` (16px) + texto em `muted`
+  - Dificuldade: Componente `DifficultyBadge` com 3 estrelas
+  - Layout: `justifyContent: space-between` (distribuídos nas extremidades)
+- **Tipografia**: Peso da pergunta reduzido de `semibold` para `regular` para melhor legibilidade
+
+##### **2. Card de Resposta - Padrão Premium** ✨
+
+- **Layout horizontal**: Ícone circular (CheckCircle2/XCircle) à esquerda + conteúdo à direita
+- **Ícone circular**: 40x40, fundo colorido (verde/vermelho com 15% opacidade)
+- **Borda condizente**: Verde (30% opacidade) para acerto, vermelho (30% opacidade) para erro
+- **Espaçamento otimizado**:
+  - Padding reduzido de `lg` (24px) para `md` (16px)
+  - Gap entre título e respostas reduzido de `sm` (8px) para `xs` (4px)
+  - Gap entre linhas reduzido de 6px para 4px
+- **Hierarquia tipográfica**:
+  - Título: `lg`, `semibold` (destaque principal)
+  - Valores (Verdade/Mentira): `md`, `regular` (secundário)
+  - Labels: `sm`, `regular`, `textSecondary` (terciário)
+
+##### **3. Card de Explicação** 📝
+
+- **Borda adicionada**: `borderWidth: 1`, `borderColor: border` para consistência visual
+
+##### **4. DifficultyBadge - Cores do Tema** 🎨
+
+- **ANTES**: Cores hardcoded diferentes por dificuldade (verde/amarelo/vermelho)
+- **AGORA**: Cores do tema consistentes
+  - Fundo: `accent` (verde claro) - igual ao botão Conversar e ícones circulares
+  - Ícones e texto: `muted` (cinza discreto)
+- **Benefício**: Consistência visual com todo o app
+
+##### **5. Navegação e Botões** 🔘
+
+- **Botão Voltar do Header**:
+  - Fundo alterado de `card` para `accent` (verde claro)
+  - Ícone alterado de `text` para `muted` (cinza)
+- **Decisão UX/UI**: Removida redundância de navegação
+  - ❌ Removido botão "Voltar" do final da tela
+  - ✅ Mantido apenas botão circular fixo no header
+  - **Benefício**: Navegação clara, economia de espaço, padrão mobile estabelecido
+
+##### **6. Funcionalidade "Salvar para Revisar" - COMENTADA** ⚠️
+
+- **Status**: Código comentado temporariamente
+- **Motivo**: Falta tela "Biblioteca" para exibir perguntas salvas
+- **Backend**: Implementado e funcional
+  - `TruthOrFalseService.markAsSaved()` - Salva pergunta
+  - `TruthOrFalseService.getSavedQuestions()` - Busca perguntas salvas
+  - Campo `savedToLibrary` no Firestore
+- **Frontend**: Não existe tela para visualização
+  - Tela "Histórico" mostra apenas perguntas **respondidas**
+  - Usuário não consegue acessar perguntas salvas
+- **Código comentado**:
+  - Estados: `isSaved`, `isSaving`
+  - Handler: `handleSaveToLibrary()`
+  - Botão: Circular no header (BookmarkPlus/BookmarkCheck)
+  - Imports: `BookmarkPlus`, `BookmarkCheck`, `Alert`, `TruthOrFalseService`
+- **TODOs adicionados**: Comentários explicativos sobre necessidade de tela Biblioteca
+- **Decisão**: Implementar junto com módulo "Teste seu Conhecimento" (funcionalidade similar necessária)
+
+#### **Opções para Implementação Futura da Biblioteca**
+
+1. **OPÇÃO 1: Criar Tela "Biblioteca"** (Recomendada) ⭐
+   - Nova tela dedicada para perguntas salvas
+   - Acessível via menu/navegação
+   - Similar à tela de histórico
+   - **Vantagem**: Separação clara entre "respondidas" e "salvas"
+
+2. **OPÇÃO 2: Adicionar Abas na Tela Histórico**
+   - Aba "Histórico" (respondidas)
+   - Aba "Biblioteca" (salvas)
+   - **Vantagem**: Centraliza tudo em um lugar
+
+3. **OPÇÃO 3: Remover Funcionalidade**
+   - Remover completamente
+   - Simplificar a interface
+   - **Vantagem**: Menos complexidade
+
+#### **Arquivos Modificados**
+
+- `src/pages/fix/truth-or-false/result/index.tsx`: Refatoração completa da tela
+- `src/pages/fix/truth-or-false/result/styles.ts`: Criado arquivo de estilos com `createStyles(theme)`
+- `src/components/ResultFeedback/index.tsx`: Refatorado para padrão premium
+- `src/components/DifficultyBadge/index.tsx`: Atualizado para usar cores do tema
+- `.agent/workflows/code-style-guide.md`: Adicionada seção crítica sobre uso correto de `theme.text()`
+
+#### **Avaliação UX/UI Sênior - Nota Final: 9.5/10** 🎯
+
+**Breakdown:**
+
+- **Visual Design**: 9/10 ⭐
+- **Consistência**: 10/10 ⭐
+- **Usabilidade**: 10/10 ✅ (após resolver redundância)
+- **Acessibilidade**: 8/10 ✅
+- **Padrões**: 9/10 ⭐
+
+**Resumo**: Tela profissional, bonita e bem estruturada. Todos os cards seguem o mesmo padrão premium. Navegação clara e única. Pronta para produção após implementação da tela Biblioteca.
+
 ### 30/12/2025 - Implementação Completa do Módulo Verdade ou Mentira
 
 - ✅ **Módulo VERDADE OU MENTIRA - 100% Implementado**
@@ -725,126 +854,18 @@ Aproveitar a migração para limpar o visual.
 
 ---
 
-### 01/01/2026 - Refinamento UI/UX da Tela de Resultado (Verdade ou Mentira)
+### 30/12/2025 - Implementação do Módulo MEDITE (Mensagem do Dia)
 
-- ✅ **Tela de Resultado - Refinamento Premium Completo**
-- **Objetivo**: Elevar a qualidade visual da tela de resultado para padrão premium, consistente com o restante do app
-
-#### **Refinamentos Implementados**
-
-##### **1. Card da Pergunta - Estilo FAQ** 🎯
-
-- **Layout horizontal**: Ícone circular (HelpCircle) à esquerda + conteúdo à direita
-- **Ícone circular**: 40x40, fundo `accent` (verde claro)
-- **Borda sutil**: `borderWidth: 1`, `borderColor: border`
-- **Metadados estilo Medite**:
-  - Tópico: Ícone `Tag` (16px) + texto em `muted`
-  - Dificuldade: Componente `DifficultyBadge` com 3 estrelas
-  - Layout: `justifyContent: space-between` (distribuídos nas extremidades)
-- **Tipografia**: Peso da pergunta reduzido de `semibold` para `regular` para melhor legibilidade
-
-##### **2. Card de Resposta - Padrão Premium** ✨
-
-- **Layout horizontal**: Ícone circular (CheckCircle2/XCircle) à esquerda + conteúdo à direita
-- **Ícone circular**: 40x40, fundo colorido (verde/vermelho com 15% opacidade)
-- **Borda condizente**: Verde (30% opacidade) para acerto, vermelho (30% opacidade) para erro
-- **Espaçamento otimizado**:
-  - Padding reduzido de `lg` (24px) para `md` (16px)
-  - Gap entre título e respostas reduzido de `sm` (8px) para `xs` (4px)
-  - Gap entre linhas reduzido de 6px para 4px
-- **Hierarquia tipográfica**:
-  - Título: `lg`, `semibold` (destaque principal)
-  - Valores (Verdade/Mentira): `md`, `regular` (secundário)
-  - Labels: `sm`, `regular`, `textSecondary` (terciário)
-
-##### **3. Card de Explicação** 📝
-
-- **Borda adicionada**: `borderWidth: 1`, `borderColor: border` para consistência visual
-
-##### **4. DifficultyBadge - Cores do Tema** 🎨
-
-- **ANTES**: Cores hardcoded diferentes por dificuldade (verde/amarelo/vermelho)
-- **AGORA**: Cores do tema consistentes
-  - Fundo: `accent` (verde claro) - igual ao botão Conversar e ícones circulares
-  - Ícones e texto: `muted` (cinza discreto)
-- **Benefício**: Consistência visual com todo o app
-
-##### **5. Navegação e Botões** 🔘
-
-- **Botão Voltar do Header**:
-  - Fundo alterado de `card` para `accent` (verde claro)
-  - Ícone alterado de `text` para `muted` (cinza)
-- **Decisão UX/UI**: Removida redundância de navegação
-  - ❌ Removido botão "Voltar" do final da tela
-  - ✅ Mantido apenas botão circular fixo no header
-  - **Benefício**: Navegação clara, economia de espaço, padrão mobile estabelecido
-
-##### **6. Funcionalidade "Salvar para Revisar" - COMENTADA** ⚠️
-
-- **Status**: Código comentado temporariamente
-- **Motivo**: Falta tela "Biblioteca" para exibir perguntas salvas
-- **Backend**: Implementado e funcional
-  - `TruthOrFalseService.markAsSaved()` - Salva pergunta
-  - `TruthOrFalseService.getSavedQuestions()` - Busca perguntas salvas
-  - Campo `savedToLibrary` no Firestore
-- **Frontend**: Não existe tela para visualização
-  - Tela "Histórico" mostra apenas perguntas **respondidas**
-  - Usuário não consegue acessar perguntas salvas
-- **Código comentado**:
-  - Estados: `isSaved`, `isSaving`
-  - Handler: `handleSaveToLibrary()`
-  - Botão: Circular no header (BookmarkPlus/BookmarkCheck)
-  - Imports: `BookmarkPlus`, `BookmarkCheck`, `Alert`, `TruthOrFalseService`
-- **TODOs adicionados**: Comentários explicativos sobre necessidade de tela Biblioteca
-- **Decisão**: Implementar junto com módulo "Teste seu Conhecimento" (funcionalidade similar necessária)
-
-#### **Opções para Implementação Futura da Biblioteca**
-
-1. **OPÇÃO 1: Criar Tela "Biblioteca"** (Recomendada) ⭐
-   - Nova tela dedicada para perguntas salvas
-   - Acessível via menu/navegação
-   - Similar à tela de histórico
-   - **Vantagem**: Separação clara entre "respondidas" e "salvas"
-
-2. **OPÇÃO 2: Adicionar Abas na Tela Histórico**
-   - Aba "Histórico" (respondidas)
-   - Aba "Biblioteca" (salvas)
-   - **Vantagem**: Centraliza tudo em um lugar
-
-3. **OPÇÃO 3: Remover Funcionalidade**
-   - Remover completamente
-   - Simplificar a interface
-   - **Vantagem**: Menos complexidade
-
-#### **Arquivos Modificados**
-
-- `src/pages/fix/truth-or-false/result/index.tsx`: Refatoração completa da tela
-- `src/pages/fix/truth-or-false/result/styles.ts`: Criado arquivo de estilos com `createStyles(theme)`
-- `src/components/ResultFeedback/index.tsx`: Refatorado para padrão premium
-- `src/components/DifficultyBadge/index.tsx`: Atualizado para usar cores do tema
-- `.agent/workflows/code-style-guide.md`: Adicionada seção crítica sobre uso correto de `theme.text()`
-
-#### **Avaliação UX/UI Sênior - Nota Final: 9.5/10** 🎯
-
-**Breakdown:**
-
-- **Visual Design**: 9/10 ⭐
-- **Consistência**: 10/10 ⭐
-- **Usabilidade**: 10/10 ✅ (após resolver redundância)
-- **Acessibilidade**: 8/10 ✅
-- **Padrões**: 9/10 ⭐
-
-**Resumo**: Tela profissional, bonita e bem estruturada. Todos os cards seguem o mesmo padrão premium. Navegação clara e única. Pronta para produção após implementação da tela Biblioteca.
-
-- ✅ **Módulo MEDITE 100% Concluído**
-- **Implementação das Imagens do Pensamento do Dia**:
-  - Substituídas todas as 7 imagens de fundo rotativas
-  - Novas imagens: `sunday.jpeg`, `monday.jpeg`, `tuesday.jpeg`, `wednesday.jpeg`, `thursday.jpeg`, `friday.jpeg`, `saturday.jpeg`
-  - Localização: `src/assets/images/meditate/`
-  - Arquivo atualizado: `src/utils/dailyThought.ts`
-  - Removidas imagens antigas (.jpg e .png)
-  - Temas implementados: Domingo (Espiritualidade), Segunda (Recomeço), Terça (Força), Quarta (Equilíbrio), Quinta (Crescimento), Sexta (Gratidão), Sábado (Descanso)
-- **Status do Módulo**: Todos os componentes, funcionalidades e assets implementados
+- ✅ **Módulo MEDITE - Mensagem do Dia Implementado (95%)**
+- **Implementações**:
+  - Migração de 365 mensagens diárias do CLI
+  - Sistema de seleção baseado no dia do ano
+  - Parsing de citações e autores
+  - Funcionalidade de compartilhamento
+  - Design premium do card com gradiente
+  - Componente `DailyMessageCard` criado
+  - Utilitário `getDailyMessage()` implementado
+- **Pendente**: 7 imagens de fundo rotativas (prompts criados)
 
 ### 29/12/2025 - Refinamento da Tela de Detalhes do Glossário
 
@@ -870,160 +891,9 @@ Aproveitar a migração para limpar o visual.
   - Uso correto de tokens do tema (sem valores hardcoded)
   - Named exports e function declarations seguindo guia de estilo
 
-### 26/12/2025 - Refinamento do Layout do Módulo MEDITE
-
-- ✅ **Módulo MEDITE - Ajustes de Layout e Espaçamento**
-- **Implementações**:
-  - Correção de alinhamento do header "Textos para Reflexão" (left-aligned)
-  - Ajuste de espaçamento entre header e cards da seção
-  - Correção de alinhamento do botão "Ver todos"
-  - Remoção de thumbnails dos cards de reflexão no `MeditateScreen`
-  - Melhorias na consistência visual com outros módulos
-
-### 24/12/2025 - Refinamento do Layout da Tela de Reflexão
-
-- ✅ **Módulo MEDITE - ReflectionScreen Refinado**
-- **Implementações**:
-  - Reorganização dos metadados (Autor, Fonte, Tempo de Leitura, Tópico)
-  - Layout 2x2: dois itens por linha com distribuição space-between
-  - Implementação de toolbar similar ao módulo Prayer
-  - Posicionamento da toolbar entre metadados e conteúdo
-  - Adição de gradiente na imagem para melhor transição visual
-  - Título e subtítulo sobrepostos na imagem
-
-### 24/12/2025 - Refinamento da UI do Chat
-
-- ✅ **Módulo CHAT - Consistência Visual e UX**
-- **Implementações**:
-  - **TypingIndicator**: Correção de posicionamento horizontal (lado esquerdo)
-  - **TypingIndicator**: Ajuste de visibilidade (apenas antes do streaming iniciar)
-  - **ChatHeader**: Ícone "limpar conversa" com estilo circular e acento
-  - **MessageBubble/TypingIndicator**: Remoção de background dos avatares
-  - **Refatoração de código**: Arrow functions → function declarations
-  - Padronização de handlers: `handleSend`, `animate`, `animatedStyle`
-  - Funções de render nomeadas: `renderMessage`, `renderEmpty`, `renderFooter`
-
-### 23/12/2025 - Implementação Completa do Módulo CHAT
+### 29/12/2025 - Implementação Completa do Módulo CHAT (Ref)
 
 - ✅ **Módulo CHAT - 100% Implementado**
-- **Arquitetura Unificada**: `src/pages/chat/`
-  - `components/`: 4 componentes compartilhados (ChatHeader, ChatInput, MessageBubble, TypingIndicator)
-  - `emotional/`: Chat emocional "O Guia" (apoio emocional)
-  - `scientific/`: Chat científico "Sr. Allan" (esclarecimentos doutrinários)
-- **Infraestrutura**:
-  - Hook `useDeepSeekChat` com suporte a múltiplos tipos
-  - Detector de intenção: 6 tipos de mensagens
-  - Serviço unificado com filtros inteligentes
-  - API DeepSeek com streaming
-- **Funcionalidades**:
-  - Markdown customizado (títulos, listas, código, blockquotes)
-  - Filtros: saudações, despedidas, redirecionamentos, off-topic
-  - Auto-scroll, limpeza de input, tema dinâmico
-  - 80% de reutilização de código entre os dois chats
+- (Consultar detalhes em 23/12/2025)
 
-### 23/12/2025 - Implementação do Módulo MEDITE (Mensagem do Dia)
-
-- ✅ **Módulo MEDITE - Mensagem do Dia Implementado (95%)**
-- **Implementações**:
-  - Migração de 365 mensagens diárias do CLI
-  - Sistema de seleção baseado no dia do ano
-  - Parsing de citações e autores
-  - Funcionalidade de compartilhamento
-  - Design premium do card com gradiente
-  - Componente `DailyMessageCard` criado
-  - Utilitário `getDailyMessage()` implementado
-- **Pendente**: 7 imagens de fundo rotativas (prompts criados)
-
-### 23/12/2025 - Atualização da Documentação Pós-Migração
-
-- ✅ **Documentação atualizada para refletir migração para React Navigation**
-- **Mudanças principais**:
-  - Seção "Navegação" atualizada com hierarquia de navegadores React Navigation v7
-  - Estrutura de pastas documentada refletindo nova organização:
-    - `src/routers/`: 5 navegadores (Root, Auth, App, Tab, Pray)
-    - `src/pages/`: Implementações de telas (auth, study, fix, meditate, pray, account)
-    - `src/components/`: 13 componentes reutilizáveis
-    - `src/stores/`: 6 stores Zustand
-  - Detalhamento completo do módulo ORE (3 telas, 5 componentes, 4 hooks, serviços)
-  - Status de cada fase atualizado
-  - Adição de nota técnica explicando decisão da migração
-- ✅ **Identificação de recursos já implementados no SaberEspirita-Web**:
-  - Backend Firebase do módulo ORE já existe e está populado
-  - Coleções: `prayers`, `prayer_categories`, `prayer_category_links`
-- ✅ **Confirmação de recursos já implementados no Mobile**:
-  - Text-to-Speech implementado com `expo-speech` (`src/utils/tts.ts`)
-  - Integrado na tela Prayer com botão de narração
-  - **Pendente**: Testar conexão real com Firebase e validar carregamento de orações
-
-### 22/12/2025 - Migração para React Navigation
-
-- ✅ **Migração completa de Expo Router para React Navigation**
-- **Decisão técnica**: Mudança de file-based routing para navegação programática
-- **Razões**:
-  - Maior controle e flexibilidade na navegação entre módulos
-  - Melhor suporte para navegação modular (PrayNavigator, futuro CourseNavigator)
-  - Documentação mais madura e comunidade maior
-  - Experiência prévia da equipe
-- **Implementações**:
-  - Criação de `src/routers/` com 5 navegadores
-  - Migração de todas as telas para `src/pages/`
-  - Backup da estrutura Expo Router em `src/app.backup-expo-router/`
-  - Atualização de `App.tsx` com RootNavigator
-  - Configuração de Bottom Tabs com AnimatedTabBar customizada
-
-### 22/12/2025 - Refinamento da UI da Lista de Orações
-
-- ✅ **Módulo ORE - Ajustes de UI/UX**
-- **Implementações**:
-  - **SearchBar**: Correção de alinhamento vertical (ícone + texto)
-  - **SearchBar**: Resolução de corte de texto em dispositivos reais
-  - **SearchBar**: Auto-close do teclado ao perder foco (onSubmit/tap outside)
-  - **PrayerListItem**: Redução de padding vertical para layout mais compacto
-  - **PrayerListItem**: Correção de espaço invisível ocupado por ícone não renderizado
-  - Identificação e correção da raiz do problema de espaçamento
-
-### 20/12/2025 - Refinamento Visual do Módulo ORE
-
-- ✅ **Módulo ORE - UI Premium e Player de Áudio**
-- **Implementações**:
-  - **Ícones dos cards**: Background verde claro + cor verde escuro (padrão Política de Privacidade)
-  - **Centralização**: Ícone e texto centralizados nos cards
-  - **Scroll horizontal**: Implementação de scroll horizontal para cards de momentos
-  - **Header**: Título "Ore" + subtítulo "Conecte-se com o divino"
-  - **Ícones Lucide**: Sunrise, Moon, HeartPulse, Users, HandHeart (específicos por momento)
-  - **Ambiente de Sintonia**: Consolidação em player de áudio integrado
-  - Componente `AmbientPlayer` com controles completos
-
-### 20/12/2025 - Refatoração de Dados de Orações
-
-- ✅ **Módulo ORE - Reestruturação de Dados**
-- **Implementações**:
-  - Extração de orações individuais para arquivos JSON separados
-  - Estrutura: um JSON por oração (seguindo padrão `porPaz.json`)
-  - Padrão de IDs descritivo: `AO-ACORDAR-0001`, `DIARIO-0001`, etc.
-  - Criação de nova oração para categoria "DIARIO"
-  - Correção de nomenclatura: `diaria.json` → `diario.json`
-  - Organização por categoria para melhor manutenibilidade
-  - Adição do campo `featured` à interface `IPrayer`
-
-### 21/12/2025 - Refinamento Completo do Módulo ORE (Preces)
-
-- ✅ **Módulo ORE implementado e refinado no projeto Expo (Mobile)**
-- **Principais conquistas**:
-  - **Redesign da Tela de Categoria**:
-    - Header centralizado com ícone grande (80px) + efeito de vibração (anéis concêntricos)
-    - Título + subtítulo descritivo por categoria
-    - Barra de ferramentas horizontal (voltar + busca)
-    - Cards limpos sem ícone
-  - **Padronização Visual**:
-    - Todos os ícones circulares (borderRadius: 20px)
-    - Remoção de emojis do `PRAYER_MOMENTS`
-    - Componente `SettingsItem` com ícones circulares
-  - **Melhorias de Conteúdo**:
-    - Exibição de autor E fonte (formato: "Autor • Fonte")
-    - Títulos atualizados ("Para o Momento", "Em Destaque")
-  - **Efeito de Vibração nos Ícones**:
-    - 3 anéis concêntricos com degradê radial
-    - Alta visibilidade e acessibilidade
-- **Arquivos modificados**: `Pray/index.tsx`, `Pray/category/[id].tsx`, `category/styles.ts`, `PrayerListItem`, `SettingsItem`, `prayer.ts`
-- **Pendente**: Integração com Firebase
+---

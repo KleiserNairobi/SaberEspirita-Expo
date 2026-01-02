@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowLeft, History } from "lucide-react-native";
 
@@ -34,9 +34,12 @@ export function TruthOrFalseHomeScreen() {
   const todayQuestion =
     truthOrFalseQuestions[getDayOfYear() % truthOrFalseQuestions.length];
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  // Usando useFocusEffect para recarregar os dados sempre que a tela ganhar foco
+  useFocusEffect(
+    React.useCallback(() => {
+      loadData();
+    }, [])
+  );
 
   async function loadData() {
     try {

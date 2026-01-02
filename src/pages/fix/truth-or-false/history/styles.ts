@@ -45,7 +45,7 @@ export const createStyles = (theme: ITheme) =>
     // Lista
     listContent: {
       padding: theme.spacing.lg,
-      paddingTop: 0,
+      paddingTop: 20,
       gap: theme.spacing.md,
       paddingBottom: 150, // Tab bar height + safe area
     },

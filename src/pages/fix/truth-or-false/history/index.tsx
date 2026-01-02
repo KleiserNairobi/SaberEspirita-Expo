@@ -43,6 +43,7 @@ export function TruthOrFalseHistoryScreen() {
       userAnswer: response.userAnswer,
       isCorrect: response.isCorrect,
       questionId: response.questionId,
+      origin: "history",
     });
   }
 
