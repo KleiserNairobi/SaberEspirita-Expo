@@ -2,10 +2,10 @@ import {
   BadgeQuestionMark,
   BookA,
   ClipboardCheck,
+  GraduationCap,
   HandHeart,
   LucideIcon,
   MessageCircleQuestion,
-  NotebookText,
 } from "lucide-react-native";
 
 export type Biblioteca = {
@@ -18,7 +18,7 @@ export const Biblioteca: Biblioteca[] = [
   {
     id: "1",
     title: "Cursos\nEspíritas",
-    icon: NotebookText,
+    icon: GraduationCap,
   },
   {
     id: "2",

@@ -32,7 +32,11 @@ export function DailyThoughtCard() {
         resizeMode="cover"
       >
         <LinearGradient
-          colors={["rgba(0, 0, 0, 0.3)", "rgba(0, 0, 0, 0.5)", "rgba(0, 0, 0, 0.7)"]}
+          colors={[
+            "rgba(0, 0, 0, 0.1)", // Topo: quase transparente
+            "rgba(0, 0, 0, 0.3)", // Meio: leve escurecimento
+            "rgba(0, 0, 0, 0.6)", // Baixo: mais escuro para legibilidade do texto
+          ]}
           style={styles.gradient}
         >
           {/* Botão compartilhar no topo direito */}

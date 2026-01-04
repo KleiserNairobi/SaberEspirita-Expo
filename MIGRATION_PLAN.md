@@ -600,6 +600,163 @@ Aproveitar a migração para limpar o visual.
 
 ## 📝 Histórico de Atualizações
 
+> **Nota:** As atualizações estão ordenadas por data **decrescente** (mais recente primeiro).
+
+---
+
+### 04/01/2026 - Implementação do Catálogo de Cursos Espíritas
+
+- ✅ **Módulo de Cursos - Fase 1: Catálogo Implementado**
+- **Objetivo**: Implementar tela de Catálogo de Cursos com navegação, filtros e layout otimizado
+
+#### **Funcionalidades Implementadas**
+
+1. **Navegação para o Catálogo**:
+   - Botão "Ver todos" ao lado de "Populares" na tela Estude
+   - Card "Cursos Espíritas" na biblioteca
+   - Ícone atualizado para `GraduationCap` 🎓 (consistência visual)
+
+2. **Tela de Catálogo (`CoursesCatalogScreen`)**:
+   - Header centralizado com ícone `GraduationCap` e 3 anéis concêntricos
+   - SearchBar sticky (para no topo ao rolar, padrão do Glossário)
+   - Botões voltar e filtro
+   - Estados: loading, empty, error
+
+3. **Sistema de Filtros**:
+   - 6 opções: Todos, Iniciante, Intermediário, Avançado, Em Andamento, Concluídos
+   - Componente genérico `FilterBottomSheet` (reutilizado de Reflexões)
+   - Cada opção com ícone próprio (BookOpen, BarChart2/3/4, PlayCircle, CheckCircle)
+   - Indicadores visuais: dot vermelho quando ativo, check verde na seleção
+
+4. **CourseCard - Layout Horizontal Compacto**:
+   - **Evolução**: De vertical (280px) para horizontal (130px) - **3x mais cursos visíveis!**
+   - Imagem à esquerda (100px, aspecto 3:4 retrato) - consistente com "Populares"
+   - Conteúdo à direita: título, descrição truncada, metadados com ícones
+   - Barra de progresso integrada (verde, "X% concluído")
+   - Chevron removido (sem espaço no layout compacto)
+   - Imagens reais: Capas de livros espíritas dos assets
+
+#### **Arquivos Criados (11)**
+
+**Tipos e Dados:**
+
+- `src/types/course.ts` - Interfaces TypeScript
+- `src/data/mockCourses.ts` - 6 cursos com imagens reais
+
+**Serviços:**
+
+- `src/services/firebase/courseService.ts` - Funções Firestore (estrutura básica)
+
+**Componentes:**
+
+- `src/pages/study/courses-catalog/index.tsx` - Tela principal
+- `src/pages/study/courses-catalog/styles.ts` - Estilos da tela
+- `src/pages/study/courses-catalog/components/CourseCard/index.tsx` - Card
+- `src/pages/study/courses-catalog/components/CourseCard/styles.ts` - Estilos do card
+
+#### **Arquivos Modificados (6)**
+
+- `src/pages/study/index.tsx` - Botão "Ver todos" e navegação
+- `src/pages/study/styles.ts` - Estilo seeAllText
+- `src/routers/types.ts` - Tipo CoursesCatalog
+- `src/routers/AppNavigator.tsx` - Rota CoursesCatalog
+- `src/data/Biblioteca.tsx` - Ícone GraduationCap
+- `src/types/course.ts` - imageUrl aceita string | number
+
+#### **Decisões de Design**
+
+- **Padrão Visual**: Copiado do Glossário (header centralizado, SearchBar sticky)
+- **Layout do Card**: Horizontal compacto (imagem 3:4 à esquerda, conteúdo à direita)
+- **Filtros**: Componente genérico com ícones (padrão de Reflexões)
+- **Imagens**: Assets locais (capas de livros espíritas)
+
+#### **Dados Mock (6 cursos)**
+
+| Curso                                | Nível         | Aulas | Duração | Imagem                            |
+| ------------------------------------ | ------------- | ----- | ------- | --------------------------------- |
+| Introdução ao Espiritismo            | Iniciante     | 12    | 3h      | basico_espiritismo_v2.png         |
+| Mediunidade e Desenvolvimento        | Intermediário | 8     | 2h      | livro_dos_mediuns.png             |
+| O Evangelho Segundo o Espiritismo    | Avançado      | 16    | 4h      | evangelho_segundo_espiritismo.png |
+| Reencarnação e Lei de Causa e Efeito | Iniciante     | 10    | 2h30    | ceu_e_inferno.png                 |
+| O Livro dos Espíritos                | Avançado      | 20    | 5h      | livro_dos_espiritos.png           |
+| Caridade e Amor ao Próximo           | Iniciante     | 6     | 1h30    | a_genese.png                      |
+
+**Progresso Mock:**
+
+- Curso 1: 45% concluído
+- Curso 3: 100% concluído
+
+#### **Próximos Passos**
+
+**Integração com Firestore:**
+
+- [ ] Criar coleções `courses` e `users/{userId}/courseProgress`
+- [ ] Implementar hooks `useCourses` e `useCourseProgress`
+- [ ] Upload de imagens para Firebase Storage
+- [ ] Popular Firestore com dados iniciais
+- [ ] Substituir `MOCK_COURSES` por dados reais
+- [ ] Remover arquivo `mockCourses.ts`
+
+**Próximas Telas:**
+
+- [ ] CourseDetailsScreen - Detalhes do curso
+- [ ] CourseCurriculumScreen - Lista de aulas
+- [ ] LessonPlayerScreen - Player de aula
+- [ ] LessonQuizScreen - Quiz da aula
+- [ ] CourseCertificateScreen - Certificado
+
+#### **Documentação**
+
+- **Walkthrough completo**: `walkthrough.md` (artifacts)
+- **Plano de implementação**: `implementation_plan.md` (artifacts)
+
+---
+
+### 04/01/2026 - Atualização de Documentação do Design System
+
+- ✅ **Documentação de Design System Atualizada**
+- **Objetivo**: Garantir que as cores e fontes reais do app sejam usadas na implementação
+
+#### **Atualizações Realizadas**
+
+1. **`docs/SESSION_2026-01-03.md`**:
+   - Adicionada seção crítica sobre protótipos Stitch vs Design System Real
+   - Documentadas cores reais do Dark Theme
+   - Documentadas fontes reais (Barlow Condensed + Oswald)
+   - Instruções claras sobre o que usar/ignorar dos protótipos
+
+2. **`docs/DESIGN_SYSTEM_REFERENCE.md`** (NOVO):
+   - Guia de referência rápida do design system
+   - Cores completas do Dark Theme com códigos hex
+   - Tipografia com nomes exatos das fontes
+   - Exemplos de uso de `theme.text()`
+   - Checklist de implementação
+   - Aviso sobre protótipos Stitch
+
+#### **Design System Real**
+
+```typescript
+// Cores principais
+background: "#121E31";
+card: "#162235";
+primary: "#8F9D7E"; // Verde oliva
+accent: "#2A3645"; // Azul escuro
+
+// Fontes
+regular: "BarlowCondensed_400Regular";
+medium: "BarlowCondensed_500Medium";
+semibold: "BarlowCondensed_600SemiBold";
+bold: "Oswald_700Bold";
+```
+
+#### **Decisão Crítica**
+
+- ❌ **NÃO usar** cores/fontes dos protótipos Stitch
+- ✅ **USAR sempre** tokens do design system (`theme.colors.*`, `theme.text()`)
+- ✅ Protótipos Stitch = referência de **LAYOUT apenas**
+
+---
+
 ### 03/01/2026 - Especificação UX/UI e Prototipagem do Módulo de Cursos
 
 - ✅ **Especificação Completa do Módulo de Cursos Espíritas**
@@ -674,9 +831,11 @@ Aproveitar a migração para limpar o visual.
 
 #### **Arquivos de Protótipos**
 
-- Protótipos salvos (aguardando implementação):
+- Protótipos salvos em `artifacts/stitch-prototypes/` (aguardando implementação):
   - PNG: Imagens de alta resolução das telas
   - HTML: Código fonte com valores CSS exatos
+
+> **⚠️ IMPORTANTE:** Os protótipos Stitch são **apenas referências de layout e estrutura**. As cores e fontes dos protótipos **NÃO correspondem** ao design system do app. Sempre use `theme.colors.*`, `theme.text()`, `theme.spacing.*` do nosso design system. Ver `docs/DESIGN_SYSTEM_REFERENCE.md` para referência rápida.
 
 #### **Estatísticas da Sessão**
 

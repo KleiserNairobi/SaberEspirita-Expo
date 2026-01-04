@@ -19,6 +19,7 @@ export type AppStackParamList = {
     initialMessage?: string;
   };
   Glossary: undefined;
+  CoursesCatalog: undefined;
 };
 
 export type GlossaryStackParamList = {

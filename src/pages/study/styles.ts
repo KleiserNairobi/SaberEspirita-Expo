@@ -19,12 +19,18 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("md", "regular", theme.colors.textSecondary),
     },
     sectionHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
       marginTop: theme.spacing.xl,
       marginHorizontal: theme.spacing.lg,
       marginBottom: theme.spacing.md,
     },
     sectionTitle: {
       ...theme.text("xxl", "regular"),
+    },
+    seeAllText: {
+      ...theme.text("md", "medium", theme.colors.primary),
     },
     libraryColumnWrapper: {
       marginHorizontal: theme.spacing.lg,

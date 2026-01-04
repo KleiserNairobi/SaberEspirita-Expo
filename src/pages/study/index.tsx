@@ -22,6 +22,9 @@ export function StudyScreen() {
 
   function handleLibraryItemPress(itemId: string) {
     switch (itemId) {
+      case "1": // Cursos Espíritas
+        navigation.navigate("CoursesCatalog");
+        break;
       case "2": // Glossário Espírita
         navigation.navigate("Glossary");
         break;
@@ -33,7 +36,7 @@ export function StudyScreen() {
         navigation.navigate("EmotionalChat");
         break;
       case "6": // Pergunte ao Sr. Allan
-        navigation.navigate("ScientificChat");
+        navigation.navigate("ScientificChat", {});
         break;
       default:
         console.log(`Item ${itemId} clicado - navegação pendente`);
@@ -56,6 +59,9 @@ export function StudyScreen() {
         {/* Seção Populares */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Populares</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("CoursesCatalog")}>
+            <Text style={styles.seeAllText}>Ver todos</Text>
+          </TouchableOpacity>
         </View>
 
         <Carousel />
