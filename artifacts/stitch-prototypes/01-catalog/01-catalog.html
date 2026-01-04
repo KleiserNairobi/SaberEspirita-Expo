@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Courses Catalog - SaberEspirita</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#7ED957",
+              "background-light": "#f7f8f6", // Not used in this dark design but kept for config consistency
+              "background-dark": "#191a1f",
+              "card-dark": "#1f2026",
+              "text-secondary": "#9CA3AF",
+            },
+            fontFamily: {
+              "display": ["Lexend", "sans-serif"]
+            },
+            borderRadius: {
+              "DEFAULT": "0.5rem",
+              "lg": "1rem", // 16px
+              "xl": "1.5rem",
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+<style>
+        /* Custom scrollbar hiding for horizontal scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        body {
+            font-family: 'Lexend', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-white h-screen overflow-hidden flex flex-col">
+<!-- Header -->
+<header class="flex items-center justify-between px-4 py-4 shrink-0 bg-background-dark z-10">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-white/5 active:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-white" style="font-size: 24px;">arrow_back</span>
+</button>
+<h1 class="text-white text-[20px] font-bold leading-tight flex-1 text-center pr-10">Cursos Espíritas</h1>
+</header>
+<!-- Scrollable Content Area -->
+<main class="flex-1 overflow-y-auto no-scrollbar pb-8">
+<!-- Search Bar -->
+<div class="px-4 mb-4">
+<div class="flex items-center w-full h-12 bg-card-dark rounded-lg border border-white/10 overflow-hidden focus-within:border-primary transition-colors">
+<div class="pl-4 pr-3 flex items-center justify-center text-text-secondary">
+<span class="material-symbols-outlined" style="font-size: 24px;">search</span>
+</div>
+<input class="bg-transparent border-none text-white placeholder-text-secondary w-full h-full focus:ring-0 p-0 text-base" placeholder="Buscar cursos..." type="text"/>
+</div>
+</div>
+<!-- Filter Chips -->
+<div class="w-full overflow-x-auto no-scrollbar px-4 mb-6">
+<div class="flex gap-2 min-w-max">
+<!-- Active Chip -->
+<button class="h-9 px-5 rounded-full bg-primary flex items-center justify-center transition-transform active:scale-95">
+<span class="text-white text-sm font-semibold">Todos</span>
+</button>
+<!-- Inactive Chips -->
+<button class="h-9 px-5 rounded-full border border-white/10 bg-transparent flex items-center justify-center hover:bg-white/5 transition-colors active:scale-95">
+<span class="text-text-secondary text-sm font-medium">Iniciante</span>
+</button>
+<button class="h-9 px-5 rounded-full border border-white/10 bg-transparent flex items-center justify-center hover:bg-white/5 transition-colors active:scale-95">
+<span class="text-text-secondary text-sm font-medium">Intermediário</span>
+</button>
+<button class="h-9 px-5 rounded-full border border-white/10 bg-transparent flex items-center justify-center hover:bg-white/5 transition-colors active:scale-95">
+<span class="text-text-secondary text-sm font-medium">Avançado</span>
+</button>
+</div>
+</div>
+<!-- Course Cards List -->
+<div class="px-4 flex flex-col gap-4">
+<!-- Card 1: In Progress -->
+<div class="bg-card-dark rounded-lg border border-white/10 overflow-hidden shadow-lg hover:shadow-xl transition-shadow cursor-pointer group">
+<!-- Image -->
+<div class="w-full aspect-video bg-gray-800 relative overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Peaceful nature scene with light rays symbolizing spiritual enlightenment" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCwQHL6uEyTbUbhNeHXKkdaxV-zp0m5c5lZC4-q_9kqD-KC4HFHGoYRVKdT0zZPmBj5JfG1UXEqwj6PO6icJENxxPsprzJOmh4fKzbvfN3ciO_DZpquYNthiVT1vZ8c3gpQdkZLAwO8GLvxWOD-hw6afv7inNu3K-01eeggg23KrWL622StOlIY9hw0nwW1XKlODtlWWdgrNbM_kk-gZe5XlTeAMEjWE-37XPIvv57P199Vlem2hvjxn5-AQl1lFDHc6ZCQTfD5CJ1Z');">
+</div>
+</div>
+<!-- Content -->
+<div class="p-4 flex flex-col gap-3">
+<h3 class="text-white text-base font-bold leading-tight">Introdução ao Espiritismo</h3>
+<!-- Metadata -->
+<div class="flex items-center gap-3 text-text-secondary text-[13px] font-normal leading-none flex-wrap">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+<span>12 aulas</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-white/20"></div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>180 min</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-white/20"></div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">bar_chart</span>
+<span>Iniciante</span>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="flex flex-col gap-1.5 mt-1">
+<div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 45%"></div>
+</div>
+<span class="text-text-secondary text-xs">45% concluído</span>
+</div>
+</div>
+</div>
+<!-- Card 2: No Progress -->
+<div class="bg-card-dark rounded-lg border border-white/10 overflow-hidden shadow-lg hover:shadow-xl transition-shadow cursor-pointer group">
+<!-- Image -->
+<div class="w-full aspect-video bg-gray-800 relative overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Abstract ethereal light waves representing mediumship connection" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCWNGnu1HG5W8E6Z9TLBTFKwFOECZ7C45C6YYRLjy4fOfssL2FptOwuXEpWgs14nyN2W8G25evzgXJLeB6shS5FMAB_Vb8egl-4N5-_WibBUc3m0JDtzjKd1rgj2826E1roVMhqK8EJY40Zaubtfs8n8bt-8BuauXnJfXliYQz_jjpJgETo7rlCzgWeddFfCN0VQCgGuukdkDHdDJHtaaNN1NVeWrtZQ2Lq1ex4ikim9SslAQDrU6t5VaBia1wPoYDsYOVKu52kZoRx');">
+</div>
+</div>
+<!-- Content -->
+<div class="p-4 flex flex-col gap-3">
+<h3 class="text-white text-base font-bold leading-tight">Mediunidade e Desenvolvimento</h3>
+<!-- Metadata -->
+<div class="flex items-center gap-3 text-text-secondary text-[13px] font-normal leading-none flex-wrap">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+<span>8 aulas</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-white/20"></div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>120 min</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-white/20"></div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">bar_chart</span>
+<span>Intermediário</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3: No Progress -->
+<div class="bg-card-dark rounded-lg border border-white/10 overflow-hidden shadow-lg hover:shadow-xl transition-shadow cursor-pointer group mb-4">
+<!-- Image -->
+<div class="w-full aspect-video bg-gray-800 relative overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="Open vintage book with soft warm lighting symbolizing deep study" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDQkVyOzNg8YrbiSjrbK18Ob7_BD7n7Pi9jwcAoKbmhjcysDSBBurrj2ttsv-8J5E_Kxo0IRqBgSGMemZP1ODAHKjw2I9o-WbIGDVMa5Mgxm_-blJ2j_TNL7Z0cS3pI17UQFbKuk_Bzccl5qIdcwCLyXcy6xNhpV-ml06GWKg9NXRvTWGHDaSdXjXnpXRN8Bvav1CgWInF9TEt0lCMf82rbxbsdeP-USSBDcyrrayJg3gIGD6ijcGe83-iWgaJYU-TQMo6Vz59zpRgt');">
+</div>
+</div>
+<!-- Content -->
+<div class="p-4 flex flex-col gap-3">
+<h3 class="text-white text-base font-bold leading-tight">O Evangelho Segundo o Espiritismo</h3>
+<!-- Metadata -->
+<div class="flex items-center gap-3 text-text-secondary text-[13px] font-normal leading-none flex-wrap">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+<span>15 aulas</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-white/20"></div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>240 min</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-white/20"></div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">bar_chart</span>
+<span>Avançado</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

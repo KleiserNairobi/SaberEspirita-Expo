@@ -269,7 +269,7 @@ src/
 
 ### Fase 3: Módulo ESTUDE (Cursos & Home)
 
-- [/] **Tela ESTUDE (Dashboard)** - 🚧 **40% Concluído**:
+- [/] **Tela ESTUDE (Dashboard)** - 🚧 **60% Concluído**:
   - [x] **Estrutura Base Implementada** (29/12/2025):
     - [x] Componente `StudyScreen` migrado do backup Expo Router
     - [x] Arquivo `styles.ts` com `createStyles(theme)`
@@ -290,6 +290,12 @@ src/
     - [x] Ícones Lucide React Native
     - [x] Dados de `src/data/Biblioteca.tsx`
     - [x] Cards: Cursos, Conceitos, Quizzes, Verdade ou Mentira, Converse com o Guia, Pergunte ao Sr. Allan
+  - [x] **Especificação UX/UI** (03/01/2026):
+    - [x] Análise de interfaces do Quiz-Web (`ICourse`, `ILesson`, `ISlide`, `IUserCourseProgress`)
+    - [x] Documentação completa em `docs/study_screen_progress_spec.md`
+    - [x] Decisão: Reutilizar `Carousel` com barra de progresso
+    - [x] Especificação do componente `ResumeCard`
+    - [x] Lógica condicional SEM/COM progresso
   - [ ] **Lógica Condicional** (Pendente):
     - [ ] Detectar se usuário tem progresso em cursos
     - [ ] _Com Progresso_: Exibir "Em Andamento" e "Continue de Onde Parou"
@@ -299,8 +305,45 @@ src/
     - [ ] `ResumeCard`: Card de ação rápida para última aula
     - [ ] `LibraryGrid`: Navegação funcional (atualmente apenas visual)
   - [ ] **Navegação dos Cards** (Pendente):
-    - [ ] Implementar `onPress` nos cards da biblioteca
+    - [x] Implementar `onPress` nos cards da biblioteca (parcial)
     - [ ] Criar telas de destino (Cursos, Conceitos, Quizzes, etc.)
+
+- [/] **Módulo de Cursos Espíritas** - 🎨 **Especificado e Prototipado** (03/01/2026):
+  - [x] **Especificação UX/UI Completa**:
+    - [x] Documentação: `docs/courses_ux_design_spec.md`
+    - [x] Jornada do usuário mapeada (diagrama Mermaid)
+    - [x] 7 telas especificadas com layouts detalhados
+    - [x] Componentes, estados e fluxos definidos
+  - [x] **Prototipagem com Stitch AI**:
+    - [x] 6 prompts criados: `docs/stitch_prompts_courses.md`
+    - [x] Protótipos gerados (PNG + HTML)
+    - [x] Design system consistente (dark mode, cores, tipografia)
+  - [x] **Telas Especificadas** (7 telas):
+    1. [x] Tela Estude (Dashboard) - Já implementada
+    2. [x] Catálogo de Cursos - Prototipada
+    3. [x] Detalhes do Curso - Prototipada
+    4. [x] Lista de Aulas (Currículo) - Prototipada
+    5. [x] Player de Aula (Slides) - Prototipada
+    6. [x] Quiz da Aula - Prototipada
+    7. [x] Certificado de Conclusão - Prototipada
+  - [ ] **Implementação** (Pendente):
+    - [ ] Criar interfaces TypeScript (`src/types/course.ts`)
+    - [ ] Criar serviços Firebase (`courseService.ts`, `lessonService.ts`)
+    - [ ] Implementar componentes reutilizáveis (~15 componentes)
+    - [ ] Criar telas seguindo protótipos
+    - [ ] Integrar navegação (CourseNavigator)
+  - [ ] **Backend Firestore** (Pendente):
+    - [ ] Criar coleções: `courses`, `lessons`, `users/{userId}/courseProgress`
+    - [ ] Popular dados de exemplo
+    - [ ] Configurar regras de segurança
+  - [ ] **Funcionalidades** (Pendente):
+    - [ ] Sistema de progresso (aulas concluídas, percentual)
+    - [ ] Desbloqueio sequencial de aulas
+    - [ ] Quiz integrado ao final de aulas
+    - [ ] Geração e compartilhamento de certificado
+    - [ ] Cache offline com React Query
+    - [ ] Lazy loading de slides
+
 - [ ] **Definição de Dados**: Modelos para `Course`, `Lesson`, `UserProgress`.
 - [ ] **Player de Aula**:
   - Suporte a Texto (Markdown/HTML), Vídeo (Expo Video) e Áudio.
@@ -556,6 +599,95 @@ Aproveitar a migração para limpar o visual.
 ---
 
 ## 📝 Histórico de Atualizações
+
+### 03/01/2026 - Especificação UX/UI e Prototipagem do Módulo de Cursos
+
+- ✅ **Especificação Completa do Módulo de Cursos Espíritas**
+- **Objetivo**: Criar especificação UX/UI detalhada e prompts para prototipagem no Stitch AI
+
+#### **Análise e Planejamento**
+
+- **Interfaces de Dados**: Análise completa das interfaces do Quiz-Web
+  - `ICourse`: Estrutura de cursos (título, descrição, workload, nível, autor)
+  - `ILesson`: Estrutura de aulas (ordem, slides, duração, quiz opcional)
+  - `ISlide`: Conteúdo em slides (tipo, título, conteúdo, highlights, referências)
+  - `IUserCourseProgress`: Progresso do usuário (última aula, aulas concluídas, percentual)
+
+- **Jornada do Usuário**: Mapeamento completo do fluxo
+  - Tela Estude → Catálogo → Detalhes → Lista de Aulas → Player → Quiz → Certificado
+
+#### **Documentação Criada**
+
+1. **`docs/study_screen_progress_spec.md`**:
+   - Especificação da tela Estude com visão de progresso
+   - Decisão: Reutilizar `Carousel` existente com barra de progresso
+   - Novo componente: `ResumeCard` (card "Continue de Onde Parou")
+   - Lógica condicional: Alternar entre visão SEM/COM progresso
+   - Estrutura Firestore: `users/{userId}/courseProgress/{courseId}`
+
+2. **`docs/courses_ux_design_spec.md`**:
+   - Especificação completa de 7 telas do módulo
+   - Layouts detalhados em ASCII art
+   - Componentes, estados e fluxos de navegação
+   - Diagrama Mermaid da jornada do usuário
+
+3. **`docs/stitch_prompts_courses.md`**:
+   - 6 prompts completos para Stitch AI
+   - Tema base consistente (dark mode, cores, tipografia)
+   - Especificações visuais detalhadas para cada tela
+   - Dicas de refinamento e ordem de prototipagem
+
+4. **`docs/courses_implementation_summary.md`**:
+   - Resumo executivo do módulo
+   - Arquitetura de dados
+   - Checklist de implementação (4 fases)
+   - Estatísticas e decisões de design
+
+#### **Telas Especificadas (7 telas)**
+
+1. **✅ Tela Estude (Dashboard)**: Já especificada anteriormente
+2. **🆕 Catálogo de Cursos**: SearchBar, FilterChips, CourseCard com progresso
+3. **🆕 Detalhes do Curso**: Hero image, stats grid, botões condicionais
+4. **🆕 Lista de Aulas**: Cards com 4 estados (concluída, em andamento, bloqueada, disponível)
+5. **🆕 Player de Aula**: Slides navegáveis, highlights, referências kardeciana/bíblica
+6. **🆕 Quiz da Aula**: Perguntas com feedback visual, explicações
+7. **🆕 Certificado**: Celebração, compartilhamento, estatísticas
+
+#### **Decisões de Design**
+
+- **Padrão Visual**: Seguir design system do app (não copiar Stitch exatamente)
+- **Reutilização**: Componente `Carousel` com props de progresso
+- **Novo Componente**: `ResumeCard` seguindo padrão premium do app
+- **UX**: Aulas sequenciais com desbloqueio progressivo
+- **Gamificação**: Certificado, badges, progresso visual
+- **Performance**: Cache com React Query, lazy loading de slides
+
+#### **Prototipagem com Stitch AI**
+
+- **Ferramenta**: https://stitch.withgoogle.com/
+- **Status**: Prompts criados, protótipos gerados (PNG + HTML)
+- **Próximos Passos**:
+  - Implementação baseada nos protótipos
+  - Criação de componentes reutilizáveis
+  - Integração com Firestore
+  - Testes e polish
+
+#### **Arquivos de Protótipos**
+
+- Protótipos salvos (aguardando implementação):
+  - PNG: Imagens de alta resolução das telas
+  - HTML: Código fonte com valores CSS exatos
+
+#### **Estatísticas da Sessão**
+
+- **Documentos criados**: 4
+- **Telas especificadas**: 7
+- **Prompts Stitch**: 6
+- **Componentes novos**: ~15
+- **Interfaces TypeScript**: 5
+- **Linhas de documentação**: ~1.500
+
+---
 
 ### 02/01/2026 - Refinamento Final e Correção de Navegação (Verdade ou Mentira)
 
