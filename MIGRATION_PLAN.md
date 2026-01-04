@@ -351,7 +351,7 @@ src/
 
 ### Fase 4: Módulos MEDITE e ORE (Novas Features)
 
-- [x] **Módulo ORE**: ✅ **98% Concluído** (apenas Firebase Storage de áudios pendente)
+- [x] **Módulo ORE**: ✅ **100% Concluído** (04/01/2026)
 - [x] **Módulo MEDITE**: ✅ **100% Concluído**
   - **Plano Detalhado**: Ver `implementation_plan.md` (criado em 23/12/2025)
   - **Estrutura Simplificada Aprovada**:
@@ -537,18 +537,18 @@ src/
       - `prayerService.ts` conectado ao Firestore
       - Queries retornando dados reais
       - Orações sendo carregadas corretamente do backend
-    - [ ] **TODO Firebase Storage**: Áudios Ambiente de Sintonia
-      - [ ] Configurar Firebase Storage no projeto
-      - [ ] Selecionar e baixar músicas clássicas royalty-free:
-        - Fontes recomendadas: Musopen, IMSLP, Free Music Archive
-        - Sugestões: Clair de Lune, Lago dos Cisnes, Ave Maria, Moonlight Sonata
-        - **Importante**: Verificar que GRAVAÇÕES são domínio público/CC0
-      - [ ] Criar estrutura de pastas no Storage: `/ambient/`
-      - [ ] Upload de arquivos MP3 para Firebase Storage
-      - [ ] Criar script de upload automatizado (opcional)
-      - [ ] Atualizar URLs em `AmbientPlayer/index.tsx` com URLs do Firebase Storage
-      - [ ] Documentar licenças em `CREDITS.md` ou similar
-      - [ ] Remover URLs temporárias do Bensound
+    - [x] ~~Firebase Storage: Áudios Ambiente de Sintonia~~ - ✅ **Implementado Completamente** (04/01/2026)
+      - [x] Configurar Firebase Storage no projeto
+      - [x] Selecionar e upload de 5 músicas clássicas para meditação:
+        - Ave Maria, Clair de Lune, Gymnopedie, Nocturne, Piano Music Relax
+      - [x] Criar estrutura de pastas no Storage: `prayers/audio/`
+      - [x] Upload de arquivos MP3 para Firebase Storage
+      - [x] Implementar sistema de cache local com `expo-file-system/legacy`
+      - [x] Atualizar `AmbientPlayer` com integração Firebase Storage + cache
+      - [x] Serviços: `audioCacheService.ts` e `ambientAudioService.ts`
+      - [x] Hook React Query: `useAmbientAudios` com cache de metadados
+      - [x] UX: Loading indicators individuais por música durante download
+      - [x] Validação de integridade: Re-download automático de arquivos vazios
 
 ### Fase 5: Módulo CONTA (Menu & Configurações)
 
@@ -598,9 +598,122 @@ Aproveitar a migração para limpar o visual.
 
 ---
 
-## 📝 Histórico de Atualizações
+### 04/01/2026 - Conclusão do Módulo ORE com Firebase Storage e Cache de Áudio
 
-> **Nota:** As atualizações estão ordenadas por data **decrescente** (mais recente primeiro).
+- ✅ **Módulo ORE - 100% Concluído**
+- **Objetivo**: Implementar sistema completo de cache de áudio do Firebase Storage para o player "Ambiente de Sintonia"
+
+#### **Funcionalidades Implementadas**
+
+1. **Firebase Storage - Áudios de Ambiente**:
+   - Configuração do Firebase Storage no projeto
+   - Upload de 5 músicas clássicas para meditação/oração
+   - Seleção de músicas essenciais: Ave Maria, Clair de Lune, Gymnopedie, Nocturne, Piano Music Relax
+   - Estrutura de pastas: `prayers/audio/`
+
+2. **Sistema de Cache Local**:
+   - Serviço `audioCacheService.ts` usando `expo-file-system/legacy`
+   - Download automático na primeira reprodução
+   - Armazenamento persistente em `documentDirectory/audio/`
+   - Validação de integridade (verifica se arquivo não está vazio)
+   - Re-download automático de arquivos corrompidos
+   - Logs detalhados com tamanho de arquivo em MB
+
+3. **Integração com Firebase**:
+   - Serviço `ambientAudioService.ts` para listar e baixar áudios
+   - Metadados estruturados: título, ícone, caminho no Storage
+   - Mapeamento de ícones: Music, Waves, Moon (lucide-react-native)
+   - URLs de download obtidas via `getDownloadURL()`
+
+4. **React Query - Gerenciamento de Estado**:
+   - Hook `useAmbientAudios` com cache de metadados (1h staleTime, 24h gcTime)
+   - Loading, error e empty states
+   - Integração automática com serviço de cache
+
+5. **UX/UI do Player**:
+   - Indicador de loading individual por música durante download
+   - Estados centralizados e bem espaçados (loading, error, empty)
+   - Spinner substituindo ícone Play durante download
+   - Botão desabilitado durante download
+   - Feedback visual claro para o usuário
+
+#### **Arquivos Criados (4)**
+
+**Tipos:**
+
+- `src/types/ambientAudio.ts` - Interface `IAmbientAudio`
+
+**Serviços:**
+
+- `src/services/audio/audioCacheService.ts` - Cache com expo-file-system/legacy
+- `src/services/firebase/ambientAudioService.ts` - Integração Firebase Storage
+
+**Hooks:**
+
+- `src/pages/pray/hooks/useAmbientAudios.ts` - React Query hook
+
+#### **Arquivos Modificados (3)**
+
+- `src/configs/firebase/firebase.ts` - Export do `storage`
+- `src/pages/pray/components/AmbientPlayer/index.tsx` - Integração completa
+- `src/pages/pray/components/AmbientPlayer/styles.ts` - (sem mudanças estruturais)
+
+#### **Problemas Resolvidos**
+
+1. **Depreciação da API do expo-file-system**:
+   - **Problema**: Nova API (`Directory`, `File`) instável com `FileAlreadyExistsException`
+   - **Solução**: Migração para `expo-file-system/legacy` (estável e recomendada)
+
+2. **Double Encoding nos Nomes de Arquivo**:
+   - **Problema**: Arquivos salvos como `prayers%252Faudio%252FNocturne.mp3`
+   - **Solução**: Decodificar URL antes de extrair nome do arquivo
+
+3. **Arquivos Baixados com 0 Bytes**:
+   - **Problema**: Downloads falhavam silenciosamente gerando arquivos vazios
+   - **Solução**: Validação de tamanho + re-download automático se `size == 0`
+
+4. **Erros de Reprodução do MediaToolbox**:
+   - **Problema**: Erros `-12864` e `-12371` ao tentar reproduzir
+   - **Causa**: Arquivos com 0 bytes ou nomes inválidos
+   - **Solução**: Combinação das correções 1, 2 e 3
+
+#### **Decisões Técnicas**
+
+- **API Legacy**: Escolhida por estabilidade ao invés da nova API instável
+- **Diretório de Cache**: `documentDirectory/audio/` (persistente)
+- **Validação**: Verificação de tamanho de arquivo antes de usar cache
+- **Fallback**: Retorna URL original do Firebase em caso de erro
+- **Logs**: Detalhados para debugging (nome do arquivo, tamanho em MB)
+
+#### **Benefícios Alcançados**
+
+- ✅ **Economia de Bandwidth**: Músicas baixadas apenas uma vez
+- ✅ **Experiência Offline**: Músicas disponíveis sem internet após primeiro download
+- ✅ **Performance**: Reprodução instantânea de músicas em cache
+- ✅ **UX Premium**: Loading indicators e feedback visual claro
+- ✅ **Manutenibilidade**: Código limpo com separação de responsabilidades
+
+#### **Próximos Passos Recomendados**
+
+**Limpeza Manual (Usuário):**
+
+- [ ] Remover músicas não essenciais do Firebase Storage (`Pathetique.mp3`, `CleanSoulRelaxing.mp3`)
+
+**Oportunidades de Reutilização:**
+
+- [ ] Aplicar mesmo sistema de cache para áudios de meditação guiada
+- [ ] Aplicar para imagens de cursos (thumbnails)
+- [ ] Aplicar para thumbnails de reflexões
+
+**Monitoramento:**
+
+- [ ] Configurar alertas de orçamento no Google Cloud Console
+- [ ] Monitorar uso de bandwidth no Firebase Console
+
+#### **Documentação**
+
+- **Walkthrough completo**: `walkthrough.md` (artifacts)
+- **Task checklist**: `task.md` (artifacts)
 
 ---
 

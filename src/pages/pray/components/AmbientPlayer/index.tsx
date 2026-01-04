@@ -1,30 +1,20 @@
-import React, { useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
 import { useAudioPlayer } from "expo-audio";
-import { Music, Waves, Play, Pause } from "lucide-react-native";
+import { Music, Waves, Moon, Play, Pause, Download } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
+import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
 import { createStyles } from "./styles";
 
-// URLs de teste funcionais - Áudios livres para meditação
-// Fonte: Bensound (royalty-free) - arquivos MP3 diretos
-// TODO: Substituir por URLs do Firebase Storage em produção
-const AMBIENT_TRACKS = [
-  {
-    id: "music",
-    title: "Música Suave",
-    icon: Music,
-    url: "https://www.bensound.com/bensound-music/bensound-slowmotion.mp3",
-  },
-  {
-    id: "nature",
-    title: "Sons da Natureza",
-    icon: Waves,
-    url: "https://www.bensound.com/bensound-music/bensound-memories.mp3",
-  },
-];
+// Mapeamento de ícones
+const ICON_MAP = {
+  music: Music,
+  waves: Waves,
+  moon: Moon,
+} as const;
 
 export function AmbientPlayer() {
   const { theme } = useAppTheme();
@@ -33,17 +23,24 @@ export function AmbientPlayer() {
   const { isPlaying, currentTrack, setPlaying, setCurrentTrack } =
     useAmbientPlayerStore();
 
+  // Carregar áudios do Firebase Storage com cache
+  const { data: audios, isLoading, error } = useAmbientAudios();
+
+  // Estado para rastrear qual música está sendo baixada
+  const [downloadingTrack, setDownloadingTrack] = useState<string | null>(null);
+
   // Player de áudio usando expo-audio
   const player = useAudioPlayer(currentTrack || "");
 
   // Quando a track mudar, tocar automaticamente
   useEffect(() => {
     if (currentTrack && currentTrack.length > 0) {
-      console.log("Track mudou para:", currentTrack);
+      console.log("[AmbientPlayer] Track mudou para:", currentTrack);
       // Aguarda um pouco para o player ser recriado com o novo source
       const timer = setTimeout(() => {
         player.play();
         setPlaying(true);
+        setDownloadingTrack(null); // Limpar estado de download quando começar a tocar
       }, 300);
 
       return () => clearTimeout(timer);
@@ -57,53 +54,114 @@ export function AmbientPlayer() {
     }
   }, [player.playing]);
 
-  function handleTrackPress(trackUrl: string) {
+  function handleTrackPress(trackUri: string) {
     try {
-      if (currentTrack === trackUrl && player.playing) {
+      if (currentTrack === trackUri && player.playing) {
         // Pausar se estiver tocando a mesma track
-        console.log("Pausando track atual");
+        console.log("[AmbientPlayer] Pausando track atual");
         player.pause();
         setPlaying(false);
-      } else if (currentTrack === trackUrl && !player.playing) {
+      } else if (currentTrack === trackUri && !player.playing) {
         // Retomar se for a mesma track mas pausada
-        console.log("Retomando track pausada");
+        console.log("[AmbientPlayer] Retomando track pausada");
         player.play();
         setPlaying(true);
       } else {
-        // Tocar nova track - apenas atualiza o estado, o useEffect cuida do resto
-        console.log("Selecionando nova track:", trackUrl);
-        setCurrentTrack(trackUrl);
+        // Tocar nova track - marcar como "baixando" se não estiver em cache
+        console.log("[AmbientPlayer] Selecionando nova track:", trackUri);
+        setDownloadingTrack(trackUri);
+        setCurrentTrack(trackUri);
       }
     } catch (error) {
-      console.error("Erro ao reproduzir áudio:", error);
+      console.error("[AmbientPlayer] Erro ao reproduzir áudio:", error);
       setPlaying(false);
+      setDownloadingTrack(null);
     }
+  }
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          {
+            padding: 24,
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 12,
+          },
+        ]}
+      >
+        <ActivityIndicator size="small" color={theme.colors.primary} />
+        <Text style={[styles.trackTitle, { flex: 0, textAlign: "center" }]}>
+          Carregando músicas...
+        </Text>
+      </View>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { padding: 24, justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <Text style={[styles.trackTitle, { flex: 0, textAlign: "center" }]}>
+          Erro ao carregar músicas
+        </Text>
+      </View>
+    );
+  }
+
+  // Empty state
+  if (!audios || audios.length === 0) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { padding: 24, justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <Text style={[styles.trackTitle, { flex: 0, textAlign: "center" }]}>
+          Nenhuma música disponível
+        </Text>
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
-      {AMBIENT_TRACKS.map((track, index) => {
-        const IconComponent = track.icon;
-        const isCurrentTrack = currentTrack === track.url;
+      {audios.map((audio, index) => {
+        const IconComponent = ICON_MAP[audio.icon];
+        const trackUri = audio.localUri || "";
+        const isCurrentTrack = currentTrack === trackUri;
         const isTrackPlaying = isCurrentTrack && isPlaying;
-        const isLast = index === AMBIENT_TRACKS.length - 1;
+        const isDownloading = downloadingTrack === trackUri;
+        const isLast = index === audios.length - 1;
 
         return (
-          <View key={track.id}>
+          <View key={audio.id}>
             <TouchableOpacity
               style={styles.trackRow}
-              onPress={() => handleTrackPress(track.url)}
+              onPress={() => handleTrackPress(trackUri)}
               activeOpacity={0.7}
+              disabled={!audio.localUri || isDownloading}
             >
               <View style={styles.trackInfo}>
                 <View style={styles.iconContainer}>
                   <IconComponent size={20} color={theme.colors.primary} />
                 </View>
-                <Text style={styles.trackTitle}>{track.title}</Text>
+                <Text style={styles.trackTitle}>{audio.title}</Text>
               </View>
 
               <View style={styles.playButton}>
-                {isTrackPlaying ? (
+                {isDownloading ? (
+                  <ActivityIndicator size="small" color={theme.colors.primary} />
+                ) : isTrackPlaying ? (
                   <Pause size={18} color={theme.colors.primary} />
                 ) : (
                   <Play size={18} color={theme.colors.primary} />
