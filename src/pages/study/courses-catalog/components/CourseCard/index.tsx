@@ -33,7 +33,7 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
       ? { uri: course.imageUrl }
       : course.imageUrl
         ? course.imageUrl
-        : require("@/assets/images/course_placeholder.png");
+        : require("@/assets/images/course-placeholder.png");
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
