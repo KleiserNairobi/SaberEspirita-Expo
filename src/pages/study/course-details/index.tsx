@@ -20,7 +20,7 @@ import { ICourse } from "@/types/course";
 import { createStyles } from "./styles";
 
 // Placeholder image (garantido existir conforme verificado antes)
-const COURSE_PLACEHOLDER = require("@/assets/images/course-placeholder.png");
+const COURSE_PLACEHOLDER = require("@/assets/images/course-placeholder.jpg");
 
 // Imagem do instrutor (Allan Kardec placeholder)
 const INSTRUCTOR_AVATAR_URI =

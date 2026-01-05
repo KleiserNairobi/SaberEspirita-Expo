@@ -67,7 +67,7 @@ function CarouselItem({ index, item, scrollX, onPress }: CarouselItemProps) {
   const imageSource =
     typeof item.imageUrl === "string"
       ? { uri: item.imageUrl }
-      : require("@/assets/images/course-placeholder.png"); // Fallback
+      : require("@/assets/images/course-placeholder.jpg"); // Fallback
 
   return (
     <View style={{ width: ITEM_SIZE }}>
