@@ -24,7 +24,7 @@ import {
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { MOCK_COURSES } from "@/data/mockCourses";
+import { useCourses } from "@/hooks/queries/useCourses";
 import { ICourse } from "@/types/course";
 import { ContentFilterType } from "@/types/prayer";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
@@ -39,8 +39,8 @@ const COURSE_FILTER_OPTIONS = [
   { id: "INICIANTE" as ContentFilterType, label: "Iniciante", icon: BarChart2 },
   { id: "INTERMEDIARIO" as ContentFilterType, label: "Intermediário", icon: BarChart3 },
   { id: "AVANCADO" as ContentFilterType, label: "Avançado", icon: BarChart4 },
-  { id: "EM_ANDAMENTO" as ContentFilterType, label: "Em Andamento", icon: PlayCircle },
-  { id: "CONCLUIDOS" as ContentFilterType, label: "Concluídos", icon: CheckCircle },
+  // { id: "EM_ANDAMENTO" as ContentFilterType, label: "Em Andamento", icon: PlayCircle }, // Desabilitado temporariamente
+  // { id: "CONCLUIDOS" as ContentFilterType, label: "Concluídos", icon: CheckCircle }, // Desabilitado temporariamente
 ] as const;
 
 export function CoursesCatalogScreen({ navigation }: any) {
@@ -50,17 +50,9 @@ export function CoursesCatalogScreen({ navigation }: any) {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<ContentFilterType>("ALL");
-  const [isLoading] = useState(false);
-  const [error] = useState<string | null>(null);
 
-  // TODO: Substituir por dados do Firestore quando disponível
-  const courses = MOCK_COURSES;
-
-  // TODO: Buscar progresso real do usuário do Firestore
-  const mockUserProgress: Record<string, number> = {
-    "1": 45, // Curso 1 com 45% de progresso
-    "3": 100, // Curso 3 concluído
-  };
+  // React Query Fetch
+  const { data: courses = [], isLoading, error } = useCourses();
 
   // Filtrar cursos baseado na busca e filtro
   const filteredCourses = React.useMemo(() => {
@@ -88,18 +80,6 @@ export function CoursesCatalogScreen({ navigation }: any) {
       case "AVANCADO":
         result = result.filter((c) => c.difficultyLevel === "Avançado");
         break;
-      case "EM_ANDAMENTO":
-        result = result.filter((c) => {
-          const progress = mockUserProgress[c.id];
-          return progress !== undefined && progress > 0 && progress < 100;
-        });
-        break;
-      case "CONCLUIDOS":
-        result = result.filter((c) => {
-          const progress = mockUserProgress[c.id];
-          return progress === 100;
-        });
-        break;
       case "ALL":
       default:
         // Não aplica filtro adicional
@@ -107,15 +87,15 @@ export function CoursesCatalogScreen({ navigation }: any) {
     }
 
     return result;
-  }, [courses, searchQuery, filterType, mockUserProgress]);
+  }, [courses, searchQuery, filterType]);
 
   function handleCoursePress(course: ICourse) {
-    // TODO: Navegar para CourseDetails
-    console.log("Curso selecionado:", course.title);
+    navigation.navigate("CourseDetails", { courseId: course.id });
   }
 
   function renderCourse({ item }: { item: ICourse }) {
-    const progress = mockUserProgress[item.id];
+    // TODO: Buscar progresso real do usuário
+    const progress = 0;
 
     return (
       <View style={{ paddingHorizontal: theme.spacing.lg }}>

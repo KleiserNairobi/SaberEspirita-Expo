@@ -10,6 +10,7 @@ import { EmotionalChatScreen } from "@/pages/chat/emotional";
 import { ScientificChatScreen } from "@/pages/chat/scientific";
 import { GlossaryNavigator } from "./GlossaryNavigator";
 import { CoursesCatalogScreen } from "@/pages/study/courses-catalog";
+import { CourseDetailsScreen } from "@/pages/study/course-details";
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -28,6 +29,7 @@ export function AppNavigator() {
       <Stack.Screen name="ScientificChat" component={ScientificChatScreen} />
       <Stack.Screen name="Glossary" component={GlossaryNavigator} />
       <Stack.Screen name="CoursesCatalog" component={CoursesCatalogScreen} />
+      <Stack.Screen name="CourseDetails" component={CourseDetailsScreen} />
     </Stack.Navigator>
   );
 }

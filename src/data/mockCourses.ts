@@ -15,7 +15,8 @@ export const MOCK_COURSES: ICourse[] = [
     author: "Allan Kardec",
     lessonCount: 12,
     releaseYear: 2024,
-    imageUrl: require("@/assets/images/bkp/basico_espiritismo_v2.png"),
+    imageUrl:
+      "https://firebasestorage.googleapis.com/v0/b/saber-espirita.firebasestorage.app/o/courses%2Fbasico-espiritismo.png?alt=media&token=c87db838-3042-454a-8c32-f4843d038256",
     featured: true, // ⭐ Destaque em "Populares"
   },
   {

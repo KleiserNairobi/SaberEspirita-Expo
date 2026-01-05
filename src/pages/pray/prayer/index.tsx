@@ -28,7 +28,7 @@ import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { usePrayer } from "@/pages/pray/hooks/usePrayer";
 import { createStyles } from "@/pages/pray/prayer/styles";
 import { sharePrayer } from "@/utils/sharing";
-import { speakText, stopSpeaking, isSpeaking } from "@/utils/tts";
+import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
 
 export function PrayerScreen() {
   const { theme } = useAppTheme();

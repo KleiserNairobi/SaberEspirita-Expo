@@ -30,7 +30,7 @@ import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { useGlossaryTerm } from "../hooks/useGlossaryTerms";
 import { GLOSSARY_CATEGORIES } from "@/types/glossary";
 import { createStyles } from "./styles";
-import { speakText, stopSpeaking, isSpeaking } from "@/utils/tts";
+import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
 
 export function TermDetailScreen() {
   const { theme } = useAppTheme();

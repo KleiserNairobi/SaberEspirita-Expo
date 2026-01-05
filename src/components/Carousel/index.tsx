@@ -1,4 +1,3 @@
-import { ImageSlider } from "@/data/SliderData";
 import React from "react";
 import {
   Dimensions,
@@ -17,22 +16,33 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { ICourse } from "@/types/course";
+
 const { width } = Dimensions.get("window");
 const SPACING = 10;
 const ITEM_SIZE = width * 0.72;
 const SPACER_ITEM_SIZE = (width - ITEM_SIZE) / 2;
 
 interface CarouselProps {
-  index?: number;
-  item: (typeof ImageSlider)[number];
-  scrollX: SharedValue<number>;
+  data: ICourse[];
+  onCoursePress: (courseId: string) => void;
 }
 
-function CarouselItem({ index, item, scrollX }: CarouselProps) {
+interface CarouselItemProps {
+  index: number;
+  item: ICourse;
+  scrollX: SharedValue<number>;
+  onPress: (courseId: string) => void;
+}
+
+function CarouselItem({ index, item, scrollX, onPress }: CarouselItemProps) {
+  const { theme } = useAppTheme();
+
   const inputRange = [
-    (index! - 2) * ITEM_SIZE,
-    (index! - 1) * ITEM_SIZE,
-    index! * ITEM_SIZE,
+    (index - 2) * ITEM_SIZE,
+    (index - 1) * ITEM_SIZE,
+    index * ITEM_SIZE,
   ];
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -54,16 +64,23 @@ function CarouselItem({ index, item, scrollX }: CarouselProps) {
     };
   });
 
+  const imageSource =
+    typeof item.imageUrl === "string"
+      ? { uri: item.imageUrl }
+      : require("@/assets/images/course_placeholder.png"); // Fallback
+
   return (
     <View style={{ width: ITEM_SIZE }}>
       <Animated.View style={[styles.itemContainer, animatedStyle]}>
         <View style={styles.imageContainer}>
-          <Image source={item.image} style={styles.imageView} />
-          {/* Overlay escuro para melhor legibilidade do texto */}
-          <View style={styles.overlay}></View>
-          {/* Container do texto sobreposto na imagem */}
+          <Image source={imageSource} style={styles.imageView} />
+          {/* Overlay escuro */}
+          <View style={styles.overlay} />
+          {/* Texto sobreposto */}
           <View style={styles.textOverlayContainer}>
-            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.title} numberOfLines={2}>
+              {item.title}
+            </Text>
             {item.description && (
               <Text style={styles.description} numberOfLines={2}>
                 {item.description}
@@ -72,7 +89,7 @@ function CarouselItem({ index, item, scrollX }: CarouselProps) {
             <TouchableOpacity
               style={styles.button}
               activeOpacity={0.8}
-              onPress={() => console.log("Iniciar curso:", item.title)}
+              onPress={() => onPress(item.id)}
             >
               <Text style={styles.buttonText}>INICIAR CURSO</Text>
             </TouchableOpacity>
@@ -83,9 +100,10 @@ function CarouselItem({ index, item, scrollX }: CarouselProps) {
   );
 }
 
-export function Carousel() {
+export function Carousel({ data, onCoursePress }: CarouselProps) {
   const scrollX = useSharedValue(0);
-  const DATA_LENGTH = ImageSlider.length;
+  // Adiciona spacers virtuais no array
+  const DATA_WITH_SPACERS = [{ id: "left-spacer" }, ...data, { id: "right-spacer" }];
 
   const onScrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -93,23 +111,34 @@ export function Carousel() {
     },
   });
 
+  if (data.length === 0) {
+    return null; // ou um esqueleto de loading
+  }
+
   return (
     <Animated.FlatList
       horizontal
-      data={ImageSlider}
-      keyExtractor={(_item, index) => index.toString()}
+      data={DATA_WITH_SPACERS}
+      keyExtractor={(item) => item.id.toString()}
       showsHorizontalScrollIndicator={false}
-      // contentContainerStyle={{ alignItems: "center" }}
       snapToInterval={ITEM_SIZE}
       bounces={false}
       decelerationRate={"fast"}
       scrollEventThrottle={16}
       onScroll={onScrollHandler}
       renderItem={({ item, index }) => {
-        if (index === 0 || index === DATA_LENGTH - 1) {
+        if (item.id === "left-spacer" || item.id === "right-spacer") {
           return <View style={{ width: SPACER_ITEM_SIZE }} />;
         }
-        return <CarouselItem key={index} index={index} item={item} scrollX={scrollX} />;
+        return (
+          <CarouselItem
+            key={item.id}
+            index={index}
+            item={item as ICourse}
+            scrollX={scrollX}
+            onPress={onCoursePress}
+          />
+        );
       }}
     />
   );

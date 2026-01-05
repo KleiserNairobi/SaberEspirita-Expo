@@ -28,25 +28,23 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
       ? `${course.description.substring(0, 60)}...`
       : course.description;
 
+  const imageSource =
+    typeof course.imageUrl === "string"
+      ? { uri: course.imageUrl }
+      : course.imageUrl
+        ? course.imageUrl
+        : require("@/assets/images/course_placeholder.png");
+
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
       {/* Imagem à Esquerda (Formato Retrato 3:4) */}
       <View style={styles.imagePlaceholder}>
-        {course.imageUrl ? (
-          <>
-            <Image
-              source={course.imageUrl as any}
-              style={{ width: "100%", height: "100%" }}
-              resizeMode="cover"
-            />
-            <View style={styles.gradientOverlay} />
-          </>
-        ) : (
-          <>
-            <View style={styles.gradientOverlay} />
-            <BookOpen size={32} color={theme.colors.primary} />
-          </>
-        )}
+        <Image
+          source={imageSource as any}
+          style={styles.courseImage}
+          resizeMode="cover"
+        />
+        <View style={styles.gradientOverlay} />
       </View>
 
       {/* Conteúdo à Direita */}

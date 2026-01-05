@@ -10,6 +10,8 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
 import { AppStackParamList } from "@/routers/types";
 
+import { useFeaturedCourses } from "@/hooks/queries/useCourses";
+
 import { createStyles } from "./styles";
 
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -19,6 +21,13 @@ export function StudyScreen() {
   const styles = createStyles(theme);
   const user = useAuthStore((state) => state.user);
   const navigation = useNavigation<NavigationProp>();
+
+  // Fetching de cursos populares via React Query
+  const { data: featuredCourses = [], isLoading: loadingFeatured } = useFeaturedCourses();
+
+  function handleCoursePress(courseId: string) {
+    navigation.navigate("CourseDetails", { courseId });
+  }
 
   function handleLibraryItemPress(itemId: string) {
     switch (itemId) {
@@ -56,15 +65,19 @@ export function StudyScreen() {
           </Text>
         </View>
 
-        {/* Seção Populares */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Populares</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("CoursesCatalog")}>
-            <Text style={styles.seeAllText}>Ver todos</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Seção Populares - Mostra apenas se tiver cursos carregados */}
+        {featuredCourses.length > 0 && (
+          <>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Populares</Text>
+              <TouchableOpacity onPress={() => navigation.navigate("CoursesCatalog")}>
+                <Text style={styles.seeAllText}>Ver todos</Text>
+              </TouchableOpacity>
+            </View>
 
-        <Carousel />
+            <Carousel data={featuredCourses} onCoursePress={handleCoursePress} />
+          </>
+        )}
 
         {/* Seção Biblioteca */}
         <View style={styles.sectionHeader}>

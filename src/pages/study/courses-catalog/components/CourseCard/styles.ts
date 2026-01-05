@@ -12,14 +12,19 @@ export const createStyles = (theme: ITheme) =>
       borderColor: theme.colors.border,
       marginBottom: theme.spacing.md,
       overflow: "hidden",
-      minHeight: 130,
+      minHeight: 130, // Restaurado minHeight para consistência
     },
     imagePlaceholder: {
       width: 100,
-      aspectRatio: 3 / 4, // Formato retrato
+      // height removido: Flexbox (alignItems: stretch) do pai cuidará da altura
       backgroundColor: theme.colors.accent,
       justifyContent: "center",
       alignItems: "center",
+    },
+    courseImage: {
+      ...StyleSheet.absoluteFillObject,
+      width: undefined,
+      height: undefined,
     },
     gradientOverlay: {
       ...StyleSheet.absoluteFillObject,

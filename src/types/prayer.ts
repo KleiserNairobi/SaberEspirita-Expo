@@ -37,7 +37,12 @@ export type ContentFilterType =
   | "FAVORITES"
   | "BY_AUTHOR"
   | "BY_SOURCE"
-  | "BY_TOPIC"; // Usado para reflexões
+  | "BY_TOPIC" // Usado para reflexões
+  | "INICIANTE" // Usado para cursos
+  | "INTERMEDIARIO" // Usado para cursos
+  | "AVANCADO" // Usado para cursos
+  | "EM_ANDAMENTO" // Usado para cursos
+  | "CONCLUIDOS"; // Usado para cursos
 
 // Mantido para compatibilidade com código existente de orações
 export type PrayerFilterType = "ALL" | "FAVORITES" | "BY_AUTHOR" | "BY_SOURCE";

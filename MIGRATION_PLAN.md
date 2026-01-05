@@ -557,6 +557,7 @@ src/
   - [x] **Grupo 1: Preferências**:
     - [x] Alterar Tema (Claro/Escuro/Sistema).
     - [x] Efeitos Sonoros (Switch On/Off).
+    - [ ] **Futuro**: Seleção de Voz para Narração (TTS) - Permitir escolher entre vozes disponíveis no dispositivo.
   - [x] **Grupo 2: Notificações**:
     - [x] Notificação de Atualização do App (Switch On/Off).
     - [x] Notificação do Curso (Switch On/Off).
@@ -1299,5 +1300,36 @@ bold: "Oswald_700Bold";
 
 - ✅ **Módulo CHAT - 100% Implementado**
 - (Consultar detalhes em 23/12/2025)
+
+---
+
+### 05/01/2026 - Implementação Módulo CURSOS (Fase 1 - Stitch Fidelity)
+
+- ✅ **Módulo CURSOS - Implementação Parcial (40% → 65%)**
+- **Principais implementações**:
+  - **Migração para React Query**: Todas as telas de cursos agora utilizam `@tanstack/react-query` para data fetching
+    - Hooks criados: `useCourses`, `useFeaturedCourses`, `useCourse`, `useLessons`
+    - Telas refatoradas: `StudyScreen`, `CoursesCatalogScreen`
+  - **CourseDetailsScreen**: Reimplementação completa seguindo protótipo Stitch (`02-details.html`)
+    - Hero Section com imagem, overlay gradiente e título posicionado
+    - Stats Grid 2x2 (Aulas, Duração, Nível, Ano) com ícones circulares
+    - Barra de progresso visual do curso
+    - Footer fixo (sticky) com botões de ação padronizados
+    - Tentativa de otimização de carregamento de imagem (Image.prefetch + cache headers)
+  - **CourseCurriculumScreen**: Reimplementação completa seguindo protótipo Stitch (`03-curriculum.html`)
+    - Progress Header com resumo visual do progresso
+    - Rich Lesson Cards com estados visuais distintos:
+      - ✅ Concluída (verde, check icon)
+      - ▶️ Em Andamento (amarelo, barra de progresso interna)
+      - 🔒 Bloqueada (opaca, lock icon)
+      - 📝 Quiz (badge visual)
+  - **Padronização de Estilos**: Botões alinhados com padrões do app (Privacy/GlossaryFilter)
+    - Uso de tokens do tema (`theme.spacing.md`, `theme.radius.md`)
+    - Background com opacidade (`${theme.colors.primary}20`)
+- **Pendências identificadas**:
+  - Performance no carregamento da imagem de capa (3-5s de delay)
+  - Implementação do LessonPlayerScreen
+  - Integração real do progresso do usuário (atualmente mockado)
+  - Execução do script de seed de aulas (`scripts/seed_lessons.ts`)
 
 ---

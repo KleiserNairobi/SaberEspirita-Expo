@@ -622,6 +622,64 @@ export function useAuth() {
 
 ---
 
+## Data Fetching & Caching
+
+### TanStack Query (Obrigatório)
+
+Todo data fetching remoto (API, Firebase, etc.) **DEVE** ser feito utilizando **TanStack Query (React Query)**.
+
+**NÃO** use `useEffect` + `useState` para buscar dados manualmente.
+
+### Padrão de Custom Hooks
+
+Crie custom hooks para encapsular as queries. Isso separa a lógica de busca da UI.
+
+```typescript
+// src/hooks/queries/useCourses.ts
+import { useQuery } from "@tanstack/react-query";
+import { getCourses } from "@/services/firebase/courseService";
+
+export function useCourses() {
+  return useQuery({
+    queryKey: ["courses"],
+    queryFn: getCourses,
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+}
+```
+
+### Consumo no Componente
+
+```typescript
+export function CourseList() {
+  const { data: courses, isLoading, error } = useCourses();
+
+  if (isLoading) return <Loading />;
+  if (error) return <Error />;
+
+  return <FlatList data={courses} ... />;
+}
+```
+
+### Mutações
+
+Para criar/atualizar/deletar dados, use `useMutation` e invalide as queries relacionadas.
+
+```typescript
+export function useCreateCourse() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createCourseService,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+    },
+  });
+}
+```
+
+---
+
 ## Estilização
 
 ### Regras Gerais

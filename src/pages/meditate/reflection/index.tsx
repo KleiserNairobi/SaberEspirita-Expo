@@ -25,7 +25,7 @@ import { REFLECTION_TOPICS } from "@/types/reflection";
 import { MeditateStackParamList } from "@/routers/types";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
-import { speakText, stopSpeaking, isSpeaking } from "@/utils/tts";
+import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
 import { shareReflection } from "@/utils/sharing";
 import { createStyles } from "./styles";
 

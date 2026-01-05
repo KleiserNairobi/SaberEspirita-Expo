@@ -20,6 +20,8 @@ export type AppStackParamList = {
   };
   Glossary: undefined;
   CoursesCatalog: undefined;
+  CourseDetails: { courseId: string };
+  CourseCurriculum: { courseId: string };
 };
 
 export type GlossaryStackParamList = {
