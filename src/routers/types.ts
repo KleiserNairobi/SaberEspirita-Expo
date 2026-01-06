@@ -22,6 +22,7 @@ export type AppStackParamList = {
   CoursesCatalog: undefined;
   CourseDetails: { courseId: string };
   CourseCurriculum: { courseId: string };
+  LessonPlayer: { courseId: string; lessonId: string };
 };
 
 export type GlossaryStackParamList = {

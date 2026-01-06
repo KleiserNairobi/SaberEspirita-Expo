@@ -1,67 +1,122 @@
-# 📚 Resumo: Módulo de Cursos Espíritas
+# 📚 Módulo de Cursos Espíritas - Resumo de Implementação
 
-**Data**: 06/01/2026  
-**Status**: Em Implementação (80%)
-
----
-
-## 📁 Documentos Criados
-
-### 1. **`courses_ux_design_spec.md`**
-
-Especificação completa de UX/UI com:
-
-- ✅ Análise das interfaces de dados (ICourse, ILesson, ISlide, IUserCourseProgress)
-- ✅ Jornada do usuário (diagrama Mermaid)
-- ✅ 7 telas detalhadas com layouts, componentes e estados
-- ✅ Fluxos de navegação
-
-### 2. **`stitch_prompts_courses.md`**
-
-6 prompts prontos para Stitch AI:
-
-- ✅ Prompt 1: Catálogo de Cursos
-- ✅ Prompt 2: Detalhes do Curso
-- ✅ Prompt 3: Lista de Aulas (Currículo)
-- ✅ Prompt 4: Player de Aula (Slides)
-- ✅ Prompt 5: Quiz da Aula
-- ✅ Prompt 6: Certificado de Conclusão
-
-### 3. **`study_screen_progress_spec.md`** (criado anteriormente)
-
-Especificação da tela Estude com progresso
+**Última Atualização**: 06/01/2026 14:15  
+**Status Geral**: 85% Concluído
 
 ---
 
-## 🎯 Estrutura do Módulo de Cursos
+## 📊 Status Atual
 
-### Arquitetura de Dados
+### Telas Implementadas (4/7)
+
+| #   | Tela                           | Status      | Arquivo                              | Data       |
+| --- | ------------------------------ | ----------- | ------------------------------------ | ---------- |
+| 1   | **Estude (Dashboard)**         | ✅ Completo | `src/pages/study/index.tsx`          | 05/01/2026 |
+| 2   | **Catálogo de Cursos**         | ✅ Completo | `src/pages/study/courses-catalog/`   | 04/01/2026 |
+| 3   | **Detalhes do Curso**          | ✅ Completo | `src/pages/study/course-details/`    | 05/01/2026 |
+| 4   | **Currículo (Lista de Aulas)** | ✅ Completo | `src/pages/study/course-curriculum/` | 06/01/2026 |
+| 5   | **Player de Aula**             | ⏳ Pendente | -                                    | -          |
+| 6   | **Quiz da Aula**               | ⏳ Pendente | -                                    | -          |
+| 7   | **Certificado**                | ⏳ Pendente | -                                    | -          |
+
+---
+
+## 🎯 Arquitetura de Dados
+
+### Interfaces TypeScript
 
 ```typescript
 // Curso
 ICourse {
-  id, title, description, workloadMinutes,
-  difficultyLevel: 'Iniciante' | 'Intermediário' | 'Avançado',
-  author, lessonCount, imageUrl?, featured?
+  id: string;
+  title: string;
+  description: string;
+  workloadMinutes: number;
+  difficultyLevel: 'Iniciante' | 'Intermediário' | 'Avançado';
+  author: string;
+  lessonCount: number;
+  imageUrl?: string | number;
+  featured?: boolean;
+  certification?: ICertification;
+  stats?: ICourseStats;
+  status?: CourseStatus;
 }
 
 // Aula
 ILesson {
-  id, courseId, title, order, slides[],
-  durationMinutes, quizId?
+  id: string;
+  courseId: string;
+  title: string;
+  order: number;
+  slides: ISlide[];
+  durationMinutes: number;
+  quizId?: string;
+  status?: LessonStatus;
 }
 
 // Slide
 ISlide {
-  slideType, title, content, imagePrompt?,
-  highlights[], references { kardeciana?, biblica? }
+  slideType: 'text' | 'image' | 'highlight' | 'reference';
+  title: string;
+  content: string;
+  imagePrompt?: string;
+  highlights?: string[];
+  references?: {
+    kardeciana?: string;
+    biblica?: string;
+  };
 }
 
 // Progresso do Usuário
 IUserCourseProgress {
-  userId, courseId, lastLessonId,
-  completedLessons[], completionPercentage
+  userId: string;
+  courseId: string;
+  lastLessonId: string;
+  completedLessons: string[];
+  completionPercentage: number;
+  completedAt?: Date;
+  finalGrade?: number;
+  certificateId?: string;
 }
+```
+
+### Estrutura Firestore
+
+```
+courses/
+  ├─ COURSE-00001/
+  │  ├─ id, title, description, workloadMinutes
+  │  ├─ difficultyLevel, author, lessonCount
+  │  ├─ certification: { enabled, minimumGrade: 7.0, ... }
+  │  ├─ stats: { exerciseCount: 3, totalDurationMinutes: 243 }
+  │  └─ status: 'PUBLISHED' | 'COMING_SOON' | 'DRAFT'
+  │
+  └─ COURSE-00002/
+
+lessons/
+  ├─ LESSON-00001/
+  │  ├─ courseId, title, order, durationMinutes
+  │  ├─ slides: [...]
+  │  ├─ quizId?: string
+  │  └─ status: 'PUBLISHED' | 'DRAFT'
+  │
+  └─ LESSON-00002/
+
+exercises/
+  ├─ EXERCISE-INIC-001/
+  │  ├─ courseId, lessonId, quizId
+  │  ├─ weight, passingGrade
+  │  └─ type: 'LESSON_QUIZ' | 'FINAL_EXAM'
+  │
+  └─ EXERCISE-INIC-002/
+
+users/{userId}/courseProgress/
+  ├─ {courseId}/
+  │  ├─ lastLessonId, completedLessons[]
+  │  ├─ completionPercentage, finalGrade
+  │  └─ certificateId?, completedAt?
+  │
+  └─ {courseId}/
 ```
 
 ---
@@ -69,257 +124,348 @@ IUserCourseProgress {
 ## 🗺️ Jornada do Usuário
 
 ```
-Tela Estude
-    ↓ (clica "Cursos Espíritas")
+Tela Estude (Dashboard)
+    ↓ (clica "Cursos Espíritas" ou "Ver todos")
 Catálogo de Cursos
     ↓ (seleciona curso)
 Detalhes do Curso
-    ↓ (clica "Iniciar/Continuar")
-Lista de Aulas
-    ↓ (seleciona aula)
-Player de Aula (Slides)
+    ↓ (clica "Iniciar/Continuar Curso" ou "Ver Aulas")
+Lista de Aulas (Currículo)
+    ↓ (seleciona aula disponível)
+Player de Aula (Slides) [PENDENTE]
     ↓ (finaliza aula)
-Quiz da Aula? (se houver)
+Quiz da Aula? (se houver) [PENDENTE]
     ↓ (completa)
-Próxima Aula ou Certificado
+Próxima Aula ou Certificado [PENDENTE]
 ```
 
 ---
 
-## 📱 Telas do Módulo (7 telas)
+## 📱 Detalhamento das Telas Implementadas
 
 ### 1. ✅ Tela Estude (Dashboard)
 
-**Status**: Implementada e refatorada com React Query  
 **Arquivo**: `src/pages/study/index.tsx`  
-**Componentes**: ResumeCard, Carousel com progresso  
 **Data**: 05/01/2026
+
+**Componentes**:
+
+- Header com saudação personalizada
+- Seção "Populares" com `Carousel` reutilizado
+- Seção "Explore a Biblioteca" (grade 3 colunas)
+- Botão "Ver todos" para navegação ao catálogo
+
+**Integrações**:
+
+- `useAuthStore()` para nome do usuário
+- `useAppTheme()` para tema dinâmico
+- Dados de `src/data/SliderData.tsx` e `src/data/Biblioteca.tsx`
 
 ---
 
 ### 2. ✅ Catálogo de Cursos
 
-**Status**: Implementada e refatorada com React Query  
-**Rota**: `CoursesCatalog`  
 **Arquivo**: `src/pages/study/courses-catalog/index.tsx`  
+**Data**: 04/01/2026
+
 **Componentes**:
 
-- SearchBar
-- FilterChips (Todos, Iniciante, Intermediário, Avançado)
-- CourseCard (imagem 16:9, título, metadados, barra de progresso)
+- Header centralizado com ícone `GraduationCap` e 3 anéis concêntricos
+- `SearchBar` sticky (fixa ao rolar)
+- `FilterBottomSheet` com 6 opções:
+  - Todos, Iniciante, Intermediário, Avançado, Em Andamento, Concluídos
+- `CourseCard` horizontal compacto (imagem 3:4 à esquerda)
+
+**Layout do Card**:
+
+- Imagem 100x100px (aspecto 3:4 retrato)
+- Título, descrição truncada, metadados com ícones
+- Barra de progresso integrada (se iniciado)
+- Imagens reais: Capas de livros espíritas dos assets
 
 **Estados**:
 
-- Loading (skeleton)
-- Empty (sem cursos)
+- Loading (ActivityIndicator)
+- Empty (mensagem "Nenhum curso encontrado")
 - Error (retry)
 
-**Data**: 05/01/2026
+**Hooks**:
+
+- `useCourses()` - React Query para buscar cursos
 
 ---
 
 ### 3. ✅ Detalhes do Curso
 
-**Status**: Implementada seguindo protótipo Stitch  
-**Rota**: `CourseDetails`  
 **Arquivo**: `src/pages/study/course-details/index.tsx`  
+**Data**: 05/01/2026
+
 **Componentes**:
 
-- Hero Image com gradiente (LinearGradient)
-- CourseHeader (título + autor sobrepostos na imagem)
-- ProgressBar (se iniciado)
-- StatsGrid (2x2: aulas, duração, nível, ano) com ícones circulares
-- Description (expandível)
-- InstructorCard (autor com avatar)
-- ActionButtons fixos no footer (Iniciar/Continuar/Ver Aulas)
+- Hero Image com `LinearGradient` overlay
+- `CourseHeader` (título + autor sobrepostos na imagem)
+- `ProgressBar` (se curso iniciado)
+- `StatsGrid` 2x2 com ícones circulares:
+  - Aulas, Duração, Nível, Ano
+- `Description` expandível
+- `InstructorCard` (autor com avatar)
+- `ActionButtons` fixos no footer
 
 **Estados Condicionais**:
 
-- Novo: "INICIAR CURSO"
-- Em Progresso: Barra + "CONTINUAR CURSO"
-- Completo: Badge "✓ Concluído"
+- **Novo**: "INICIAR CURSO" (verde)
+- **Em Progresso**: Barra de progresso + "CONTINUAR CURSO"
+- **Completo**: Badge "✓ Concluído"
 
-**Observações**:
+**Otimizações**:
 
-- Implementado Image.prefetch para otimização
-- Performance de carregamento ainda precisa melhorias (passar via route params)
+- `Image.prefetch()` para pré-carregar imagem
+- **Pendente**: Passar imageUrl via route params para melhor performance
 
-**Data**: 05/01/2026
+**Hooks**:
+
+- `useCourse(courseId)` - Busca curso por ID
+- `useCourseProgress(courseId)` - Busca progresso do usuário
 
 ---
 
 ### 4. ✅ Lista de Aulas (Currículo)
 
-**Status**: Implementada seguindo protótipo Stitch  
-**Rota**: `CourseCurriculum`  
 **Arquivo**: `src/pages/study/course-curriculum/index.tsx`  
+**Data**: 06/01/2026
+
 **Componentes**:
 
-- CourseProgress (X de Y aulas) - Header com barra
-- LessonCard com 4 estados visuais:
-  - ✓ Concluída (verde, check icon)
-  - ▶ Em Andamento (amarelo, barra de progresso interna)
-  - 🔒 Bloqueada (cinza, lock icon)
-  - Disponível (branco, número)
-  - 📝 Quiz (badge visual)
+- Header de navegação com botão voltar
+- `SummaryCard` com progresso do curso
+- `LessonCard` com 4 estados visuais
 
-**Lógica**: Aulas sequenciais desbloqueadas (mockado visualmente)
+**Estados da Aula**:
 
-**Observações**:
+| Status          | Ícone                      | Cor                     | Descrição         |
+| --------------- | -------------------------- | ----------------------- | ----------------- |
+| **COMPLETED**   | `CheckCircle` (preenchido) | Verde (`success`)       | Aula concluída    |
+| **IN_PROGRESS** | `PlayCircle` (preenchido)  | Verde oliva (`primary`) | Aula em andamento |
+| **AVAILABLE**   | `PlayCircle` (outline)     | Cinza (`textSecondary`) | Aula disponível   |
+| **LOCKED**      | `Lock`                     | Cinza (`textSecondary`) | Aula bloqueada    |
 
-- Estados visuais implementados
-- Progresso real ainda não integrado
+**Lógica de Desbloqueio**:
 
-**Data**: 05/01/2026
+- Primeira aula sempre disponível
+- Aulas seguintes desbloqueiam após completar a anterior
+- Aula em progresso é a `lastLessonId`
+
+**Hooks**:
+
+- `useCourse(courseId)` - Título do curso
+- `useLessons(courseId)` - Lista de aulas
+- `useCourseProgress(courseId)` - Progresso real do Firestore
+
+**Correções Recentes** (06/01/2026):
+
+- ✅ Ícone `PlayCircle` outline adicionado para aulas disponíveis
+- ✅ Removidos estilos não utilizados (`numberCircle`, `numberText`)
 
 ---
 
-### 5. ⏳ Player de Aula (Slides)
+## 🛠️ Serviços e Hooks Criados
 
-**Status**: Não implementado  
-**Rota**: `LessonPlayer`  
-**Componentes**:
+### Serviços Firebase
 
-- SlideContent (título + conteúdo markdown)
-- HighlightCard (💡 destaques)
-- ReferenceCard (📖 referências kardeciana/bíblica)
-- SlideIndicator (●●●○○○ + contador)
-- NavigationButtons (Anterior/Próximo)
+**`src/services/firebase/courseService.ts`**:
 
-**Tipos de Slide**:
+```typescript
+getCourses() // Busca todos os cursos
+getFeaturedCourses() // Busca cursos em destaque
+getCourseById(id: string) // Busca curso por ID
+```
 
-- Texto
-- Imagem
-- Destaque
-- Referência
+**`src/services/firebase/lessonService.ts`**:
 
-**Navegação**: Swipe + botões
+```typescript
+getLessonsByCourseId(courseId: string) // Busca aulas de um curso
+getLessonById(id: string) // Busca aula por ID
+```
 
----
+### Hooks React Query
 
-### 6. ⏳ Quiz da Aula
+**`src/hooks/queries/useCourses.ts`**:
 
-**Status**: Não implementado  
-**Rota**: `LessonQuiz`  
-**Componentes**:
+```typescript
+useCourses() // Lista todos os cursos
+useFeaturedCourses() // Lista cursos em destaque
+useCourse(id: string) // Busca curso individual
+```
 
-- QuizHeader (contador)
-- ProgressBar
-- QuestionCard
-- AnswerOption (4 estados: default, selected, correct, incorrect)
-- ConfirmButton
+**`src/hooks/queries/useLessons.ts`**:
 
-**Fluxo**:
+```typescript
+useLessons(courseId: string) // Lista aulas de um curso
+useLesson(id: string) // Busca aula individual
+```
 
-1. Seleciona resposta
-2. Confirma
-3. Feedback visual
-4. Explicação
-5. Próxima pergunta
-6. Resultado final
+**`src/hooks/queries/useCourseProgress.ts`**:
 
----
-
-### 7. ⏳ Certificado de Conclusão
-
-**Status**: Não implementado  
-**Rota**: `CourseCertificate`  
-**Componentes**:
-
-- CelebrationHeader (🎉 Parabéns!)
-- CertificateCard (borda dourada, gradiente)
-- StatsSection (100%, aulas, quizzes, minutos)
-- ShareButton
-- ExploreButton
-
-**Funcionalidades**:
-
-- Gerar imagem do certificado
-- Compartilhar
-- Salvar na galeria
+```typescript
+useCourseProgress(courseId: string) // Busca progresso do usuário
+```
 
 ---
 
 ## 🎨 Design System
 
-### Cores
+### Cores (Dark Theme)
 
-- Background: `#F2F7F2` (light) / `#191a1f` (dark)
-- Card: `#FFFFFF` (light) / `#1f2026` (dark)
-- Primary: `#6F7C60` (verde oliva)
-- Success: `#5C8A5C`
-- Warning: `#F59E0B`
-- Error: `#C94B4B`
+```typescript
+background: "#121E31";
+card: "#162235";
+primary: "#8F9D7E"; // Verde oliva
+success: "#5C8A5C"; // Verde
+warning: "#FFA726"; // Laranja (adicionado 06/01)
+error: "#C94B4B"; // Vermelho
+accent: "#2A3645"; // Azul escuro
+```
 
 ### Tipografia
 
-- Font: Barlow Condensed / Oswald
-- Tamanhos: 12px, 14px, 16px, 18px, 20px, 24px, 32px
+```typescript
+regular: "BarlowCondensed_400Regular";
+medium: "BarlowCondensed_500Medium";
+semibold: "BarlowCondensed_600SemiBold";
+bold: "Oswald_700Bold";
+```
 
-### Espaçamento
+### Padrões Visuais
 
-- xs: 4px
-- sm: 8px
-- md: 16px
-- lg: 24px
-- xl: 32px
-
-### Border Radius
-
-- xs: 4px
-- sm: 8px
-- md: 16px
-- lg: 24px
-- xl: 32px
-
----
-
-## 🚀 Próximos Passos
-
-### Fase 1: Prototipagem no Stitch
-
-1. ✅ Prompts criados
-2. ✅ Protótipos gerados no Stitch AI
-3. ✅ Exportados em `/artifacts/stitch-prototypes/`
-
-### Fase 2: Implementação
-
-1. ✅ Criar interfaces TypeScript (`src/types/course.ts`)
-2. ✅ Criar serviços Firebase (`courseService.ts`, `lessonService.ts`)
-3. ✅ Criar hooks React Query (`useCourses.ts`, `useLessons.ts`)
-4. ✅ Implementar componentes reutilizáveis (CourseCard, LessonCard)
-5. ✅ Criar telas seguindo protótipos (CourseDetails, CourseCurriculum)
-6. ✅ Integrar navegação (rotas no AppNavigator)
-7. ⏳ Implementar LessonPlayer
-8. ⏳ Implementar LessonQuiz
-9. ⏳ Implementar CourseCertificate
-
-### Fase 3: Backend
-
-1. ✅ Criar coleções Firestore:
-   - `courses`
-   - `lessons`
-   - `users/{userId}/courseProgress` (pendente)
-2. ⏳ Popular dados de exemplo (script criado, não executado)
-3. ⏳ Configurar regras de segurança
-
-### Fase 4: Testes e Polish
-
-1. ⏳ Testar fluxo completo
-2. ⏳ Adicionar animações
-3. ⏳ Implementar offline support
-4. ⏳ Otimizar performance (imagem de capa)
+- ✅ **Sem sombras** nos cards (consistência com app)
+- ✅ **Ícones circulares** padronizados (borderRadius: 20px)
+- ✅ **Tokens do tema** em todos os componentes
+- ✅ **Efeito de vibração** nos ícones de categoria (3 anéis concêntricos)
 
 ---
 
 ## 📊 Estatísticas
 
 - **Telas**: 7 (4 implementadas + 3 pendentes)
-- **Componentes Novos**: ~10 implementados
+- **Componentes Novos**: ~12 implementados
 - **Serviços**: 2 implementados (course, lesson)
-- **Hooks React Query**: 4 implementados
-- **Interfaces**: 5 (ICourse, ILesson, ISlide, IUserCourseProgress, ICourseCategory)
-- **Prompts Stitch**: 6 (todos gerados)
+- **Hooks React Query**: 5 implementados
+- **Interfaces TypeScript**: 8+ (ICourse, ILesson, ISlide, IUserCourseProgress, etc.)
+- **Prompts Stitch**: 6 criados
+
+---
+
+## 🚀 Próximas Implementações
+
+### Fase 2: Funcionalidades Educacionais (Prioridade Alta)
+
+#### 1. **Tela de Player de Aula**
+
+- [ ] Exibir slides da aula (swipe horizontal)
+- [ ] Navegação entre slides (botões + indicador)
+- [ ] Renderizar conteúdo markdown
+- [ ] Exibir highlights e referências
+- [ ] Marcar aula como concluída
+- [ ] Atualizar progresso no Firestore
+
+#### 2. **Sistema de Exercícios**
+
+- [ ] Integrar com quizzes existentes
+- [ ] Calcular nota ponderada
+- [ ] Salvar tentativas no Firestore
+- [ ] Exibir melhor resultado
+- [ ] Feedback visual de acertos/erros
+
+#### 3. **Sistema de Certificação**
+
+- [ ] Verificar elegibilidade (100% aulas + nota ≥ 7.0)
+- [ ] Gerar PDF de certificado
+- [ ] Validação pública via QR Code
+- [ ] Compartilhamento nativo
+- [ ] Enviar por email (opcional)
+
+#### 4. **Material Complementar**
+
+- [ ] Exibir PDFs, vídeos, links externos
+- [ ] Download offline de materiais
+- [ ] Marcação de leitura/visualização
+
+---
+
+## 🐛 Problemas Conhecidos
+
+### 1. Performance de Imagem (Detalhes do Curso)
+
+**Problema**: Carregamento da imagem de capa demora 3-5s  
+**Solução Proposta**: Passar `imageUrl` via route params para renderização instantânea  
+**Status**: Pendente
+
+### 2. ~~Progresso Mockado~~ ✅ RESOLVIDO
+
+**Problema**: Estados visuais de progresso eram simulados  
+**Solução**: Implementados hooks `useCourseProgress` com dados reais do Firestore  
+**Status**: ✅ Resolvido em 06/01/2026
+
+### 3. Dados de Teste
+
+**Problema**: Script de seed criado mas não executado  
+**Ação**: Executar `scripts/seed_lessons.ts` quando apropriado  
+**Status**: Pendente
+
+---
+
+## 📅 Histórico de Atualizações
+
+### 06/01/2026 - Currículo Funcional + Certificação
+
+**Implementações**:
+
+- ✅ Tela de Currículo completa com Firestore
+- ✅ Hooks `useCourse` e `useCourseProgress` criados
+- ✅ Lógica de desbloqueio sequencial de aulas
+- ✅ 4 estados visuais nos cards de aula
+- ✅ Correção de ícones (PlayCircle outline para aulas disponíveis)
+- ✅ Sistema de certificação no Quiz-Web (8 novas interfaces)
+- ✅ Cor `warning` adicionada ao tema
+- ✅ Dados exportados para Firestore (curso + exercícios)
+
+**Arquivos Modificados**:
+
+- Quiz-Web: `src/types/index.ts`, `src/files/courses/`, `src/pages/Export.tsx`
+- Mobile: `src/types/course.ts`, `src/hooks/queries/`, `src/pages/study/course-curriculum/`, `src/configs/theme/`
+
+---
+
+### 05/01/2026 - Detalhes e Navegação
+
+**Implementações**:
+
+- ✅ Tela de Detalhes do Curso com hero image
+- ✅ Navegação completa: Catálogo → Detalhes → Currículo
+- ✅ Botão "Ver Aulas" funcional
+- ✅ Estados condicionais (novo, em progresso, completo)
+
+---
+
+### 04/01/2026 - Catálogo de Cursos
+
+**Implementações**:
+
+- ✅ Tela de Catálogo com SearchBar sticky
+- ✅ Sistema de filtros (6 opções)
+- ✅ CourseCard horizontal compacto
+- ✅ Navegação do Dashboard para Catálogo
+
+---
+
+### 03/01/2026 - Especificação UX/UI
+
+**Documentação Criada**:
+
+- ✅ `courses_ux_design_spec.md` - Especificação completa de 7 telas
+- ✅ `stitch_prompts_courses.md` - 6 prompts para Stitch AI
+- ✅ Jornada do usuário mapeada (diagrama Mermaid)
+- ✅ Protótipos gerados no Stitch AI
 
 ---
 
@@ -328,467 +474,33 @@ Próxima Aula ou Certificado
 ### Padrão Visual
 
 - ✅ Seguir protótipos Stitch com adaptações ao design system do app
-- ✅ Usar tokens do tema (`theme.colors`, `theme.spacing`, `theme.radius`)
+- ✅ Usar tokens do tema (`theme.colors.*`, `theme.text()`, `theme.spacing.*`)
 - ✅ Manter consistência com módulos ORE e MEDITE
 - ✅ Botões padronizados (Privacy/GlossaryFilter styles)
 
 ### UX
 
-- ✅ Aulas sequenciais (desbloqueio progressivo) - mockado
-- ✅ Feedback visual claro (estados de conclusão)
-- ⏳ Navegação intuitiva (swipe + botões)
-- ⏳ Gamificação (certificado, progresso)
+- ✅ Aulas sequenciais com desbloqueio progressivo
+- ✅ Feedback visual claro (4 estados de conclusão)
+- ⏳ Navegação intuitiva (swipe + botões) - pendente no Player
+- ⏳ Gamificação (certificado, progresso) - parcialmente implementado
 
 ### Performance
 
 - ✅ Cache de progresso (React Query)
-- ⏳ Lazy loading de slides
-- ⏳ Otimização de imagens (pendente: route params)
+- ⏳ Lazy loading de slides - pendente
+- ⏳ Otimização de imagens (route params) - pendente
 
 ---
 
-## 🐛 Problemas Conhecidos
+## 📚 Documentação Relacionada
 
-1. **Performance de Imagem**: Carregamento da imagem de capa demora 3-5s
-   - **Solução proposta**: Passar imageUrl via route params
-2. **Progresso Mockado**: Estados visuais de progresso são simulados
-   - **Solução**: Implementar integração real com Firestore
-3. **Dados de Teste**: Script de seed criado mas não executado
-   - **Ação**: Executar `scripts/seed_lessons.ts` quando apropriado
+- **`courses_ux_design_spec.md`** - Especificação completa de UX/UI
+- **`stitch_prompts_courses.md`** - Prompts para prototipagem
+- **`study_screen_progress_spec.md`** - Especificação da tela Estude
+- **`DESIGN_SYSTEM_REFERENCE.md`** - Referência rápida do design system
 
 ---
 
-**Última atualização:** 05/01/2026 17:50  
-**Implementado por:** Antigravity AI
-
----
-
-## 📁 Documentos Criados
-
-### 1. **`courses_ux_design_spec.md`**
-
-Especificação completa de UX/UI com:
-
-- ✅ Análise das interfaces de dados (ICourse, ILesson, ISlide, IUserCourseProgress)
-- ✅ Jornada do usuário (diagrama Mermaid)
-- ✅ 7 telas detalhadas com layouts, componentes e estados
-- ✅ Fluxos de navegação
-
-### 2. **`stitch_prompts_courses.md`**
-
-6 prompts prontos para Stitch AI:
-
-- ✅ Prompt 1: Catálogo de Cursos
-- ✅ Prompt 2: Detalhes do Curso
-- ✅ Prompt 3: Lista de Aulas (Currículo)
-- ✅ Prompt 4: Player de Aula (Slides)
-- ✅ Prompt 5: Quiz da Aula
-- ✅ Prompt 6: Certificado de Conclusão
-
-### 3. **`study_screen_progress_spec.md`** (criado anteriormente)
-
-Especificação da tela Estude com progresso
-
----
-
-## 🎯 Estrutura do Módulo de Cursos
-
-### Arquitetura de Dados
-
-```typescript
-// Curso
-ICourse {
-  id, title, description, workloadMinutes,
-  difficultyLevel: 'Iniciante' | 'Intermediário' | 'Avançado',
-  author, lessonCount
-}
-
-// Aula
-ILesson {
-  id, courseId, title, order, slides[],
-  durationMinutes, quizId?
-}
-
-// Slide
-ISlide {
-  slideType, title, content, imagePrompt?,
-  highlights[], references { kardeciana?, biblica? }
-}
-
-// Progresso do Usuário
-IUserCourseProgress {
-  userId, courseId, lastLessonId,
-  completedLessons[], completionPercentage
-}
-```
-
----
-
-## 🗺️ Jornada do Usuário
-
-```
-Tela Estude
-    ↓ (clica "Cursos Espíritas")
-Catálogo de Cursos
-    ↓ (seleciona curso)
-Detalhes do Curso
-    ↓ (clica "Iniciar/Continuar")
-Lista de Aulas
-    ↓ (seleciona aula)
-Player de Aula (Slides)
-    ↓ (finaliza aula)
-Quiz da Aula? (se houver)
-    ↓ (completa)
-Próxima Aula ou Certificado
-```
-
----
-
-## 📱 Telas do Módulo (7 telas)
-
-### 1. ✅ Tela Estude (Dashboard)
-
-**Status**: Já especificada  
-**Arquivo**: `study_screen_progress_spec.md`  
-**Componentes**: ResumeCard, Carousel com progresso
-
----
-
-### 2. 🆕 Catálogo de Cursos
-
-**Rota**: `CoursesCatalog`  
-**Componentes**:
-
-- SearchBar
-- FilterChips (Todos, Iniciante, Intermediário, Avançado)
-- CourseCard (imagem 16:9, título, metadados, barra de progresso)
-
-**Estados**:
-
-- Loading (skeleton)
-- Empty (sem cursos)
-- Error (retry)
-
----
-
-### 3. 🆕 Detalhes do Curso
-
-**Rota**: `CourseDetails`  
-**Componentes**:
-
-- Hero Image com gradiente
-- CourseHeader (título + autor)
-- ProgressBar (se iniciado)
-- StatsGrid (2x2: aulas, duração, nível, ano)
-- Description (expandível)
-- ActionButtons (Iniciar/Continuar/Ver Aulas)
-
-**Estados Condicionais**:
-
-- Novo: "INICIAR CURSO"
-- Em Progresso: Barra + "CONTINUAR CURSO"
-- Completo: Badge "✓ Concluído"
-
----
-
-### 4. 🆕 Lista de Aulas (Currículo)
-
-**Rota**: `CourseCurriculum`  
-**Componentes**:
-
-- CourseProgress (X de Y aulas)
-- LessonCard com 4 estados:
-  - ✓ Concluída (verde)
-  - ▶ Em Andamento (amarelo)
-  - 🔒 Bloqueada (cinza)
-  - Disponível (branco)
-
-**Lógica**: Aulas sequenciais desbloqueadas
-
----
-
-### 5. 🆕 Player de Aula (Slides)
-
-**Rota**: `LessonPlayer`  
-**Componentes**:
-
-- SlideContent (título + conteúdo markdown)
-- HighlightCard (💡 destaques)
-- ReferenceCard (📖 referências kardeciana/bíblica)
-- SlideIndicator (●●●○○○ + contador)
-- NavigationButtons (Anterior/Próximo)
-
-**Tipos de Slide**:
-
-- Texto
-- Imagem
-- Destaque
-- Referência
-
-**Navegação**: Swipe + botões
-
----
-
-### 6. 🆕 Quiz da Aula
-
-**Rota**: `LessonQuiz`  
-**Componentes**:
-
-- QuizHeader (contador)
-- ProgressBar
-- QuestionCard
-- AnswerOption (4 estados: default, selected, correct, incorrect)
-- ConfirmButton
-
-**Fluxo**:
-
-1. Seleciona resposta
-2. Confirma
-3. Feedback visual
-4. Explicação
-5. Próxima pergunta
-6. Resultado final
-
----
-
-### 7. 🆕 Certificado de Conclusão
-
-**Rota**: `CourseCertificate`  
-**Componentes**:
-
-- CelebrationHeader (🎉 Parabéns!)
-- CertificateCard (borda dourada, gradiente)
-- StatsSection (100%, aulas, quizzes, minutos)
-- ShareButton
-- ExploreButton
-
-**Funcionalidades**:
-
-- Gerar imagem do certificado
-- Compartilhar
-- Salvar na galeria
-
----
-
-## 🎨 Design System
-
-### Cores
-
-- Background: `#191a1f`
-- Card: `#1f2026`
-- Primary: `#7ED957` (verde)
-- Success: `#10B981`
-- Warning: `#F59E0B`
-- Error: `#EF4444`
-- Gold: `#F59E0B`
-
-### Tipografia
-
-- Font: Google Sans
-- Tamanhos: 12px, 13px, 14px, 15px, 16px, 18px, 20px, 24px, 32px
-
-### Espaçamento
-
-- xs: 4px
-- sm: 8px
-- md: 16px
-- lg: 24px
-- xl: 32px
-
-### Border Radius
-
-- Cards: 16px
-- Buttons: 12px
-- Small: 8px
-
----
-
-## 🚀 Próximos Passos
-
-### Fase 1: Prototipagem no Stitch
-
-1. ✅ Prompts criados
-2. ⏳ Gerar protótipos no Stitch AI
-3. ⏳ Exportar imagens (PNG alta resolução)
-4. ⏳ Salvar em `/artifacts/stitch-prototypes/`
-
-### Fase 2: Implementação
-
-1. ⏳ Criar interfaces TypeScript (`src/types/course.ts`)
-2. ⏳ Criar serviços Firebase (`courseService.ts`, `lessonService.ts`)
-3. ⏳ Implementar componentes reutilizáveis
-4. ⏳ Criar telas seguindo protótipos
-5. ⏳ Integrar navegação (CourseNavigator)
-
-### Fase 3: Backend
-
-1. ⏳ Criar coleções Firestore:
-   - `courses`
-   - `lessons`
-   - `users/{userId}/courseProgress`
-2. ⏳ Popular dados de exemplo
-3. ⏳ Configurar regras de segurança
-
-### Fase 4: Testes e Polish
-
-1. ⏳ Testar fluxo completo
-2. ⏳ Adicionar animações
-3. ⏳ Implementar offline support
-4. ⏳ Otimizar performance
-
----
-
-## 📊 Estatísticas
-
-- **Telas**: 7 (1 existente + 6 novas)
-- **Componentes Novos**: ~15
-- **Serviços**: 3 (course, lesson, progress)
-- **Interfaces**: 5 (ICourse, ILesson, ISlide, IUserCourseProgress, ICourseCategory)
-- **Prompts Stitch**: 6
-
----
-
-## 💡 Decisões de Design
-
-### Padrão Visual
-
-- ✅ Seguir design system do app (não copiar Stitch exatamente)
-- ✅ Usar tokens do tema (`theme.colors`, `theme.spacing`)
-- ✅ Manter consistência com módulos ORE e MEDITE
-- ✅ Dark mode premium
-
-### UX
-
-- ✅ Aulas sequenciais (desbloqueio progressivo)
-- ✅ Feedback visual claro (estados de conclusão)
-- ✅ Navegação intuitiva (swipe + botões)
-- ✅ Gamificação (certificado, progresso)
-
-### Performance
-
-- ✅ Cache de progresso (React Query)
-- ✅ Lazy loading de slides
-- ✅ Otimização de imagens
-
----
-
-**Documentação completa criada por:** Antigravity AI  
-**Data:** 03/01/2026 20:30
----
-
-## 📅 Atualização: 06/01/2026
-
-### **Arquitetura Educacional Completa Implementada**
-
-#### **1. Sistema de Certificação**
-
-**Interfaces Atualizadas (Quiz-Web + Mobile):**
-
-- ✅ `ICourse.certification` - Requisitos de certificação (nota ≥ 7.0, 100% aulas/exercícios)
-- ✅ `ICourse.stats` - Estatísticas do curso
-- ✅ `ICourse.status` - Status de publicação (PUBLISHED, COMING_SOON, DRAFT)
-- ✅ `ILesson.status` - Status da aula
-- ✅ `IUserCourseProgress` - Campos de certificação e nota final
-- ✅ 8 novas interfaces criadas (IExercise, ICertificate, ISupplementaryMaterial, etc.)
-
-**Dados Exportados para Firestore:**
-
-```
-courses/COURSE-00001
-  ├─ certification: { enabled, minimumGrade: 7.0, ... }
-  ├─ stats: { exerciseCount: 3, totalDurationMinutes: 243 }
-  └─ lessons/ (2 aulas publicadas)
-
-exercises/ (3 exercícios, reutilizam quizzes)
-  ├─ EXERCISE-INIC-001 (quizId: QUIZ-CON0001)
-  ├─ EXERCISE-INIC-002 (quizId: QUIZ-CON0002)
-  └─ EXERCISE-INIC-003 (quizId: QUIZ-CON0003)
-```
-
-#### **2. Tela de Currículo Funcional**
-
-**Status**: ✅ Implementada e integrada com Firestore  
-**Arquivo**: `src/pages/study/course-curriculum/index.tsx`
-
-**Implementações:**
-
-- ✅ Design system correto (cores success/primary, sem sombras)
-- ✅ Título dinâmico do curso via `useCourse`
-- ✅ Progresso real do Firestore via `useCourseProgress`
-- ✅ Lógica de desbloqueio sequencial de aulas
-- ✅ 4 estados visuais: Concluída, Em Andamento, Bloqueada, Disponível
-- ✅ Navegação completa (Catálogo → Detalhes → Currículo)
-
-**Hooks Criados:**
-
-```typescript
-// src/hooks/queries/useCourse.ts
-useCourse(id: string) // Busca curso por ID
-
-// src/hooks/queries/useCourseProgress.ts
-useCourseProgress(courseId: string) // Busca progresso do usuário
-```
-
-**Lógica de Status:**
-
-- **COMPLETED**: Aula em `completedLessons`
-- **IN_PROGRESS**: Aula é a `lastLessonId`
-- **AVAILABLE**: Aula anterior concluída ou é a primeira
-- **LOCKED**: Aula anterior não concluída
-
-#### **3. Melhorias de Design System**
-
-- ✅ Cor `warning` adicionada (Light: #F59E0B, Dark: #FFA726)
-- ✅ Sombras removidas dos cards (consistência com app)
-- ✅ Espaçamentos usando theme tokens
-- ✅ Cores usando theme tokens (sem hardcode)
-
-#### **4. Arquivos Modificados**
-
-**Quiz-Web:**
-- `src/types/index.ts` (+200 linhas)
-- `src/files/courses/data/Iniciacao.ts` (certificação)
-- `src/files/courses/exercises/IniciacaoExercises.ts` (novo)
-- `src/pages/Export.tsx` (exportação de exercícios)
-
-**Mobile:**
-- `src/types/course.ts` (+115 linhas)
-- `src/hooks/queries/useCourses.ts` (useCourse)
-- `src/hooks/queries/useCourseProgress.ts` (novo)
-- `src/pages/study/course-curriculum/` (completo)
-- `src/routers/AppNavigator.tsx` (rota CourseCurriculum)
-- `src/configs/theme/` (cor warning)
-
----
-
-## 🎯 Próximas Implementações
-
-### **Fase 2: Funcionalidades Educacionais**
-
-1. **Tela de Player de Aula** (Prioridade Alta)
-   - Exibir slides da aula
-   - Navegação entre slides
-   - Marcar aula como concluída
-   - Atualizar progresso no Firestore
-
-2. **Sistema de Exercícios**
-   - Integrar com quizzes existentes
-   - Calcular nota ponderada
-   - Salvar tentativas
-   - Exibir melhor resultado
-
-3. **Sistema de Certificação**
-   - Verificar elegibilidade
-   - Gerar PDF de certificado
-   - Validação pública
-   - Enviar por email
-
-4. **Material Complementar**
-   - Exibir PDFs, vídeos, links
-   - Download offline
-   - Marcação de leitura
-
----
-
-**Última Atualização**: 06/01/2026  
+**Implementado por**: Antigravity AI  
 **Próxima Revisão**: Após implementação do Player de Aula

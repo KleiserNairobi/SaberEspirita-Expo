@@ -18,7 +18,7 @@ export async function getLessonsByCourseId(courseId: string): Promise<ILesson[]>
 
     const lessons: ILesson[] = [];
     querySnapshot.forEach((doc) => {
-      lessons.push({ id: doc.id, ...doc.data() } as ILesson);
+      lessons.push({ ...doc.data(), id: doc.id } as ILesson);
     });
 
     return lessons;
@@ -43,7 +43,7 @@ export async function getLessonById(
     const lessonSnap = await getDoc(lessonRef);
 
     if (lessonSnap.exists()) {
-      return { id: lessonSnap.id, ...lessonSnap.data() } as ILesson;
+      return { ...lessonSnap.data(), id: lessonSnap.id } as ILesson;
     }
 
     return null;

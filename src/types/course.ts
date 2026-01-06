@@ -56,7 +56,7 @@ export interface ISlide {
   title: string;
   content: string;
   imagePrompt?: string;
-  highlights?: string[];
+  highlights?: { title: string; content: string }[];
   references?: {
     kardeciana?: string;
     biblica?: string;

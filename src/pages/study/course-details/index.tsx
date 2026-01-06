@@ -16,6 +16,7 @@ import {
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { useCourse } from "@/hooks/queries/useCourses";
+import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
 import { ICourse } from "@/types/course";
 import { createStyles } from "./styles";
 
@@ -38,10 +39,16 @@ export function CourseDetailsScreen() {
 
   // React Query Fetch
   const { data: course, isLoading: loading } = useCourse(courseId);
+  const { data: progress } = useCourseProgress(courseId);
 
-  // Todo: Buscar progresso real do usuário
-  const userProgress = 0; // 0% a 100%
-  const isEnrolled = false;
+  // Calcular progresso real
+  const completedCount = progress?.completedLessons?.length || 0;
+  const totalLessons = course?.lessonCount || 0;
+
+  const userProgress =
+    totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+
+  const isEnrolled = !!progress; // Se tem objeto de progresso, está matriculado
 
   // Prefetch da imagem para cache agressivo
   React.useEffect(() => {

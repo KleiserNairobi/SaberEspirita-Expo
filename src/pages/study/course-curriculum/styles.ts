@@ -132,18 +132,6 @@ export const createStyles = (theme: ITheme) =>
       justifyContent: "center",
       alignItems: "center",
     },
-    numberCircle: {
-      width: 32,
-      height: 32,
-      borderRadius: 16,
-      borderWidth: 2,
-      borderColor: "rgba(255,255,255,0.2)",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    numberText: {
-      ...theme.text("sm", "semibold", "#FFF"),
-    },
     lockedIconDetails: {
       width: 32,
       height: 32,

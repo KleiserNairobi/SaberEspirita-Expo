@@ -93,8 +93,14 @@ export function CourseCurriculumScreen() {
   }
 
   function handleLessonPress(lesson: ILesson, status: LessonStatus) {
-    if (status === LessonStatus.LOCKED) return;
-    // navigation.navigate("LessonPlayer", { lessonId: lesson.id });
+    if (status === LessonStatus.LOCKED) {
+      Alert.alert(
+        "Aula Bloqueada",
+        "Complete as aulas anteriores para desbloquear esta aula."
+      );
+      return;
+    }
+    navigation.navigate("LessonPlayer", { courseId, lessonId: lesson.id });
   }
 
   const renderLessonItem = ({ item, index }: { item: ILesson; index: number }) => {
@@ -143,9 +149,11 @@ export function CourseCurriculumScreen() {
                 </View>
               )}
               {status === LessonStatus.AVAILABLE && (
-                <View style={styles.numberCircle}>
-                  <Text style={styles.numberText}>{index + 1}</Text>
-                </View>
+                <PlayCircle
+                  size={32}
+                  color={theme.colors.textSecondary}
+                  fill="transparent"
+                />
               )}
             </View>
 
