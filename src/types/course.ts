@@ -10,18 +10,45 @@ export interface ICourse {
   categoryId?: string;
   releaseYear?: number;
   featured?: boolean; // Curso em destaque (aparece em "Populares")
+  status: CourseStatus; // ✅ NOVO - Status de publicação
+
+  // ✅ NOVO - Requisitos de Certificação
+  certification: {
+    enabled: boolean;
+    minimumGrade: number;
+    requiredLessonsPercent: number;
+    requiredExercisesPercent: number;
+  };
+
+  // ✅ NOVO - Estatísticas
+  stats?: {
+    exerciseCount: number;
+    totalDurationMinutes: number;
+    enrolledStudents?: number;
+    completionRate?: number;
+  };
 }
 
 export interface ILesson {
   id: string;
   courseId: string;
+  moduleId?: string; // ✅ NOVO - Agrupamento opcional
   title: string;
+  description?: string; // ✅ NOVO
   order: number;
   slides: ISlide[];
   durationMinutes: number;
   quizId?: string;
   source?: string;
   chapter?: string;
+  status: LessonStatus; // ✅ NOVO
+
+  // ✅ NOVO - Conteúdo multimídia
+  videoUrl?: string;
+  audioUrl?: string;
+
+  // ✅ NOVO - Materiais Complementares
+  supplementaryMaterials?: ISupplementaryMaterial[];
 }
 
 export interface ISlide {
@@ -39,14 +66,36 @@ export interface ISlide {
 export interface IUserCourseProgress {
   userId: string;
   courseId: string;
+
+  // Progresso de Aulas
   lastLessonId?: string;
   completedLessons: string[];
-  completionPercentage: number;
+  lessonsCompletionPercent: number; // ✅ NOVO
+
+  // ✅ NOVO - Progresso de Exercícios
+  exerciseResults: IExerciseResult[];
+  exercisesCompletionPercent: number;
+
+  // ✅ NOVO - Nota Final
+  finalGrade?: number;
+
+  // ✅ NOVO - Certificação
+  certificateEligible: boolean;
+  certificateIssued: boolean;
+  certificateIssuedAt?: Date;
+  certificateUrl?: string;
+
+  // Timestamps
   startedAt: Date;
+  lastAccessedAt: Date;
   completedAt?: Date;
 }
 
 export type CourseDifficultyLevel = "Iniciante" | "Intermediário" | "Avançado";
+
+export type CourseStatus = "PUBLISHED" | "COMING_SOON" | "DRAFT";
+
+export type LessonStatus = "PUBLISHED" | "COMING_SOON" | "DRAFT";
 
 export type SlideType = "text" | "image" | "highlight" | "reference";
 
@@ -55,4 +104,89 @@ export interface ICourseCategory {
   name: string;
   description?: string;
   iconName?: string;
+}
+
+// ✅ NOVO - Exercícios
+export interface IExercise {
+  id: string;
+  courseId: string;
+  lessonId?: string;
+  moduleId?: string;
+  title: string;
+  description?: string;
+  order: number;
+  type: ExerciseType;
+  weight: number;
+  passingGrade: number;
+  maxAttempts?: number;
+  timeLimit?: number;
+  status: ExerciseStatus;
+  quizId?: string;
+  essayQuestions?: IEssayQuestion[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type ExerciseType = "QUIZ" | "TRUE_FALSE" | "ESSAY" | "MIXED";
+
+export type ExerciseStatus = "PUBLISHED" | "COMING_SOON" | "DRAFT";
+
+export interface IEssayQuestion {
+  id: string;
+  question: string;
+  expectedAnswer?: string;
+  maxWords?: number;
+  minWords?: number;
+}
+
+export interface IExerciseResult {
+  exerciseId: string;
+  attempts: IExerciseAttempt[];
+  bestScore: number;
+  passed: boolean;
+  completedAt?: Date;
+}
+
+export interface IExerciseAttempt {
+  attemptNumber: number;
+  score: number;
+  answers: unknown[];
+  startedAt: Date;
+  completedAt: Date;
+  timeSpent: number;
+}
+
+// ✅ NOVO - Material Complementar
+export interface ISupplementaryMaterial {
+  id: string;
+  title: string;
+  description?: string;
+  type: MaterialType;
+  url?: string;
+  fileUrl?: string;
+  content?: string;
+  order: number;
+}
+
+export type MaterialType = "PDF" | "LINK" | "TEXT" | "VIDEO" | "AUDIO" | "REFERENCE";
+
+// ✅ NOVO - Certificados
+export interface ICertificate {
+  id: string;
+  userId: string;
+  courseId: string;
+  studentName: string;
+  studentEmail: string;
+  studentDocument?: string;
+  courseTitle: string;
+  courseAuthor: string;
+  courseWorkloadMinutes: number;
+  finalGrade: number;
+  lessonsCompleted: number;
+  exercisesCompleted: number;
+  certificateNumber: string;
+  issuedAt: Date;
+  pdfUrl: string;
+  validationCode: string;
+  validationUrl: string;
 }

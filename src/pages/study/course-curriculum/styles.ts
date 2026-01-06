@@ -38,16 +38,11 @@ export const createStyles = (theme: ITheme) =>
     // SUMMARY CARD (Topo)
     summaryCard: {
       backgroundColor: theme.colors.card,
-      borderRadius: 16,
-      padding: 16,
-      marginBottom: 24,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.md,
+      marginBottom: theme.spacing.lg,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
     },
     summaryTitle: {
       ...theme.text("lg", "semibold"),
@@ -68,8 +63,8 @@ export const createStyles = (theme: ITheme) =>
     summaryBarBg: {
       width: "100%",
       height: 8,
-      backgroundColor: "rgba(255,255,255,0.1)", // Ou theme.colors.border
-      borderRadius: 4,
+      backgroundColor: theme.colors.border, // ✅ Usar token
+      borderRadius: theme.radius.xs, // ✅ Usar token
       overflow: "hidden",
       marginBottom: 4,
     },
@@ -87,33 +82,33 @@ export const createStyles = (theme: ITheme) =>
     lessonCard: {
       flexDirection: "row",
       alignItems: "center",
-      padding: 16,
-      marginBottom: 12,
-      borderRadius: 12,
+      padding: theme.spacing.md, // ✅ Usar token
+      marginBottom: theme.spacing.sm, // ✅ Usar token
+      borderRadius: theme.radius.md, // ✅ Usar token
       borderWidth: 1,
-      borderColor: "transparent", // Sobrescrito pelos estados
-      backgroundColor: theme.colors.card, // Sobrescrito
+      borderColor: "transparent",
+      backgroundColor: theme.colors.card,
     },
 
     // VARIANTES DE CARD
     cardCompleted: {
-      backgroundColor: "rgba(16, 185, 129, 0.1)", // Success 10%
-      borderColor: "rgba(16, 185, 129, 0.3)", // Success 30%
+      backgroundColor: `${theme.colors.success}15`, // ✅ Success 15% opacidade
+      borderColor: `${theme.colors.success}30`, // ✅ Success 30% opacidade
     },
     cardInProgress: {
-      backgroundColor: "rgba(245, 158, 11, 0.1)", // Warning 10%
-      borderColor: "rgba(245, 158, 11, 0.3)", // Warning 30%
-      flexDirection: "column", // Muda layout para caber a barra interna
-      alignItems: "stretch", // Esticar conteúdo
+      backgroundColor: `${theme.colors.primary}15`, // ✅ Primary 15% opacidade
+      borderColor: `${theme.colors.primary}30`, // ✅ Primary 30% opacidade
+      flexDirection: "column",
+      alignItems: "stretch",
     },
     cardLocked: {
       backgroundColor: theme.colors.card,
-      borderColor: "rgba(255,255,255,0.05)",
+      borderColor: theme.colors.border, // ✅ Usar token
       opacity: 0.6,
     },
     cardAvailable: {
       backgroundColor: theme.colors.card,
-      borderColor: "rgba(255,255,255,0.1)",
+      borderColor: theme.colors.border, // ✅ Usar token
     },
 
     // CONTEÚDO DO CARD
@@ -176,27 +171,39 @@ export const createStyles = (theme: ITheme) =>
       paddingHorizontal: 8,
       paddingVertical: 4,
       borderRadius: 12,
-      backgroundColor: "rgba(126, 217, 87, 0.2)", // Primary 20%
+      backgroundColor: `${theme.colors.primary}20`, // ✅ Primary 20% opacidade
       marginRight: 8,
     },
     quizText: {
-      ...theme.text("xs", "bold", theme.colors.primary),
+      ...theme.text("xs", "bold", theme.colors.primary), // ✅ Usar primary
       textTransform: "uppercase",
     },
 
-    // BARRA DE PROGRESSO INTERNA (Card In Progress)
+    // COMING SOON BADGE
+    comingSoonBadge: {
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 12,
+      backgroundColor: `${theme.colors.primary}20`, // ✅ Primary 20% opacidade
+      marginRight: 8,
+    },
+    comingSoonText: {
+      ...theme.text("xs", "bold", theme.colors.primary), // ✅ Usar primary
+      textTransform: "uppercase",
+    },
+
+    // INTERNAL PROGRESS BAR (Para aulas em andamento)
     internalProgressBarBg: {
       width: "100%",
       height: 4,
-      backgroundColor: "rgba(245, 158, 11, 0.2)", // Warning 20%
-      borderRadius: 2,
-      marginTop: 12,
-      overflow: "hidden",
+      backgroundColor: theme.colors.border, // ✅ Usar token
+      borderRadius: theme.radius.xs, // ✅ Usar token
+      marginTop: 8,
     },
     internalProgressBarFill: {
       height: "100%",
-      backgroundColor: theme.colors.warning, // Warning
-      borderRadius: 2,
+      backgroundColor: theme.colors.primary, // ✅ Usar primary
+      borderRadius: theme.radius.xs, // ✅ Usar token
     },
 
     loadingContainer: {

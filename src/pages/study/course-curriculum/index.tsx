@@ -21,6 +21,8 @@ import {
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { useLessons } from "@/hooks/queries/useLessons";
+import { useCourse } from "@/hooks/queries/useCourses"; // ✅ Corrigido
+import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
 import { ILesson } from "@/types/course";
 import { createStyles } from "./styles";
 
@@ -45,23 +47,45 @@ export function CourseCurriculumScreen() {
   // Fetch das aulas reais
   const { data: lessons = [], isLoading: loading } = useLessons(courseId);
 
-  // MOCK DE PROGRESSO (Para demonstração visual dos estados do Stitch)
-  // No futuro isso virá de useCourseProgress(courseId)
-  const courseProgress = {
-    percent: 67,
-    completed: 8,
-    total: 12,
-    currentLessonId: "2", // Simulando que a aula 2 está em andamento
-    completedLessonIds: ["1"],
-  };
+  // ✅ Fetch do curso para exibir título
+  const { data: course } = useCourse(courseId);
+
+  // ✅ Fetch do progresso real do usuário
+  const { data: progress } = useCourseProgress(courseId);
+
+  // Calcular progresso
+  const totalLessons = lessons.length;
+  const completedLessons = progress?.completedLessons.length || 0;
+  const progressPercent =
+    totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
   function getLessonStatus(lesson: ILesson, index: number): LessonStatus {
-    // Lógica provisória baseada no índice para demonstrar os visuais
-    if (index === 0) return LessonStatus.COMPLETED;
-    if (index === 1) return LessonStatus.IN_PROGRESS;
-    if (index === 2) return LessonStatus.LOCKED;
-    if (index === 3) return LessonStatus.AVAILABLE; // Ex: Quiz
-    return LessonStatus.LOCKED;
+    // Se não tiver progresso, todas as aulas estão disponíveis (sem bloqueio)
+    if (!progress) {
+      return index === 0 ? LessonStatus.AVAILABLE : LessonStatus.AVAILABLE;
+    }
+
+    // Verificar se a aula foi concluída
+    if (progress.completedLessons.includes(lesson.id)) {
+      return LessonStatus.COMPLETED;
+    }
+
+    // Verificar se é a próxima aula (em andamento)
+    if (progress.lastLessonId === lesson.id) {
+      return LessonStatus.IN_PROGRESS;
+    }
+
+    // Lógica de desbloqueio sequencial: só pode acessar se a anterior foi concluída
+    if (index === 0) {
+      return LessonStatus.AVAILABLE; // Primeira aula sempre disponível
+    }
+
+    const previousLesson = lessons[index - 1];
+    if (previousLesson && progress.completedLessons.includes(previousLesson.id)) {
+      return LessonStatus.AVAILABLE; // Aula anterior concluída, esta está disponível
+    }
+
+    return LessonStatus.LOCKED; // Bloqueada
   }
 
   function handleGoBack() {
@@ -78,15 +102,13 @@ export function CourseCurriculumScreen() {
     const hasQuiz = index === 3; // Mock para mostrar badge de Quiz
 
     // Define estilos baseados no status
-    let containerStyle = styles.lessonCard;
-    if (status === LessonStatus.COMPLETED)
-      containerStyle = [styles.lessonCard, styles.cardCompleted];
-    if (status === LessonStatus.IN_PROGRESS)
-      containerStyle = [styles.lessonCard, styles.cardInProgress];
-    if (status === LessonStatus.LOCKED)
-      containerStyle = [styles.lessonCard, styles.cardLocked];
-    if (status === LessonStatus.AVAILABLE)
-      containerStyle = [styles.lessonCard, styles.cardAvailable];
+    const containerStyle = [
+      styles.lessonCard,
+      status === LessonStatus.COMPLETED && styles.cardCompleted,
+      status === LessonStatus.IN_PROGRESS && styles.cardInProgress,
+      status === LessonStatus.LOCKED && styles.cardLocked,
+      status === LessonStatus.AVAILABLE && styles.cardAvailable,
+    ];
 
     return (
       <TouchableOpacity
@@ -110,8 +132,8 @@ export function CourseCurriculumScreen() {
               {status === LessonStatus.IN_PROGRESS && (
                 <PlayCircle
                   size={32}
-                  color={theme.colors.warning}
-                  fill={theme.colors.warning}
+                  color={theme.colors.primary}
+                  fill={theme.colors.primary}
                   fillOpacity={0.1}
                 />
               )}
@@ -185,18 +207,16 @@ export function CourseCurriculumScreen() {
           ListHeaderComponent={
             // HEADER DE RESUMO DE PROGRESSO
             <View style={styles.summaryCard}>
-              <Text style={styles.summaryTitle}>Resumo do Progresso</Text>
+              <Text style={styles.summaryTitle}>{course?.title || "Curso"}</Text>
               <View style={styles.summaryProgressRow}>
                 <Text style={styles.summaryLabel}>Progresso do curso</Text>
-                <Text style={styles.summaryPercent}>{courseProgress.percent}%</Text>
+                <Text style={styles.summaryPercent}>{progressPercent}%</Text>
               </View>
               <View style={styles.summaryBarBg}>
-                <View
-                  style={[styles.summaryBarFill, { width: `${courseProgress.percent}%` }]}
-                />
+                <View style={[styles.summaryBarFill, { width: `${progressPercent}%` }]} />
               </View>
               <Text style={styles.summaryFooter}>
-                {courseProgress.completed} de {courseProgress.total} aulas concluídas
+                {completedLessons} de {totalLessons} aulas concluídas
               </Text>
             </View>
           }

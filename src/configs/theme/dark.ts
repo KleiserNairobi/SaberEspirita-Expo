@@ -18,6 +18,7 @@ export const DarkTheme: ITheme = {
     muted: "#546072",
     error: "#CF6679",
     success: "#81C784",
+    warning: "#FFA726", // ✅ NOVO - Laranja claro para avisos
     onPrimary: "#0C1624",
     onSecondary: "#FFFFFF",
   },

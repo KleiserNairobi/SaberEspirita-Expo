@@ -29,6 +29,6 @@ export function useCourse(id: string) {
   return useQuery({
     queryKey: COURSES_KEYS.detail(id),
     queryFn: () => getCourseById(id),
-    enabled: !!id, // Só executa se tiver ID
+    enabled: !!id,
   });
 }

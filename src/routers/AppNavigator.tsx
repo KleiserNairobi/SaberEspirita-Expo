@@ -11,6 +11,7 @@ import { ScientificChatScreen } from "@/pages/chat/scientific";
 import { GlossaryNavigator } from "./GlossaryNavigator";
 import { CoursesCatalogScreen } from "@/pages/study/courses-catalog";
 import { CourseDetailsScreen } from "@/pages/study/course-details";
+import { CourseCurriculumScreen } from "@/pages/study/course-curriculum"; // ✅ NOVO
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -30,6 +31,7 @@ export function AppNavigator() {
       <Stack.Screen name="Glossary" component={GlossaryNavigator} />
       <Stack.Screen name="CoursesCatalog" component={CoursesCatalogScreen} />
       <Stack.Screen name="CourseDetails" component={CourseDetailsScreen} />
+      <Stack.Screen name="CourseCurriculum" component={CourseCurriculumScreen} />
     </Stack.Navigator>
   );
 }

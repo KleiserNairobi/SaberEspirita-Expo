@@ -18,6 +18,7 @@ export const LightTheme: ITheme = {
     muted: "#A3B09A",
     error: "#C94B4B",
     success: "#5C8A5C",
+    warning: "#F59E0B", // ✅ NOVO - Laranja para avisos
     onPrimary: "#FFFFFF",
     onSecondary: "#FFFFFF",
 
