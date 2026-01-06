@@ -8,7 +8,9 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.md,
     },
     slideTitle: {
-      ...theme.text("xl", "bold"),
-      marginBottom: theme.spacing.md,
+      ...theme.text("xl", "bold"), // Aumentado para destaque claro
+      textAlign: "center", // Centralizado para alinhar com Header e Toolbar
+      marginBottom: theme.spacing.xs, // Espaço reduzido
+      marginTop: theme.spacing.sm,
     },
   });

@@ -7,14 +7,16 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  Share,
 } from "react-native";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft, MoreVertical } from "lucide-react-native";
+import { ArrowLeft } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
+import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore"; // Store de preferências de leitura
 import { AppStackParamList } from "@/routers/types";
 import { useLesson } from "@/hooks/queries/useLessons";
 
@@ -23,12 +25,14 @@ import {
   COURSE_PROGRESS_KEYS,
 } from "@/hooks/queries/useCourseProgress";
 import { markLessonAsCompleted } from "@/services/firebase/progressService";
+import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech"; // Utils de TTS
 
 import { SlideContent } from "./components/SlideContent";
 import { HighlightCard } from "./components/HighlightCard";
 import { ReferenceCard } from "./components/ReferenceCard";
 import { SlideIndicator } from "./components/SlideIndicator";
 import { NavigationButtons } from "./components/NavigationButtons";
+import { ReadingToolbar } from "@/components/ReadingToolbar"; // Nova Toolbar
 import { createStyles } from "./styles";
 
 type LessonPlayerRouteProp = RouteProp<AppStackParamList, "LessonPlayer">;
@@ -42,8 +46,13 @@ export function LessonPlayerScreen() {
   const navigation = useNavigation<NavigationProp>();
   const queryClient = useQueryClient();
 
+  // Controle de Fonte
+  const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } =
+    usePrayerPreferencesStore();
+
   const { courseId, lessonId } = route.params;
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isNarrating, setIsNarrating] = useState(false); // Estado de narração
 
   // Fetch da aula
   const { data: lesson, isLoading } = useLesson(courseId, lessonId);
@@ -99,9 +108,60 @@ export function LessonPlayerScreen() {
     navigation.goBack();
   }
 
-  function handleMenu() {
-    // TODO: Implementar menu de opções (Fase 2)
-    Alert.alert("Menu", "Funcionalidade em desenvolvimento");
+  // --- Funções da Toolbar de Leitura ---
+
+  async function handleShare() {
+    if (!currentSlide) return;
+    try {
+      await Share.share({
+        message: `${currentSlide.title}\n\n${currentSlide.content}`,
+      });
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível compartilhar.");
+    }
+  }
+
+  async function handleNarrate() {
+    if (!currentSlide) return;
+
+    try {
+      const speaking = await isSpeaking();
+
+      if (speaking || isNarrating) {
+        await stopSpeaking();
+        setIsNarrating(false);
+      } else {
+        setIsNarrating(true);
+
+        // Constrói texto completo para narração
+        let fullText = `${currentSlide.title}. ${currentSlide.content}`;
+
+        // Adiciona destaques
+        if (currentSlide.highlights && currentSlide.highlights.length > 0) {
+          fullText += ". Destaques: ";
+          currentSlide.highlights.forEach((h) => {
+            fullText += `${h.title}: ${h.content}. `;
+          });
+        }
+
+        // Adiciona referências
+        if (currentSlide.references) {
+          fullText += ". Referências: ";
+          if (currentSlide.references.kardeciana) {
+            fullText += `Kardeciana: ${currentSlide.references.kardeciana}. `;
+          }
+          if (currentSlide.references.biblica) {
+            fullText += `Bíblica: ${currentSlide.references.biblica}. `;
+          }
+        }
+
+        await speakText(fullText);
+        setIsNarrating(false);
+      }
+    } catch (error) {
+      setIsNarrating(false);
+      Alert.alert("Erro", "Não foi possível narrar o conteúdo.");
+    }
   }
 
   if (isLoading) {
@@ -129,18 +189,29 @@ export function LessonPlayerScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-      {/* Header */}
+      {/* Header - Apenas Título (Botão Voltar removido pois já existe na Toolbar) */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.headerButton} onPress={handleGoBack}>
-          <ArrowLeft size={24} color={theme.colors.text} />
-        </TouchableOpacity>
+        {/* Placeholder vazio para equilíbrio visual */}
+        <View style={styles.headerButton} />
         <Text style={styles.headerTitle} numberOfLines={1}>
           {lesson.title}
         </Text>
-        <TouchableOpacity style={styles.headerButton} onPress={handleMenu}>
-          <MoreVertical size={24} color={theme.colors.text} />
-        </TouchableOpacity>
+        {/* Placeholder vazio para equilíbrio visual */}
+        <View style={styles.headerButton} />
       </View>
+
+      {/* Toolbar de Leitura Padronizada */}
+      <ReadingToolbar
+        onBack={handleGoBack}
+        onShare={handleShare}
+        onNarrate={handleNarrate}
+        isNarrating={isNarrating}
+        onIncreaseFontSize={increaseFontSize}
+        onDecreaseFontSize={decreaseFontSize}
+        canIncreaseFontSize={fontSizeLevel < 4}
+        canDecreaseFontSize={fontSizeLevel > 0}
+        showFavorite={false} // Não exibe favorito em aulas
+      />
 
       {/* Content */}
       <ScrollView
@@ -152,14 +223,15 @@ export function LessonPlayerScreen() {
           title={currentSlide.title}
           content={currentSlide.content}
           imagePrompt={currentSlide.imagePrompt}
+          fontSize={getFontSize()}
         />
 
         {currentSlide.highlights && currentSlide.highlights.length > 0 && (
-          <HighlightCard highlights={currentSlide.highlights} />
+          <HighlightCard highlights={currentSlide.highlights} fontSize={getFontSize()} />
         )}
 
         {currentSlide.references && (
-          <ReferenceCard references={currentSlide.references} />
+          <ReferenceCard references={currentSlide.references} fontSize={getFontSize()} />
         )}
 
         <SlideIndicator

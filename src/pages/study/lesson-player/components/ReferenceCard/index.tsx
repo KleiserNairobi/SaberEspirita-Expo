@@ -10,9 +10,10 @@ interface ReferenceCardProps {
     kardeciana?: string;
     biblica?: string;
   };
+  fontSize?: number;
 }
 
-export function ReferenceCard({ references }: ReferenceCardProps) {
+export function ReferenceCard({ references, fontSize = 16 }: ReferenceCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
@@ -27,10 +28,14 @@ export function ReferenceCard({ references }: ReferenceCardProps) {
         <Text style={styles.headerTitle}>Referências</Text>
       </View>
       {references.kardeciana && (
-        <Text style={styles.referenceText}>Kardeciana: {references.kardeciana}</Text>
+        <Text style={[styles.referenceText, { fontSize, lineHeight: fontSize * 1.5 }]}>
+          Kardeciana: {references.kardeciana}
+        </Text>
       )}
       {references.biblica && (
-        <Text style={styles.referenceText}>Bíblica: {references.biblica}</Text>
+        <Text style={[styles.referenceText, { fontSize, lineHeight: fontSize * 1.5 }]}>
+          Bíblica: {references.biblica}
+        </Text>
       )}
     </View>
   );

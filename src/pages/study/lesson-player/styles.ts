@@ -24,7 +24,8 @@ export const createStyles = (theme: ITheme) =>
       alignItems: "center",
     },
     headerTitle: {
-      ...theme.text("md", "semibold"),
+      ...theme.text("sm", "medium"), // Menor e mais sutil (Contexto)
+      color: theme.colors.textSecondary, // Cor mais clara para tirar peso
       flex: 1,
       textAlign: "center",
       paddingHorizontal: theme.spacing.sm,

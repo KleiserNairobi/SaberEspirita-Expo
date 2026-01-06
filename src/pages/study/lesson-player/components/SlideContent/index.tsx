@@ -9,9 +9,15 @@ interface SlideContentProps {
   title: string;
   content: string; // Markdown formatted
   imagePrompt?: string;
+  fontSize?: number;
 }
 
-export function SlideContent({ title, content, imagePrompt }: SlideContentProps) {
+export function SlideContent({
+  title,
+  content,
+  imagePrompt,
+  fontSize = 16,
+}: SlideContentProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
@@ -19,19 +25,22 @@ export function SlideContent({ title, content, imagePrompt }: SlideContentProps)
   const markdownStyles = {
     body: {
       ...theme.text("md", "regular"),
+      fontSize: fontSize,
       color: theme.colors.text,
-      lineHeight: 24,
+      lineHeight: fontSize * 1.5,
     },
     paragraph: {
       marginBottom: theme.spacing.md,
     },
     strong: {
       ...theme.text("md", "semibold"),
+      fontSize: fontSize,
       color: theme.colors.text,
     },
     em: {
       ...theme.text("md", "regular"),
       fontStyle: "italic",
+      fontSize: fontSize,
       color: theme.colors.text,
     },
     bullet_list: {
@@ -50,7 +59,7 @@ export function SlideContent({ title, content, imagePrompt }: SlideContentProps)
       borderRadius: 3,
       backgroundColor: theme.colors.primary,
       marginRight: theme.spacing.sm,
-      marginTop: 8,
+      marginTop: fontSize / 2 + 2, // Ajuste dinâmico
     },
     blockquote: {
       borderLeftWidth: 4,
@@ -65,7 +74,18 @@ export function SlideContent({ title, content, imagePrompt }: SlideContentProps)
 
   return (
     <View style={styles.slideCard}>
-      <Text style={styles.slideTitle}>{title}</Text>
+      <Text
+        style={[
+          styles.slideTitle,
+          {
+            fontSize: fontSize * 1.2,
+            lineHeight: fontSize * 1.6,
+            textAlign: "left",
+          },
+        ]}
+      >
+        {title}
+      </Text>
       <Markdown style={markdownStyles}>{content}</Markdown>
     </View>
   );

@@ -10,9 +10,10 @@ interface HighlightCardProps {
     title: string;
     content: string;
   }>;
+  fontSize?: number;
 }
 
-export function HighlightCard({ highlights }: HighlightCardProps) {
+export function HighlightCard({ highlights, fontSize = 16 }: HighlightCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
@@ -28,8 +29,12 @@ export function HighlightCard({ highlights }: HighlightCardProps) {
       </View>
       {highlights.map((highlight, index) => (
         <View key={index} style={styles.highlightItem}>
-          <Text style={styles.highlightTitle}>{highlight.title}</Text>
-          <Text style={styles.highlightContent}>{highlight.content}</Text>
+          <Text style={[styles.highlightTitle, { fontSize }]}>{highlight.title}</Text>
+          <Text
+            style={[styles.highlightContent, { fontSize, lineHeight: fontSize * 1.5 }]}
+          >
+            {highlight.content}
+          </Text>
         </View>
       ))}
     </View>

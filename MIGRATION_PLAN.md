@@ -1333,3 +1333,31 @@ bold: "Oswald_700Bold";
   - Execução do script de seed de aulas (`scripts/seed_lessons.ts`)
 
 ---
+
+### 06/01/2026 - Padronização da Barra de Leitura e Ajustes de Progresso
+
+- ✅ **Melhoria no Catálogo e Detalhes do Curso**
+  - **Problema**: Progresso não atualizava corretamente na tela de catálogo.
+  - **Solução**: Implementado cálculo de progresso no client-side (`completedLessons.length / totalLessons`) para garantir consistência visual imediata.
+  - **UX**: Adicionado `useFocusEffect` para recarregar dados de progresso ao voltar para o catálogo.
+
+- ✅ **Padronização da Barra de Ferramentas (`ReadingToolbar`)**
+  - **Componente Reutilizável**: Criado `src/components/ReadingToolbar` unificando ações de leitura.
+  - **Funcionalidades**:
+    - Voltar (Navegação)
+    - Narrar (TTS - Título + Conteúdo + Destaques + Referências)
+    - Compartilhar (Nativo)
+    - Ajuste de Fonte (A+/A- com persistência em Zustand)
+    - Favoritar (Opcional, usado apenas no Glossário)
+  - **Integração**:
+    - Substituída toolbar inline da tela de Glossário (`TermDetailScreen`).
+    - Implementada nova toolbar na tela de Aula (`LessonPlayerScreen`), removendo header actions duplicadas.
+
+- ✅ **Refinamentos de UX/UI no Lesson Player**
+  - **Limpeza Visual**: Removido botão "Voltar" do header duplicado.
+  - **Hierarquia**:
+    - Título do Header reduzido (contextual).
+    - Título do Slide aumentado (1.4x), alinhado à esquerda e responsivo ao ajuste de fonte.
+  - **Espaçamento**:
+    - Toolbar com `justifyContent: 'center'` e gap fixo para consistência visual.
+    - Margem reduzida entre título e conteúdo para melhor fluxo de leitura.

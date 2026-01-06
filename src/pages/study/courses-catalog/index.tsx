@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { useFocusEffect } from "@react-navigation/native";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   BookOpen,
@@ -18,13 +20,12 @@ import {
   BarChart2,
   BarChart3,
   BarChart4,
-  PlayCircle,
-  CheckCircle,
 } from "lucide-react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useCourses } from "@/hooks/queries/useCourses";
+import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
 import { ICourse } from "@/types/course";
 import { ContentFilterType } from "@/types/prayer";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
@@ -39,20 +40,64 @@ const COURSE_FILTER_OPTIONS = [
   { id: "INICIANTE" as ContentFilterType, label: "Iniciante", icon: BarChart2 },
   { id: "INTERMEDIARIO" as ContentFilterType, label: "Intermediário", icon: BarChart3 },
   { id: "AVANCADO" as ContentFilterType, label: "Avançado", icon: BarChart4 },
-  // { id: "EM_ANDAMENTO" as ContentFilterType, label: "Em Andamento", icon: PlayCircle }, // Desabilitado temporariamente
-  // { id: "CONCLUIDOS" as ContentFilterType, label: "Concluídos", icon: CheckCircle }, // Desabilitado temporariamente
 ] as const;
+
+// Componente individual para permitir o uso do hook de progresso em cada item
+const CatalogCourseItem = React.memo(
+  ({
+    course,
+    onPress,
+    theme,
+    styles,
+  }: {
+    course: ICourse;
+    onPress: (course: ICourse) => void;
+    theme: any;
+    styles: any;
+  }) => {
+    // Busca o progresso específico deste curso
+    const { data: progressData } = useCourseProgress(course.id);
+
+    // Calcular progresso real localmente para garantir consistência com a tela de detalhes
+    // (Isso evita depender de campos que possam estar desatualizados no banco)
+    const completedCount = progressData?.completedLessons?.length || 0;
+    const totalLessons = course.lessonCount || 0;
+
+    const progressPercent =
+      totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+
+    return (
+      <View style={{ paddingHorizontal: theme.spacing.lg }}>
+        <CourseCard
+          course={course}
+          progress={progressPercent}
+          onPress={() => onPress(course)}
+        />
+      </View>
+    );
+  }
+);
 
 export function CoursesCatalogScreen({ navigation }: any) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const queryClient = useQueryClient();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<ContentFilterType>("ALL");
 
   // React Query Fetch
   const { data: courses = [], isLoading, error } = useCourses();
+
+  // Invalida cache de progresso ao focar na tela para garantir dados atualizados
+  useFocusEffect(
+    useCallback(() => {
+      // Invalida todas as queries que começam com 'courseProgress'
+      // Isso força o refetch do progresso dos cursos exibidos na lista
+      queryClient.invalidateQueries({ queryKey: ["courseProgress"] });
+    }, [queryClient])
+  );
 
   // Filtrar cursos baseado na busca e filtro
   const filteredCourses = React.useMemo(() => {
@@ -94,17 +139,13 @@ export function CoursesCatalogScreen({ navigation }: any) {
   }
 
   function renderCourse({ item }: { item: ICourse }) {
-    // TODO: Buscar progresso real do usuário
-    const progress = 0;
-
     return (
-      <View style={{ paddingHorizontal: theme.spacing.lg }}>
-        <CourseCard
-          course={item}
-          progress={progress}
-          onPress={() => handleCoursePress(item)}
-        />
-      </View>
+      <CatalogCourseItem
+        course={item}
+        onPress={handleCoursePress}
+        theme={theme}
+        styles={styles}
+      />
     );
   }
 

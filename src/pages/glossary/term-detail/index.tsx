@@ -13,16 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { GlossaryStackParamList } from "@/routers/types";
-import {
-  Heart,
-  Share2,
-  Volume2,
-  VolumeX,
-  ArrowLeft,
-  AArrowDown,
-  AArrowUp,
-  MessageCircle,
-} from "lucide-react-native";
+import { ArrowLeft, MessageCircle } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useGlossaryFavoritesStore } from "@/stores/glossaryFavoritesStore";
@@ -31,6 +22,7 @@ import { useGlossaryTerm } from "../hooks/useGlossaryTerms";
 import { GLOSSARY_CATEGORIES } from "@/types/glossary";
 import { createStyles } from "./styles";
 import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
+import { ReadingToolbar } from "@/components/ReadingToolbar";
 
 export function TermDetailScreen() {
   const { theme } = useAppTheme();
@@ -139,72 +131,20 @@ export function TermDetailScreen() {
           </View>
         </View>
 
-        {/* Barra de Ações */}
-        <View style={styles.actionsContainer}>
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={handleGoBack}
-            activeOpacity={0.7}
-          >
-            <ArrowLeft size={20} color={theme.colors.primary} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={handleToggleFavorite}
-            activeOpacity={0.7}
-          >
-            <Heart
-              size={20}
-              color={theme.colors.primary}
-              fill={isFavorite ? theme.colors.primary : "transparent"}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={handleNarrate}
-            activeOpacity={0.7}
-          >
-            {isNarrating ? (
-              <VolumeX size={20} color={theme.colors.primary} />
-            ) : (
-              <Volume2 size={20} color={theme.colors.primary} />
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={handleShare}
-            activeOpacity={0.7}
-          >
-            <Share2 size={20} color={theme.colors.primary} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={decreaseFontSize}
-            activeOpacity={0.7}
-            disabled={fontSizeLevel === 0}
-          >
-            <AArrowDown
-              size={20}
-              color={fontSizeLevel === 0 ? theme.colors.muted : theme.colors.primary}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={increaseFontSize}
-            activeOpacity={0.7}
-            disabled={fontSizeLevel === 4}
-          >
-            <AArrowUp
-              size={20}
-              color={fontSizeLevel === 4 ? theme.colors.muted : theme.colors.primary}
-            />
-          </TouchableOpacity>
-        </View>
+        {/* Barra de Ações Reutilizável */}
+        <ReadingToolbar
+          onBack={handleGoBack}
+          onShare={handleShare}
+          onNarrate={handleNarrate}
+          isNarrating={isNarrating}
+          onIncreaseFontSize={increaseFontSize}
+          onDecreaseFontSize={decreaseFontSize}
+          canIncreaseFontSize={fontSizeLevel < 4}
+          canDecreaseFontSize={fontSizeLevel > 0}
+          showFavorite={true}
+          isFavorite={isFavorite}
+          onFavorite={handleToggleFavorite}
+        />
 
         {/* Definição */}
         <View style={styles.section}>
