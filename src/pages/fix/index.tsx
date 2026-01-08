@@ -1,53 +1,75 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, ScrollView, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useCategories } from "@/hooks/queries/useQuiz";
+import { CategoryCard } from "./components/CategoryCard";
+import { createStyles } from "./styles";
+import { FixStackParamList } from "@/routers/types";
 
-export default function FixPlaceholderScreen() {
+type FixHomeNavigationProp = NativeStackNavigationProp<FixStackParamList, "FixHome">;
+
+export default function FixHomeScreen() {
   const { theme } = useAppTheme();
+  const styles = createStyles(theme);
+  const navigation = useNavigation<FixHomeNavigationProp>();
+
+  const { data: categories, isLoading } = useCategories();
+
+  function handleCategoryPress(categoryId: string, categoryName: string) {
+    navigation.navigate("Subcategories", {
+      categoryId,
+      categoryName,
+    });
+  }
+
+  function renderHeader() {
+    return (
+      <View>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Fixe seu Conhecimento</Text>
+          <Text style={styles.subtitle}>Teste o que você aprendeu hoje.</Text>
+        </View>
+
+        {/* TODO: Desafio Diário Card */}
+        {/* <DailyChallengeCard /> */}
+
+        {/* TODO: Meu Progresso Section */}
+        {/* <ProgressSection /> */}
+
+        {/* Título da Seção */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Categorias</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
-      <View style={styles.content}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>Fixe</Text>
-        <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
-          Módulo em desenvolvimento
-        </Text>
-        <Text style={[styles.description, { color: theme.colors.muted }]}>
-          Em breve você poderá acessar quizzes e exercícios para fixar seu conhecimento.
-        </Text>
-      </View>
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={categories}
+        numColumns={3}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={renderHeader}
+        contentContainerStyle={styles.contentContainer}
+        columnWrapperStyle={styles.categoryGrid}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <CategoryCard
+            key={item.id}
+            name={item.name}
+            questionCount={item.questionCount}
+            progress={0} // TODO: Calcular progresso real do usuário
+            icon={item.icon as any}
+            gradientColors={item.gradientColors}
+            onPress={() => handleCategoryPress(item.id, item.name)}
+          />
+        )}
+      />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 32,
-  },
-  title: {
-    fontSize: 32,
-    fontFamily: "Oswald_700Bold",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 18,
-    fontFamily: "Oswald_400Regular",
-    marginBottom: 16,
-  },
-  description: {
-    fontSize: 14,
-    fontFamily: "BarlowCondensed_400Regular",
-    textAlign: "center",
-    lineHeight: 20,
-  },
-});

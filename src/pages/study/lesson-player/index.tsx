@@ -113,8 +113,30 @@ export function LessonPlayerScreen() {
   async function handleShare() {
     if (!currentSlide) return;
     try {
+      // Constrói mensagem completa para compartilhamento
+      let shareMessage = `${currentSlide.title}\n\n${currentSlide.content}`;
+
+      // Adiciona destaques
+      if (currentSlide.highlights && currentSlide.highlights.length > 0) {
+        shareMessage += "\n\n💡 Destaques:\n";
+        currentSlide.highlights.forEach((h) => {
+          shareMessage += `\n• ${h.title}: ${h.content}`;
+        });
+      }
+
+      // Adiciona referências
+      if (currentSlide.references) {
+        shareMessage += "\n\n📖 Referências:";
+        if (currentSlide.references.kardeciana) {
+          shareMessage += `\n• Kardeciana: ${currentSlide.references.kardeciana}`;
+        }
+        if (currentSlide.references.biblica) {
+          shareMessage += `\n• Bíblica: ${currentSlide.references.biblica}`;
+        }
+      }
+
       await Share.share({
-        message: `${currentSlide.title}\n\n${currentSlide.content}`,
+        message: shareMessage,
       });
     } catch (error) {
       Alert.alert("Erro", "Não foi possível compartilhar.");
@@ -133,7 +155,7 @@ export function LessonPlayerScreen() {
       } else {
         setIsNarrating(true);
 
-        // Constrói texto completo para narração
+        // Constrói texto completo para narração (sem referências para evitar problemas com capítulos bíblicos)
         let fullText = `${currentSlide.title}. ${currentSlide.content}`;
 
         // Adiciona destaques
@@ -142,17 +164,6 @@ export function LessonPlayerScreen() {
           currentSlide.highlights.forEach((h) => {
             fullText += `${h.title}: ${h.content}. `;
           });
-        }
-
-        // Adiciona referências
-        if (currentSlide.references) {
-          fullText += ". Referências: ";
-          if (currentSlide.references.kardeciana) {
-            fullText += `Kardeciana: ${currentSlide.references.kardeciana}. `;
-          }
-          if (currentSlide.references.biblica) {
-            fullText += `Bíblica: ${currentSlide.references.biblica}. `;
-          }
         }
 
         await speakText(fullText);

@@ -3,6 +3,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { FixStackParamList } from "./types";
 import FixPlaceholder from "@/pages/fix";
+import { SubcategoriesScreen } from "@/pages/fix/subcategories";
+import { QuizScreen } from "@/pages/fix/quiz";
+import { QuizResultScreen } from "@/pages/fix/quiz/result";
 import { TruthOrFalseHomeScreen } from "@/pages/fix/truth-or-false/home";
 import { TruthOrFalseQuestionScreen } from "@/pages/fix/truth-or-false/question";
 import { TruthOrFalseResultScreen } from "@/pages/fix/truth-or-false/result";
@@ -18,6 +21,9 @@ export function FixNavigator() {
       }}
     >
       <Stack.Screen name="FixHome" component={FixPlaceholder} />
+      <Stack.Screen name="Subcategories" component={SubcategoriesScreen} />
+      <Stack.Screen name="Quiz" component={QuizScreen} />
+      <Stack.Screen name="QuizResult" component={QuizResultScreen} />
       <Stack.Screen name="TruthOrFalseHome" component={TruthOrFalseHomeScreen} />
       <Stack.Screen name="TruthOrFalseQuestion" component={TruthOrFalseQuestionScreen} />
       <Stack.Screen name="TruthOrFalseResult" component={TruthOrFalseResultScreen} />

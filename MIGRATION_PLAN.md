@@ -249,23 +249,58 @@ src/
 
 ### Fase 2: Módulo FIXE (Quizzes & Gamificação)
 
-- [ ] **Integração Legada**: Migrar modelos e dados do Firestore (`Category`, `Quiz`, `UserHistory`).
-- [ ] **Tela FIXE (Dashboard)**:
-  - **Seção 1: Desafio Diário**:
-    - Lógica para gerar/selecionar 5 perguntas do dia.
-    - Card com Streak (Sequência de dias).
-    - Botão "Iniciar" direto.
-  - **Seção 2: Quizzes por Curso**:
-    - Listagem vertical de cursos disponíveis para quiz.
-    - Botão "Fazer Quiz" para cada item.
-  - **Seção 3: Meu Progresso**:
-    - Resumo estatístico (Acertos totais).
-    - Exibição de Conquistas (Badges).
-    - Link para "Placar Completo" (Leaderboard).
-- [ ] **Fluxo de Quiz**:
-  - Tela de Execução (Feedback visual imediato).
-  - Tela de Resultados (Ao final, com opção de revisão).
+- [x] **Integração Legada**: Migrar modelos e dados do Firestore (`Category`, `Quiz`, `UserHistory`).
+  - [x] Tipos TypeScript criados em `src/types/quiz.ts` (IQuiz, IQuestion, IQuizAnswer, IQuizHistory, ICategory, ISubcategory)
+  - [x] Serviços Firebase criados em `src/services/firebase/quizService.ts`
+  - [x] Hooks React Query criados em `src/hooks/queries/useQuiz.ts`
+  - [x] Dados mockados para desenvolvimento (6 categorias: Conceitos, Diversos, Espíritos, Filmes, Livros, Personagens)
+
+- [x] **Componentes Reutilizáveis** (08/01/2026):
+  - [x] `AnswerOption` - Alternativa com feedback visual verde/vermelho
+  - [x] `QuestionCard` - Container de perguntas
+  - [x] `QuizProgressBar` - Barra de progresso + contador
+  - [x] `CategoryCard` - Card de categoria (3 colunas, padrão do app)
+  - [x] `SubcategoryCard` - Card de subcategoria com check
+  - [x] `SearchBar` - Busca com ícone (componente genérico)
+  - [x] `IconButton` - Botão genérico com ícone (componente genérico)
+  - [x] `Button` - Botão genérico primary/outline (componente genérico)
+
+- [x] **Tela FIXE (Dashboard)** - ✅ **100% Concluído** (08/01/2026):
+  - [x] `FixHomeScreen` implementada com FlatList (3 colunas)
+  - [x] Grid de 6 categorias com ícones, contador de questões e barra de progresso
+  - [x] Navegação para subcategorias
+  - [x] Design alinhado com padrão do app (fundo branco, ícone verde claro/escuro)
+  - [ ] **Pendente**: Desafio Diário (card + lógica de 5 perguntas/dia)
+  - [ ] **Pendente**: Meu Progresso (estatísticas + badges)
+
+- [x] **Tela de Subcategorias** - ✅ **100% Concluído** (08/01/2026):
+  - [x] `SubcategoriesScreen` com SearchBar e filtros
+  - [x] Lista de subcategorias por categoria
+  - [x] Navegação para quiz
+  - [x] Ícone de check para subcategorias concluídas
+
+- [x] **Fluxo de Quiz** - ✅ **100% Concluído** (08/01/2026):
+  - [x] **Tela de Execução** (`QuizScreen`):
+    - [x] Navegação de perguntas com barra de progresso
+    - [x] Feedback visual imediato (verde/vermelho)
+    - [x] Botões "Confirmar" e "Próxima"
+    - [x] Botão "Parar" com confirmação
+    - [x] Cálculo de resultados (acertos, percentual, nível)
+  - [x] **Tela de Resultados** (`QuizResultScreen`):
+    - [x] Sistema de estrelas (1-4 baseado no percentual)
+    - [x] Estatísticas (acertos/total, percentual)
+    - [x] Mensagens motivacionais por nível (Ótimo/Bom/Regular/Fraco)
+    - [x] Botões "Continuar" e "Revisar e Aprender"
+    - [ ] **Pendente**: Tela de revisão de respostas
+
+- [x] **Navegação** - ✅ **100% Concluído** (08/01/2026):
+  - [x] `FixStackParamList` atualizado com rotas de quiz
+  - [x] `FixNavigator` configurado com todas as rotas
+  - [x] Navegação completa: FixHome → Subcategories → Quiz → QuizResult
+
 - [ ] **Leaderboard**: Tela dedicada com Ranking Global/Amigos.
+- [ ] **Integração com Firestore**: Salvar progresso e histórico do usuário
+- [ ] **Cálculo de Progresso Real**: Substituir mock (0%) por dados reais do Firestore
 
 ### Fase 3: Módulo ESTUDE (Cursos & Home)
 

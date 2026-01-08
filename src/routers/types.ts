@@ -52,6 +52,24 @@ export type MeditateStackParamList = {
 
 export type FixStackParamList = {
   FixHome: undefined;
+  Subcategories: {
+    categoryId: string;
+    categoryName: string;
+  };
+  Quiz: {
+    subcategoryId: string;
+    categoryName: string;
+    subcategoryName: string;
+  };
+  QuizResult: {
+    categoryName: string;
+    subcategoryName: string;
+    correctAnswers: number;
+    totalQuestions: number;
+    percentage: number;
+    level: string;
+    userAnswers: any[]; // TODO: Tipar corretamente
+  };
   TruthOrFalseHome: undefined;
   TruthOrFalseQuestion: undefined;
   TruthOrFalseResult: {
