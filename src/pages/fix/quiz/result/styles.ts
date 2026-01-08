@@ -18,24 +18,9 @@ export function createStyles(theme: ITheme) {
       marginTop: theme.spacing.xl,
       marginBottom: theme.spacing.lg,
     },
-    starsRow: {
-      flexDirection: "row",
-      gap: theme.spacing.sm,
-    },
-    star: {
-      width: 48,
-      height: 48,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    starActive: {
-      opacity: 1,
-    },
-    starInactive: {
-      opacity: 0.3,
-    },
-    starText: {
-      fontSize: 40,
+    resultImage: {
+      width: 250,
+      height: 180,
     },
     titleContainer: {
       alignItems: "center",

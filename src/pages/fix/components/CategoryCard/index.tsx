@@ -9,7 +9,7 @@ interface CategoryCardProps {
   questionCount: number;
   progress: number; // 0-100
   icon: keyof typeof LucideIcons;
-  gradientColors: [string, string]; // Não usado mais, mantido para compatibilidade
+  gradientColors: [string, string]; // Não usado mais
   onPress: () => void;
 }
 

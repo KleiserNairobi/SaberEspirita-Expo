@@ -1396,3 +1396,21 @@ bold: "Oswald_700Bold";
   - **Espaçamento**:
     - Toolbar com `justifyContent: 'center'` e gap fixo para consistência visual.
     - Margem reduzida entre título e conteúdo para melhor fluxo de leitura.
+
+### 08/01/2026 - Implementação Lógica de Refazer Quiz e Refinamentos de UI
+
+- ✅ **Lógica de Refazer Quiz (Retake) - 100% Concluído**
+  - **Objetivo**: Permitir que o usuário refaça um quiz já completado, resetando seu progresso.
+  - **Implementação**:
+    - Criado serviço `updateUserScore`, `removeUserHistory`, `removeUserCompletedSubcategory` no `quizService.ts`.
+    - Componente `QuizRetakeBottomSheet` implementado fiel ao design do CLI (botões Não/Sim lado a lado).
+    - Integração na `SubcategoriesScreen`:
+      - Substitui `Alert` nativo por BottomSheet customizado.
+      - Invalidação de cache React Query (`QUIZ_KEYS.userProgress`) para atualização imediata da UI (remoção do checkmark).
+    - Fluxo completo: Clique em subcategoria concluída -> BottomSheet -> Sim -> Remove histórico Firebase -> Limpa Cache -> Navega para Quiz.
+
+- ✅ **Melhorias de UI/UX no Quiz Flow**
+  - **Subtítulos**: Exibição correta de subtítulos (descrição da subcategoria) em todo o fluxo (Quiz, Resultado, Review).
+  - **Botão Finalizar**: Botão "Próxima" muda dinamicamente para "Finalizar" na última questão.
+  - **Header de Resultado**: Ajustado para priorizar o subtítulo em vez do nome da categoria.
+  - **ProgressBar**: Correção de layout e margens.

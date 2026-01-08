@@ -1,5 +1,4 @@
-import React from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -21,12 +20,15 @@ export function QuizResultScreen() {
   const navigation = useNavigation<QuizResultNavigationProp>();
 
   const {
+    categoryId,
     categoryName,
     subcategoryName,
+    subtitle,
     correctAnswers,
     totalQuestions,
     percentage,
     level,
+    userAnswers,
   } = route.params;
 
   // Determinar mensagem de feedback baseada no nível
@@ -57,26 +59,36 @@ export function QuizResultScreen() {
     return messages[level as keyof typeof messages] || messages.Fraco;
   }
 
-  // Determinar número de estrelas baseado no percentage
-  function getStarCount(percentage: number): number {
-    if (percentage >= 90) return 4;
-    if (percentage >= 70) return 3;
-    if (percentage >= 50) return 2;
-    return 1;
+  // Determinar imagem de resultado baseada no percentage
+  function getResultImage(percentage: number) {
+    if (percentage >= 90) return require("@/assets/images/stars/FourStars.png");
+    if (percentage >= 70) return require("@/assets/images/stars/ThreeStars.png");
+    if (percentage >= 50) return require("@/assets/images/stars/TwoStars.png");
+    return require("@/assets/images/stars/OneStar.png");
   }
 
   const feedback = getFeedbackMessage(level);
-  const starCount = getStarCount(percentage);
+  const resultImage = getResultImage(percentage);
 
   function handleContinue() {
-    // Voltar para a lista de subcategorias
-    navigation.navigate("FixHome");
+    // Voltar para a lista de subcategorias (contexto do estudo atual)
+    navigation.navigate("Subcategories", {
+      categoryId,
+      categoryName,
+    });
   }
 
   function handleReview() {
-    // TODO: Implementar tela de revisão de respostas
-    // navigation.navigate('QuizReview', { userAnswers });
-    handleContinue(); // Por enquanto, volta para home
+    navigation.navigate("QuizReview", {
+      categoryId,
+      categoryName,
+      subcategoryName,
+      subtitle,
+      totalQuestions,
+      percentage,
+      level,
+      userAnswers,
+    });
   }
 
   return (
@@ -88,25 +100,15 @@ export function QuizResultScreen() {
       >
         {/* Ilustração de Estrelas */}
         <View style={styles.starsContainer}>
-          <View style={styles.starsRow}>
-            {[...Array(4)].map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.star,
-                  index < starCount ? styles.starActive : styles.starInactive,
-                ]}
-              >
-                <Text style={styles.starText}>⭐</Text>
-              </View>
-            ))}
-          </View>
+          <Image source={resultImage} style={styles.resultImage} resizeMode="contain" />
         </View>
 
         {/* Título */}
         <View style={styles.titleContainer}>
           <Text style={styles.subcategoryName}>{subcategoryName}</Text>
-          <Text style={styles.categoryName}>{categoryName}</Text>
+          <Text style={styles.categoryName} numberOfLines={2}>
+            {subtitle || categoryName}
+          </Text>
         </View>
 
         {/* Estatísticas */}

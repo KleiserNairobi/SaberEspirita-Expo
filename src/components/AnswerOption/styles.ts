@@ -30,10 +30,14 @@ export function createStyles(theme: ITheme) {
       flex: 1,
     },
     textChecked: {
-      ...theme.text("md", "semibold"),
+      ...theme.text("md", "regular"),
     },
     iconContainer: {
       marginLeft: theme.spacing.sm,
+      width: 20,
+      height: 20,
+      justifyContent: "center",
+      alignItems: "center",
     },
   });
 }

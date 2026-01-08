@@ -58,17 +58,31 @@ export type FixStackParamList = {
   };
   Quiz: {
     subcategoryId: string;
+    categoryId: string;
     categoryName: string;
     subcategoryName: string;
+    subtitle?: string; // Descrição específica do quiz
   };
   QuizResult: {
+    categoryId: string;
     categoryName: string;
     subcategoryName: string;
+    subtitle?: string;
     correctAnswers: number;
     totalQuestions: number;
     percentage: number;
     level: string;
     userAnswers: any[]; // TODO: Tipar corretamente
+  };
+  QuizReview: {
+    categoryId: string;
+    categoryName: string;
+    subcategoryName: string;
+    subtitle?: string;
+    totalQuestions: number;
+    percentage: number;
+    level: string;
+    userAnswers: any[];
   };
   TruthOrFalseHome: undefined;
   TruthOrFalseQuestion: undefined;

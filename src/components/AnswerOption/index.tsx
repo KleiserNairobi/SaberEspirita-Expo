@@ -37,15 +37,14 @@ export function AnswerOption({
     >
       <View style={styles.content}>
         <Text style={[styles.text, checked && styles.textChecked]}>{text}</Text>
-        {checked && (
-          <View style={styles.iconContainer}>
-            {isCorrect ? (
+        <View style={styles.iconContainer}>
+          {checked &&
+            (isCorrect ? (
               <CheckCircle2 size={20} color={theme.colors.success} />
             ) : (
               <XCircle size={20} color={theme.colors.error} />
-            )}
-          </View>
-        )}
+            ))}
+        </View>
       </View>
     </TouchableOpacity>
   );

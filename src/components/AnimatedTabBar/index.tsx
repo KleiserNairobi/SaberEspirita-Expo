@@ -21,6 +21,7 @@ interface TabBarProps {
           color: string;
           size: number;
         }) => React.ReactNode;
+        tabBarStyle?: any;
       };
     };
   };
@@ -101,6 +102,14 @@ export const AnimatedTabBar = ({ state, descriptors, navigation }: TabBarProps) 
       ? insets.bottom + 10 // iPhones modernos e Android gestual
       : 22; // fallback para Android com 3 botões
 
+  const focusedRoute = state.routes[state.index];
+  const focusedOptions = descriptors[focusedRoute.key].options;
+
+  // @ts-ignore
+  if (focusedOptions.tabBarStyle?.display === "none") {
+    return null;
+  }
+
   return (
     <View
       style={[
@@ -109,6 +118,8 @@ export const AnimatedTabBar = ({ state, descriptors, navigation }: TabBarProps) 
           height: BASE_HEIGHT + safeBottom,
           paddingBottom: safeBottom,
         },
+        // @ts-ignore
+        focusedOptions.tabBarStyle,
       ]}
     >
       <BlurView intensity={60} tint="dark" style={styles.blurContainer}>

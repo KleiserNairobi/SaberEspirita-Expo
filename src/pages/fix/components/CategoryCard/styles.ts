@@ -11,9 +11,7 @@ export function createStyles(theme: ITheme) {
       marginBottom: theme.spacing.sm,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      alignItems: "center",
-      justifyContent: "center",
-      // gap: theme.spacing.sm,
+      alignItems: "flex-start",
     },
     iconContainer: {
       width: 40,
@@ -27,18 +25,20 @@ export function createStyles(theme: ITheme) {
     name: {
       ...theme.text("md", "semibold"),
       color: theme.colors.text,
+      textAlign: "left",
       marginBottom: theme.spacing.xs,
     },
     questionCount: {
       ...theme.text("xs", "regular"),
       color: theme.colors.textSecondary,
+      textAlign: "left",
       marginBottom: theme.spacing.sm,
     },
     progressContainer: {
+      width: "100%",
       flexDirection: "row",
       alignItems: "center",
-      // gap: 4,
-      // marginTop: theme.spacing.xs,
+      gap: 6,
     },
     progressBackground: {
       flex: 1,

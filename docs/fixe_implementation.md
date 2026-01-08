@@ -1,128 +1,219 @@
-# Módulo FIXE - Documentação de Implementação
+# Documentação do Módulo FIXE (Quizzes Standalone)
 
-**Data**: 08/01/2026  
-**Status**: ✅ Core Completo (4 telas + navegação)
-
----
-
-## 📋 Resumo
-
-Módulo de quizzes standalone implementado com migração da lógica do CLI para Expo. Permite usuários testarem conhecimentos sobre Espiritismo através de quizzes organizados por categorias e subcategorias.
+**Data de Implementação**: 08/01/2026  
+**Status**: ✅ Core Completo | 🚧 Funcionalidades Extras Pendentes
 
 ---
 
-## 🏗️ Arquitetura
+## 📋 Visão Geral
 
-### Tipos (`src/types/quiz.ts`)
+O módulo FIXE é um sistema de quizzes standalone migrado do projeto CLI (React Native CLI) para o projeto Expo. Permite que usuários testem seus conhecimentos sobre Espiritismo através de categorias, subcategorias e quizzes com feedback imediato.
 
-- `IQuiz`, `IQuestion`, `IQuizAnswer`
-- `IQuizHistory`, `ICategory`, `ISubcategory`
+---
 
-### Componentes Reutilizáveis
+## 🗂️ Estrutura de Arquivos
 
-1. **AnswerOption** - Alternativa com feedback verde/vermelho
-2. **QuestionCard** - Container de perguntas
-3. **QuizProgressBar** - Barra + contador
-4. **CategoryCard** - Card 3 colunas (padrão do app)
-5. **SubcategoryCard** - Card com check
-6. **SearchBar**, **IconButton**, **Button** (genéricos)
-
-### Serviços Firebase (`src/services/firebase/quizService.ts`)
-
-```typescript
-getCategories();
-getSubcategories(categoryId);
-getQuiz(subcategoryId);
-saveUserCompletedSubcategories();
-addUserHistory();
-getUserProgress();
 ```
-
-### Hooks React Query (`src/hooks/queries/useQuiz.ts`)
-
-```typescript
-useCategories();
-useSubcategories(categoryId);
-useQuiz(subcategoryId);
-useUserQuizProgress(userId);
+src/pages/fix/
+├── index.tsx                          # FixHomeScreen (Dashboard)
+├── styles.ts
+├── subcategories/
+│   ├── index.tsx                      # SubcategoriesScreen
+│   ├── styles.ts
+│   └── components/
+│       └── SubcategoryCard/
+│           ├── index.tsx
+│           └── styles.ts
+├── quiz/
+│   ├── index.tsx                      # QuizScreen (Execução)
+│   ├── styles.ts
+│   ├── result/
+│   │   ├── index.tsx                  # QuizResultScreen
+│   │   └── styles.ts
+│   └── components/
+│       ├── AnswerOption/
+│       ├── QuestionCard/
+│       └── QuizProgressBar/
+└── components/
+    └── CategoryCard/
+        ├── index.tsx
+        └── styles.ts
 ```
 
 ---
 
-## 📱 Telas
+## 🎯 Funcionalidades Implementadas
 
-### 1. FixHomeScreen ✅
+### ✅ 1. Integração com Firestore (100%)
 
-- Grid 3 colunas (FlatList)
-- 6 categorias: Conceitos, Diversos, Espíritos, Filmes, Livros, Personagens
-- Navegação → Subcategories
+**Arquivo**: `src/services/firebase/quizService.ts`
 
-### 2. SubcategoriesScreen ✅
+Funções implementadas (copiadas do CLI):
 
-- SearchBar + filtros
-- Lista de subcategorias
-- Navegação → Quiz
+- `getCategories()` - Busca categorias do Firestore (`categories` collection)
+- `getSubcategories(categoryId)` - Busca subcategorias por categoria (`subcategories` collection)
+- `getQuiz(subcategoryId)` - Busca quiz específico (`quizes/QUIZ-{subcategoryId}`)
+- `getUserCompletedSubcategories(userId)` - Busca progresso do usuário
+- `saveUserCompletedSubcategories()` - Salva subcategoria concluída
+- `addUserHistory()` - Adiciona histórico de quiz
+- `removeUserCompletedSubcategory()` - Remove subcategoria da lista de completados (Retake)
+- `removeUserHistory()` - Remove histórico específico (Retake)
+- `updateUserScore()` - Recalcula pontuação total do usuário (Retake)
 
-### 3. QuizScreen ✅
+**Hooks React Query**: `src/hooks/queries/useQuiz.ts`
 
-- Navegação de perguntas
-- Feedback visual imediato
-- Cálculo de resultados
-- Navegação → QuizResult
+- `useCategories()`
+- `useSubcategories(categoryId)`
+- `useQuiz(subcategoryId)`
+- `useUserQuizProgress(userId)`
 
-### 4. QuizResultScreen ✅
+### ✅ 2. FixHomeScreen (Dashboard) - 100%
 
-- Sistema de estrelas (1-4)
-- Estatísticas + mensagens motivacionais
-- Botões "Continuar" e "Revisar"
+**Layout**: 2 colunas (FlatList com `numColumns={2}`)
+
+**Características**:
+
+- Grid de 6 categorias (Conceitos, Diversos, Espíritos, Filmes, Livros, Personagens)
+- Cada card mostra:
+  - Ícone (Lucide) alinhado à esquerda
+  - Nome da categoria
+  - Contador de questões
+  - **Barra de progresso real**: calculada como `(subcategorias concluídas / subcategoryCount) * 100`
+- Layout vertical, alinhamento à esquerda
+- Navegação para SubcategoriesScreen
+
+### ✅ 3. SubcategoriesScreen - 100%
+
+**Layout**: Idêntico ao `AllTermsScreen` do Glossário
+
+**Características**:
+
+- **SectionList** com sticky header
+- **Header**:
+  - Botão voltar (circular, fundo accent)
+  - Ícone central com 3 anéis concêntricos (borderWidth)
+  - Título (nome da categoria) - `xxxl`, `semibold`
+  - Subtítulo ("Escolha uma subcategoria para começar")
+- **SearchBar sticky**: usa `@/pages/pray/components/SearchBar`
+- Lista de subcategorias com:
+  - Nome e descrição
+  - Contador de questões
+  - Ícone de check se concluída
+- **Lógica de Refazer Quiz**:
+  - Ao clicar em subcategoria completada, abre `QuizRetakeBottomSheet`.
+  - Opções "Não" (Cancelar) e "Sim" (Responder).
+  - "Sim" remove histórico, atualiza cache (remove check) e inicia quiz do zero.
+
+### ✅ 4. QuizScreen (Execução) - 100%
+
+**Características**:
+
+- Navegação de perguntas com barra de progresso
+- Feedback visual imediato (verde/vermelho)
+- Botões "Confirmar" e "Próxima"
+- Botão "Parar" com confirmação
+- Cálculo de resultados (acertos, percentual, nível)
+
+### ✅ 5. QuizResultScreen - 100%
+
+**Características**:
+
+- Sistema de estrelas (1-4 baseado no percentual)
+- Estatísticas (acertos/total, percentual)
+- Mensagens motivacionais por nível (Ótimo/Bom/Regular/Fraco)
+- Botões "Continuar" e "Revisar e Aprender"
+
+### ✅ 6. Navegação - 100%
+
+**Rotas**: `FixStackParamList`
+
+- `FixHome` → `Subcategories` → `Quiz` → `QuizResult`
 
 ---
 
-## 🔄 Navegação
+## 🚧 Funcionalidades Pendentes
 
-```
-FixHome → Subcategories → Quiz → QuizResult
-```
-
-**Tipos**: `FixStackParamList` em `src/routers/types.ts`
-
----
-
-## 📊 Dados Mockados
-
-**6 Categorias**:
-
-- Conceitos (1077 questões) - BookOpen - Roxo
-- Diversos (132) - Sparkles - Laranja
-- Espíritos (187) - Ghost - Verde
-- Filmes (148) - Film - Rosa
-- Livros (107) - Library - Azul
-- Personagens (626) - Users - Laranja
-
----
-
-## ✅ Próximos Passos
-
-### Alta Prioridade:
-
-1. Integração com Firestore (salvar progresso)
-2. Tela de revisão de respostas
-3. Cálculo de progresso real (substituir 0%)
-
-### Média Prioridade:
-
-4. Desafio Diário (5 perguntas/dia + streak)
-5. Meu Progresso (estatísticas + badges)
-
-### Baixa Prioridade:
-
-6. Leaderboard (ranking global/amigos)
+- [ ] **ReviewScreen**: Tela de revisão de respostas com explicações doutrinárias
+- [ ] **LeaderboardScreen**: Ranking global/amigos
+- [ ] **Desafio Diário**: Card + lógica de 5 perguntas/dia + streak
+- [ ] **Meu Progresso**: Estatísticas gerais + badges/conquistas
 
 ---
 
 ## 🎨 Design System
 
-- Fundo branco (`theme.colors.card`)
-- Ícones: Fundo `accent` + ícone `primary`
-- Sem sombras (apenas bordas)
-- Tipografia e espaçamento via tokens do tema
+**Componentes Reutilizáveis**:
+
+- `CategoryCard` (2 colunas, vertical, alinhado à esquerda)
+- `SubcategoryCard` (horizontal, com check)
+- `AnswerOption` (feedback verde/vermelho)
+- `QuestionCard`
+- `QuizProgressBar`
+- `SearchBar` (de `@/pages/pray/components/SearchBar`)
+
+**Padrões**:
+
+- Fundo: `theme.colors.background`
+- Cards: `theme.colors.card`
+- Ícones: `theme.colors.primary` (verde)
+- Accent: `theme.colors.accent` (verde claro)
+
+---
+
+## 📊 Estrutura de Dados (Firestore)
+
+### Categories
+
+```typescript
+{
+  id: string;
+  title: string;
+  description: string;
+  quizCount: number;
+  subcategoryCount: number; // Usado para calcular progresso
+}
+```
+
+### Subcategories
+
+```typescript
+{
+  id: string;
+  idCategory: string;
+  title: string;
+  subtitle: string;
+  quizCount: number;
+}
+```
+
+### Quizzes
+
+```typescript
+{
+  id: "QUIZ-{subcategoryId}";
+  idCategory: string;
+  idSubcategory: string;
+  questions: IQuestion[];
+}
+```
+
+### User Progress
+
+```typescript
+// Collection: users_completed_subcategories/{userId}
+{
+  completedSubcategories: {
+    [categoryId]: string[]; // Array de subcategoryIds
+  }
+}
+```
+
+---
+
+## 🔄 Próximos Passos
+
+1. Implementar **ReviewScreen** (revisar respostas)
+2. Implementar **LeaderboardScreen** (ranking)
+3. Implementar **Desafio Diário** (5 perguntas/dia)
+4. Implementar **Meu Progresso** (estatísticas + badges)
+5. Reutilizar componentes no Quiz da Aula (módulo Estude)

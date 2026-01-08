@@ -29,7 +29,7 @@ export function createStyles(theme: ITheme) {
       ...theme.text("xxl", "regular"),
       marginBottom: 10,
     },
-    categoryGrid: {
+    columnWrapper: {
       paddingHorizontal: theme.spacing.lg,
       gap: theme.spacing.sm,
     },

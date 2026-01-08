@@ -39,6 +39,8 @@ export function createStyles(theme: ITheme) {
       padding: theme.spacing.lg,
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
+      flexDirection: "row",
+      gap: theme.spacing.md,
     },
     loadingContainer: {
       flex: 1,
@@ -48,6 +50,31 @@ export function createStyles(theme: ITheme) {
     loadingText: {
       ...theme.text("md", "regular"),
       color: theme.colors.textSecondary,
+    },
+    // Bottom Sheet Styles
+    bottomSheetContent: {
+      padding: theme.spacing.xl,
+      alignItems: "center",
+    },
+    sheetTitle: {
+      ...theme.text("xl", "bold"),
+      color: theme.colors.text,
+      textAlign: "center",
+      marginBottom: theme.spacing.sm,
+    },
+    sheetSubtitle: {
+      ...theme.text("md", "regular"),
+      color: theme.colors.textSecondary,
+      textAlign: "center",
+      marginBottom: theme.spacing.xl,
+    },
+    sheetButtons: {
+      flexDirection: "row",
+      gap: theme.spacing.md,
+      width: "100%",
+    },
+    sheetButton: {
+      flex: 1,
     },
   });
 }

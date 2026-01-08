@@ -1,5 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import {
   BellRing,
   ClipboardCheck,
@@ -37,10 +38,19 @@ export function TabNavigator() {
       <Tab.Screen
         name="FixTab"
         component={FixNavigator}
-        options={{
+        options={({ route }: { route: any }) => ({
           title: "Fixe",
-          tabBarIcon: ({ color, size }) => <ClipboardCheck size={size} color={color} />,
-        }}
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+            <ClipboardCheck size={size} color={color} />
+          ),
+          tabBarStyle: ((route) => {
+            const routeName = getFocusedRouteNameFromRoute(route);
+            if (routeName && routeName !== "FixHome") {
+              return { display: "none" };
+            }
+            return undefined;
+          })(route),
+        })}
       />
       <Tab.Screen
         name="MeditateTab"
