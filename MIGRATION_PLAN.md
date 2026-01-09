@@ -291,7 +291,7 @@ src/
     - [x] Estatísticas (acertos/total, percentual)
     - [x] Mensagens motivacionais por nível (Ótimo/Bom/Regular/Fraco)
     - [x] Botões "Continuar" e "Revisar e Aprender"
-    - [ ] **Pendente**: Tela de revisão de respostas
+    - [x] **Concluído**: Tela de revisão de respostas (`QuizReviewScreen`)
 
 - [x] **Navegação** - ✅ **100% Concluído** (08/01/2026):
   - [x] `FixStackParamList` atualizado com rotas de quiz
@@ -374,7 +374,7 @@ src/
   - [ ] **Funcionalidades** (Pendente):
     - [ ] Sistema de progresso (aulas concluídas, percentual)
     - [ ] Desbloqueio sequencial de aulas
-    - [ ] Quiz integrado ao final de aulas
+    - [x] Quiz integrado ao final de aulas
     - [ ] Geração e compartilhamento de certificado
     - [ ] Cache offline com React Query
     - [ ] Lazy loading de slides
@@ -631,6 +631,36 @@ Aproveitar a migração para limpar o visual.
 ---
 
 **Próximo Passo Imediato**: Confirmar estrutura de dados dos Cursos e iniciar implementação da Fase 1 (Auth).
+
+---
+
+### 09/01/2026 - Integração de Quiz no Curso
+
+- ✅ **Módulo de Cursos - Fase 2: Quiz Integrado**
+- **Objetivo**: Integrar o sistema de exercícios do módulo Fixe dentro do fluxo de aulas do Curso.
+
+#### **Funcionalidades Implementadas**
+
+1. **Tela de Quiz do Curso (`CourseQuizScreen`)**:
+   - Reutilização dos componentes visuais do módulo Fixe (`QuestionCard`, `QuizProgressBar`).
+   - Lógica adaptada para salvar progresso no contexto do Curso (não afeta ranking global de Fixe diretamente, mas marca aula como concluída).
+   - Navegação: Aula → Quiz → Conclusão → Currículo.
+
+2. **Player de Aula Atualizado**:
+   - Detecção automática de `quizId` na aula.
+   - Redirecionamento para o Quiz ao finalizar slides, em vez de conclusão imediata.
+   - Feedback visual de conclusão apenas após sucesso no quiz.
+
+3. **Serviços de Quiz Genéricos**:
+   - Atualizado `quizService.ts` com `getQuizById` para suportar IDs de quiz de curso (não vinculados a subcategorias do Fixe).
+   - Tipagem ajustada para suportar `correct` (índice) vs `correctOptionId`.
+
+#### **Arquivos Modificados/Criados**
+
+- `src/pages/study/course-quiz/index.tsx` (Novo)
+- `src/pages/study/lesson-player/index.tsx` (Lógica atualizada)
+- `src/services/firebase/quizService.ts` (Nova função `getQuizById`)
+- `src/routers/types.ts` (Nova rota `CourseQuiz`)
 
 ---
 

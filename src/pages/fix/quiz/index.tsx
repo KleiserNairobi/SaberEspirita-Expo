@@ -11,6 +11,8 @@ import { useAudioPlayer } from "expo-audio";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useQuiz } from "@/hooks/queries/useQuiz";
+import { useQueryClient } from "@tanstack/react-query";
+import { useDailyChallenge } from "@/hooks/queries/useDailyChallenge";
 import { QuizProgressBar } from "@/components/QuizProgressBar";
 import { QuestionCard } from "@/components/QuestionCard";
 import { IconButton } from "@/components/IconButton";
@@ -20,6 +22,7 @@ import { useAuthStore } from "@/stores/authStore";
 import {
   addUserHistory,
   saveUserCompletedSubcategories,
+  updateUserScore,
 } from "@/services/firebase/quizService";
 import { IQuizHistory } from "@/types/quiz";
 import { FixStackParamList } from "@/routers/types";
@@ -33,8 +36,9 @@ export function QuizScreen() {
   const styles = createStyles(theme);
   const route = useRoute<QuizRouteProp>();
   const navigation = useNavigation<QuizNavigationProp>();
+  const queryClient = useQueryClient();
 
-  const { subcategoryId, categoryId, categoryName, subcategoryName, subtitle } =
+  const { subcategoryId, categoryId, categoryName, subcategoryName, subtitle, mode } =
     route.params;
 
   /* State Replication from CLI */
@@ -50,28 +54,49 @@ export function QuizScreen() {
   const { soundEffects } = usePreferencesStore();
 
   // Audio Assets
-  const correctAsset = Asset.fromModule(require("@/assets/sounds/correct.mp3"));
-  const wrongAsset = Asset.fromModule(require("@/assets/sounds/wrong.mp3"));
+  const [audioReady, setAudioReady] = useState(false);
 
-  // Inicializa players (expo-audio)
-  const correctPlayer = useAudioPlayer(correctAsset.uri || "");
-  const wrongPlayer = useAudioPlayer(wrongAsset.uri || "");
+  // Audio Assets - Memoized to prevent recreation
+  const correctAsset = useMemo(
+    () => Asset.fromModule(require("@/assets/sounds/correct.mp3")),
+    []
+  );
+  const wrongAsset = useMemo(
+    () => Asset.fromModule(require("@/assets/sounds/wrong.mp3")),
+    []
+  );
 
-  // Garante que assets estejam carregados
+  // Carregar assets antes de inicializar players
   useEffect(() => {
     async function loadAssets() {
-      await correctAsset.downloadAsync();
-      await wrongAsset.downloadAsync();
-      // Atualiza players se necessário, mas o hook deve reagir a URI
+      try {
+        await Promise.all([correctAsset.downloadAsync(), wrongAsset.downloadAsync()]);
+        setAudioReady(true);
+      } catch (error) {
+        console.error("Erro ao carregar sons:", error);
+      }
     }
     loadAssets();
-  }, []);
+  }, [correctAsset, wrongAsset]);
 
-  // States not strictly in CLI but needed for QuestionCard compatibility/UX
-  // CLI doesn't seem to have forced feedback step, but we keep state structure
-  // clean to match CLI logic flow.
+  // Inicializa players apenas com URIs válidas (localUri preferido após download)
+  const correctPlayer = useAudioPlayer(
+    audioReady ? correctAsset.localUri || correctAsset.uri : ""
+  );
+  const wrongPlayer = useAudioPlayer(
+    audioReady ? wrongAsset.localUri || wrongAsset.uri : ""
+  );
 
-  const { data: quiz, isLoading } = useQuiz(subcategoryId);
+  // Conditional Data Fetching
+  const isDaily = mode === "daily";
+
+  const standardQuiz = useQuiz(subcategoryId);
+  const dailyQuiz = useDailyChallenge();
+
+  const { data: quizData, isLoading } = isDaily ? dailyQuiz : standardQuiz;
+
+  // Use quizData instead of quiz
+  const quiz = quizData;
 
   const currentQuestion = quiz?.questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === (quiz?.questions.length || 0) - 1;
@@ -181,13 +206,19 @@ export function QuizScreen() {
       const { user } = useAuthStore.getState();
 
       if (user?.uid) {
+        // Para Daily Challenge, usamos um ID único por dia para permitir histórico e streak
+        const today = new Date().toISOString().split("T")[0];
+        const dailySubcategoryId = `DAILY_${today}`;
+
+        const historySubcategoryId = isDaily ? dailySubcategoryId : subcategoryId;
+
         const userHistory: IQuizHistory = {
           userId: user.uid,
-          categoryId: categoryId,
-          subcategoryId: subcategoryId,
+          categoryId: categoryId || "DAILY", // Fallback for Daily
+          subcategoryId: historySubcategoryId || "DAILY_CHALLENGE",
           quizId: quiz.id,
-          title: categoryName,
-          subtitle: subtitle || subcategoryName,
+          title: categoryName || "Desafio Diário",
+          subtitle: subtitle || subcategoryName || new Date().toLocaleDateString(),
           completed: true,
           score: percentage,
           totalQuestions,
@@ -197,17 +228,38 @@ export function QuizScreen() {
           completedAt: new Date(),
         };
 
-        // Salvar progresso em paralelo
-        await Promise.all([
-          saveUserCompletedSubcategories(user.uid, categoryId, subcategoryId),
+        const promises: Promise<any>[] = [
           addUserHistory(userHistory, user.displayName || "Usuário"),
-        ]);
+        ];
+
+        // Only save subcategory progress if it's NOT a daily challenge
+        if (!isDaily) {
+          promises.push(
+            saveUserCompletedSubcategories(user.uid, categoryId, subcategoryId)
+          );
+        }
+
+        // Wait for history to be added before updating score to ensure it counts
+        await Promise.all(promises);
+
+        // Update aggregated score for leaderboard
+        await updateUserScore(user.uid, user.displayName || "Usuário");
+
+        // Invalidate queries to update UI immediately
+        if (isDaily) {
+          queryClient.invalidateQueries({ queryKey: ["dailyQuizStatus", user.uid] });
+          queryClient.invalidateQueries({ queryKey: ["userStreak", user.uid] });
+        } else {
+          queryClient.invalidateQueries({ queryKey: ["userQuizProgress", user.uid] });
+        }
+        // Invalidate leaderboard cache
+        queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
       }
 
       navigation.navigate("QuizResult", {
         categoryId,
-        categoryName,
-        subcategoryName,
+        categoryName: categoryName || "Desafio Diário",
+        subcategoryName: subcategoryName || "Geral",
         subtitle,
         correctAnswers,
         totalQuestions,
@@ -220,8 +272,8 @@ export function QuizScreen() {
       // Navega mesmo com erro para não travar o usuário
       navigation.navigate("QuizResult", {
         categoryId,
-        categoryName,
-        subcategoryName,
+        categoryName: categoryName || "Desafio",
+        subcategoryName: subcategoryName || "Erro",
         correctAnswers: 0, // Fallback visual
         totalQuestions: quiz.questions.length,
         percentage: 0,
@@ -276,14 +328,14 @@ export function QuizScreen() {
           size={24}
           color={theme.colors.text}
         />
-        <Text style={styles.headerTitle}>{categoryName}</Text>
+        <Text style={styles.headerTitle}>{categoryName || "Desafio Diário"}</Text>
       </View>
 
       {/* Progress Bar */}
       <QuizProgressBar
         current={currentQuestionIndex + 1}
         total={quiz.questions.length}
-        title={subcategoryName}
+        title={subcategoryName || "Perguntas Aleatórias"}
         subtitle={subtitle}
       />
 

@@ -89,16 +89,26 @@ export async function getSubcategories(idCategory: string): Promise<ISubcategory
 
 // ==================== QUIZZES ====================
 
-export async function getQuiz(idSubcategory: string): Promise<IQuiz | null> {
+// ✅ NOVA: Busca por ID exato (genérico)
+export async function getQuizById(quizId: string): Promise<IQuiz | null> {
   try {
-    const quizDoc = await getDoc(doc(db, "quizes", `QUIZ-${idSubcategory}`));
+    const quizDoc = await getDoc(doc(db, "quizes", quizId));
     if (quizDoc.exists()) {
       const quizData = quizDoc.data() as IQuiz;
       return quizData;
     } else {
-      console.log(`Quiz não encontrado para subcategoria: ${idSubcategory}`);
+      console.log(`Quiz não encontrado pelo ID: ${quizId}`);
       return null;
     }
+  } catch (error) {
+    console.log(`Erro ao obter quiz pelo ID: ${quizId}`, error);
+    return null;
+  }
+}
+
+export async function getQuiz(idSubcategory: string): Promise<IQuiz | null> {
+  try {
+    return await getQuizById(`QUIZ-${idSubcategory}`);
   } catch (error) {
     console.log(`Erro ao obter quiz para subcategoria: ${idSubcategory}`, error);
     return null;
@@ -339,5 +349,157 @@ export async function removeUserCompletedSubcategory(
     }
   } catch (error) {
     console.log("Ocorreu um erro ao remover a subcategoria concluída:", error);
+  }
+}
+
+// ==================== DESAFIO DIÁRIO ====================
+
+export async function getDailyChallengeQuestions(): Promise<IQuiz | null> {
+  try {
+    // 1. Buscar todas as categorias
+    const categories = await getCategories();
+    if (categories.length === 0) return null;
+
+    // 2. Selecionar até 3 categorias aleatórias para garantir variedade
+    const shuffledCategories = categories.sort(() => 0.5 - Math.random());
+    const selectedCategories = shuffledCategories.slice(0, 3);
+
+    const allQuestions: any[] = [];
+
+    // 3. Para cada categoria selecionada, buscar uma subcategoria aleatória e seu quiz
+    for (const category of selectedCategories) {
+      const subcategories = await getSubcategories(category.id);
+      if (subcategories.length > 0) {
+        const randomSub = subcategories[Math.floor(Math.random() * subcategories.length)];
+        const quiz = await getQuiz(randomSub.id);
+
+        if (quiz && quiz.questions.length > 0) {
+          const questionsWithMeta = quiz.questions.map((q) => ({
+            ...q,
+            originSubcategory: randomSub.name,
+            originCategory: category.name,
+          }));
+          allQuestions.push(...questionsWithMeta);
+        }
+      }
+    }
+
+    if (allQuestions.length === 0) return null;
+
+    // 4. Embaralhar todas as questões e pegar 5
+    const shuffledQuestions = allQuestions.sort(() => 0.5 - Math.random()).slice(0, 5);
+
+    // 5. Retornar estrutura compatível com IQuiz
+    const today = new Date().toISOString().split("T")[0];
+
+    return {
+      id: `DAILY_${today}`,
+      idCategory: "DAILY",
+      idSubcategory: "DAILY_CHALLENGE",
+      questions: shuffledQuestions,
+    };
+  } catch (error) {
+    console.error("Erro ao gerar desafio diário:", error);
+    return null;
+  }
+}
+
+// ==================== STREAK ====================
+
+export async function getUserStreak(userId: string): Promise<number> {
+  try {
+    const historyRef = collection(db, "users_history", userId, "history");
+    const q = query(historyRef, where("categoryId", "==", "DAILY"));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) return 0;
+
+    // Extrair datas de conclusão únicas
+    const completedDates = snapshot.docs
+      .map((doc) => {
+        const data = doc.data() as IQuizHistory;
+        const date =
+          data.completedAt instanceof Timestamp
+            ? data.completedAt.toDate()
+            : new Date(data.completedAt);
+        return date.toISOString().split("T")[0]; // YYYY-MM-DD
+      })
+      .sort((a, b) => b.localeCompare(a)); // Decrescente
+
+    const uniqueDates = Array.from(new Set(completedDates));
+
+    if (uniqueDates.length === 0) return 0;
+
+    // Calcular sequência
+    let streak = 0;
+    const today = new Date().toISOString().split("T")[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+
+    // Se não fez hoje nem ontem, streak quebrou
+    if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday) {
+      return 0;
+    }
+
+    // Contar dias consecutivos
+    let currentDate = new Date(uniqueDates[0]);
+
+    // Se o último foi hoje, começamos a verificar de hoje para trás
+    // Se o último foi ontem, começamos de ontem.
+    // O loop verifica se current está na lista, depois subtrai um dia.
+
+    for (let i = 0; i < uniqueDates.length; i++) {
+      const dateToCheck = uniqueDates[i];
+      const stringCurrent = currentDate.toISOString().split("T")[0];
+
+      if (dateToCheck === stringCurrent) {
+        streak++;
+        currentDate.setDate(currentDate.getDate() - 1);
+      } else {
+        break; // Quebrou a sequência
+      }
+    }
+
+    return streak;
+  } catch (error) {
+    console.error("Erro ao calcular streak:", error);
+    return 0;
+  }
+}
+
+export async function getDailyChallengeStatus(userId: string): Promise<boolean> {
+  try {
+    const today = new Date().toISOString().split("T")[0];
+    const dailyId = `DAILY_${today}`;
+
+    // 1. Verificar documento padrão novo (DAILY_YYYY-MM-DD)
+    const historyRef = doc(db, "users_history", userId, "history", dailyId);
+    let historyDoc = await getDoc(historyRef);
+
+    if (historyDoc.exists()) return true;
+
+    // 2. Fallback: Verificar documento legado/único (DAILY_CHALLENGE)
+    // Se o usuário completou o desafio hoje mas antes da atualização de código
+    const legacyRef = doc(db, "users_history", userId, "history", "DAILY_CHALLENGE");
+    historyDoc = await getDoc(legacyRef);
+
+    if (!historyDoc.exists()) return false;
+
+    const data = historyDoc.data() as IQuizHistory;
+
+    const completedAt =
+      data.completedAt instanceof Timestamp
+        ? data.completedAt.toDate()
+        : new Date(data.completedAt);
+
+    const todayDate = new Date();
+
+    return (
+      completedAt.getDate() === todayDate.getDate() &&
+      completedAt.getMonth() === todayDate.getMonth() &&
+      completedAt.getFullYear() === todayDate.getFullYear()
+    );
+  } catch (error) {
+    console.error("Erro ao verificar status do desafio diário:", error);
+    return false;
   }
 }

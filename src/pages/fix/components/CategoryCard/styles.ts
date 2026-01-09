@@ -17,7 +17,7 @@ export function createStyles(theme: ITheme) {
       width: 40,
       height: 40,
       borderRadius: 20,
-      backgroundColor: theme.colors.accent,
+      backgroundColor: theme.colors.primary + "15",
       alignItems: "center",
       justifyContent: "center",
       marginBottom: theme.spacing.sm,

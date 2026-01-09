@@ -1,7 +1,7 @@
 # Documentação do Módulo FIXE (Quizzes Standalone)
 
 **Data de Implementação**: 08/01/2026  
-**Status**: ✅ Core Completo | 🚧 Funcionalidades Extras Pendentes
+**Status**: ✅ Core Completo | 🚧 Funcionalidades Extras (Leaderboard, Desafio Diário) Pendentes
 
 ---
 
@@ -123,17 +123,29 @@ Funções implementadas (copiadas do CLI):
 - Mensagens motivacionais por nível (Ótimo/Bom/Regular/Fraco)
 - Botões "Continuar" e "Revisar e Aprender"
 
-### ✅ 6. Navegação - 100%
+### ✅ 6. ReviewScreen (Revisão) - 100%
+
+**Características**:
+
+- Header com botão voltar e título "Revisão das respostas"
+- Resumo no topo: Nome do quiz, contagem de questões, percentual de acertos e estrelas
+- Lista de todas as questões respondidas:
+  - Badge de status (Certo/Errado)
+  - Pergunta e resposta do usuário (com indicação se pulou)
+  - Resposta correta exibida claramente
+  - **Explicação doutrinária** completa para cada questão
+- Feedback visual com faixas laterais coloridas (Verde/Vermelho)
+
+### ✅ 7. Navegação - 100%
 
 **Rotas**: `FixStackParamList`
 
-- `FixHome` → `Subcategories` → `Quiz` → `QuizResult`
+- `FixHome` → `Subcategories` → `Quiz` → `QuizResult` → `ReviewScreen`
 
 ---
 
 ## 🚧 Funcionalidades Pendentes
 
-- [ ] **ReviewScreen**: Tela de revisão de respostas com explicações doutrinárias
 - [ ] **LeaderboardScreen**: Ranking global/amigos
 - [ ] **Desafio Diário**: Card + lógica de 5 perguntas/dia + streak
 - [ ] **Meu Progresso**: Estatísticas gerais + badges/conquistas
@@ -212,7 +224,6 @@ Funções implementadas (copiadas do CLI):
 
 ## 🔄 Próximos Passos
 
-1. Implementar **ReviewScreen** (revisar respostas)
 2. Implementar **LeaderboardScreen** (ranking)
 3. Implementar **Desafio Diário** (5 perguntas/dia)
 4. Implementar **Meu Progresso** (estatísticas + badges)

@@ -55,9 +55,19 @@ export function QuizReviewScreen() {
   const filledStars = getFilledStarsCount(level);
 
   function handleContinue() {
-    navigation.navigate("Subcategories", {
-      categoryId,
-      categoryName,
+    // FIX: Usar reset para limpar a pilha e garantir que o botão voltar leve à FixHome
+    navigation.reset({
+      index: 1,
+      routes: [
+        { name: "FixHome" },
+        {
+          name: "Subcategories",
+          params: {
+            categoryId,
+            categoryName,
+          },
+        },
+      ],
     });
   }
 

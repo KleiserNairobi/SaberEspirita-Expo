@@ -71,10 +71,28 @@ export function QuizResultScreen() {
   const resultImage = getResultImage(percentage);
 
   function handleContinue() {
-    // Voltar para a lista de subcategorias (contexto do estudo atual)
-    navigation.navigate("Subcategories", {
-      categoryId,
-      categoryName,
+    // Se for desafio diário, voltar para home
+    if (categoryId === "DAILY") {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "FixHome" }],
+      });
+      return;
+    }
+
+    // FIX: Usar reset para limpar a pilha e garantir que o botão voltar leve à FixHome
+    navigation.reset({
+      index: 1,
+      routes: [
+        { name: "FixHome" },
+        {
+          name: "Subcategories",
+          params: {
+            categoryId,
+            categoryName,
+          },
+        },
+      ],
     });
   }
 

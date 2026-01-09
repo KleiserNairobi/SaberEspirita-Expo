@@ -79,6 +79,16 @@ export function LessonPlayerScreen() {
   async function handleFinish() {
     if (!lesson) return;
 
+    // Se a aula tiver um quiz, redireciona para a tela de Quiz
+    if (lesson.quizId) {
+      navigation.navigate("CourseQuiz", {
+        courseId: lesson.courseId,
+        lessonId: lesson.id,
+        quizId: lesson.quizId,
+      });
+      return;
+    }
+
     try {
       await markLessonAsCompleted(lesson.courseId, lesson.id, user?.uid);
 

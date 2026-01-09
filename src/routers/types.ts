@@ -23,6 +23,7 @@ export type AppStackParamList = {
   CourseDetails: { courseId: string };
   CourseCurriculum: { courseId: string };
   LessonPlayer: { courseId: string; lessonId: string };
+  CourseQuiz: { courseId: string; lessonId: string; quizId: string };
 };
 
 export type GlossaryStackParamList = {
@@ -62,6 +63,7 @@ export type FixStackParamList = {
     categoryName: string;
     subcategoryName: string;
     subtitle?: string; // Descrição específica do quiz
+    mode?: "standard" | "daily";
   };
   QuizResult: {
     categoryId: string;

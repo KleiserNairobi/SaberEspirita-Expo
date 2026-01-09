@@ -1,13 +1,13 @@
 # 📚 Módulo de Cursos Espíritas - Resumo de Implementação
 
-**Última Atualização**: 06/01/2026 14:15  
-**Status Geral**: 85% Concluído
+**Última Atualização**: 09/01/2026 16:55  
+**Status Geral**: 95% Concluído
 
 ---
 
 ## 📊 Status Atual
 
-### Telas Implementadas (4/7)
+### Telas Implementadas (6/7)
 
 | #   | Tela                           | Status      | Arquivo                              | Data       |
 | --- | ------------------------------ | ----------- | ------------------------------------ | ---------- |
@@ -15,8 +15,8 @@
 | 2   | **Catálogo de Cursos**         | ✅ Completo | `src/pages/study/courses-catalog/`   | 04/01/2026 |
 | 3   | **Detalhes do Curso**          | ✅ Completo | `src/pages/study/course-details/`    | 05/01/2026 |
 | 4   | **Currículo (Lista de Aulas)** | ✅ Completo | `src/pages/study/course-curriculum/` | 06/01/2026 |
-| 5   | **Player de Aula**             | ⏳ Pendente | -                                    | -          |
-| 6   | **Quiz da Aula**               | ⏳ Pendente | -                                    | -          |
+| 5   | **Player de Aula**             | ✅ Completo | `src/pages/study/lesson-player/`     | 09/01/2026 |
+| 6   | **Quiz da Aula**               | ✅ Completo | `src/pages/study/course-quiz/`       | 09/01/2026 |
 | 7   | **Certificado**                | ⏳ Pendente | -                                    | -          |
 
 ---
@@ -415,6 +415,24 @@ bold: "Oswald_700Bold";
 ---
 
 ## 📅 Histórico de Atualizações
+
+### 09/01/2026 - Integração de Quiz e Player
+
+**Implementações**:
+
+- ✅ **CourseQuizScreen**: Nova tela que reutiliza a engine de quiz do módulo Fixe.
+- ✅ **Integração no Player**: Aula agora redireciona para o quiz (se existir `quizId`) antes de concluir.
+- ✅ **Lógica de Conclusão**: Progresso só é salvo após sucesso no quiz.
+- ✅ **Service Update**: `quizService` atualizado para buscar quizzes por ID genérico.
+
+**Arquivos Modificados**:
+
+- `src/pages/study/course-quiz/index.tsx`
+- `src/pages/study/lesson-player/index.tsx`
+- `src/services/firebase/quizService.ts`
+- `src/routers/types.ts`
+
+---
 
 ### 06/01/2026 - Currículo Funcional + Certificação
 
