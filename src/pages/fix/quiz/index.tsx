@@ -5,13 +5,13 @@ import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowLeft } from "lucide-react-native";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
-
 import { Asset } from "expo-asset";
 import { useAudioPlayer } from "expo-audio";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+
 import { usePreferencesStore } from "@/stores/preferencesStore";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useQuiz } from "@/hooks/queries/useQuiz";
-import { useQueryClient } from "@tanstack/react-query";
 import { useDailyChallenge } from "@/hooks/queries/useDailyChallenge";
 import { QuizProgressBar } from "@/components/QuizProgressBar";
 import { QuestionCard } from "@/components/QuestionCard";
@@ -20,14 +20,17 @@ import { Button } from "@/components/Button";
 import { createStyles } from "./styles";
 import { useAuthStore } from "@/stores/authStore";
 import {
+  getQuizById,
   addUserHistory,
   saveUserCompletedSubcategories,
   updateUserScore,
 } from "@/services/firebase/quizService";
-import { IQuizHistory } from "@/types/quiz";
-import { FixStackParamList } from "@/routers/types";
-import { IQuizAnswer } from "@/types/quiz";
+import { markLessonAsCompleted } from "@/services/firebase/progressService";
+import { COURSE_PROGRESS_KEYS } from "@/hooks/queries/useCourseProgress";
+import { IQuizHistory, IQuizAnswer } from "@/types/quiz";
+import { FixStackParamList, AppStackParamList } from "@/routers/types";
 
+// Combine params type to support both stacks if needed, or just use FixStackParamList which we extended
 type QuizRouteProp = RouteProp<FixStackParamList, "Quiz">;
 type QuizNavigationProp = NativeStackNavigationProp<FixStackParamList, "Quiz">;
 
@@ -38,10 +41,18 @@ export function QuizScreen() {
   const navigation = useNavigation<QuizNavigationProp>();
   const queryClient = useQueryClient();
 
-  const { subcategoryId, categoryId, categoryName, subcategoryName, subtitle, mode } =
-    route.params;
+  const {
+    subcategoryId,
+    categoryId,
+    categoryName,
+    subcategoryName,
+    subtitle,
+    mode,
+    courseId,
+    lessonId,
+    quizId,
+  } = route.params;
 
-  /* State Replication from CLI */
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["40%"], []);
 
@@ -87,21 +98,34 @@ export function QuizScreen() {
     audioReady ? wrongAsset.localUri || wrongAsset.uri : ""
   );
 
-  // Conditional Data Fetching
   const isDaily = mode === "daily";
+  const isCourse = mode === "course";
 
-  const standardQuiz = useQuiz(subcategoryId);
+  const standardQuiz = useQuiz(subcategoryId || "");
   const dailyQuiz = useDailyChallenge();
 
-  const { data: quizData, isLoading } = isDaily ? dailyQuiz : standardQuiz;
+  const courseQuiz = useQuery({
+    queryKey: ["quiz", quizId],
+    queryFn: () => getQuizById(quizId!),
+    enabled: isCourse && !!quizId,
+  });
 
-  // Use quizData instead of quiz
+  const isLoading = isDaily
+    ? dailyQuiz.isLoading
+    : isCourse
+      ? courseQuiz.isLoading
+      : standardQuiz.isLoading;
+
+  const quizData = isDaily
+    ? dailyQuiz.data
+    : isCourse
+      ? courseQuiz.data
+      : standardQuiz.data;
+
   const quiz = quizData;
 
   const currentQuestion = quiz?.questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === (quiz?.questions.length || 0) - 1;
-
-  // --- CLI Logic Replication ---
 
   function playSound(isCorrect: boolean) {
     if (!soundEffects) return;
@@ -206,79 +230,88 @@ export function QuizScreen() {
       const { user } = useAuthStore.getState();
 
       if (user?.uid) {
-        // Para Daily Challenge, usamos um ID único por dia para permitir histórico e streak
-        const today = new Date().toISOString().split("T")[0];
-        const dailySubcategoryId = `DAILY_${today}`;
-
-        const historySubcategoryId = isDaily ? dailySubcategoryId : subcategoryId;
-
-        const userHistory: IQuizHistory = {
-          userId: user.uid,
-          categoryId: categoryId || "DAILY", // Fallback for Daily
-          subcategoryId: historySubcategoryId || "DAILY_CHALLENGE",
-          quizId: quiz.id,
-          title: categoryName || "Desafio Diário",
-          subtitle: subtitle || subcategoryName || new Date().toLocaleDateString(),
-          completed: true,
-          score: percentage,
-          totalQuestions,
-          correctAnswers,
-          percentage,
-          level,
-          completedAt: new Date(),
-        };
-
-        const promises: Promise<any>[] = [
-          addUserHistory(userHistory, user.displayName || "Usuário"),
-        ];
-
-        // Only save subcategory progress if it's NOT a daily challenge
-        if (!isDaily) {
-          promises.push(
-            saveUserCompletedSubcategories(user.uid, categoryId, subcategoryId)
-          );
+        // --- Lógica para CURSO ---
+        if (isCourse && courseId && lessonId) {
+          await markLessonAsCompleted(courseId, lessonId, user.uid);
+          queryClient.invalidateQueries({
+            queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, courseId),
+          });
+          // TODO: Salvar histórico específico de curso se necessário
         }
+        // --- Lógica para FIXE (Standard/Daily) ---
+        else {
+          const today = new Date().toISOString().split("T")[0];
+          const dailySubcategoryId = `DAILY_${today}`;
 
-        // Wait for history to be added before updating score to ensure it counts
-        await Promise.all(promises);
+          const historySubcategoryId = isDaily ? dailySubcategoryId : subcategoryId!;
 
-        // Update aggregated score for leaderboard
-        await updateUserScore(user.uid, user.displayName || "Usuário");
+          const userHistory: IQuizHistory = {
+            userId: user.uid,
+            categoryId: categoryId || "DAILY",
+            subcategoryId: historySubcategoryId || "DAILY_CHALLENGE",
+            quizId: quiz.id,
+            title: categoryName || "Desafio Diário",
+            subtitle: subtitle || subcategoryName || new Date().toLocaleDateString(),
+            completed: true,
+            score: percentage,
+            totalQuestions,
+            correctAnswers,
+            percentage,
+            level,
+            completedAt: new Date(),
+          };
 
-        // Invalidate queries to update UI immediately
-        if (isDaily) {
-          queryClient.invalidateQueries({ queryKey: ["dailyQuizStatus", user.uid] });
-          queryClient.invalidateQueries({ queryKey: ["userStreak", user.uid] });
-        } else {
-          queryClient.invalidateQueries({ queryKey: ["userQuizProgress", user.uid] });
+          const promises: Promise<any>[] = [
+            addUserHistory(userHistory, user.displayName || "Usuário"),
+          ];
+
+          if (!isDaily && subcategoryId) {
+            promises.push(
+              saveUserCompletedSubcategories(user.uid, categoryId!, subcategoryId)
+            );
+          }
+
+          await Promise.all(promises);
+          await updateUserScore(user.uid, user.displayName || "Usuário");
+
+          if (isDaily) {
+            queryClient.invalidateQueries({ queryKey: ["dailyQuizStatus", user.uid] });
+            queryClient.invalidateQueries({ queryKey: ["userStreak", user.uid] });
+          } else {
+            queryClient.invalidateQueries({ queryKey: ["userQuizProgress", user.uid] });
+          }
+          queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
         }
-        // Invalidate leaderboard cache
-        queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
       }
 
+      // Navegação para Resultado
       navigation.navigate("QuizResult", {
         categoryId,
-        categoryName: categoryName || "Desafio Diário",
-        subcategoryName: subcategoryName || "Geral",
+        categoryName:
+          categoryName || (isCourse ? "Exercício de Fixação" : "Desafio Diário"),
+        subcategoryName: subcategoryName || (isCourse ? "Conclusão da Aula" : "Geral"),
         subtitle,
         correctAnswers,
         totalQuestions,
         percentage,
         level,
         userAnswers: finalAnswers,
+        courseId, // Params opcionais para o modo Curso
+        lessonId,
       });
     } catch (error) {
       console.error("Erro ao salvar progresso:", error);
-      // Navega mesmo com erro para não travar o usuário
       navigation.navigate("QuizResult", {
         categoryId,
-        categoryName: categoryName || "Desafio",
+        categoryName: categoryName || "Erro",
         subcategoryName: subcategoryName || "Erro",
-        correctAnswers: 0, // Fallback visual
+        correctAnswers: 0,
         totalQuestions: quiz.questions.length,
         percentage: 0,
         level: "Fraco",
         userAnswers: finalAnswers,
+        courseId,
+        lessonId,
       });
     }
   }

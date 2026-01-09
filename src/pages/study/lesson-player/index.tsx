@@ -19,6 +19,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore"; // Store de preferências de leitura
 import { AppStackParamList } from "@/routers/types";
 import { useLesson } from "@/hooks/queries/useLessons";
+import { useExercises } from "@/hooks/queries/useExercises"; // Import Hook updated to Plural
 
 import {
   useCourseProgress,
@@ -55,7 +56,10 @@ export function LessonPlayerScreen() {
   const [isNarrating, setIsNarrating] = useState(false); // Estado de narração
 
   // Fetch da aula
-  const { data: lesson, isLoading } = useLesson(courseId, lessonId);
+  const { data: lesson, isLoading: isLoadingLesson } = useLesson(courseId, lessonId);
+
+  // Fetch dos exercícios associados (PLURAL)
+  const { data: exercises, isLoading: isLoadingExercises } = useExercises(lessonId);
 
   // Fetch do progresso (para atualizar depois)
   const { data: progress } = useCourseProgress(courseId);
@@ -63,6 +67,12 @@ export function LessonPlayerScreen() {
   const currentSlide = lesson?.slides[currentSlideIndex];
   const isFirstSlide = currentSlideIndex === 0;
   const isLastSlide = currentSlideIndex === (lesson?.slides.length || 0) - 1;
+
+  // Loading unificado
+  const isLoading = isLoadingLesson || isLoadingExercises;
+
+  // Verifica se tem exercícios
+  const hasExercises = exercises && exercises.length > 0;
 
   function handlePrevious() {
     if (currentSlideIndex > 0) {
@@ -79,14 +89,20 @@ export function LessonPlayerScreen() {
   async function handleFinish() {
     if (!lesson) return;
 
-    // Se a aula tiver um quiz, redireciona para a tela de Quiz
-    if (lesson.quizId) {
-      navigation.navigate("CourseQuiz", {
-        courseId: lesson.courseId,
-        lessonId: lesson.id,
-        quizId: lesson.quizId,
-      });
-      return;
+    // Se houver exercícios, inicia o primeiro (por enquanto)
+    if (hasExercises) {
+      const firstExercise = exercises[0];
+      if (firstExercise.quizId) {
+        navigation.navigate("CourseQuiz", {
+          courseId: lesson.courseId,
+          lessonId: lesson.id,
+          quizId: firstExercise.quizId,
+          mode: "course",
+          categoryName: "Exercício de Fixação",
+          subcategoryName: lesson.title,
+        });
+        return;
+      }
     }
 
     try {
@@ -268,6 +284,7 @@ export function LessonPlayerScreen() {
         isFirstSlide={isFirstSlide}
         isLastSlide={isLastSlide}
         onFinish={handleFinish}
+        finishLabel={hasExercises ? "IR PARA EXERCÍCIO" : "FINALIZAR AULA"}
       />
     </SafeAreaView>
   );

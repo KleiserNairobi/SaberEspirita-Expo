@@ -23,7 +23,30 @@ export type AppStackParamList = {
   CourseDetails: { courseId: string };
   CourseCurriculum: { courseId: string };
   LessonPlayer: { courseId: string; lessonId: string };
-  CourseQuiz: { courseId: string; lessonId: string; quizId: string };
+  CourseQuiz: {
+    subcategoryId?: string;
+    categoryId?: string;
+    categoryName?: string;
+    subcategoryName?: string;
+    subtitle?: string;
+    mode?: "standard" | "daily" | "course";
+    courseId: string;
+    lessonId: string;
+    quizId: string;
+  };
+  QuizResult: {
+    categoryId?: string;
+    categoryName?: string;
+    subcategoryName?: string;
+    subtitle?: string;
+    correctAnswers: number;
+    totalQuestions: number;
+    percentage: number;
+    level: string;
+    userAnswers: any[];
+    courseId?: string;
+    lessonId?: string;
+  };
 };
 
 export type GlossaryStackParamList = {
@@ -58,23 +81,28 @@ export type FixStackParamList = {
     categoryName: string;
   };
   Quiz: {
-    subcategoryId: string;
-    categoryId: string;
-    categoryName: string;
-    subcategoryName: string;
-    subtitle?: string; // Descrição específica do quiz
-    mode?: "standard" | "daily";
+    subcategoryId?: string;
+    categoryId?: string;
+    categoryName?: string;
+    subcategoryName?: string;
+    subtitle?: string;
+    mode?: "standard" | "daily" | "course";
+    courseId?: string;
+    lessonId?: string;
+    quizId?: string;
   };
   QuizResult: {
-    categoryId: string;
-    categoryName: string;
-    subcategoryName: string;
+    categoryId?: string;
+    categoryName?: string;
+    subcategoryName?: string;
     subtitle?: string;
     correctAnswers: number;
     totalQuestions: number;
     percentage: number;
     level: string;
-    userAnswers: any[]; // TODO: Tipar corretamente
+    userAnswers: any[];
+    courseId?: string;
+    lessonId?: string;
   };
   QuizReview: {
     categoryId: string;

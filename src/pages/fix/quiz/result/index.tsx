@@ -5,11 +5,11 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Button } from "@/components/Button";
 import { createStyles } from "./styles";
-import { FixStackParamList } from "@/routers/types";
+import { FixStackParamList, AppStackParamList } from "@/routers/types";
 
 type QuizResultRouteProp = RouteProp<FixStackParamList, "QuizResult">;
 type QuizResultNavigationProp = NativeStackNavigationProp<
-  FixStackParamList,
+  FixStackParamList & AppStackParamList, // Union to support both stacks
   "QuizResult"
 >;
 
@@ -29,6 +29,7 @@ export function QuizResultScreen() {
     percentage,
     level,
     userAnswers,
+    courseId,
   } = route.params;
 
   // Determinar mensagem de feedback baseada no nível
@@ -71,6 +72,22 @@ export function QuizResultScreen() {
   const resultImage = getResultImage(percentage);
 
   function handleContinue() {
+    // Se for modo Curso, voltar para o currículo do curso
+    if (courseId) {
+      // Cast to any to avoid strict type checking conflict for this specific reset
+      (navigation as any).reset({
+        index: 1,
+        routes: [
+          { name: "Tabs" }, // Garante que a Tab esteja na base
+          {
+            name: "CourseCurriculum",
+            params: { courseId },
+          },
+        ],
+      });
+      return;
+    }
+
     // Se for desafio diário, voltar para home
     if (categoryId === "DAILY") {
       navigation.reset({
@@ -88,8 +105,8 @@ export function QuizResultScreen() {
         {
           name: "Subcategories",
           params: {
-            categoryId,
-            categoryName,
+            categoryId: categoryId || "DAILY", // Fallbacks for safety
+            categoryName: categoryName || "Desafio",
           },
         },
       ],
@@ -98,14 +115,14 @@ export function QuizResultScreen() {
 
   function handleReview() {
     navigation.navigate("QuizReview", {
-      categoryId,
-      categoryName,
-      subcategoryName,
+      categoryId: categoryId || "DAILY",
+      categoryName: categoryName || "Desafio",
+      subcategoryName: subcategoryName || "Geral",
       subtitle,
       totalQuestions,
       percentage,
       level,
-      userAnswers,
+      userAnswers: userAnswers || [],
     });
   }
 

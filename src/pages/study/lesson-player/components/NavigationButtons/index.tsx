@@ -11,6 +11,7 @@ interface NavigationButtonsProps {
   isFirstSlide: boolean;
   isLastSlide: boolean;
   onFinish?: () => void;
+  finishLabel?: string;
 }
 
 export function NavigationButtons({
@@ -19,6 +20,7 @@ export function NavigationButtons({
   isFirstSlide,
   isLastSlide,
   onFinish,
+  finishLabel = "FINALIZAR AULA",
 }: NavigationButtonsProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -50,7 +52,7 @@ export function NavigationButtons({
           onPress={onFinish}
           activeOpacity={0.7}
         >
-          <Text style={styles.buttonFinishText}>FINALIZAR AULA</Text>
+          <Text style={styles.buttonFinishText}>{finishLabel}</Text>
         </TouchableOpacity>
       ) : (
         <TouchableOpacity style={styles.buttonNext} onPress={onNext} activeOpacity={0.7}>

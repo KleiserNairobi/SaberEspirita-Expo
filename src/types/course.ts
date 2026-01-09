@@ -38,7 +38,6 @@ export interface ILesson {
   order: number;
   slides: ISlide[];
   durationMinutes: number;
-  quizId?: string;
   source?: string;
   chapter?: string;
   status: LessonStatus; // ✅ NOVO

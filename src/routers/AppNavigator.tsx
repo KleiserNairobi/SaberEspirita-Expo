@@ -11,9 +11,10 @@ import { ScientificChatScreen } from "@/pages/chat/scientific";
 import { GlossaryNavigator } from "./GlossaryNavigator";
 import { CoursesCatalogScreen } from "@/pages/study/courses-catalog";
 import { CourseDetailsScreen } from "@/pages/study/course-details";
-import { CourseCurriculumScreen } from "@/pages/study/course-curriculum"; // ✅ NOVO
+import { CourseCurriculumScreen } from "@/pages/study/course-curriculum";
 import { LessonPlayerScreen } from "@/pages/study/lesson-player";
-import { CourseQuizScreen } from "@/pages/study/course-quiz";
+import { QuizScreen } from "@/pages/fix/quiz";
+import { QuizResultScreen } from "@/pages/fix/quiz/result";
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -35,7 +36,8 @@ export function AppNavigator() {
       <Stack.Screen name="CourseDetails" component={CourseDetailsScreen} />
       <Stack.Screen name="CourseCurriculum" component={CourseCurriculumScreen} />
       <Stack.Screen name="LessonPlayer" component={LessonPlayerScreen} />
-      <Stack.Screen name="CourseQuiz" component={CourseQuizScreen} />
+      <Stack.Screen name="CourseQuiz" component={QuizScreen} />
+      <Stack.Screen name="QuizResult" component={QuizResultScreen} />
     </Stack.Navigator>
   );
 }
