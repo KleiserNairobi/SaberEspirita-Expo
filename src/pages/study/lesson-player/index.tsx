@@ -89,9 +89,18 @@ export function LessonPlayerScreen() {
   async function handleFinish() {
     if (!lesson) return;
 
+    console.log("🎬 [LessonPlayer] handleFinish INÍCIO", {
+      courseId: lesson.courseId,
+      lessonId: lesson.id,
+      hasExercises,
+      userId: user?.uid,
+    });
+
     // Se houver exercícios, inicia o primeiro (por enquanto)
     if (hasExercises) {
       const firstExercise = exercises[0];
+      console.log("📝 [LessonPlayer] Redirecionando para exercício:", firstExercise);
+
       if (firstExercise.quizId) {
         navigation.navigate("CourseQuiz", {
           courseId: lesson.courseId,
@@ -106,26 +115,47 @@ export function LessonPlayerScreen() {
     }
 
     try {
+      console.log("💾 [LessonPlayer] Chamando markLessonAsCompleted...");
       await markLessonAsCompleted(lesson.courseId, lesson.id, user?.uid);
+      console.log("✅ [LessonPlayer] markLessonAsCompleted retornou com sucesso");
 
       // Invalidar cache de progresso para atualizar a tela anterior
       if (user?.uid) {
+        console.log("🔄 [LessonPlayer] Invalidando cache React Query...");
         queryClient.invalidateQueries({
           queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, lesson.courseId),
         });
+        console.log("✅ [LessonPlayer] Cache invalidado");
       }
 
       Alert.alert("Aula Concluída!", "Parabéns! Você concluiu esta aula com sucesso.", [
         {
           text: "OK",
-          onPress: () => navigation.goBack(),
+          onPress: () => {
+            console.log("👋 [LessonPlayer] Voltando para tela anterior");
+            navigation.goBack();
+          },
         },
       ]);
     } catch (error) {
-      console.error("Erro ao marcar aula como concluída:", error);
+      console.error("❌ [LessonPlayer] Erro ao marcar aula como concluída:", error);
+
+      // Exibe erro detalhado
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+
       Alert.alert(
-        "Erro",
-        "Não foi possível marcar a aula como concluída. Tente novamente."
+        "Erro ao Salvar Progresso",
+        `Não foi possível marcar a aula como concluída.\n\nDetalhes: ${errorMessage}\n\nVerifique sua conexão e tente novamente.`,
+        [
+          {
+            text: "Ver Console",
+            onPress: () => console.log("Erro completo:", error),
+          },
+          {
+            text: "OK",
+            style: "cancel",
+          },
+        ]
       );
     }
   }

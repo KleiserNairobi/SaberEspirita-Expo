@@ -634,6 +634,12 @@ Aproveitar a migração para limpar o visual.
 
 ---
 
+### 09/01/2026 (Refatoração) - Reutilização do QuizScreen (19:00)
+
+- ✅ **Refatoração**: Substituído o `CourseQuizScreen` pelo componente robusto `QuizScreen` do módulo Fixe.
+- ✅ **Clean Code**: O app agora utiliza uma única engine de quiz para todos os módulos (Fixe, Diário, Cursos).
+- ✅ **Melhoria**: Navegação simplificada e unificada.
+
 ### 09/01/2026 - Integração de Quiz no Curso
 
 - ✅ **Módulo de Cursos - Fase 2: Quiz Integrado**
@@ -1444,3 +1450,60 @@ bold: "Oswald_700Bold";
   - **Botão Finalizar**: Botão "Próxima" muda dinamicamente para "Finalizar" na última questão.
   - **Header de Resultado**: Ajustado para priorizar o subtítulo em vez do nome da categoria.
   - **ProgressBar**: Correção de layout e margens.
+
+### 10/01/2026 - Redesign Completo da Tela CourseDetailsScreen
+
+- ✅ **Correção da Lógica de Status das Aulas**
+  - **Problema**: Status das aulas exibidos incorretamente (ex: "8 min restantes" hardcoded, "Bloqueada" indevidamente).
+  - **Solução**:
+    - Refatorada função `getLessonStatus` em `CourseCurriculumScreen.tsx` para usar corretamente `progress.completedLessons` e `progress.lastLessonId`.
+    - Implementado desbloqueio sequencial: apenas primeira aula disponível quando `completedLessons` está vazio.
+    - Removido mock `hasQuiz = index === 3`.
+  - **Resultado**: Status agora reflete corretamente: Disponível, Em Andamento, Concluída, Bloqueada.
+
+- ✅ **Ajustes de Estilo no Card Bloqueado**
+  - Removida opacidade global (`opacity: 0.6`) que deixava texto ilegível.
+  - Aplicado background com 50% transparência apenas no card, mantendo texto legível.
+
+- ✅ **Redesign Completo da Tela CourseDetailsScreen**
+  - **Motivação**: Tela ocupava ~40% do espaço com hero image, faltavam informações críticas (certificado, exercícios).
+  - **Mudanças Implementadas**:
+    - ❌ **Removido**: Hero image, seção de autor (redundante), ano de atualização.
+    - ✅ **Adicionado**:
+      - Header compacto com apenas botão voltar + título (10% da tela vs 40% antes).
+      - Contador de exercícios nos stats.
+      - Badge "🏆 Emite Certificado" (se aplicável).
+      - Card de requisitos para certificado com ícone de alerta.
+    - ✅ **Layout de Stats**: Migrado de grid 2x3 com cards para lista 2 colunas sem cards.
+    - ✅ **Ícones Estilizados**: Círculos coloridos (`theme.colors.primary + "15"`) consistentes com botão voltar.
+    - ✅ **Progresso Sem Card**: Removido background e borda para layout mais limpo.
+  - **Economia de Espaço**: ~220px (~30% da tela) liberados para conteúdo útil.
+
+- ✅ **Padronização com Design System**
+  - **Regra de Ouro Aplicada**: NENHUM card tem sombra (removidas todas as propriedades `shadowColor`, `shadowOffset`, `shadowOpacity`, `shadowRadius`, `elevation`).
+  - **Consistência Visual**: Cards de progresso e requisitos seguem mesma formatação dos cards da biblioteca:
+    - `borderWidth: 1`
+    - `borderColor: theme.colors.border`
+    - `borderRadius: theme.radius.md`
+  - **Espaçamento**: Aumentada margem superior da seção "Sobre o Curso" (`theme.spacing.lg`) para melhor separação visual das stats.
+
+- ✅ **Correção de Safe Area Insets**
+  - Adicionado `SafeAreaView` com `edges={["top"]}` no container principal.
+  - Footer com `paddingBottom` dinâmico usando `useSafeAreaInsets()` para respeitar área segura inferior.
+  - Título e botões agora não ficam atrás dos ícones do sistema.
+
+- ✅ **Reorganização de Layout**
+  - **Nova Ordem**:
+    1. Header (botão voltar + título)
+    2. Card de Progresso (se matriculado, sem card)
+    3. Descrição do Curso ("Sobre o Curso")
+    4. Stats em 2 colunas (ícones com círculos coloridos)
+    5. Requisitos para Certificado (card sutil com borda laranja)
+    6. Footer com botões de ação
+
+- 📊 **Resultado UX/UI**: Design profissional, limpo e funcional (9/10):
+  - ✅ Hierarquia visual clara
+  - ✅ Informações críticas destacadas
+  - ✅ Consistência com design system
+  - ✅ Uso eficiente do espaço
+  - ✅ Princípios de design moderno (flat, minimalista)

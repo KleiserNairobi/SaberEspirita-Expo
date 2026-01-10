@@ -1,11 +1,5 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet } from "react-native";
 import { ITheme } from "@/configs/theme/types";
-
-const { width } = Dimensions.get("window");
-// Altura da imagem do hero
-const HERO_HEIGHT = 320;
-// Altura do footer fixo
-const FOOTER_HEIGHT = 100;
 
 export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
@@ -13,219 +7,221 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
       backgroundColor: theme.colors.background,
     },
-    scrollContent: {
-      paddingBottom: FOOTER_HEIGHT + 20, // Espaço para o footer fixo
-    },
 
-    // HERO SECTION
-    heroContainer: {
-      width: "100%",
-      height: HERO_HEIGHT,
-      position: "relative",
-    },
-    heroImage: {
-      width: "100%",
-      height: "100%",
+    // HEADER
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
     },
     backButton: {
-      position: "absolute",
-      top: 48,
-      left: 16,
-      zIndex: 10,
       width: 40,
       height: 40,
       borderRadius: 20,
-      backgroundColor: "rgba(0,0,0,0.4)",
       justifyContent: "center",
       alignItems: "center",
+      backgroundColor: theme.colors.accent,
+      marginRight: theme.spacing.md,
     },
-    heroOverlay: {
-      position: "absolute",
-      bottom: 0,
-      left: 0,
-      right: 0,
-      padding: 24,
-      paddingBottom: 32,
-      // O gradiente deve ser gerado pelo LinearGradient no componente
-    },
-    courseTitle: {
-      ...theme.text("xxl", "semibold"), // Reduzido de 'bold' para 'semibold'
-      color: "#FFFFFF",
-      marginBottom: 8,
-      textShadowColor: "rgba(0, 0, 0, 0.5)",
-      textShadowOffset: { width: 0, height: 1 },
-      textShadowRadius: 2,
-    },
-    authorContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 8,
-    },
-    authorText: {
-      ...theme.text("sm", "medium"),
-      color: "rgba(255, 255, 255, 0.9)",
+    headerTitle: {
+      ...theme.text("lg", "bold"),
+      color: theme.colors.text,
+      flex: 1,
     },
 
-    // PROGRESS SECTION
-    progressSection: {
-      paddingHorizontal: 20,
-      marginTop: 24,
-      marginBottom: 24,
+    // SCROLL CONTENT
+    scrollContent: {
+      padding: theme.spacing.md,
+      paddingBottom: 120, // Espaço para footer fixo
+    },
+
+    // PROGRESS (SEM CARD)
+    progressCard: {
+      marginBottom: theme.spacing.md,
     },
     progressHeader: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      marginBottom: 8,
+      marginBottom: theme.spacing.sm,
     },
     progressLabel: {
-      ...theme.text("xs", "medium"),
-      textTransform: "uppercase",
-      color: theme.colors.textSecondary,
+      ...theme.text("xs", "semibold", theme.colors.textSecondary),
       letterSpacing: 0.5,
     },
     progressValue: {
-      ...theme.text("xs", "bold"),
-      color: theme.colors.text,
+      ...theme.text("lg", "bold", theme.colors.primary),
     },
     progressBarBg: {
       width: "100%",
       height: 8,
       backgroundColor: theme.colors.border,
-      borderRadius: 4,
+      borderRadius: theme.radius.xs,
       overflow: "hidden",
+      marginBottom: theme.spacing.xs,
     },
     progressBarFill: {
       height: "100%",
       backgroundColor: theme.colors.primary,
-      borderRadius: 4,
+      borderRadius: theme.radius.xs,
+    },
+    progressFooter: {
+      ...theme.text("sm", "regular", theme.colors.textSecondary),
+    },
+
+    // STATS LIST (2 COLUNAS)
+    statsList: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: theme.spacing.sm,
+      marginBottom: theme.spacing.lg,
+      marginTop: theme.spacing.md,
+    },
+    statItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.xs,
+      width: "48%", // 2 colunas
+    },
+    statText: {
+      ...theme.text("sm", "regular", theme.colors.textSecondary),
+      flex: 1,
+    },
+    iconCircle: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: `${theme.colors.primary}15`,
+      alignItems: "center",
+      justifyContent: "center",
     },
 
     // STATS GRID
     statsGrid: {
       flexDirection: "row",
       flexWrap: "wrap",
-      paddingHorizontal: 16,
-      gap: 12,
-      marginBottom: 32,
+      gap: theme.spacing.sm,
+      marginBottom: theme.spacing.md,
     },
     statCard: {
-      // 50% menos o gap
-      width: (width - 32 - 12) / 2,
-      flexDirection: "row",
-      alignItems: "center",
-      padding: 16,
-      backgroundColor: theme.colors.card,
-      borderRadius: 16,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      gap: 12,
-    },
-    iconCircle: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: "rgba(126, 217, 87, 0.1)", // Primary com opacidade
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    statInfo: {
       flex: 1,
+      minWidth: "30%", // 3 colunas em telas maiores
+      backgroundColor: theme.colors.card,
+      borderRadius: theme.radius.lg, // Mais arredondado
+      padding: theme.spacing.lg, // Mais padding
+      alignItems: "center",
+      gap: theme.spacing.xs,
+      // Removida borda marcada
+      // Adicionada sombra sutil
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    certificateCard: {
+      backgroundColor: `${theme.colors.warning}08`, // Mais sutil (8% opacidade)
+      // Sem borda
     },
     statValue: {
-      ...theme.text("lg", "semibold"), // Reduzido de 'bold' para 'semibold'
+      ...theme.text("xl", "bold"), // Maior
       color: theme.colors.text,
-      marginBottom: 2,
     },
     statLabel: {
       ...theme.text("xs", "regular", theme.colors.textSecondary),
     },
 
-    // DESCRIPTION SECTION
-    sectionContainer: {
-      paddingHorizontal: 20,
-      marginBottom: 24,
+    // SECTION
+    section: {
+      marginTop: theme.spacing.lg,
+      marginBottom: theme.spacing.md,
     },
     sectionTitle: {
       ...theme.text("lg", "semibold"),
       color: theme.colors.text,
-      marginBottom: 12,
+      marginBottom: theme.spacing.sm,
     },
     descriptionText: {
-      ...theme.text("sm", "regular", theme.colors.textSecondary),
+      ...theme.text("md", "regular", theme.colors.textSecondary),
       lineHeight: 24,
     },
 
-    // INSTRUCTOR MINI CARD
-    instructorCard: {
+    // REQUIREMENTS CARD
+    requirementsCard: {
+      backgroundColor: `${theme.colors.warning}08`,
+      borderRadius: theme.radius.md,
+      borderWidth: 1,
+      borderColor: `${theme.colors.warning}30`,
+      padding: theme.spacing.lg,
+      marginBottom: theme.spacing.md,
+      marginTop: theme.spacing.md,
+    },
+    requirementsHeader: {
       flexDirection: "row",
       alignItems: "center",
-      marginTop: 24,
-      paddingTop: 24,
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.border,
-      gap: 16,
+      gap: theme.spacing.sm,
+      marginBottom: theme.spacing.sm,
     },
-    instructorAvatar: {
-      width: 48,
-      height: 48,
-      borderRadius: 24,
-      backgroundColor: theme.colors.border,
+    requirementsTitle: {
+      ...theme.text("md", "regular"),
     },
-    instructorInfo: {
+    requirementsList: {
+      gap: theme.spacing.xs,
+    },
+    requirementItem: {
+      flexDirection: "row",
+      gap: theme.spacing.sm,
+    },
+    requirementBullet: {
+      ...theme.text("md", "bold", theme.colors.warning),
+    },
+    requirementText: {
+      ...theme.text("sm", "regular", theme.colors.textSecondary),
       flex: 1,
     },
-    instructorName: {
-      ...theme.text("sm", "bold"),
-      color: theme.colors.text,
-    },
-    instructorRole: {
-      ...theme.text("xs", "regular", theme.colors.textSecondary),
-    },
 
-    // FIXED FOOTER
+    // FOOTER
     footer: {
       position: "absolute",
       bottom: 0,
       left: 0,
       right: 0,
-      paddingHorizontal: 20,
-      paddingTop: 16,
-      paddingBottom: 24, // Padding inferior seguro
-      backgroundColor: theme.colors.background, // Fundo sólido para cobrir o conteúdo rolando
+      backgroundColor: theme.colors.background,
+      padding: theme.spacing.md,
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
-      gap: 12,
-      // Sombra sutil para elevação
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: -4 },
-      shadowOpacity: 0.05,
-      shadowRadius: 8,
-      elevation: 10,
+    },
+    footerButtons: {
+      flexDirection: "row",
+      gap: theme.spacing.sm,
+    },
+    flexButton: {
+      flex: 1,
     },
     primaryButton: {
-      width: "100%",
-      paddingVertical: theme.spacing.md,
       backgroundColor: theme.colors.primary,
       borderRadius: theme.radius.md,
-      justifyContent: "center",
+      paddingVertical: theme.spacing.md,
       alignItems: "center",
+      justifyContent: "center",
     },
     primaryButtonText: {
-      ...theme.text("md", "bold"), // Padronizado
-      color: "#FFFFFF",
-      letterSpacing: 0.5,
+      ...theme.text("md", "bold"),
+      color: theme.colors.background,
     },
     secondaryButton: {
-      width: "100%",
-      paddingVertical: theme.spacing.md,
-      backgroundColor: `${theme.colors.primary}20`,
+      backgroundColor: "transparent",
       borderRadius: theme.radius.md,
-      justifyContent: "center",
+      paddingVertical: theme.spacing.md,
       alignItems: "center",
+      justifyContent: "center",
+      borderWidth: 1,
+      borderColor: theme.colors.primary,
     },
     secondaryButtonText: {
-      ...theme.text("md", "medium"),
-      color: theme.colors.primary,
+      ...theme.text("md", "bold", theme.colors.primary),
     },
   });

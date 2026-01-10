@@ -227,4 +227,5 @@ Funções implementadas (copiadas do CLI):
 2. Implementar **LeaderboardScreen** (ranking)
 3. Implementar **Desafio Diário** (5 perguntas/dia)
 4. Implementar **Meu Progresso** (estatísticas + badges)
-5. Reutilizar componentes no Quiz da Aula (módulo Estude)
+5. Implementar **Meu Progresso** (estatísticas + badges)
+6. ✅ Reutilizar componentes no Quiz da Aula (módulo Estude) - **Concluído em 09/01/2026**

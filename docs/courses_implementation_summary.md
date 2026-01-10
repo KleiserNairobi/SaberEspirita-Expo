@@ -1,7 +1,7 @@
 # 📚 Módulo de Cursos Espíritas - Resumo de Implementação
 
-**Última Atualização**: 09/01/2026 16:55  
-**Status Geral**: 95% Concluído
+**Última Atualização**: 09/01/2026 19:15  
+**Status Geral**: 98% Concluído
 
 ---
 
@@ -16,7 +16,7 @@
 | 3   | **Detalhes do Curso**          | ✅ Completo | `src/pages/study/course-details/`    | 05/01/2026 |
 | 4   | **Currículo (Lista de Aulas)** | ✅ Completo | `src/pages/study/course-curriculum/` | 06/01/2026 |
 | 5   | **Player de Aula**             | ✅ Completo | `src/pages/study/lesson-player/`     | 09/01/2026 |
-| 6   | **Quiz da Aula**               | ✅ Completo | `src/pages/study/course-quiz/`       | 09/01/2026 |
+| 6   | **Quiz da Aula**               | ✅ Completo | `src/pages/fix/quiz/` (Reutilizado)  | 09/01/2026 |
 | 7   | **Certificado**                | ⏳ Pendente | -                                    | -          |
 
 ---
@@ -415,6 +415,27 @@ bold: "Oswald_700Bold";
 ---
 
 ## 📅 Histórico de Atualizações
+
+### 09/01/2026 (Refatoração) - Reutilização do QuizScreen
+
+**Implementações**:
+
+- ✅ **Refatoração Completa**: Substituído o `CourseQuizScreen` pelo componente robusto `QuizScreen` do módulo Fixe.
+- ✅ **QuizScreen Universal**: Adaptado para funcionar em modo 'course', aceitando IDs arbitrários e integrando com o progresso do curso.
+- ✅ **QuizResultScreen Atualizado**: Navegação 'Continuar' agora retorna ao currículo do curso quando executado neste contexto.
+- ✅ **Limpeza de Código**: Removidos componentes duplicados e redundantes.
+
+**Arquivos Modificados**:
+
+- `src/pages/fix/quiz/index.tsx` (Adaptado)
+- `src/pages/fix/quiz/result/index.tsx` (Adaptado)
+- `src/pages/study/lesson-player/index.tsx` (Navegação atualizada)
+- `src/services/firebase/quizService.ts`
+- `src/routers/types.ts`
+- `src/routers/AppNavigator.tsx` (Rota atualizada)
+- 🗑️ `src/pages/study/course-quiz/` (Removido)
+
+---
 
 ### 09/01/2026 - Integração de Quiz e Player
 

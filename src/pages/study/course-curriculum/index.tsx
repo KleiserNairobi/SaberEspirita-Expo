@@ -60,9 +60,14 @@ export function CourseCurriculumScreen() {
     totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
   function getLessonStatus(lesson: ILesson, index: number): LessonStatus {
-    // Se não tiver progresso, todas as aulas estão disponíveis (sem bloqueio)
-    if (!progress) {
-      return index === 0 ? LessonStatus.AVAILABLE : LessonStatus.AVAILABLE;
+    // Se não tiver progresso OU se completedLessons estiver vazio
+    if (!progress || progress.completedLessons.length === 0) {
+      // Primeira aula sempre disponível
+      if (index === 0) {
+        return LessonStatus.AVAILABLE;
+      }
+      // Demais aulas bloqueadas (desbloqueio sequencial)
+      return LessonStatus.LOCKED;
     }
 
     // Verificar se a aula foi concluída
@@ -165,8 +170,9 @@ export function CourseCurriculumScreen() {
               <Text style={styles.lessonMeta}>
                 {item.durationMinutes} min
                 {status === LessonStatus.COMPLETED && " • Concluída"}
-                {status === LessonStatus.IN_PROGRESS && " • 8 min restantes"}
+                {status === LessonStatus.IN_PROGRESS && " • Em andamento"}
                 {status === LessonStatus.LOCKED && " • Bloqueada"}
+                {status === LessonStatus.AVAILABLE && " • Disponível"}
               </Text>
             </View>
           </View>

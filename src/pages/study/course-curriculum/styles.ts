@@ -102,13 +102,13 @@ export const createStyles = (theme: ITheme) =>
       alignItems: "stretch",
     },
     cardLocked: {
-      backgroundColor: theme.colors.card,
-      borderColor: theme.colors.border, // ✅ Usar token
-      opacity: 0.6,
+      backgroundColor: `${theme.colors.card}80`, // Card com 50% opacidade
+      borderColor: theme.colors.border,
+      // Removido opacity global para manter texto legível
     },
     cardAvailable: {
       backgroundColor: theme.colors.card,
-      borderColor: theme.colors.border, // ✅ Usar token
+      borderColor: theme.colors.border,
     },
 
     // CONTEÚDO DO CARD
