@@ -21,7 +21,7 @@ export function QuizReviewScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const route = useRoute<QuizReviewRouteProp>();
-  const navigation = useNavigation<QuizReviewNavigationProp>();
+  const navigation = useNavigation<any>(); // Usando any para permitir navegação entre stacks (FIXE e APP)
 
   const {
     categoryId,
@@ -32,6 +32,7 @@ export function QuizReviewScreen() {
     percentage,
     level,
     userAnswers,
+    courseId, // ← NOVO: courseId opcional para exercícios de curso
   } = route.params;
 
   function handleBack() {
@@ -55,20 +56,29 @@ export function QuizReviewScreen() {
   const filledStars = getFilledStarsCount(level);
 
   function handleContinue() {
-    // FIX: Usar reset para limpar a pilha e garantir que o botão voltar leve à FixHome
-    navigation.reset({
-      index: 1,
-      routes: [
-        { name: "FixHome" },
-        {
-          name: "Subcategories",
-          params: {
-            categoryId,
-            categoryName,
+    // Detectar se estamos no contexto de CURSO ou FIXE
+    // Se courseId existe nos params, estamos em um exercício de curso
+    const isCourseContext = !!courseId;
+
+    if (isCourseContext) {
+      // Contexto de CURSO: Navegar de volta ao currículo do curso
+      navigation.navigate("CourseCurriculum", { courseId: courseId! });
+    } else {
+      // Contexto de FIXE: Usar reset para limpar a pilha
+      navigation.reset({
+        index: 1,
+        routes: [
+          { name: "FixHome" },
+          {
+            name: "Subcategories",
+            params: {
+              categoryId,
+              categoryName,
+            },
           },
-        },
-      ],
-    });
+        ],
+      });
+    }
   }
 
   return (

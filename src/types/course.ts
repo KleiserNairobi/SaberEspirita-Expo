@@ -71,6 +71,9 @@ export interface IUserCourseProgress {
   completedLessons: string[];
   lessonsCompletionPercent: number; // ✅ NOVO
 
+  // ✅ NOVO - Exercícios Pendentes
+  pendingExercises: string[]; // IDs de lessonId com exercícios pendentes
+
   // ✅ NOVO - Progresso de Exercícios
   exerciseResults: IExerciseResult[];
   exercisesCompletionPercent: number;

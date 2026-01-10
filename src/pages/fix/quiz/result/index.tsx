@@ -123,6 +123,7 @@ export function QuizResultScreen() {
       percentage,
       level,
       userAnswers: userAnswers || [],
+      courseId, // ← NOVO: Passa courseId para QuizReview
     });
   }
 

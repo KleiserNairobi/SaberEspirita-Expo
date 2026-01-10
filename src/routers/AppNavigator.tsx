@@ -1,5 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import { AppStackParamList } from "./types";
 import { TabNavigator } from "./TabNavigator";
@@ -15,29 +16,33 @@ import { CourseCurriculumScreen } from "@/pages/study/course-curriculum";
 import { LessonPlayerScreen } from "@/pages/study/lesson-player";
 import { QuizScreen } from "@/pages/fix/quiz";
 import { QuizResultScreen } from "@/pages/fix/quiz/result";
+import { QuizReviewScreen } from "@/pages/fix/quiz/review";
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
 export function AppNavigator() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="Tabs" component={TabNavigator} />
-      <Stack.Screen name="FAQ" component={FAQScreen} />
-      <Stack.Screen name="Privacy" component={PrivacyScreen} />
-      <Stack.Screen name="Terms" component={TermsScreen} />
-      <Stack.Screen name="EmotionalChat" component={EmotionalChatScreen} />
-      <Stack.Screen name="ScientificChat" component={ScientificChatScreen} />
-      <Stack.Screen name="Glossary" component={GlossaryNavigator} />
-      <Stack.Screen name="CoursesCatalog" component={CoursesCatalogScreen} />
-      <Stack.Screen name="CourseDetails" component={CourseDetailsScreen} />
-      <Stack.Screen name="CourseCurriculum" component={CourseCurriculumScreen} />
-      <Stack.Screen name="LessonPlayer" component={LessonPlayerScreen} />
-      <Stack.Screen name="CourseQuiz" component={QuizScreen} />
-      <Stack.Screen name="QuizResult" component={QuizResultScreen} />
-    </Stack.Navigator>
+    <BottomSheetModalProvider>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="Tabs" component={TabNavigator} />
+        <Stack.Screen name="FAQ" component={FAQScreen} />
+        <Stack.Screen name="Privacy" component={PrivacyScreen} />
+        <Stack.Screen name="Terms" component={TermsScreen} />
+        <Stack.Screen name="EmotionalChat" component={EmotionalChatScreen} />
+        <Stack.Screen name="ScientificChat" component={ScientificChatScreen} />
+        <Stack.Screen name="Glossary" component={GlossaryNavigator} />
+        <Stack.Screen name="CoursesCatalog" component={CoursesCatalogScreen} />
+        <Stack.Screen name="CourseDetails" component={CourseDetailsScreen} />
+        <Stack.Screen name="CourseCurriculum" component={CourseCurriculumScreen} />
+        <Stack.Screen name="LessonPlayer" component={LessonPlayerScreen} />
+        <Stack.Screen name="CourseQuiz" component={QuizScreen} />
+        <Stack.Screen name="QuizResult" component={QuizResultScreen} />
+        <Stack.Screen name="QuizReview" component={QuizReviewScreen} />
+      </Stack.Navigator>
+    </BottomSheetModalProvider>
   );
 }

@@ -4,6 +4,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Allura_400Regular } from "@expo-google-fonts/allura";
 import { Baskervville_400Regular_Italic } from "@expo-google-fonts/baskervville";
@@ -80,12 +81,14 @@ function AppContent() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
-        <QueryClientProvider client={queryClient}>
-          <StatusBar style={resolvedThemeType === "dark" ? "light" : "dark"} />
-          <RootNavigator />
-        </QueryClientProvider>
-      </BottomSheetModalProvider>
+      <SafeAreaProvider>
+        <BottomSheetModalProvider>
+          <QueryClientProvider client={queryClient}>
+            <StatusBar style={resolvedThemeType === "dark" ? "light" : "dark"} />
+            <RootNavigator />
+          </QueryClientProvider>
+        </BottomSheetModalProvider>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   View,
@@ -34,6 +34,9 @@ import { ReferenceCard } from "./components/ReferenceCard";
 import { SlideIndicator } from "./components/SlideIndicator";
 import { NavigationButtons } from "./components/NavigationButtons";
 import { ReadingToolbar } from "@/components/ReadingToolbar"; // Nova Toolbar
+import { BottomSheetMessage } from "@/components/BottomSheetMessage";
+import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { createStyles } from "./styles";
 
 type LessonPlayerRouteProp = RouteProp<AppStackParamList, "LessonPlayer">;
@@ -54,6 +57,14 @@ export function LessonPlayerScreen() {
   const { courseId, lessonId } = route.params;
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isNarrating, setIsNarrating] = useState(false); // Estado de narração
+
+  // Estado para configuração do BottomSheet genérico
+  const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
+    null
+  );
+
+  // Ref para BottomSheet genérico
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   // Fetch da aula
   const { data: lesson, isLoading: isLoadingLesson } = useLesson(courseId, lessonId);
@@ -96,22 +107,29 @@ export function LessonPlayerScreen() {
       userId: user?.uid,
     });
 
-    // Se houver exercícios, inicia o primeiro (por enquanto)
+    // Se houver exercícios, exibe BottomSheet de decisão
     if (hasExercises) {
-      const firstExercise = exercises[0];
-      console.log("📝 [LessonPlayer] Redirecionando para exercício:", firstExercise);
+      console.log(
+        "📝 [LessonPlayer] Aula tem exercícios, exibindo BottomSheet de decisão"
+      );
 
-      if (firstExercise.quizId) {
-        navigation.navigate("CourseQuiz", {
-          courseId: lesson.courseId,
-          lessonId: lesson.id,
-          quizId: firstExercise.quizId,
-          mode: "course",
-          categoryName: "Exercício de Fixação",
-          subcategoryName: lesson.title,
-        });
-        return;
-      }
+      setMessageConfig({
+        type: "question",
+        title: "Exercício de Fixação",
+        message:
+          "Teste seus conhecimentos sobre esta aula para garantir seu certificado ao final do curso!\n\n⚠️ Os exercícios são obrigatórios para obter o certificado.",
+        primaryButton: {
+          label: "FAZER EXERCÍCIO AGORA",
+          onPress: handleExerciseNow,
+        },
+        secondaryButton: {
+          label: "Fazer Depois",
+          onPress: handleExerciseLater,
+        },
+      });
+
+      bottomSheetRef.current?.present();
+      return;
     }
 
     try {
@@ -128,15 +146,21 @@ export function LessonPlayerScreen() {
         console.log("✅ [LessonPlayer] Cache invalidado");
       }
 
-      Alert.alert("Aula Concluída!", "Parabéns! Você concluiu esta aula com sucesso.", [
-        {
-          text: "OK",
+      // Exibe BottomSheet de conclusão
+      setMessageConfig({
+        type: "success",
+        title: "Aula Concluída!",
+        message: `Parabéns! Você concluiu a aula "${lesson.title}" com sucesso.`,
+        primaryButton: {
+          label: "Continuar",
           onPress: () => {
             console.log("👋 [LessonPlayer] Voltando para tela anterior");
             navigation.goBack();
           },
         },
-      ]);
+      });
+
+      bottomSheetRef.current?.present();
     } catch (error) {
       console.error("❌ [LessonPlayer] Erro ao marcar aula como concluída:", error);
 
@@ -159,6 +183,112 @@ export function LessonPlayerScreen() {
       );
     }
   }
+
+  
+  async function markLessonAsCompletedAndReturn() {
+    try {
+      console.log("💾 [LessonPlayer] Chamando markLessonAsCompleted...");
+      await markLessonAsCompleted(lesson.courseId, lesson.id, user?.uid);
+      console.log("✅ [LessonPlayer] markLessonAsCompleted retornou com sucesso");
+
+      if (user?.uid) {
+        queryClient.invalidateQueries({
+          queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, lesson.courseId),
+        });
+      }
+
+      console.log("👋 [LessonPlayer] Voltando para tela anterior");
+      navigation.goBack();
+    } catch (error) {
+      console.error("❌ [LessonPlayer] Erro ao marcar aula como concluída:", error);
+      
+      setMessageConfig({
+        type: "error",
+        title: "Erro",
+        message: "Não foi possível marcar a aula como concluída. Tente novamente.",
+        primaryButton: { label: "OK", onPress: () => {} },
+      });
+      bottomSheetRef.current?.present();
+    }
+  }
+
+  function handleExerciseNow() {
+    console.log("🚀 [LessonPlayer] handleExerciseNow chamado");
+    if (!exercises || exercises.length === 0) return;
+    
+    // Fecha bottom sheet
+    bottomSheetRef.current?.dismiss();
+
+    const firstExercise = exercises[0];
+    
+    // Marca aula como concluída em background
+    markLessonAsCompleted(lesson.courseId, lesson.id, user?.uid).then(() => {
+      if (user?.uid) {
+        queryClient.invalidateQueries({
+          queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, lesson.courseId),
+        });
+      }
+    });
+
+    if (firstExercise.quizId) {
+      navigation.navigate("CourseQuiz", {
+        courseId: lesson.courseId,
+        lessonId: lesson.id,
+        quizId: firstExercise.quizId,
+        mode: "course",
+        categoryName: "Exercício de Fixação",
+        subcategoryName: lesson.title,
+      });
+    }
+  }
+
+  async function handleExerciseLater() {
+    console.log("🕒 [LessonPlayer] handleExerciseLater chamado");
+    
+    // Fecha bottom sheet atual
+    bottomSheetRef.current?.dismiss();
+
+    try {
+      // 1. Marca aula como concluída
+      await markLessonAsCompleted(lesson.courseId, lesson.id, user?.uid);
+      
+      // 2. Marca exercício como pendente
+      await markExerciseAsPending(lesson.courseId, lesson.id, user?.uid);
+      
+      // 3. Invalida cache
+      if (user?.uid) {
+        queryClient.invalidateQueries({
+          queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, lesson.courseId),
+        });
+      }
+
+      // 4. Mostra mensagem de info
+      setTimeout(() => {
+        setMessageConfig({
+          type: "info",
+          title: "Exercício Pendente",
+          message: "Você pode fazer o exercício depois no currículo do curso.",
+          primaryButton: {
+            label: "OK",
+            onPress: () => navigation.goBack(),
+          },
+        });
+        bottomSheetRef.current?.present();
+      }, 500); // Delay para permitir fechamento e reabertura suave
+
+    } catch (error) {
+      console.error("❌ [LessonPlayer] Erro ao processar exercício pendente:", error);
+      
+      setMessageConfig({
+        type: "error",
+        title: "Erro",
+        message: "Não foi possível salvar o progresso. Tente novamente.",
+        primaryButton: { label: "OK", onPress: () => {} },
+      });
+      bottomSheetRef.current?.present();
+    }
+  }
+
 
   function handleGoBack() {
     navigation.goBack();
@@ -195,7 +325,13 @@ export function LessonPlayerScreen() {
         message: shareMessage,
       });
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível compartilhar.");
+      setMessageConfig({
+        type: "error",
+        title: "Erro",
+        message: "Não foi possível compartilhar.",
+        primaryButton: { label: "OK", onPress: () => {} },
+      });
+      bottomSheetRef.current?.present();
     }
   }
 
@@ -227,7 +363,13 @@ export function LessonPlayerScreen() {
       }
     } catch (error) {
       setIsNarrating(false);
-      Alert.alert("Erro", "Não foi possível narrar o conteúdo.");
+      setMessageConfig({
+        type: "error",
+        title: "Erro",
+        message: "Não foi possível narrar o conteúdo.",
+        primaryButton: { label: "OK", onPress: () => {} },
+      });
+      bottomSheetRef.current?.present();
     }
   }
 
@@ -237,6 +379,8 @@ export function LessonPlayerScreen() {
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
+        {/* BottomSheet Genérico para Mensagens */}
+        <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
       </SafeAreaView>
     );
   }
@@ -250,6 +394,8 @@ export function LessonPlayerScreen() {
             <Text style={styles.retryButtonText}>Voltar</Text>
           </TouchableOpacity>
         </View>
+        {/* BottomSheet Genérico para Mensagens */}
+        <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
       </SafeAreaView>
     );
   }
@@ -314,8 +460,10 @@ export function LessonPlayerScreen() {
         isFirstSlide={isFirstSlide}
         isLastSlide={isLastSlide}
         onFinish={handleFinish}
-        finishLabel={hasExercises ? "IR PARA EXERCÍCIO" : "FINALIZAR AULA"}
+        finishLabel="FINALIZAR AULA"
       />
+      {/* BottomSheet Genérico para Mensagens */}
+      <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
     </SafeAreaView>
   );
 }

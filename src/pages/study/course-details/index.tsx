@@ -205,7 +205,7 @@ export function CourseDetailsScreen() {
       <View style={styles.footer}>
         {isEnrolled ? (
           <TouchableOpacity style={styles.primaryButton} onPress={handleStartCourse}>
-            <Text style={styles.primaryButtonText}>CONTINUAR CURSO</Text>
+            <Text style={styles.primaryButtonText}>{userProgress === 100 ? "VER CURRÍCULO" : "CONTINUAR CURSO"}</Text>
           </TouchableOpacity>
         ) : (
           <View style={styles.footerButtons}>

@@ -194,6 +194,22 @@ export const createStyles = (theme: ITheme) =>
       borderRadius: theme.radius.xs, // ✅ Usar token
     },
 
+    // ✅ NOVO: PENDING EXERCISE BADGE
+    pendingBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+      marginTop: 6,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      backgroundColor: `${theme.colors.warning}20`, // Warning 20% opacity
+      borderRadius: 4,
+      alignSelf: "flex-start",
+    },
+    pendingBadgeText: {
+      ...theme.text("xs", "semibold", theme.colors.warning),
+    },
+
     loadingContainer: {
       flex: 1,
       justifyContent: "center",

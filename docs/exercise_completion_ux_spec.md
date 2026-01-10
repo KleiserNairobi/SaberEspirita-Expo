@@ -408,14 +408,14 @@ export async function checkCertificateEligibility(
 
 ## 📅 Plano de Implementação (3 Fases)
 
-### **Fase 1: Modal de Decisão** (Prioridade Alta)
+### **Fase 1: Modal de Decisão** (Prioridade Alta) - ✅ **Concluído (10/01/2026)**
 
 **Tempo estimado:** 2-3 horas
 
-- [ ] Criar `ExerciseDecisionModal` component
-- [ ] Modificar `LessonPlayerScreen` para exibir modal
-- [ ] Implementar `markExerciseAsPending` service
-- [ ] Testar fluxo "Fazer Agora" vs "Fazer Depois"
+- [x] Criar `ExerciseDecisionModal` component (Implementado como `BottomSheetMessage` genérico)
+- [x] Modificar `LessonPlayerScreen` para exibir modal
+- [x] Implementar `markExerciseAsPending` service
+- [x] Testar fluxo "Fazer Agora" vs "Fazer Depois"
 
 ### **Fase 2: Indicadores Visuais** (Prioridade Alta)
 

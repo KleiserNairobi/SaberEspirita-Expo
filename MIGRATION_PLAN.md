@@ -634,6 +634,35 @@ Aproveitar a migração para limpar o visual.
 
 ---
 
+### 10/01/2026 - UX de Conclusão de Aula e Exercícios Híbrido
+
+- ✅ **Módulo de Cursos - Fase 1: Modal de Decisão Implementado**
+- **Objetivo**: Implementar lógica onde o usuário decide se faz o exercício agora ou depois, sem bloquear a conclusão da aula.
+
+#### **Funcionalidades Implementadas**
+
+1. **Modal de Decisão (`BottomSheetMessage`)**:
+   - Componente genérico reutilizável para mensagens de sucesso/erro/decisão.
+   - Substituição de todos os `Alert.alert` nativos por este componente visual.
+   - Integração com `react-native-safe-area-context` para suporte a devices com notch.
+
+2. **Fluxo de `LessonPlayerScreen`**:
+   - Removida navegação automática para o quiz.
+   - Implementado "Fazer Agora" -> Navega para Quiz.
+   - Implementado "Fazer Depois" -> Marca pendência e volta ao currículo.
+
+3. **Correções de Infraestrutura**:
+   - Adicionado `SafeAreaProvider` e `GestureHandlerRootView` no `App.tsx` (Root) para corrigir problemas de layout e gestos em modais.
+   - Ajuste de ordem de providers para garantir funcionamento do `@gorhom/bottom-sheet`.
+
+#### **Arquivos Modificados/Criados**
+
+- `src/components/BottomSheetMessage/index.tsx` (Novo componente robusto)
+- `src/pages/study/lesson-player/index.tsx` (Lógica de decisão integrada)
+- `App.tsx` (Correção de Providers)
+
+---
+
 ### 09/01/2026 (Refatoração) - Reutilização do QuizScreen (19:00)
 
 - ✅ **Refatoração**: Substituído o `CourseQuizScreen` pelo componente robusto `QuizScreen` do módulo Fixe.

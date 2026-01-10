@@ -16,6 +16,7 @@ import {
   PlayCircle,
   Lock,
   ChevronRight,
+  AlertTriangle, // ← NOVO: Ícone para badge de exercício pendente
 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -23,6 +24,7 @@ import { AppStackParamList } from "@/routers/types";
 import { useLessons } from "@/hooks/queries/useLessons";
 import { useCourse } from "@/hooks/queries/useCourses"; // ✅ Corrigido
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
+import { useExercises } from "@/hooks/queries/useExercises"; // ← NOVO: Para buscar exercícios
 import { ILesson } from "@/types/course";
 import { createStyles } from "./styles";
 
@@ -52,6 +54,9 @@ export function CourseCurriculumScreen() {
 
   // ✅ Fetch do progresso real do usuário
   const { data: progress } = useCourseProgress(courseId);
+
+  // ✅ NOVO: Extrair exercícios pendentes
+  const pendingExercises = progress?.pendingExercises || [];
 
   // Calcular progresso
   const totalLessons = lessons.length;
@@ -105,12 +110,15 @@ export function CourseCurriculumScreen() {
       );
       return;
     }
+
+    // Comportamento normal: abre a aula
+    // TODO: Implementar navegação direta para exercício pendente
     navigation.navigate("LessonPlayer", { courseId, lessonId: lesson.id });
   }
 
   const renderLessonItem = ({ item, index }: { item: ILesson; index: number }) => {
     const status = getLessonStatus(item, index);
-    const hasQuiz = index === 3; // Mock para mostrar badge de Quiz
+    const isPendingExercise = pendingExercises.includes(item.id); // ← NOVO
 
     // Define estilos baseados no status
     const containerStyle = [
@@ -174,18 +182,19 @@ export function CourseCurriculumScreen() {
                 {status === LessonStatus.LOCKED && " • Bloqueada"}
                 {status === LessonStatus.AVAILABLE && " • Disponível"}
               </Text>
+
+              {/* ✅ NOVO: Badge de exercício pendente */}
+              {isPendingExercise && (
+                <View style={styles.pendingBadge}>
+                  <AlertTriangle size={14} color={theme.colors.warning} />
+                  <Text style={styles.pendingBadgeText}>Exercício pendente</Text>
+                </View>
+              )}
             </View>
           </View>
 
-          {/* DIREITA (CHEVRON OU BADGE) */}
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            {hasQuiz && (
-              <View style={styles.quizBadge}>
-                <Text style={styles.quizText}>Quiz</Text>
-              </View>
-            )}
-            <ChevronRight size={24} color={theme.colors.textSecondary} />
-          </View>
+          {/* DIREITA (CHEVRON) */}
+          <ChevronRight size={24} color={theme.colors.textSecondary} />
         </View>
 
         {/* BARRA DE PROGRESSO INTERNA (Só para Em Andamento) */}

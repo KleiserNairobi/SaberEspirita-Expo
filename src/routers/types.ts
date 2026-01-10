@@ -47,6 +47,17 @@ export type AppStackParamList = {
     courseId?: string;
     lessonId?: string;
   };
+  QuizReview: {
+    categoryId: string;
+    categoryName: string;
+    subcategoryName: string;
+    subtitle?: string;
+    totalQuestions: number;
+    percentage: number;
+    level: string;
+    userAnswers: any[];
+    courseId?: string; // Opcional: usado quando é exercício de curso
+  };
 };
 
 export type GlossaryStackParamList = {
@@ -113,6 +124,7 @@ export type FixStackParamList = {
     percentage: number;
     level: string;
     userAnswers: any[];
+    courseId?: string; // Opcional: usado quando é exercício de curso
   };
   TruthOrFalseHome: undefined;
   TruthOrFalseQuestion: undefined;
