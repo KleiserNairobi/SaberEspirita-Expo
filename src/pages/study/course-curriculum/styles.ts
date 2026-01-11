@@ -224,4 +224,69 @@ export const createStyles = (theme: ITheme) =>
       justifyContent: "center",
       alignItems: "center",
     },
+
+    // ✅ NOVO: Estilos da Lista de Exercícios
+    lessonWrapper: {
+      marginBottom: theme.spacing.sm,
+    },
+    exercisesListContainer: {
+      marginLeft: theme.spacing.lg, // Indentado em relação ao card da aula
+      borderLeftWidth: 2,
+      borderLeftColor: theme.colors.border,
+      paddingLeft: theme.spacing.md,
+      marginTop: -8, // Aproximar do card de cima (conector visual)
+      paddingTop: 8,
+      paddingBottom: 8,
+    },
+    exerciseCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingVertical: 12,
+      paddingRight: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: `${theme.colors.border}50`, // Mais sutil
+    },
+    exerciseLeftContent: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      flex: 1,
+    },
+    connectorLine: {
+      // Pode ser usado para linha vertical se necessário,
+      // mas o borderLeft no container já faz esse papel
+      width: 0,
+      height: 0,
+    },
+    exerciseIconContainer: {
+      width: 24,
+      height: 24,
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: 12,
+      backgroundColor: theme.colors.background, // Fundo para cobrir linha se necessário
+      borderWidth: 2,
+      borderColor: theme.colors.textSecondary,
+    },
+    exerciseIconCompleted: {
+      borderColor: theme.colors.success,
+      backgroundColor: `${theme.colors.success}10`,
+    },
+    exerciseDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: theme.colors.textSecondary,
+    },
+    exerciseTextContainer: {
+      flex: 1,
+    },
+    exerciseTitle: {
+      ...theme.text("sm", "regular", theme.colors.textSecondary),
+    },
+    exerciseTitleCompleted: {
+      color: theme.colors.text,
+      textDecorationLine: "none",
+    },
   });

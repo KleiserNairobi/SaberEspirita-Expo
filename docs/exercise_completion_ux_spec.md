@@ -36,52 +36,30 @@ Combinar **3 estratégias complementares**:
 
 ## 📱 Implementação Detalhada
 
-### **COMPONENTE 1: Modal de Decisão Informativa**
+### **COMPONENTE 1: Fluxo de Conclusão Direto**
 
-**Quando exibir:**
-
-- Após o usuário finalizar todos os slides de uma aula
-- Apenas se a aula tiver exercício associado (`exerciseId` presente)
-
-**Layout:**
-
-```
-┌─────────────────────────────────────┐
-│         🎯 Exercício de Fixação     │
-│                                     │
-│  Teste seus conhecimentos sobre     │
-│  esta aula para garantir seu        │
-│  certificado ao final do curso!     │
-│                                     │
-│  ┌─────────────────────────────┐   │
-│  │ ⚠️ Importante                │   │
-│  │ Os exercícios são obrigatórios│  │
-│  │ para obter o certificado.    │   │
-│  └─────────────────────────────┘   │
-│                                     │
-│  ┌─────────────────────────────┐   │
-│  │   FAZER EXERCÍCIO AGORA     │   │ ← Primary (verde)
-│  └─────────────────────────────┘   │
-│                                     │
-│  ┌─────────────────────────────┐   │
-│  │   Fazer Depois              │   │ ← Outline (secundário)
-│  └─────────────────────────────┘   │
-│                                     │
-└─────────────────────────────────────┘
-```
+**Objetivo:** Reduzir fricção e cliques desnecessários.
 
 **Comportamento:**
 
-- **"FAZER EXERCÍCIO AGORA"**: Navega para `CourseQuiz` passando `exerciseId`
-- **"Fazer Depois"**:
-  - Marca aula como concluída
-  - Salva exercício como pendente no progresso
-  - Volta ao currículo
-  - Mostra toast: "Você pode fazer o exercício depois no currículo"
+1.  **Botão "FINALIZAR AULA"**:
+    - Ao ser clicado, muda estado para `isLoading`.
+    - Texto muda para **"PROCESSANDO..."** com spinner.
+    - Bloqueia novas interações.
+
+2.  **Ação Automática**:
+    - Salva progresso no Firebase.
+    - Invalida cache local (React Query).
+    - **Navega automaticamente** de volta para a tela anterior (Currículo).
+
+3.  **Eliminação de Modais**:
+    - **Removido**: Modal de "Aula Concluída".
+    - **Removido**: Modal de "Fazer exercício agora ou depois".
+    - **Decisão do Usuário**: A decisão de fazer o exercício é tomada **no Currículo**, onde os exercícios estão explicitamente listados.
 
 **Arquivo:**
 
-- `src/pages/study/lesson-player/components/ExerciseDecisionModal/index.tsx`
+- `src/pages/study/lesson-player/index.tsx`
 
 ---
 
@@ -143,6 +121,7 @@ Combinar **3 estratégias complementares**:
 │ 2 de 2 aulas concluídas             │
 │ 1 de 2 exercícios concluídos        │
 │    (Baseado em stats.exerciseCount) │
+│                                     │
 └─────────────────────────────────────┘
 ```
 
@@ -173,14 +152,11 @@ const certificateEligible = lessonsProgress === 100 && exercisesProgress === 100
 
 **Cenário**: Uma aula pode ter múltiplos exercícios (p.ex. 3 exercícios).
 
-**Comportamento em QuizResult:**
+**Novo Comportamento Simplificado:**
 
-1.  **Verificação de Próximo**: Ao terminar um exercício, o sistema verifica se há outro exercício pendente na mesma aula.
-2.  **BottomSheet de Continuação**:
-    - Se houver próximo: Exibe mensagem "Exercício X/Y completo! Deseja continuar agora?"
-    - Botão "Próximo Exercício": Navega para o próximo exercício
-    - Botão "Fazer Depois": Volta para o currículo
-3.  **Botão "Parar"**: Oculto durante o fluxo de curso para evitar interrupção acidental, exceto no último ou via BottomSheet.
+1.  **Botão "Continuar"**: Ao finalizar um exercício, o sistema volta para o currículo.
+2.  **Visualização no Currículo**: O próximo exercício estará disponível na lista.
+3.  **Fluxo Limpo**: Sem BottomSheets de decisão intermediária para evitar loops de navegação.
 
 ---
 
@@ -209,10 +185,10 @@ export async function saveExerciseResult(
 
 ## 📅 Status da Implementação
 
-✅ **Fase 1: Modal de Decisão** - Concluído
+✅ **Fase 1: Fluxo de Conclusão Direto** - Concluído (Substituiu Modal de Decisão)
 ✅ **Fase 2: Indicadores Visuais** - Concluído
 ✅ **Fase 3: Barra Dupla + Certificado** - Concluído
-✅ **Fase 4: Fluxo Sequencial** - Concluído
+✅ **Fase 4: Navegação Simplificada** - Concluído
 ✅ **Correção de Bugs**: - Persistência de dados (`saveExerciseResult`) - Cálculo de porcentagem 200% (`stats.exerciseCount`) - Navegação com ID correto (`exerciseId`)
 
 ---

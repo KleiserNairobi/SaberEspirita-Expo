@@ -59,7 +59,17 @@ export function QuizReviewScreen() {
     // ✅ MODIFICADO: Se for exercício de curso, voltar para QuizResult
     // para que a lógica de próximo exercício seja executada
     if (courseId) {
-      navigation.goBack(); // Volta para QuizResult
+      // ✅ MODIFICADO: Voltar para o currículo para manter fluxo linear
+      navigation.reset({
+        index: 1,
+        routes: [
+          { name: "Tabs" },
+          {
+            name: "CourseCurriculum",
+            params: { courseId },
+          },
+        ],
+      });
     } else {
       // Contexto de FIXE: Usar reset para limpar a pilha
       navigation.reset({

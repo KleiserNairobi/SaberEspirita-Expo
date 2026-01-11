@@ -29,3 +29,26 @@ export async function getExercisesByLessonId(lessonId: string): Promise<IExercis
     return [];
   }
 }
+
+/**
+ * Busca todos os exercícios associados a um curso
+ * @param courseId - ID do curso
+ * @returns Lista de exercícios encontrados
+ */
+export async function getExercisesByCourseId(courseId: string): Promise<IExercise[]> {
+  try {
+    const exercisesRef = collection(db, "exercises");
+    const q = query(exercisesRef, where("courseId", "==", courseId));
+    const querySnapshot = await getDocs(q);
+
+    const exercises: IExercise[] = [];
+    querySnapshot.forEach((doc) => {
+      exercises.push({ ...doc.data(), id: doc.id } as IExercise);
+    });
+
+    return exercises;
+  } catch (error) {
+    console.error(`Erro ao buscar exercícios do curso ${courseId}:`, error);
+    return [];
+  }
+}

@@ -270,8 +270,8 @@ src/
   - [x] Grid de 6 categorias com ícones, contador de questões e barra de progresso
   - [x] Navegação para subcategorias
   - [x] Design alinhado com padrão do app (fundo branco, ícone verde claro/escuro)
-  - [ ] **Pendente**: Desafio Diário (card + lógica de 5 perguntas/dia)
-  - [ ] **Pendente**: Meu Progresso (estatísticas + badges)
+  - [x] **Desafio Diário**: Card + lógica de 5 perguntas/dia implementados.
+  - [x] **Meu Progresso**: Estatísticas e badges implementados.
 
 - [x] **Tela de Subcategorias** - ✅ **100% Concluído** (08/01/2026):
   - [x] `SubcategoriesScreen` com SearchBar e filtros
@@ -298,9 +298,9 @@ src/
   - [x] `FixNavigator` configurado com todas as rotas
   - [x] Navegação completa: FixHome → Subcategories → Quiz → QuizResult
 
-- [ ] **Leaderboard**: Tela dedicada com Ranking Global/Amigos.
-- [ ] **Integração com Firestore**: Salvar progresso e histórico do usuário
-- [ ] **Cálculo de Progresso Real**: Substituir mock (0%) por dados reais do Firestore
+- [x] **Leaderboard**: Tela dedicada com Ranking Global/Amigos.
+- [x] **Integração com Firestore**: Salvar progresso e histórico do usuário.
+- [x] **Cálculo de Progresso Real**: Dados reais do Firestore integrados.
 
 ### Fase 3: Módulo ESTUDE (Cursos & Home)
 
@@ -634,6 +634,25 @@ Aproveitar a migração para limpar o visual.
 
 ---
 
+### 11/01/2026 - Módulo FIXE 100% Concluído (Gamificação)
+
+- ✅ **Módulo FIXE - Gamificação Completa**
+- **Objetivo**: Finalizar todas as funcionalidades de engajamento do módulo de quizzes.
+
+#### **Funcionalidades Implementadas**
+
+1. **Gamificação e Engajamento**:
+   - **Desafio Diário**: Sistema de 5 perguntas aleatórias renovado diariamente.
+   - **Meu Progresso**: Visualização de estatísticas detalhadas e conquistas (badges).
+   - **Leaderboard**: Ranking Global e entre amigos funcional.
+
+2. **Persistência e Dados**:
+   - Integração completa com Firestore para salvar histórico de partidas.
+   - Cálculo real de progresso substituindo mocks.
+   - Sincronização de pontuação e nível do usuário.
+
+---
+
 ### 11/01/2026 - Fluxo Sequencial e Correções de Progresso
 
 - ✅ **Módulo de Cursos - Fase 3: Sistema Híbrido Completo**
@@ -665,6 +684,54 @@ Aproveitar a migração para limpar o visual.
 - `src/pages/fix/quiz/index.tsx` (Integração de salvamento)
 - `src/pages/fix/quiz/result/index.tsx` (Fluxo sequencial)
 - `src/services/firebase/progressService.ts` (Correção matemática)
+
+---
+
+### 11/01/2026 - Otimização de Dados de Progresso
+
+- ✅ **Módulo de Cursos - Refatoração de Dados**
+- **Objetivo**: Otimizar a consistência dos dados de progresso removendo campos calculados propensos a dessincronização.
+
+#### **Mudanças Implementadas**
+
+1.  **Frontend-First Calculation**:
+    - Removidos campos `exercisesCompletionPercent` e `lessonsCompletionPercent` do Firestore.
+    - O cálculo de porcentagem agora é feito dinamicamente no frontend (tempo real).
+    - **Benefício**: Evita bugs onde o total de exercícios muda (ex: de 3 para 7) mas a porcentagem gravada permanece antiga (33%).
+    - **Garantia**: O progresso exibido é sempre `(Concluídos / Total Atual)`, garantindo 100% de precisão mesmo se o curso for atualizado.
+
+2.  **Sincronização de Estatísticas**:
+    - A rotina de exportação (`Export.tsx`) agora atualiza corretamente o campo `stats.exerciseCount` nos documentos de curso, garantindo que o frontend tenha o denominador correto para o cálculo.
+
+#### **Arquivos Modificados**
+
+- `src/types/course.ts` (Remoção de campos da interface)
+- `src/services/firebase/progressService.ts` (Remoção de lógica de salvamento)
+- `src/pages/study/course-curriculum/index.tsx` (Implementação de cálculo dinâmico)
+- `src/pages/Export.tsx` (Correção na atualização de estatísticas)
+
+### 11/01/2026 - Fluxo Simplificado de Navegação (Conclusão)
+
+- ✅ **UX/UI Refinement - Conclusão de Aula e Exercícios**
+- **Objetivo**: Eliminar fricção e loops de navegação, removendo modais redundantes e garantindo fluxo linear para o currículo.
+
+#### **Mudanças Implementadas (Final)**
+
+1.  **Remoção de BottomSheets de Decisão**:
+    - **Aula**: Botão "FINALIZAR AULA" agora processa e volta direto para o currículo. Sem modal de "Sucesso".
+    - **Quiz Result**: Botão "Continuar" volta direto para o currículo. Sem modal de "Próximo Exercício".
+    - **Quiz Review**: Botão "Continuar" volta direto para o currículo.
+
+2.  **Fluxo Linear**:
+    - O usuário sempre retorna ao "Hub Central" (Currículo) após concluir uma unidade de trabalho (aula ou exercício).
+    - A decisão de qual exercício fazer em seguida é tomada visualmente na lista do currículo (badges pendentes).
+
+#### **Arquivos Modificados**
+
+- `src/pages/study/lesson-player/index.tsx`
+- `src/pages/fix/quiz/result/index.tsx`
+- `src/pages/fix/quiz/review/index.tsx`
+- `docs/exercise_completion_ux_spec.md` (Atualizado para refletir fluxo final)
 
 ---
 

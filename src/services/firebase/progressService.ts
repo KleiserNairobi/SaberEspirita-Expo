@@ -7,7 +7,6 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import { db, auth } from "@/configs/firebase/firebase";
-import { getCourseById } from "./courseService";
 
 /**
  * Marca uma aula como concluída e atualiza o progresso do usuário no curso
@@ -28,11 +27,6 @@ export async function markLessonAsCompleted(
 
   console.log("✅ [markLessonAsCompleted] UserId:", currentUserId);
 
-  // Buscar informações do curso para calcular porcentagem
-  const course = await getCourseById(courseId);
-  const totalLessons = course?.lessonCount || 0;
-  console.log("📚 [markLessonAsCompleted] Curso encontrado:", { totalLessons });
-
   const progressRef = doc(db, `users/${currentUserId}/courseProgress/${courseId}`);
   console.log(
     "📍 [markLessonAsCompleted] Path Firestore:",
@@ -51,18 +45,14 @@ export async function markLessonAsCompleted(
     // Adicionar aula se não estiver completa
     if (!completedLessons.includes(lessonId)) {
       const newCompletedCount = completedLessons.length + 1;
-      const completionPercent =
-        totalLessons > 0 ? Math.round((newCompletedCount / totalLessons) * 100) : 0;
 
       console.log("🔄 [markLessonAsCompleted] Atualizando progresso...", {
         newCompletedCount,
-        completionPercent,
       });
 
       await updateDoc(progressRef, {
         completedLessons: arrayUnion(lessonId),
         lastLessonId: lessonId,
-        lessonsCompletionPercent: completionPercent,
         lastAccessedAt: new Date(),
       });
 
@@ -72,21 +62,14 @@ export async function markLessonAsCompleted(
     }
   } else {
     // Criar novo documento de progresso
-    const completionPercent = totalLessons > 0 ? Math.round((1 / totalLessons) * 100) : 0;
-
-    console.log("🆕 [markLessonAsCompleted] Criando novo documento de progresso...", {
-      completionPercent,
-    });
+    console.log("🆕 [markLessonAsCompleted] Criando novo documento de progresso...");
 
     await setDoc(progressRef, {
       userId: currentUserId,
       courseId,
       completedLessons: [lessonId],
       lastLessonId: lessonId,
-      lessonsCompletionPercent: completionPercent,
-      pendingExercises: [],
       exerciseResults: [],
-      exercisesCompletionPercent: 0,
       certificateEligible: false,
       certificateIssued: false,
       startedAt: new Date(),
@@ -97,76 +80,6 @@ export async function markLessonAsCompleted(
   }
 
   console.log("🎉 [markLessonAsCompleted] FIM - Sucesso!");
-}
-
-/**
- * Marca exercício como pendente (usuário escolheu "Fazer Depois")
- */
-export async function markExerciseAsPending(
-  courseId: string,
-  lessonId: string,
-  userId?: string
-): Promise<void> {
-  console.log("🔵 [markExerciseAsPending] INÍCIO", { courseId, lessonId, userId });
-
-  const currentUserId = userId || auth.currentUser?.uid;
-
-  if (!currentUserId) {
-    console.error("❌ [markExerciseAsPending] Usuário não autenticado");
-    throw new Error("Usuário não autenticado");
-  }
-
-  const progressRef = doc(db, `users/${currentUserId}/courseProgress/${courseId}`);
-  const progressDoc = await getDoc(progressRef);
-
-  if (progressDoc.exists()) {
-    const currentProgress = progressDoc.data();
-    const pendingExercises = currentProgress.pendingExercises || [];
-
-    // Adicionar exercício se não estiver pendente
-    if (!pendingExercises.includes(lessonId)) {
-      await updateDoc(progressRef, {
-        pendingExercises: arrayUnion(lessonId),
-        lastAccessedAt: new Date(),
-      });
-      console.log("✅ [markExerciseAsPending] Exercício marcado como pendente");
-    } else {
-      console.log("⚠️ [markExerciseAsPending] Exercício já estava pendente");
-    }
-  } else {
-    console.error("❌ [markExerciseAsPending] Documento de progresso não encontrado");
-    throw new Error("Documento de progresso não encontrado");
-  }
-
-  console.log("🎉 [markExerciseAsPending] FIM - Sucesso!");
-}
-
-/**
- * Remove exercício da lista de pendentes (após conclusão)
- */
-export async function removeExerciseFromPending(
-  courseId: string,
-  lessonId: string,
-  userId?: string
-): Promise<void> {
-  console.log("🔵 [removeExerciseFromPending] INÍCIO", { courseId, lessonId, userId });
-
-  const currentUserId = userId || auth.currentUser?.uid;
-
-  if (!currentUserId) {
-    console.error("❌ [removeExerciseFromPending] Usuário não autenticado");
-    throw new Error("Usuário não autenticado");
-  }
-
-  const progressRef = doc(db, `users/${currentUserId}/courseProgress/${courseId}`);
-
-  await updateDoc(progressRef, {
-    pendingExercises: arrayRemove(lessonId),
-    lastAccessedAt: new Date(),
-  });
-
-  console.log("✅ [removeExerciseFromPending] Exercício removido dos pendentes");
-  console.log("🎉 [removeExerciseFromPending] FIM - Sucesso!");
 }
 
 /**
@@ -253,27 +166,10 @@ export async function saveExerciseResult(
     ];
   }
 
-  // Buscar dados do curso para saber total de exercícios
-  const course = await getCourseById(courseId);
-  const totalExercises = course?.stats?.exerciseCount || updatedResults.length || 1; // Fallback para evitar divisão por zero
-
-  // Calcular porcentagem de exercícios completos
-  // Conta quantos exercícios únicos foram passados
-  const completedExercises = updatedResults.filter((r: any) => r.passed).length;
-
-  // Garante que não exceda 100% e usa o total real do curso
-  const exercisesCompletionPercent = Math.min(
-    100,
-    Math.round((completedExercises / totalExercises) * 100)
-  );
-
-  console.log(
-    `📊 [saveExerciseResult] Progresso: ${completedExercises}/${totalExercises} (${exercisesCompletionPercent}%)`
-  );
+  console.log("🔄 [saveExerciseResult] Atualizando progresso com novos resultados...");
 
   await updateDoc(progressRef, {
     exerciseResults: updatedResults,
-    exercisesCompletionPercent,
     lastAccessedAt: new Date(),
   });
 

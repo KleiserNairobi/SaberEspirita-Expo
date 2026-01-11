@@ -24,7 +24,7 @@ import { AppStackParamList } from "@/routers/types";
 import { useLessons } from "@/hooks/queries/useLessons";
 import { useCourse } from "@/hooks/queries/useCourses";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
-import { useExercises } from "@/hooks/queries/useExercises";
+import { useExercises, useCourseExercises } from "@/hooks/queries/useExercises";
 import { ILesson } from "@/types/course";
 import { ProgressSummaryCard } from "./components/ProgressSummaryCard";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage"; // ✅ NOVO
@@ -60,8 +60,8 @@ export function CourseCurriculumScreen() {
   // ✅ Fetch do progresso real do usuário
   const { data: progress } = useCourseProgress(courseId);
 
-  // ✅ NOVO: Extrair exercícios pendentes
-  const pendingExercises = progress?.pendingExercises || [];
+  // ✅ Fetch de todos os exercícios do curso para renderização e cálculo
+  const { data: allExercises = [] } = useCourseExercises(courseId);
 
   // Calcular progresso de aulas
   const totalLessons = lessons.length;
@@ -70,12 +70,18 @@ export function CourseCurriculumScreen() {
     totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
   // ✅ NOVO: Calcular progresso de exercícios
-  // Usar total do curso se disponível, senão fallback para resultados
+  // Usar total do curso se disponível, senão total de exercícios carregados
   const totalExercises =
-    course?.stats?.exerciseCount || progress?.exerciseResults?.length || 0;
+    course?.stats?.exerciseCount && course.stats.exerciseCount > 0
+      ? course.stats.exerciseCount
+      : allExercises.length;
+
   const completedExercises =
     progress?.exerciseResults?.filter((r) => r.passed).length || 0;
-  const exercisesProgress = progress?.exercisesCompletionPercent || 0;
+
+  // ✅ CORREÇÃO: Calcular porcentagem dinamicamente para evitar dados estaleiros
+  const exercisesProgress =
+    totalExercises > 0 ? Math.round((completedExercises / totalExercises) * 100) : 0;
 
   // ✅ NOVO: Verificar elegibilidade para certificado
   const certificateEligible = progress?.certificateEligible || false;
@@ -85,26 +91,6 @@ export function CourseCurriculumScreen() {
     null
   );
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-
-  // ✅ NOVO: Função para calcular progresso de exercícios por aula
-  function getLessonExerciseProgress(lessonId: string) {
-    // Buscar exercícios completados desta aula
-    const completedIds =
-      progress?.exerciseResults?.filter((r) => r.passed).map((r) => r.exerciseId) || [];
-
-    // Verificar se a aula está na lista de pendentes
-    const hasPendingExercises = pendingExercises.includes(lessonId);
-
-    // Se não tem pendentes, significa que todos foram completados ou não há exercícios
-    if (!hasPendingExercises) {
-      return { total: 0, completed: 0, pending: 0, hasPending: false };
-    }
-
-    // Se tem pendentes, precisamos buscar quantos exercícios a aula tem
-    // Por enquanto, vamos assumir que se está pendente, há pelo menos 1 exercício
-    // A contagem exata será feita quando clicar na aula
-    return { total: 0, completed: 0, pending: 1, hasPending: true };
-  }
 
   function getLessonStatus(lesson: ILesson, index: number): LessonStatus {
     // Se não tiver progresso OU se completedLessons estiver vazio
@@ -147,30 +133,12 @@ export function CourseCurriculumScreen() {
   // ✅ NOVO: Handler para botão de certificado
   function handleGetCertificate() {
     if (!certificateEligible) {
-      // Mostrar BottomSheet de bloqueio
-      const pendingCount = pendingExercises.length;
-      const pendingList = pendingExercises
-        .map((lessonId, index) => {
-          const lesson = lessons.find((l) => l.id === lessonId);
-          return `${index + 1}. ${lesson?.title || "Aula desconhecida"}`;
-        })
-        .join("\n");
-
-      setMessageConfig({
-        type: "warning",
-        title: "Certificado Bloqueado",
-        message: `Você ainda tem ${pendingCount} exercício(s) pendente(s):\n\n${pendingList}\n\nComplete todos os exercícios para obter seu certificado!`,
-        primaryButton: {
-          label: "VER EXERCÍCIOS PENDENTES",
-          onPress: handleViewPendingExercises,
-        },
-        secondaryButton: {
-          label: "Cancelar",
-          onPress: () => bottomSheetRef.current?.dismiss(),
-        },
-      });
-
-      bottomSheetRef.current?.present();
+      // Mostrar popup de aviso
+      const missingCount = totalExercises - completedExercises;
+      Alert.alert(
+        "Certificado Bloqueado",
+        `Você ainda precisa completar ${missingCount} exercícios para obter o certificado. Verifique as aulas e complete os exercícios pendentes.`
+      );
       return;
     }
 
@@ -179,13 +147,6 @@ export function CourseCurriculumScreen() {
       "Parabéns!",
       "Você completou todas as aulas e exercícios! Em breve você poderá gerar seu certificado."
     );
-  }
-
-  // ✅ NOVO: Scroll para primeira aula com exercício pendente
-  function handleViewPendingExercises() {
-    bottomSheetRef.current?.dismiss();
-    // TODO: Implementar scroll para primeira aula com badge
-    // Por enquanto, apenas fecha o BottomSheet
   }
 
   async function handleLessonPress(lesson: ILesson, status: LessonStatus) {
@@ -197,51 +158,92 @@ export function CourseCurriculumScreen() {
       return;
     }
 
-    // ✅ Se a aula tem exercício pendente, navega direto para o quiz
-    const isPendingExercise = pendingExercises.includes(lesson.id);
-    if (isPendingExercise) {
-      try {
-        // Buscar exercício vinculado à aula
-        const { getExercisesByLessonId } =
-          await import("@/services/firebase/exerciseService");
-        const exercises = await getExercisesByLessonId(lesson.id);
-
-        if (exercises.length > 0) {
-          // Encontrar o primeiro exercício pendente
-          // Precisamos verificar quais já foram completados
-          const completedIds =
-            progress?.exerciseResults?.filter((r) => r.passed).map((r) => r.exerciseId) ||
-            [];
-
-          const nextExercise =
-            exercises.find((ex) => !completedIds.includes(ex.id)) || exercises[0];
-
-          if (nextExercise.quizId) {
-            console.log(
-              "🎯 Navegando direto para exercício pendente:",
-              nextExercise.quizId
-            );
-            navigation.navigate("CourseQuiz", {
-              courseId,
-              lessonId: lesson.id,
-              quizId: nextExercise.quizId,
-              exerciseId: nextExercise.id, // ✅ NOVO
-            });
-            return;
-          }
-        }
-      } catch (error) {
-        console.error("❌ Erro ao buscar exercício:", error);
-      }
-    }
-
     // Comportamento normal: abre a aula
     navigation.navigate("LessonPlayer", { courseId, lessonId: lesson.id });
   }
 
+  // ✅ Helper para renderizar item de exercício
+  const renderExerciseItem = (exercise: any, lessonId: string, index: number) => {
+    // 1. Verificar se completado
+    const completedIds =
+      progress?.exerciseResults?.filter((r) => r.passed).map((r) => r.exerciseId) || [];
+    const isCompleted = completedIds.includes(exercise.id);
+
+    // 2. Verificar se a AULA PAI foi completada
+    const isLessonCompleted = progress?.completedLessons.includes(lessonId);
+
+    // 3. Regra de Negócio: Exercício só libera se a aula foi feita
+    const isLocked = !isLessonCompleted;
+
+    return (
+      <TouchableOpacity
+        key={exercise.id}
+        style={[styles.exerciseCard, isLocked && { opacity: 0.6 }]}
+        disabled={isLocked}
+        onPress={() => {
+          navigation.navigate("CourseQuiz", {
+            courseId,
+            lessonId: lessonId,
+            quizId: exercise.quizId,
+            exerciseId: exercise.id,
+            mode: "course",
+            categoryName: "Exercício de Fixação",
+            subcategoryName: exercise.title || `Exercício ${index + 1}`,
+          });
+        }}
+      >
+        <View style={styles.exerciseLeftContent}>
+          {/* Linha conectora visual (opcional, pode ser feito com borda esquerda no container) */}
+          <View style={styles.connectorLine} />
+
+          <View
+            style={[
+              styles.exerciseIconContainer,
+              isCompleted && styles.exerciseIconCompleted,
+              isLocked && { borderColor: theme.colors.border },
+            ]}
+          >
+            {/* Ícone de Haltere/Cérebro */}
+            {isCompleted ? (
+              <CheckCircle
+                size={20}
+                color={theme.colors.success}
+                fill={theme.colors.success}
+                fillOpacity={0.1}
+              />
+            ) : isLocked ? (
+              <Lock size={14} color={theme.colors.textSecondary} />
+            ) : (
+              <View style={styles.exerciseDot} />
+            )}
+          </View>
+
+          <View style={styles.exerciseTextContainer}>
+            <Text
+              style={[
+                styles.exerciseTitle,
+                isCompleted && styles.exerciseTitleCompleted,
+                isLocked && { color: theme.colors.textSecondary, opacity: 0.5 },
+              ]}
+            >
+              {exercise.title || `Exercício ${index + 1}`}
+            </Text>
+          </View>
+        </View>
+
+        {!isLocked && <ChevronRight size={20} color={theme.colors.textSecondary} />}
+        {isLocked && <View style={{ width: 20 }} />}
+      </TouchableOpacity>
+    );
+  };
+
   const renderLessonItem = ({ item, index }: { item: ILesson; index: number }) => {
     const status = getLessonStatus(item, index);
-    const isPendingExercise = pendingExercises.includes(item.id); // ← NOVO
+
+    // Obter exercícios desta aula
+    const lessonExercises = allExercises
+      .filter((e) => e.lessonId === item.id)
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
 
     // Define estilos baseados no status
     const containerStyle = [
@@ -253,80 +255,81 @@ export function CourseCurriculumScreen() {
     ];
 
     return (
-      <TouchableOpacity
-        style={containerStyle}
-        onPress={() => handleLessonPress(item, status)}
-        disabled={status === LessonStatus.LOCKED}
-        activeOpacity={0.7}
-      >
-        <View style={styles.cardHeaderRow}>
-          <View style={styles.cardLeftContent}>
-            {/* ÍCONE / NÚMERO */}
-            <View style={styles.iconContainer}>
-              {status === LessonStatus.COMPLETED && (
-                <CheckCircle
-                  size={32}
-                  color={theme.colors.success}
-                  fill={theme.colors.success}
-                  fillOpacity={0.1}
-                />
-              )}
-              {status === LessonStatus.IN_PROGRESS && (
-                <PlayCircle
-                  size={32}
-                  color={theme.colors.primary}
-                  fill={theme.colors.primary}
-                  fillOpacity={0.1}
-                />
-              )}
-              {status === LessonStatus.LOCKED && (
-                <View style={styles.lockedIconDetails}>
-                  <Lock size={20} color={theme.colors.textSecondary} />
-                </View>
-              )}
-              {status === LessonStatus.AVAILABLE && (
-                <PlayCircle
-                  size={32}
-                  color={theme.colors.textSecondary}
-                  fill="transparent"
-                />
-              )}
+      <View style={styles.lessonWrapper}>
+        <TouchableOpacity
+          style={containerStyle}
+          onPress={() => handleLessonPress(item, status)}
+          disabled={status === LessonStatus.LOCKED}
+          activeOpacity={0.7}
+        >
+          <View style={styles.cardHeaderRow}>
+            <View style={styles.cardLeftContent}>
+              {/* ÍCONE / NÚMERO */}
+              <View style={styles.iconContainer}>
+                {status === LessonStatus.COMPLETED && (
+                  <CheckCircle
+                    size={32}
+                    color={theme.colors.success}
+                    fill={theme.colors.success}
+                    fillOpacity={0.1}
+                  />
+                )}
+                {status === LessonStatus.IN_PROGRESS && (
+                  <PlayCircle
+                    size={32}
+                    color={theme.colors.primary}
+                    fill={theme.colors.primary}
+                    fillOpacity={0.1}
+                  />
+                )}
+                {status === LessonStatus.LOCKED && (
+                  <View style={styles.lockedIconDetails}>
+                    <Lock size={20} color={theme.colors.textSecondary} />
+                  </View>
+                )}
+                {status === LessonStatus.AVAILABLE && (
+                  <PlayCircle
+                    size={32}
+                    color={theme.colors.textSecondary}
+                    fill="transparent"
+                  />
+                )}
+              </View>
+
+              {/* TEXTOS */}
+              <View style={styles.textContainer}>
+                <Text style={styles.lessonTitle} numberOfLines={1}>
+                  {index + 1}. {item.title}
+                </Text>
+                <Text style={styles.lessonMeta}>
+                  {item.durationMinutes} min
+                  {status === LessonStatus.COMPLETED && " • Concluída"}
+                  {status === LessonStatus.IN_PROGRESS && " • Em andamento"}
+                  {status === LessonStatus.LOCKED && " • Bloqueada"}
+                  {status === LessonStatus.AVAILABLE && " • Disponível"}
+                </Text>
+              </View>
             </View>
 
-            {/* TEXTOS */}
-            <View style={styles.textContainer}>
-              <Text style={styles.lessonTitle} numberOfLines={1}>
-                {index + 1}. {item.title}
-              </Text>
-              <Text style={styles.lessonMeta}>
-                {item.durationMinutes} min
-                {status === LessonStatus.COMPLETED && " • Concluída"}
-                {status === LessonStatus.IN_PROGRESS && " • Em andamento"}
-                {status === LessonStatus.LOCKED && " • Bloqueada"}
-                {status === LessonStatus.AVAILABLE && " • Disponível"}
-              </Text>
-
-              {/* ✅ NOVO: Badge de exercício pendente */}
-              {isPendingExercise && (
-                <View style={styles.pendingBadge}>
-                  <AlertTriangle size={14} color={theme.colors.warning} />
-                  <Text style={styles.pendingBadgeText}>Exercício pendente</Text>
-                </View>
-              )}
-            </View>
+            {/* DIREITA (CHEVRON) */}
+            <ChevronRight size={24} color={theme.colors.textSecondary} />
           </View>
 
-          {/* DIREITA (CHEVRON) */}
-          <ChevronRight size={24} color={theme.colors.textSecondary} />
-        </View>
+          {/* BARRA DE PROGRESSO INTERNA (Só para Em Andamento) */}
+          {status === LessonStatus.IN_PROGRESS && (
+            <View style={styles.internalProgressBarBg}>
+              <View style={[styles.internalProgressBarFill, { width: "55%" }]} />
+            </View>
+          )}
+        </TouchableOpacity>
 
-        {/* BARRA DE PROGRESSO INTERNA (Só para Em Andamento) */}
-        {status === LessonStatus.IN_PROGRESS && (
-          <View style={styles.internalProgressBarBg}>
-            <View style={[styles.internalProgressBarFill, { width: "55%" }]} />
+        {/* LISTA DE EXERCÍCIOS (Renderizada abaixo do card da aula) */}
+        {lessonExercises.length > 0 && (
+          <View style={styles.exercisesListContainer}>
+            {lessonExercises.map((ex, idx) => renderExerciseItem(ex, item.id, idx))}
           </View>
         )}
-      </TouchableOpacity>
+      </View>
     );
   };
 

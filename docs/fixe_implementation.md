@@ -1,7 +1,7 @@
 # Documentação do Módulo FIXE (Quizzes Standalone)
 
 **Data de Implementação**: 08/01/2026  
-**Status**: ✅ Core Completo | 🚧 Funcionalidades Extras (Leaderboard, Desafio Diário) Pendentes
+**Status**: ✅ Completo (Core + Gamificação + Persistência)
 
 ---
 
@@ -146,9 +146,9 @@ Funções implementadas (copiadas do CLI):
 
 ## 🚧 Funcionalidades Pendentes
 
-- [ ] **LeaderboardScreen**: Ranking global/amigos
-- [ ] **Desafio Diário**: Card + lógica de 5 perguntas/dia + streak
-- [ ] **Meu Progresso**: Estatísticas gerais + badges/conquistas
+- [x] **LeaderboardScreen**: Ranking global/amigos (Implementado)
+- [x] **Desafio Diário**: Card + lógica de 5 perguntas/dia + streak (Implementado)
+- [x] **Meu Progresso**: Estatísticas gerais + badges/conquistas (Implementado)
 
 ---
 
@@ -224,8 +224,7 @@ Funções implementadas (copiadas do CLI):
 
 ## 🔄 Próximos Passos
 
-2. Implementar **LeaderboardScreen** (ranking)
-3. Implementar **Desafio Diário** (5 perguntas/dia)
-4. Implementar **Meu Progresso** (estatísticas + badges)
-5. Implementar **Meu Progresso** (estatísticas + badges)
-6. ✅ Reutilizar componentes no Quiz da Aula (módulo Estude) - **Concluído em 09/01/2026**
+2. ✅ Implementar **LeaderboardScreen** (ranking)
+3. ✅ Implementar **Desafio Diário** (5 perguntas/dia)
+4. ✅ Implementar **Meu Progresso** (estatísticas + badges)
+5. ✅ Reutilizar componentes no Quiz da Aula (módulo Estude) - **Concluído em 09/01/2026**

@@ -69,14 +69,14 @@ export interface IUserCourseProgress {
   // Progresso de Aulas
   lastLessonId?: string;
   completedLessons: string[];
-  lessonsCompletionPercent: number; // ✅ NOVO
+  // lessonsCompletionPercent: number; // REMOVED (Calculated on frontend)
 
-  // ✅ NOVO - Exercícios Pendentes
-  pendingExercises: string[]; // IDs de lessonId com exercícios pendentes
+  // ✅ NOVO - Exercícios Pendentes (REMOVIDO: Agora calculado dinamicamente)
+  // pendingExercises: string[];
 
   // ✅ NOVO - Progresso de Exercícios
   exerciseResults: IExerciseResult[];
-  exercisesCompletionPercent: number;
+  // exercisesCompletionPercent: number; // REMOVED (Calculated on frontend)
 
   // ✅ NOVO - Nota Final
   finalGrade?: number;

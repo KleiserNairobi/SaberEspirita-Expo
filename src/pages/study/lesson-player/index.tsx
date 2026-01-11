@@ -25,10 +25,7 @@ import {
   useCourseProgress,
   COURSE_PROGRESS_KEYS,
 } from "@/hooks/queries/useCourseProgress";
-import {
-  markLessonAsCompleted,
-  markExerciseAsPending,
-} from "@/services/firebase/progressService";
+import { markLessonAsCompleted } from "@/services/firebase/progressService";
 import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech"; // Utils de TTS
 
 import { SlideContent } from "./components/SlideContent";
@@ -104,37 +101,13 @@ export function LessonPlayerScreen() {
   async function handleFinish() {
     if (!lesson) return;
 
+    setIsProcessing(true); // 🔄 Ativa loading
+
     console.log("🎬 [LessonPlayer] handleFinish INÍCIO", {
       courseId: lesson.courseId,
       lessonId: lesson.id,
-      hasExercises,
       userId: user?.uid,
     });
-
-    // Se houver exercícios, exibe BottomSheet de decisão
-    if (hasExercises) {
-      console.log(
-        "📝 [LessonPlayer] Aula tem exercícios, exibindo BottomSheet de decisão"
-      );
-
-      setMessageConfig({
-        type: "question",
-        title: "Exercício de Fixação",
-        message:
-          "Teste seus conhecimentos sobre esta aula para garantir seu certificado ao final do curso!\n\n Os exercícios são obrigatórios para obter o certificado.",
-        primaryButton: {
-          label: "FAZER EXERCÍCIO AGORA",
-          onPress: handleExerciseNow,
-        },
-        secondaryButton: {
-          label: "Fazer Depois",
-          onPress: handleExerciseLater,
-        },
-      });
-
-      bottomSheetRef.current?.present();
-      return;
-    }
 
     try {
       console.log("💾 [LessonPlayer] Chamando markLessonAsCompleted...");
@@ -144,29 +117,19 @@ export function LessonPlayerScreen() {
       // Invalidar cache de progresso para atualizar a tela anterior
       if (user?.uid) {
         console.log("🔄 [LessonPlayer] Invalidando cache React Query...");
-        queryClient.invalidateQueries({
+        // Usar await para garantir que a invalidação ocorra antes de voltar?
+        // QueryClient.invalidateQueries é assíncrono.
+        await queryClient.invalidateQueries({
           queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, lesson.courseId),
         });
         console.log("✅ [LessonPlayer] Cache invalidado");
       }
 
-      // Exibe BottomSheet de conclusão
-      setMessageConfig({
-        type: "success",
-        title: "Aula Concluída!",
-        message: `Parabéns! Você concluiu a aula "${lesson.title}" com sucesso.`,
-        primaryButton: {
-          label: "Continuar",
-          onPress: () => {
-            console.log("👋 [LessonPlayer] Voltando para tela anterior");
-            navigation.goBack();
-          },
-        },
-      });
-
-      bottomSheetRef.current?.present();
+      console.log("👋 [LessonPlayer] Voltando para tela anterior");
+      navigation.goBack(); // 🔙 Volta direto
     } catch (error) {
       console.error("❌ [LessonPlayer] Erro ao marcar aula como concluída:", error);
+      setIsProcessing(false); // 🛑 Para loading apenas em erro
 
       // Exibe erro detalhado
       const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
@@ -185,106 +148,6 @@ export function LessonPlayerScreen() {
           },
         ]
       );
-    }
-  }
-
-  async function markLessonAsCompletedAndReturn() {
-    if (!lesson) return;
-
-    try {
-      console.log("💾 [LessonPlayer] Chamando markLessonAsCompleted...");
-      await markLessonAsCompleted(lesson.courseId, lesson.id, user?.uid);
-      console.log("✅ [LessonPlayer] markLessonAsCompleted retornou com sucesso");
-
-      if (user?.uid) {
-        queryClient.invalidateQueries({
-          queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, lesson.courseId),
-        });
-      }
-
-      console.log("👋 [LessonPlayer] Voltando para tela anterior");
-      navigation.goBack();
-    } catch (error) {
-      console.error("❌ [LessonPlayer] Erro ao marcar aula como concluída:", error);
-
-      setMessageConfig({
-        type: "error",
-        title: "Erro",
-        message: "Não foi possível marcar a aula como concluída. Tente novamente.",
-        primaryButton: { label: "OK", onPress: () => {} },
-      });
-      bottomSheetRef.current?.present();
-    }
-  }
-
-  function handleExerciseNow() {
-    console.log("🚀 [LessonPlayer] handleExerciseNow chamado");
-    if (!lesson || !exercises || exercises.length === 0) return;
-
-    setIsProcessing(true); // Desabilita botão
-
-    // Fecha bottom sheet
-    bottomSheetRef.current?.dismiss();
-
-    const firstExercise = exercises[0];
-
-    // Marca aula como concluída em background
-    markLessonAsCompleted(lesson.courseId, lesson.id, user?.uid).then(() => {
-      if (user?.uid) {
-        queryClient.invalidateQueries({
-          queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, lesson.courseId),
-        });
-      }
-    });
-
-    if (firstExercise.quizId) {
-      navigation.navigate("CourseQuiz", {
-        courseId: lesson.courseId,
-        lessonId: lesson.id,
-        quizId: firstExercise.quizId,
-        exerciseId: firstExercise.id, // ✅ NOVO: Passando exerciseId correto
-        mode: "course",
-        categoryName: "Exercício de Fixação",
-        subcategoryName: lesson.title,
-      });
-    }
-  }
-
-  async function handleExerciseLater() {
-    console.log("🕒 [LessonPlayer] handleExerciseLater chamado");
-    if (!lesson) return;
-
-    setIsProcessing(true); // Desabilita botão
-
-    // Fecha bottom sheet atual
-    bottomSheetRef.current?.dismiss();
-
-    try {
-      // 1. Marca aula como concluída
-      await markLessonAsCompleted(lesson.courseId, lesson.id, user?.uid);
-
-      // 2. Marca exercício como pendente
-      await markExerciseAsPending(lesson.courseId, lesson.id, user?.uid);
-
-      // 3. Invalida cache
-      if (user?.uid) {
-        queryClient.invalidateQueries({
-          queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, lesson.courseId),
-        });
-      }
-
-      // 4. Volta direto para o currículo (badge laranja será exibido)
-      navigation.goBack();
-    } catch (error) {
-      console.error("❌ [LessonPlayer] Erro ao processar exercício pendente:", error);
-
-      setMessageConfig({
-        type: "error",
-        title: "Erro",
-        message: "Não foi possível salvar o progresso. Tente novamente.",
-        primaryButton: { label: "OK", onPress: () => {} },
-      });
-      bottomSheetRef.current?.present();
     }
   }
 
