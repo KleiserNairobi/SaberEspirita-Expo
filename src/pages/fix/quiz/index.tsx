@@ -25,7 +25,10 @@ import {
   saveUserCompletedSubcategories,
   updateUserScore,
 } from "@/services/firebase/quizService";
-import { markLessonAsCompleted } from "@/services/firebase/progressService";
+import {
+  markLessonAsCompleted,
+  saveExerciseResult,
+} from "@/services/firebase/progressService";
 import { COURSE_PROGRESS_KEYS } from "@/hooks/queries/useCourseProgress";
 import { IQuizHistory, IQuizAnswer } from "@/types/quiz";
 import { FixStackParamList, AppStackParamList } from "@/routers/types";
@@ -51,6 +54,7 @@ export function QuizScreen() {
     courseId,
     lessonId,
     quizId,
+    exerciseId, // ✅ NOVO
   } = route.params;
 
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -232,7 +236,26 @@ export function QuizScreen() {
       if (user?.uid) {
         // --- Lógica para CURSO ---
         if (isCourse && courseId && lessonId) {
+          // 1. Marcar aula como concluída (mantido)
           await markLessonAsCompleted(courseId, lessonId, user.uid);
+
+          // 2. ✅ Salvar resultado do exercício (NOVO)
+          // Se exerciseId foi passado, usamos ele. Se não, tentamos usar quizId como fallback (embora idealmente devêssemos ter exerciseId)
+          if (exerciseId) {
+            await saveExerciseResult(
+              courseId,
+              lessonId,
+              exerciseId,
+              percentage, // score
+              percentage >= 70, // passed (assumindo 70% como nota de corte por enquanto)
+              user.uid
+            );
+          } else {
+            console.warn(
+              "⚠️ [QuizScreen] exerciseId não fornecido. O progresso do exercício não será salvo detalhadamente."
+            );
+          }
+
           queryClient.invalidateQueries({
             queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, courseId),
           });
@@ -394,15 +417,18 @@ export function QuizScreen() {
 
       {/* Botões de Ação */}
       <View style={styles.footer}>
-        <View style={styles.sheetButton}>
-          <Button
-            title="Parar"
-            variant="outline"
-            onPress={handleStop}
-            fullWidth
-            disabled={currentQuestionIndex === 0}
-          />
-        </View>
+        {/* ✅ Ocultar botão "Parar" em exercícios de curso */}
+        {!isCourse && (
+          <View style={styles.sheetButton}>
+            <Button
+              title="Parar"
+              variant="outline"
+              onPress={handleStop}
+              fullWidth
+              disabled={currentQuestionIndex === 0}
+            />
+          </View>
+        )}
         <View style={styles.sheetButton}>
           <Button
             title={isLastQuestion ? "Finalizar" : "Próxima"}

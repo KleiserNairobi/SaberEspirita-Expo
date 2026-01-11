@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { ArrowLeft, ArrowRight } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -12,6 +12,7 @@ interface NavigationButtonsProps {
   isLastSlide: boolean;
   onFinish?: () => void;
   finishLabel?: string;
+  isLoading?: boolean; // ✅ NOVO: Para desabilitar botão durante processamento
 }
 
 export function NavigationButtons({
@@ -21,6 +22,7 @@ export function NavigationButtons({
   isLastSlide,
   onFinish,
   finishLabel = "FINALIZAR AULA",
+  isLoading = false, // ✅ NOVO
 }: NavigationButtonsProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -48,11 +50,19 @@ export function NavigationButtons({
       {/* Botão Próximo ou Finalizar */}
       {isLastSlide && onFinish ? (
         <TouchableOpacity
-          style={styles.buttonFinish}
+          style={[styles.buttonFinish, isLoading && styles.buttonDisabled]}
           onPress={onFinish}
+          disabled={isLoading}
           activeOpacity={0.7}
         >
-          <Text style={styles.buttonFinishText}>{finishLabel}</Text>
+          {isLoading ? (
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+              <ActivityIndicator size="small" color="#FFFFFF" />
+              <Text style={styles.buttonFinishText}>PROCESSANDO...</Text>
+            </View>
+          ) : (
+            <Text style={styles.buttonFinishText}>{finishLabel}</Text>
+          )}
         </TouchableOpacity>
       ) : (
         <TouchableOpacity style={styles.buttonNext} onPress={onNext} activeOpacity={0.7}>

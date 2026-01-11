@@ -33,6 +33,7 @@ export type AppStackParamList = {
     courseId: string;
     lessonId: string;
     quizId: string;
+    exerciseId?: string;
   };
   QuizResult: {
     categoryId?: string;
@@ -101,6 +102,7 @@ export type FixStackParamList = {
     courseId?: string;
     lessonId?: string;
     quizId?: string;
+    exerciseId?: string;
   };
   QuizResult: {
     categoryId?: string;

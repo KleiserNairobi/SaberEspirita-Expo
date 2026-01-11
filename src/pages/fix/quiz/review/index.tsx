@@ -56,13 +56,10 @@ export function QuizReviewScreen() {
   const filledStars = getFilledStarsCount(level);
 
   function handleContinue() {
-    // Detectar se estamos no contexto de CURSO ou FIXE
-    // Se courseId existe nos params, estamos em um exercício de curso
-    const isCourseContext = !!courseId;
-
-    if (isCourseContext) {
-      // Contexto de CURSO: Navegar de volta ao currículo do curso
-      navigation.navigate("CourseCurriculum", { courseId: courseId! });
+    // ✅ MODIFICADO: Se for exercício de curso, voltar para QuizResult
+    // para que a lógica de próximo exercício seja executada
+    if (courseId) {
+      navigation.goBack(); // Volta para QuizResult
     } else {
       // Contexto de FIXE: Usar reset para limpar a pilha
       navigation.reset({

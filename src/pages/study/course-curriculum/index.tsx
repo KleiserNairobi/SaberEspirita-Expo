@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -22,10 +22,15 @@ import {
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { useLessons } from "@/hooks/queries/useLessons";
-import { useCourse } from "@/hooks/queries/useCourses"; // ✅ Corrigido
+import { useCourse } from "@/hooks/queries/useCourses";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
-import { useExercises } from "@/hooks/queries/useExercises"; // ← NOVO: Para buscar exercícios
+import { useExercises } from "@/hooks/queries/useExercises";
 import { ILesson } from "@/types/course";
+import { ProgressSummaryCard } from "./components/ProgressSummaryCard";
+import { BottomSheetMessage } from "@/components/BottomSheetMessage"; // ✅ NOVO
+import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types"; // ✅ NOVO
+import { BottomSheetModal } from "@gorhom/bottom-sheet"; // ✅ NOVO
+import { Button } from "@/components/Button"; // ✅ NOVO
 import { createStyles } from "./styles";
 
 type CourseCurriculumRouteProp = RouteProp<AppStackParamList, "CourseCurriculum">;
@@ -58,11 +63,48 @@ export function CourseCurriculumScreen() {
   // ✅ NOVO: Extrair exercícios pendentes
   const pendingExercises = progress?.pendingExercises || [];
 
-  // Calcular progresso
+  // Calcular progresso de aulas
   const totalLessons = lessons.length;
   const completedLessons = progress?.completedLessons.length || 0;
-  const progressPercent =
+  const lessonsProgress =
     totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+
+  // ✅ NOVO: Calcular progresso de exercícios
+  // Usar total do curso se disponível, senão fallback para resultados
+  const totalExercises =
+    course?.stats?.exerciseCount || progress?.exerciseResults?.length || 0;
+  const completedExercises =
+    progress?.exerciseResults?.filter((r) => r.passed).length || 0;
+  const exercisesProgress = progress?.exercisesCompletionPercent || 0;
+
+  // ✅ NOVO: Verificar elegibilidade para certificado
+  const certificateEligible = progress?.certificateEligible || false;
+
+  // ✅ NOVO: Estado e ref para BottomSheet de certificado
+  const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
+    null
+  );
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+  // ✅ NOVO: Função para calcular progresso de exercícios por aula
+  function getLessonExerciseProgress(lessonId: string) {
+    // Buscar exercícios completados desta aula
+    const completedIds =
+      progress?.exerciseResults?.filter((r) => r.passed).map((r) => r.exerciseId) || [];
+
+    // Verificar se a aula está na lista de pendentes
+    const hasPendingExercises = pendingExercises.includes(lessonId);
+
+    // Se não tem pendentes, significa que todos foram completados ou não há exercícios
+    if (!hasPendingExercises) {
+      return { total: 0, completed: 0, pending: 0, hasPending: false };
+    }
+
+    // Se tem pendentes, precisamos buscar quantos exercícios a aula tem
+    // Por enquanto, vamos assumir que se está pendente, há pelo menos 1 exercício
+    // A contagem exata será feita quando clicar na aula
+    return { total: 0, completed: 0, pending: 1, hasPending: true };
+  }
 
   function getLessonStatus(lesson: ILesson, index: number): LessonStatus {
     // Se não tiver progresso OU se completedLessons estiver vazio
@@ -102,7 +144,51 @@ export function CourseCurriculumScreen() {
     navigation.goBack();
   }
 
-  function handleLessonPress(lesson: ILesson, status: LessonStatus) {
+  // ✅ NOVO: Handler para botão de certificado
+  function handleGetCertificate() {
+    if (!certificateEligible) {
+      // Mostrar BottomSheet de bloqueio
+      const pendingCount = pendingExercises.length;
+      const pendingList = pendingExercises
+        .map((lessonId, index) => {
+          const lesson = lessons.find((l) => l.id === lessonId);
+          return `${index + 1}. ${lesson?.title || "Aula desconhecida"}`;
+        })
+        .join("\n");
+
+      setMessageConfig({
+        type: "warning",
+        title: "Certificado Bloqueado",
+        message: `Você ainda tem ${pendingCount} exercício(s) pendente(s):\n\n${pendingList}\n\nComplete todos os exercícios para obter seu certificado!`,
+        primaryButton: {
+          label: "VER EXERCÍCIOS PENDENTES",
+          onPress: handleViewPendingExercises,
+        },
+        secondaryButton: {
+          label: "Cancelar",
+          onPress: () => bottomSheetRef.current?.dismiss(),
+        },
+      });
+
+      bottomSheetRef.current?.present();
+      return;
+    }
+
+    // TODO: Navegar para tela de certificado
+    Alert.alert(
+      "Parabéns!",
+      "Você completou todas as aulas e exercícios! Em breve você poderá gerar seu certificado."
+    );
+  }
+
+  // ✅ NOVO: Scroll para primeira aula com exercício pendente
+  function handleViewPendingExercises() {
+    bottomSheetRef.current?.dismiss();
+    // TODO: Implementar scroll para primeira aula com badge
+    // Por enquanto, apenas fecha o BottomSheet
+  }
+
+  async function handleLessonPress(lesson: ILesson, status: LessonStatus) {
     if (status === LessonStatus.LOCKED) {
       Alert.alert(
         "Aula Bloqueada",
@@ -111,8 +197,45 @@ export function CourseCurriculumScreen() {
       return;
     }
 
+    // ✅ Se a aula tem exercício pendente, navega direto para o quiz
+    const isPendingExercise = pendingExercises.includes(lesson.id);
+    if (isPendingExercise) {
+      try {
+        // Buscar exercício vinculado à aula
+        const { getExercisesByLessonId } =
+          await import("@/services/firebase/exerciseService");
+        const exercises = await getExercisesByLessonId(lesson.id);
+
+        if (exercises.length > 0) {
+          // Encontrar o primeiro exercício pendente
+          // Precisamos verificar quais já foram completados
+          const completedIds =
+            progress?.exerciseResults?.filter((r) => r.passed).map((r) => r.exerciseId) ||
+            [];
+
+          const nextExercise =
+            exercises.find((ex) => !completedIds.includes(ex.id)) || exercises[0];
+
+          if (nextExercise.quizId) {
+            console.log(
+              "🎯 Navegando direto para exercício pendente:",
+              nextExercise.quizId
+            );
+            navigation.navigate("CourseQuiz", {
+              courseId,
+              lessonId: lesson.id,
+              quizId: nextExercise.quizId,
+              exerciseId: nextExercise.id, // ✅ NOVO
+            });
+            return;
+          }
+        }
+      } catch (error) {
+        console.error("❌ Erro ao buscar exercício:", error);
+      }
+    }
+
     // Comportamento normal: abre a aula
-    // TODO: Implementar navegação direta para exercício pendente
     navigation.navigate("LessonPlayer", { courseId, lessonId: lesson.id });
   }
 
@@ -228,20 +351,16 @@ export function CourseCurriculumScreen() {
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={
-            // HEADER DE RESUMO DE PROGRESSO
-            <View style={styles.summaryCard}>
-              <Text style={styles.summaryTitle}>{course?.title || "Curso"}</Text>
-              <View style={styles.summaryProgressRow}>
-                <Text style={styles.summaryLabel}>Progresso do curso</Text>
-                <Text style={styles.summaryPercent}>{progressPercent}%</Text>
-              </View>
-              <View style={styles.summaryBarBg}>
-                <View style={[styles.summaryBarFill, { width: `${progressPercent}%` }]} />
-              </View>
-              <Text style={styles.summaryFooter}>
-                {completedLessons} de {totalLessons} aulas concluídas
-              </Text>
-            </View>
+            <ProgressSummaryCard
+              courseTitle={course?.title || "Curso"}
+              lessonsProgress={lessonsProgress}
+              exercisesProgress={exercisesProgress}
+              totalLessons={totalLessons}
+              completedLessons={completedLessons}
+              totalExercises={totalExercises}
+              completedExercises={completedExercises}
+              certificateEligible={certificateEligible}
+            />
           }
           renderItem={renderLessonItem}
           ListEmptyComponent={
@@ -257,6 +376,21 @@ export function CourseCurriculumScreen() {
           }
         />
       )}
+
+      {/* ✅ NOVO: Botão de Certificado (aparece quando 100% aulas) */}
+      {lessonsProgress === 100 && (
+        <View style={styles.certificateButtonContainer}>
+          <Button
+            title={certificateEligible ? "OBTER CERTIFICADO" : "COMPLETAR EXERCÍCIOS"}
+            onPress={handleGetCertificate}
+            variant={certificateEligible ? "primary" : "outline"}
+            fullWidth
+          />
+        </View>
+      )}
+
+      {/* ✅ NOVO: BottomSheet para mensagens */}
+      <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
     </SafeAreaView>
   );
 }

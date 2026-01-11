@@ -634,6 +634,40 @@ Aproveitar a migração para limpar o visual.
 
 ---
 
+### 11/01/2026 - Fluxo Sequencial e Correções de Progresso
+
+- ✅ **Módulo de Cursos - Fase 3: Sistema Híbrido Completo**
+- **Objetivo**: Finalizar a implementação do sistema que permite completar exercícios agora ou depois, garantindo persistência correta e feedback visual preciso.
+
+#### **Funcionalidades Implementadas**
+
+1. **Indicadores de Pendência Visuais**:
+   - `Badge` "⚠️ Exercício pendente" adicionado aos cards de aula no currículo.
+   - Navegação direta para o exercício pendente ao clicar no card da aula.
+
+2. **Fluxo Sequencial de Múltiplos Exercícios**:
+   - Lógica para aulas com múltiplos exercícios.
+   - Detecção automática do "Próximo Exercício" após conclusão.
+   - `BottomSheet` inteligente oferecendo "Próximo Exercício" ou "Fazer Depois".
+
+3. **Correções de Persistência e Cálculo (Crítico)**:
+   - **Bug Fix**: Persistência do resultado executada corretamente via `saveExerciseResult` (antes o progresso era perdido).
+   - **Bug Fix**: Cálculo de porcentagem corrigido para usar `course.stats.exerciseCount` como total real (corrigindo bug de "200% de progresso").
+   - **Bug Fix Visual**: Texto "X de Y exercícios" corrigido para exibir total do curso.
+
+4. **Navegação Robusta**:
+   - Propagação do `exerciseId` correto em todo o fluxo (Player → Quiz → Result → Next Quiz).
+
+#### **Arquivos Modificados**
+
+- `src/pages/study/course-curriculum/index.tsx` (Lógica de badges e cálculo visual)
+- `src/pages/study/lesson-player/index.tsx` (Navegação com ID correto)
+- `src/pages/fix/quiz/index.tsx` (Integração de salvamento)
+- `src/pages/fix/quiz/result/index.tsx` (Fluxo sequencial)
+- `src/services/firebase/progressService.ts` (Correção matemática)
+
+---
+
 ### 10/01/2026 - UX de Conclusão de Aula e Exercícios Híbrido
 
 - ✅ **Módulo de Cursos - Fase 1: Modal de Decisão Implementado**

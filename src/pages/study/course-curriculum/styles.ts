@@ -210,6 +210,15 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("xs", "semibold", theme.colors.warning),
     },
 
+    // ✅ NOVO: Container do botão de certificado
+    certificateButtonContainer: {
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.md,
+      backgroundColor: theme.colors.background,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+    },
+
     loadingContainer: {
       flex: 1,
       justifyContent: "center",

@@ -253,12 +253,23 @@ export async function saveExerciseResult(
     ];
   }
 
+  // Buscar dados do curso para saber total de exercícios
+  const course = await getCourseById(courseId);
+  const totalExercises = course?.stats?.exerciseCount || updatedResults.length || 1; // Fallback para evitar divisão por zero
+
   // Calcular porcentagem de exercícios completos
+  // Conta quantos exercícios únicos foram passados
   const completedExercises = updatedResults.filter((r: any) => r.passed).length;
-  const exercisesCompletionPercent =
-    exerciseResults.length > 0
-      ? Math.round((completedExercises / exerciseResults.length) * 100)
-      : 0;
+
+  // Garante que não exceda 100% e usa o total real do curso
+  const exercisesCompletionPercent = Math.min(
+    100,
+    Math.round((completedExercises / totalExercises) * 100)
+  );
+
+  console.log(
+    `📊 [saveExerciseResult] Progresso: ${completedExercises}/${totalExercises} (${exercisesCompletionPercent}%)`
+  );
 
   await updateDoc(progressRef, {
     exerciseResults: updatedResults,

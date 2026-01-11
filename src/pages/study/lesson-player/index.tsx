@@ -25,7 +25,10 @@ import {
   useCourseProgress,
   COURSE_PROGRESS_KEYS,
 } from "@/hooks/queries/useCourseProgress";
-import { markLessonAsCompleted } from "@/services/firebase/progressService";
+import {
+  markLessonAsCompleted,
+  markExerciseAsPending,
+} from "@/services/firebase/progressService";
 import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech"; // Utils de TTS
 
 import { SlideContent } from "./components/SlideContent";
@@ -57,6 +60,7 @@ export function LessonPlayerScreen() {
   const { courseId, lessonId } = route.params;
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isNarrating, setIsNarrating] = useState(false); // Estado de narração
+  const [isProcessing, setIsProcessing] = useState(false); // Estado de processamento
 
   // Estado para configuração do BottomSheet genérico
   const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
@@ -117,7 +121,7 @@ export function LessonPlayerScreen() {
         type: "question",
         title: "Exercício de Fixação",
         message:
-          "Teste seus conhecimentos sobre esta aula para garantir seu certificado ao final do curso!\n\n⚠️ Os exercícios são obrigatórios para obter o certificado.",
+          "Teste seus conhecimentos sobre esta aula para garantir seu certificado ao final do curso!\n\n Os exercícios são obrigatórios para obter o certificado.",
         primaryButton: {
           label: "FAZER EXERCÍCIO AGORA",
           onPress: handleExerciseNow,
@@ -184,8 +188,9 @@ export function LessonPlayerScreen() {
     }
   }
 
-  
   async function markLessonAsCompletedAndReturn() {
+    if (!lesson) return;
+
     try {
       console.log("💾 [LessonPlayer] Chamando markLessonAsCompleted...");
       await markLessonAsCompleted(lesson.courseId, lesson.id, user?.uid);
@@ -201,7 +206,7 @@ export function LessonPlayerScreen() {
       navigation.goBack();
     } catch (error) {
       console.error("❌ [LessonPlayer] Erro ao marcar aula como concluída:", error);
-      
+
       setMessageConfig({
         type: "error",
         title: "Erro",
@@ -214,13 +219,15 @@ export function LessonPlayerScreen() {
 
   function handleExerciseNow() {
     console.log("🚀 [LessonPlayer] handleExerciseNow chamado");
-    if (!exercises || exercises.length === 0) return;
-    
+    if (!lesson || !exercises || exercises.length === 0) return;
+
+    setIsProcessing(true); // Desabilita botão
+
     // Fecha bottom sheet
     bottomSheetRef.current?.dismiss();
 
     const firstExercise = exercises[0];
-    
+
     // Marca aula como concluída em background
     markLessonAsCompleted(lesson.courseId, lesson.id, user?.uid).then(() => {
       if (user?.uid) {
@@ -235,6 +242,7 @@ export function LessonPlayerScreen() {
         courseId: lesson.courseId,
         lessonId: lesson.id,
         quizId: firstExercise.quizId,
+        exerciseId: firstExercise.id, // ✅ NOVO: Passando exerciseId correto
         mode: "course",
         categoryName: "Exercício de Fixação",
         subcategoryName: lesson.title,
@@ -244,17 +252,20 @@ export function LessonPlayerScreen() {
 
   async function handleExerciseLater() {
     console.log("🕒 [LessonPlayer] handleExerciseLater chamado");
-    
+    if (!lesson) return;
+
+    setIsProcessing(true); // Desabilita botão
+
     // Fecha bottom sheet atual
     bottomSheetRef.current?.dismiss();
 
     try {
       // 1. Marca aula como concluída
       await markLessonAsCompleted(lesson.courseId, lesson.id, user?.uid);
-      
+
       // 2. Marca exercício como pendente
       await markExerciseAsPending(lesson.courseId, lesson.id, user?.uid);
-      
+
       // 3. Invalida cache
       if (user?.uid) {
         queryClient.invalidateQueries({
@@ -262,23 +273,11 @@ export function LessonPlayerScreen() {
         });
       }
 
-      // 4. Mostra mensagem de info
-      setTimeout(() => {
-        setMessageConfig({
-          type: "info",
-          title: "Exercício Pendente",
-          message: "Você pode fazer o exercício depois no currículo do curso.",
-          primaryButton: {
-            label: "OK",
-            onPress: () => navigation.goBack(),
-          },
-        });
-        bottomSheetRef.current?.present();
-      }, 500); // Delay para permitir fechamento e reabertura suave
-
+      // 4. Volta direto para o currículo (badge laranja será exibido)
+      navigation.goBack();
     } catch (error) {
       console.error("❌ [LessonPlayer] Erro ao processar exercício pendente:", error);
-      
+
       setMessageConfig({
         type: "error",
         title: "Erro",
@@ -288,7 +287,6 @@ export function LessonPlayerScreen() {
       bottomSheetRef.current?.present();
     }
   }
-
 
   function handleGoBack() {
     navigation.goBack();
@@ -461,6 +459,7 @@ export function LessonPlayerScreen() {
         isLastSlide={isLastSlide}
         onFinish={handleFinish}
         finishLabel="FINALIZAR AULA"
+        isLoading={isProcessing}
       />
       {/* BottomSheet Genérico para Mensagens */}
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
