@@ -28,8 +28,8 @@
 
 Combinar **3 estratégias complementares**:
 
-1. **Modal de Decisão Informativa** (após aula)
-2. **Indicadores Visuais no Currículo** (badges)
+1. **Fluxo de Conclusão Direto** (sem modais de decisão)
+2. **Lista Explícita de Exercícios** (hierarquia visual no currículo)
 3. **Barra de Progresso Dupla** (aulas + exercícios)
 
 ---
@@ -63,39 +63,45 @@ Combinar **3 estratégias complementares**:
 
 ---
 
-### **COMPONENTE 2: Indicadores Visuais no Currículo**
+### **COMPONENTE 2: Lista Explícita de Exercícios no Currículo**
 
-**Objetivo:** Mostrar claramente quais aulas têm exercícios pendentes
+**Objetivo:** Deixar claro que os exercícios são partes integrantes do curso, listados logo abaixo de sua respectiva aula.
 
-**Estados Visuais das Aulas:**
+**Estrutura Visual:**
 
-| Estado                             | Ícone                  | Badge                             | Descrição                  |
-| ---------------------------------- | ---------------------- | --------------------------------- | -------------------------- |
-| **Concluída + Exercício OK**       | `CheckCircle` (verde)  | -                                 | Aula e exercício completos |
-| **Concluída + Exercício Pendente** | `CheckCircle` (verde)  | `⚠️ Exercício pendente` (laranja) | Aula feita, exercício não  |
-| **Em Andamento**                   | `PlayCircle` (primary) | -                                 | Aula em progresso          |
-| **Disponível**                     | `PlayCircle` (outline) | -                                 | Aula disponível            |
-| **Bloqueada**                      | `Lock` (muted)         | -                                 | Aula bloqueada             |
+- **Card da Aula**: Exibe status da aula (Concluída, Em andamento, Bloqueada).
+- **Lista de Exercícios**: Renderizada **abaixo** do card da aula (conexão visual).
+- **Hierarquia**: A aula é o "pai", os exercícios são "filhos".
 
-**Layout do Card com Exercício Pendente:**
+**Layout:**
 
 ```
 ┌─────────────────────────────────────┐
 │ ✓ 2. Os Princípios Básicos          │
 │    18 min • Concluída               │
-│    ⚠️ Exercício pendente            │ ← Badge laranja
 └─────────────────────────────────────┘
+    │
+    ├── [ ✓ ] Exercício de Fixação 1
+    │
+    └── [ 🔒 ] Exercício de Fixação 2
 ```
 
-**Comportamento ao Clicar:**
+**Estados dos Exercícios:**
 
-- Se exercício pendente → Navega direto para o **primeiro exercício pendente** da aula (`CourseQuiz` com `exerciseId`)
-- Se aula completa (com exercício) → Permite revisar aula ou refazer exercício
+1.  **Bloqueado (🔒)**: Se a aula correspondente não foi concluída.
+2.  **Pendente (⭕)**: Aula concluída, mas exercício não realizado.
+3.  **Concluído (✅)**: Exercício realizado com sucesso (`passed: true`).
+
+**Comportamento:**
+
+- **Clique na Aula**: Abre o Player de Vídeo (`LessonPlayer`).
+- **Clique no Exercício**: Abre o Quiz (`CourseQuiz`).
+- **Feedback**: Ícone de check verde indica conclusão.
 
 **Arquivo:**
 
 - `src/pages/study/course-curriculum/index.tsx`
-- `src/pages/study/course-curriculum/components/LessonCard/index.tsx`
+- (Renderização interna via `renderExerciseItem`)
 
 ---
 
@@ -148,15 +154,23 @@ const certificateEligible = lessonsProgress === 100 && exercisesProgress === 100
 
 ---
 
-## 🔄 Fluxo Sequencial de Múltiplos Exercícios
+## 🔄 Fluxo de Navegação (Curriculum-Centric)
 
-**Cenário**: Uma aula pode ter múltiplos exercícios (p.ex. 3 exercícios).
+**Conceito**: O Currículo é o "Hub Central" de navegação.
 
-**Novo Comportamento Simplificado:**
+**Fluxo Típico:**
 
-1.  **Botão "Continuar"**: Ao finalizar um exercício, o sistema volta para o currículo.
-2.  **Visualização no Currículo**: O próximo exercício estará disponível na lista.
-3.  **Fluxo Limpo**: Sem BottomSheets de decisão intermediária para evitar loops de navegação.
+1.  **Usuário no Currículo**: Seleciona uma Aula ou um Exercício.
+2.  **Execução**: Assiste aula ou faz quiz.
+3.  **Conclusão**: Ao terminar, **sempre retorna ao Currículo**.
+4.  **Progresso**: O Currículo é atualizado (check verde) e o próximo item é desbloqueado visualmente.
+5.  **Continuação**: Usuário clica no próximo item da lista.
+
+**Justificativa:**
+
+- Evita loops de navegação complexos.
+- Dá ao usuário controle total sobre o ritmo.
+- Reforça a visão geral do progresso no currículo.
 
 ---
 

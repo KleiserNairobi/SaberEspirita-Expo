@@ -20,7 +20,7 @@ type RegisterScreenNavigationProp = NativeStackNavigationProp<
   "Register"
 >;
 
-export default function Register() {
+export function RegisterScreen() {
   const { signUp, loading, error, clearError } = useAuthStore();
   const navigation = useNavigation<RegisterScreenNavigationProp>();
   const [email, setEmail] = useState("");
