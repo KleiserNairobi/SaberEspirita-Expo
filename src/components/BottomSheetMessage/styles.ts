@@ -14,15 +14,13 @@ export const createStyles = (theme: ITheme) =>
       height: 4,
     },
     container: {
-      flex: 1,
       paddingHorizontal: 24,
       paddingTop: 8,
       paddingBottom: 24,
       alignItems: "center",
     },
     iconContainer: {
-      marginTop: 16,
-      marginBottom: 24,
+      marginVertical: 10,
     },
     title: {
       ...theme.text("xl", "bold"),
@@ -32,9 +30,9 @@ export const createStyles = (theme: ITheme) =>
     },
     message: {
       ...theme.text("md", "regular"),
+      fontSize: theme.typography.sizes.md + 1,
       color: theme.colors.textSecondary,
       textAlign: "center",
-      lineHeight: 24,
       marginBottom: 32,
     },
     buttonContainer: {

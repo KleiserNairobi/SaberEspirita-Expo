@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -10,12 +10,15 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Mail, Lock, Eye, EyeOff, Key, UserPlus } from "lucide-react-native";
 import { useAuthStore } from "@/stores/authStore";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import type { AuthStackParamList } from "@/routers/types";
 import { Button } from "@/components/Button";
 import { TermsAndPrivacy } from "@/components/TermsAndPrivacy";
+import { BottomSheetMessage } from "@/components/BottomSheetMessage";
+import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { createStyles } from "./styles";
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, "Login">;
@@ -25,12 +28,16 @@ export function LoginScreen() {
   const styles = createStyles(theme);
   const { signIn, loading, error, clearError } = useAuthStore();
   const navigation = useNavigation<LoginScreenNavigationProp>();
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [focusedField, setFocusedField] = useState<"email" | "password" | null>(null);
+  const [bottomSheetConfig, setBottomSheetConfig] =
+    useState<BottomSheetMessageConfig | null>(null);
 
   function validateEmail(email: string): boolean {
     const emailRegex = /\S+@\S+\.\S+/;
@@ -70,8 +77,38 @@ export function LoginScreen() {
     try {
       clearError();
       await signIn(email.trim().toLowerCase(), password);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Login error:", err);
+
+      if (
+        err.code === "auth/invalid-credential" ||
+        err.message?.includes("auth/invalid-credential")
+      ) {
+        setBottomSheetConfig({
+          type: "error",
+          title: "Credenciais Inválidas",
+          message:
+            "O e-mail ou a senha informados estão incorretos.\n Por favor, verifique e tente novamente.",
+          primaryButton: {
+            label: "Tentar Novamente",
+            onPress: () => {},
+          },
+        });
+      } else {
+        setBottomSheetConfig({
+          type: "error",
+          title: "Erro no Login",
+          message: "Ocorreu um erro ao tentar entrar.\n Tente novamente mais tarde.",
+          primaryButton: {
+            label: "Ok",
+            onPress: () => {},
+          },
+        });
+      }
+      // Pequeno delay para garantir que o estado atualizou antes de abrir
+      setTimeout(() => {
+        bottomSheetModalRef.current?.present();
+      }, 100);
     }
   }
 
@@ -98,7 +135,7 @@ export function LoginScreen() {
           {/* Header com Logo */}
           <View style={styles.header}>
             <Text style={styles.logoText}>Saber Espírita</Text>
-            <Text style={styles.premiumText}>Premium Edition</Text>
+            {/* <Text style={styles.premiumText}>Premium Edition</Text> */}
           </View>
 
           {/* Título de Boas-Vindas */}
@@ -112,17 +149,32 @@ export function LoginScreen() {
           {/* Input de E-mail */}
           <View style={styles.inputWrapper}>
             <Text style={styles.inputLabel}>E-mail</Text>
-            <View style={styles.inputContainer}>
-              <Mail size={20} color={theme.colors.primary} />
+            <View
+              style={[
+                styles.inputContainer,
+                focusedField === "email" && styles.inputContainerFocused,
+                !!emailError && styles.inputContainerError,
+              ]}
+            >
+              <Mail
+                size={20}
+                color={
+                  focusedField === "email"
+                    ? theme.colors.primary
+                    : theme.colors.textSecondary
+                }
+              />
               <TextInput
                 style={styles.input}
                 placeholder="seu@email.com"
-                placeholderTextColor="#B0B0B0"
+                placeholderTextColor={theme.colors.textSecondary}
                 value={email}
                 onChangeText={(text) => {
                   setEmail(text);
                   setEmailError("");
                 }}
+                onFocus={() => setFocusedField("email")}
+                onBlur={() => setFocusedField(null)}
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="email-address"
@@ -135,17 +187,32 @@ export function LoginScreen() {
           {/* Input de Senha */}
           <View style={styles.inputWrapper}>
             <Text style={styles.inputLabel}>Senha</Text>
-            <View style={styles.inputContainer}>
-              <Lock size={20} color={theme.colors.primary} />
+            <View
+              style={[
+                styles.inputContainer,
+                focusedField === "password" && styles.inputContainerFocused,
+                !!passwordError && styles.inputContainerError,
+              ]}
+            >
+              <Lock
+                size={20}
+                color={
+                  focusedField === "password"
+                    ? theme.colors.primary
+                    : theme.colors.textSecondary
+                }
+              />
               <TextInput
                 style={styles.input}
                 placeholder="sua senha segura"
-                placeholderTextColor="#B0B0B0"
+                placeholderTextColor={theme.colors.textSecondary}
                 value={password}
                 onChangeText={(text) => {
                   setPassword(text);
                   setPasswordError("");
                 }}
+                onFocus={() => setFocusedField("password")}
+                onBlur={() => setFocusedField(null)}
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -157,9 +224,9 @@ export function LoginScreen() {
                 style={styles.eyeButton}
               >
                 {showPassword ? (
-                  <EyeOff size={20} color="#B0B0B0" />
+                  <EyeOff size={20} color={theme.colors.textSecondary} />
                 ) : (
-                  <Eye size={20} color="#B0B0B0" />
+                  <Eye size={20} color={theme.colors.textSecondary} />
                 )}
               </TouchableOpacity>
             </View>
@@ -203,6 +270,8 @@ export function LoginScreen() {
           <TermsAndPrivacy />
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <BottomSheetMessage ref={bottomSheetModalRef} config={bottomSheetConfig} />
     </View>
   );
 }

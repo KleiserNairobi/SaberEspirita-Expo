@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   User,
+  UserCredential,
 } from "firebase/auth";
 import { auth } from "@/configs/firebase/firebase";
 import * as Storage from "@/utils/Storage";
@@ -43,7 +44,7 @@ interface AuthState {
   setError: (error: string | null) => void;
   clearError: () => void;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<UserCredential>;
   signOut: () => Promise<void>;
   initializeAuth: () => (() => void) | undefined;
 }
@@ -100,15 +101,8 @@ export const useAuthStore = create<AuthState>()(
         set({ loading: true, error: null });
         try {
           console.log("AuthStore: Iniciando login...");
-          const userCredential = await signInWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
-          console.log(
-            "AuthStore: Login bem-sucedido:",
-            userCredential.user.uid
-          );
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          console.log("AuthStore: Login bem-sucedido:", userCredential.user.uid);
           set({ user: userCredential.user, loading: false });
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
@@ -129,6 +123,7 @@ export const useAuthStore = create<AuthState>()(
           );
           console.log("AuthStore: Conta criada:", userCredential.user.uid);
           set({ user: userCredential.user, loading: false });
+          return userCredential;
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
           console.error("AuthStore: Erro ao criar conta:", errorMessage);
@@ -159,9 +154,7 @@ export const useAuthStore = create<AuthState>()(
         const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
           console.log(
             "AuthStore: Estado do Firebase:",
-            firebaseUser
-              ? `Usuário logado (${firebaseUser.uid})`
-              : "Sem usuário"
+            firebaseUser ? `Usuário logado (${firebaseUser.uid})` : "Sem usuário"
           );
 
           if (firebaseUser) {

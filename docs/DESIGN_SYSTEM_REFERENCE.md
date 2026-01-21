@@ -120,8 +120,8 @@ full: 999; // Círculos perfeitos
 import { StyleSheet } from "react-native";
 import { ITheme } from "@/configs/theme/types";
 
-export const createStyles = (theme: ITheme) =>
-  StyleSheet.create({
+export function createStyles(theme: ITheme) {
+  return StyleSheet.create({
     container: {
       flex: 1,
       padding: theme.spacing.md,
@@ -150,6 +150,7 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("sm", "regular", theme.colors.muted),
     },
   });
+}
 ```
 
 ---

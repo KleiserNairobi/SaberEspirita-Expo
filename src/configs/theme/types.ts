@@ -16,7 +16,7 @@ export type ThemeColors = {
   muted: string;
   error: string;
   success: string;
-  warning: string; // ✅ NOVO - Cor de aviso/alerta
+  warning: string;
   onPrimary: string;
   onSecondary: string;
 };

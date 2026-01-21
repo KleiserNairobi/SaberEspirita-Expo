@@ -21,15 +21,17 @@ export function TermsAndPrivacy({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Ao continuar, você concorda com nossos </Text>
-      <TouchableOpacity onPress={() => handleOpenLink(termsUrl)}>
-        <Text style={styles.link}>Termos de Uso</Text>
-      </TouchableOpacity>
-      <Text style={styles.text}> e nossa </Text>
-      <TouchableOpacity onPress={() => handleOpenLink(privacyUrl)}>
-        <Text style={styles.link}>Política de Privacidade</Text>
-      </TouchableOpacity>
-      <Text style={styles.text}>.</Text>
+      <Text style={styles.text}>Ao continuar, você concorda com nossos</Text>
+      <View style={styles.linksContainer}>
+        <TouchableOpacity onPress={() => handleOpenLink(termsUrl)}>
+          <Text style={styles.link}>Termos de Uso</Text>
+        </TouchableOpacity>
+        <Text style={styles.text}> e nossa </Text>
+        <TouchableOpacity onPress={() => handleOpenLink(privacyUrl)}>
+          <Text style={styles.link}>Política de Privacidade</Text>
+        </TouchableOpacity>
+        <Text style={styles.text}>.</Text>
+      </View>
     </View>
   );
 }

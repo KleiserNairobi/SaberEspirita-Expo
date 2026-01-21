@@ -92,20 +92,15 @@ export function createStyles(theme: ITheme) {
       marginTop: theme.spacing.md,
       marginBottom: theme.spacing.lg,
     },
-    secondaryButtonsContainer: {
-      flexDirection: "row",
-      justifyContent: "space-between",
+    footerContainer: {
       alignItems: "center",
-      gap: theme.spacing.lg,
       marginBottom: theme.spacing.xl,
     },
-    secondaryButton: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: theme.spacing.xs,
-      padding: theme.spacing.xs,
+    footerText: {
+      ...theme.text("md", "regular"),
+      color: theme.colors.text,
     },
-    secondaryButtonText: {
+    linkText: {
       ...theme.text("md", "medium"),
       color: theme.colors.primary,
     },

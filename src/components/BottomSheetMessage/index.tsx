@@ -22,17 +22,17 @@ import { createStyles } from "./styles";
 
 interface BottomSheetMessageProps {
   config: BottomSheetMessageConfig | null;
+  onDismiss?: () => void;
 }
 
 export const BottomSheetMessage = forwardRef<BottomSheetModal, BottomSheetMessageProps>(
-  ({ config }, ref) => {
+  ({ config, onDismiss }, ref) => {
     const { theme } = useAppTheme();
     const insets = useSafeAreaInsets();
     const styles = createStyles(theme);
-    const snapPoints = useMemo(() => ["50%"], []);
 
     const getIconComponent = (type: MessageType) => {
-      const iconSize = 64;
+      const iconSize = 48;
       switch (type) {
         case "success":
           return (
@@ -106,11 +106,13 @@ export const BottomSheetMessage = forwardRef<BottomSheetModal, BottomSheetMessag
     return (
       <BottomSheetModal
         ref={ref}
-        snapPoints={snapPoints}
+        enableDynamicSizing={true}
         enablePanDownToClose
         backgroundStyle={styles.bottomSheetBackground}
         handleIndicatorStyle={styles.handleIndicator}
         backdropComponent={renderBackdrop}
+        keyboardBlurBehavior="restore"
+        onDismiss={onDismiss}
       >
         <BottomSheetView
           style={[styles.container, { paddingBottom: Math.max(insets.bottom, 24) }]}
