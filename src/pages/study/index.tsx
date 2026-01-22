@@ -57,9 +57,7 @@ export function StudyScreen() {
       <View>
         {/* Header com saudação */}
         <View style={styles.headerContainer}>
-          <Text style={styles.greetingText}>
-            Olá, {user?.email?.split("@")[0] || "Usuário"}!
-          </Text>
+          <Text style={styles.greetingText}>Olá, {user?.displayName || "Usuário"}!</Text>
           <Text style={styles.subtitleText}>
             Vamos começar sua jornada de conhecimento?
           </Text>

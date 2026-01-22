@@ -1637,3 +1637,97 @@ bold: "Oswald_700Bold";
   - ✅ Consistência com design system
   - ✅ Uso eficiente do espaço
   - ✅ Princípios de design moderno (flat, minimalista)
+
+---
+
+### 22/01/2026 - Refinamento de Autenticação e Onboarding
+
+- ✅ **Módulo de Autenticação - Melhorias de UX/UI**
+- **Objetivo**: Refinar a experiência de primeiro acesso, evitar redundâncias textuais e criar conexão emocional com o usuário.
+
+#### **Funcionalidades Implementadas**
+
+1. **Tela de Boas-Vindas (WelcomeScreen)**:
+   - **Objetivo**: Exibir mensagem acolhedora apenas no primeiro login do usuário.
+   - **Arquitetura**:
+     - Store Zustand: `onboardingStore.ts` com persistência MMKV
+     - Estado: `hasSeenWelcome` (boolean)
+     - Actions: `markWelcomeAsSeen()`, `resetWelcome()` (para testes)
+   - **Componente**:
+     - Localização: `src/pages/onboarding/welcome/`
+     - Seleção dinâmica de imagem baseada no tema (dark/light)
+     - Imagens de Allan Kardec: `kardecDark.png` (716KB) e `kardecLight.png` (743KB)
+     - Dimensões otimizadas: 130x173px (redução de 35% para melhor equilíbrio visual)
+   - **Tipografia Refinada**:
+     - Título em duas linhas com fontes diferentes:
+       - Linha 1: "Seja bem-vindo(a) ao" (Baskervville_400Regular_Italic, 22px, cor secundária)
+       - Linha 2: "Saber Espírita" (Allura_400Regular, 48px, cor primária + sombra sutil)
+     - Corpo do texto: `md` com `lineHeight: 20` e `textAlign: justify`
+     - Citação de Allan Kardec: `sm` com `lineHeight: 18` em card com borda lateral colorida
+   - **Otimizações de Espaço**:
+     - Padding superior reduzido: `xl` → `md`
+     - Margens entre seções: `xl` → `md`
+     - Margin top do botão: `xl` → `10px` (fixo)
+     - **Resultado**: Todo conteúdo + botão visível na viewport sem scroll excessivo
+   - **Navegação Condicional**:
+     - Lógica no `RootNavigator.tsx`:
+       - Não autenticado → `AuthNavigator`
+       - Autenticado + Primeira vez → `WelcomeScreen`
+       - Autenticado + Já viu welcome → `AppNavigator`
+     - Transição automática após clicar em "Iniciar Minha Jornada"
+
+2. **Refinamento de Mensagens de Autenticação**:
+   - **Problema**: Redundância entre "Seja bem-vindo" (Login) e "Seja bem-vindo(a) ao Saber Espírita" (WelcomeScreen)
+   - **Solução**:
+     - **Login**: "Acesse sua conta." (neutro, funciona para primeiro acesso e retornos)
+     - **Registro**: "Crie sua conta" (mantido)
+     - **Boas-Vindas**: "Seja bem-vindo(a) ao Saber Espírita" (exclusivo para primeiro login)
+   - **Benefício**: Cada tela tem identidade própria sem repetições
+
+3. **Tipografia com Sombra Sutil**:
+   - Aplicada em títulos cursivos (Allura) nas telas de Login, Registro e WelcomeScreen
+   - Configuração:
+     - `textShadowColor: "rgba(0, 0, 0, 0.15)"`
+     - `textShadowOffset: { width: 0, height: 2 }`
+     - `textShadowRadius: 4`
+   - **Benefício**: Adiciona profundidade e elegância sem comprometer legibilidade
+
+4. **Correção de Saudação na Tela Estude**:
+   - **Antes**: `user?.email?.split("@")[0]` (exibia parte do email)
+   - **Depois**: `user?.displayName` (exibe nome real do usuário)
+   - **Benefício**: Personalização mais humanizada
+
+#### **Arquivos Criados**
+
+- `src/stores/onboardingStore.ts` - Store de controle de onboarding
+- `src/pages/onboarding/welcome/index.tsx` - Componente WelcomeScreen
+- `src/pages/onboarding/welcome/styles.ts` - Estilos otimizados
+
+#### **Arquivos Modificados**
+
+- `src/routers/RootNavigator.tsx` - Lógica condicional de navegação
+- `src/routers/types.ts` - Adicionado tipo `Welcome: undefined`
+- `src/pages/auth/login/index.tsx` - Título alterado para "Acesse sua conta."
+- `src/pages/auth/login/styles.ts` - Sombra aplicada ao título
+- `src/pages/auth/register/styles.ts` - Sombra aplicada ao título
+- `src/pages/study/index.tsx` - Saudação usando `displayName`
+
+#### **Recursos Visuais**
+
+- **Imagens de Allan Kardec**:
+  - Geradas no Dreamina seguindo design system (sage green, cream beige)
+  - Light Mode: Fundo claro com iluminação suave
+  - Dark Mode: Fundo escuro com rim lighting e acentos dourados
+  - Dimensões originais: 1792x2399px
+  - Dimensões otimizadas: 130x173px (exibição na tela)
+
+#### **Impacto UX/UI**
+
+- ✅ **Primeira Impressão Memorável**: Tela de boas-vindas cria conexão emocional
+- ✅ **Hierarquia Visual Clara**: Tipografia em duas linhas com fontes diferentes
+- ✅ **Economia de Espaço**: Otimizações garantem visibilidade do botão
+- ✅ **Consistência**: Sombras sutis em todos os títulos cursivos
+- ✅ **Personalização**: Saudação com nome real do usuário
+- ✅ **Identidade Única**: Cada tela de autenticação tem mensagem distinta
+
+---

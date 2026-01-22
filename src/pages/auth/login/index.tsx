@@ -183,7 +183,7 @@ export function LoginScreen() {
           </View>
 
           {/* Título de Boas-Vindas */}
-          <Text style={styles.welcomeTitle}>Seja bem-vindo.</Text>
+          <Text style={styles.welcomeTitle}>Acesse sua conta.</Text>
 
           {/* Subtítulo */}
           <Text style={styles.subtitle}>

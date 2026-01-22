@@ -1,6 +1,7 @@
 // Tipos para navegação type-safe
 export type RootStackParamList = {
   Auth: undefined;
+  Welcome: undefined;
   App: undefined;
 };
 

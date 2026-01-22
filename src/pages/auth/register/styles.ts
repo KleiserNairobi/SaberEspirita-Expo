@@ -22,9 +22,13 @@ export function createStyles(theme: ITheme) {
       marginBottom: theme.spacing.xl,
     },
     logoText: {
-      ...theme.text("xxxl", "bold"),
+      fontFamily: "Allura_400Regular",
+      fontSize: 60,
       textAlign: "center",
       color: theme.colors.text,
+      textShadowColor: "rgba(0, 0, 0, 0.15)",
+      textShadowOffset: { width: 0, height: 2 },
+      textShadowRadius: 4,
     },
     welcomeTitle: {
       ...theme.text("xxl", "medium"),
