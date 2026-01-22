@@ -116,9 +116,54 @@ export function LoginScreen() {
     navigation.navigate("Register");
   }
 
-  function handleRecoverPassword() {
-    // TODO: Implementar recuperação de senha
-    console.log("Recuperar senha para:", email);
+  async function handleRecoverPassword() {
+    // Validar email antes de enviar
+    const isEmailValid = validateEmail(email);
+
+    if (!isEmailValid) {
+      return;
+    }
+
+    try {
+      clearError();
+      await useAuthStore.getState().sendPasswordResetEmail(email.trim().toLowerCase());
+
+      // Exibir mensagem de sucesso
+      setBottomSheetConfig({
+        type: "success",
+        title: "Redefinição de Senha",
+        message: "Verifique seu e-mail para redefinir sua senha com o link que enviamos.",
+        primaryButton: {
+          label: "OK",
+          onPress: () => {},
+        },
+      });
+
+      // Pequeno delay para garantir que o estado atualizou antes de abrir
+      setTimeout(() => {
+        bottomSheetModalRef.current?.present();
+      }, 100);
+    } catch (err: any) {
+      console.error("Erro ao recuperar senha:", err);
+
+      // Exibir mensagem de erro
+      setBottomSheetConfig({
+        type: "error",
+        title: "Houve um problema",
+        message:
+          err.message ||
+          "Não foi possível enviar o e-mail de recuperação. Tente novamente.",
+        primaryButton: {
+          label: "OK",
+          onPress: () => {},
+        },
+      });
+
+      // Pequeno delay para garantir que o estado atualizou antes de abrir
+      setTimeout(() => {
+        bottomSheetModalRef.current?.present();
+      }, 100);
+    }
   }
 
   return (
@@ -135,7 +180,6 @@ export function LoginScreen() {
           {/* Header com Logo */}
           <View style={styles.header}>
             <Text style={styles.logoText}>Saber Espírita</Text>
-            {/* <Text style={styles.premiumText}>Premium Edition</Text> */}
           </View>
 
           {/* Título de Boas-Vindas */}
@@ -159,9 +203,7 @@ export function LoginScreen() {
               <Mail
                 size={20}
                 color={
-                  focusedField === "email"
-                    ? theme.colors.primary
-                    : theme.colors.textSecondary
+                  focusedField === "email" ? theme.colors.primary : theme.colors.icon
                 }
               />
               <TextInput
@@ -197,9 +239,7 @@ export function LoginScreen() {
               <Lock
                 size={20}
                 color={
-                  focusedField === "password"
-                    ? theme.colors.primary
-                    : theme.colors.textSecondary
+                  focusedField === "password" ? theme.colors.primary : theme.colors.icon
                 }
               />
               <TextInput
@@ -224,9 +264,9 @@ export function LoginScreen() {
                 style={styles.eyeButton}
               >
                 {showPassword ? (
-                  <EyeOff size={20} color={theme.colors.textSecondary} />
+                  <EyeOff size={20} color={theme.colors.primary} />
                 ) : (
-                  <Eye size={20} color={theme.colors.textSecondary} />
+                  <Eye size={20} color={theme.colors.icon} />
                 )}
               </TouchableOpacity>
             </View>

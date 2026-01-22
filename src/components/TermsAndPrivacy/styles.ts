@@ -7,7 +7,7 @@ export function createStyles(theme: ITheme) {
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
     },
     linksContainer: {
       flexDirection: "row",
@@ -17,7 +17,7 @@ export function createStyles(theme: ITheme) {
     },
     text: {
       ...theme.text("md", "regular"),
-      color: "#6B6B6B", // Cinza médio para tema claro
+      color: theme.colors.textSecondary,
       textAlign: "center",
     },
     link: {

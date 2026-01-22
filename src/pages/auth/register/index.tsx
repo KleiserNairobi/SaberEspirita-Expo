@@ -138,7 +138,6 @@ export function RegisterScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.logoText}>Saber Espírita</Text>
-          {/* <Text style={styles.premiumText}>Premium Edition</Text> */}
         </View>
 
         {/* Titles */}
@@ -160,9 +159,7 @@ export function RegisterScreen() {
             <User
               size={20}
               color={
-                focusedField === "fullName"
-                  ? theme.colors.primary
-                  : theme.colors.textSecondary
+                focusedField === "fullName" ? theme.colors.primary : theme.colors.icon
               }
             />
             <TextInput
@@ -198,11 +195,7 @@ export function RegisterScreen() {
           >
             <Mail
               size={20}
-              color={
-                focusedField === "email"
-                  ? theme.colors.primary
-                  : theme.colors.textSecondary
-              }
+              color={focusedField === "email" ? theme.colors.primary : theme.colors.icon}
             />
             <TextInput
               style={styles.input}
@@ -237,9 +230,7 @@ export function RegisterScreen() {
             <Lock
               size={20}
               color={
-                focusedField === "password"
-                  ? theme.colors.primary
-                  : theme.colors.textSecondary
+                focusedField === "password" ? theme.colors.primary : theme.colors.icon
               }
             />
             <TextInput
@@ -263,9 +254,9 @@ export function RegisterScreen() {
               style={styles.eyeButton}
             >
               {showPassword ? (
-                <EyeOff size={20} color={theme.colors.textSecondary} />
+                <EyeOff size={20} color={theme.colors.primary} />
               ) : (
-                <Eye size={20} color={theme.colors.textSecondary} />
+                <Eye size={20} color={theme.colors.icon} />
               )}
             </TouchableOpacity>
           </View>
@@ -289,7 +280,7 @@ export function RegisterScreen() {
               color={
                 focusedField === "confirmPassword"
                   ? theme.colors.primary
-                  : theme.colors.textSecondary
+                  : theme.colors.icon
               }
             />
             <TextInput
@@ -313,9 +304,9 @@ export function RegisterScreen() {
               style={styles.eyeButton}
             >
               {showConfirmPassword ? (
-                <EyeOff size={20} color={theme.colors.textSecondary} />
+                <EyeOff size={20} color={theme.colors.primary} />
               ) : (
-                <Eye size={20} color={theme.colors.textSecondary} />
+                <Eye size={20} color={theme.colors.icon} />
               )}
             </TouchableOpacity>
           </View>

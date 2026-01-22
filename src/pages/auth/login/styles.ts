@@ -23,21 +23,13 @@ export function createStyles(theme: ITheme) {
     },
     logoText: {
       ...theme.text("xxxl", "bold"),
-      fontStyle: "italic",
       textAlign: "center",
       color: theme.colors.text,
-    },
-    premiumText: {
-      ...theme.text("sm", "regular"),
-      textAlign: "center",
-      color: theme.colors.textSecondary,
-      marginTop: theme.spacing.xs,
     },
     welcomeTitle: {
       ...theme.text("xxl", "medium"),
       textAlign: "left",
       color: theme.colors.text,
-      marginBottom: theme.spacing.sm,
     },
     subtitle: {
       ...theme.text("md", "regular"),

@@ -5,6 +5,7 @@ import {
   signOut as firebaseSignOut,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail,
   User,
   UserCredential,
 } from "firebase/auth";
@@ -46,6 +47,7 @@ interface AuthState {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<UserCredential>;
   signOut: () => Promise<void>;
+  sendPasswordResetEmail: (email: string) => Promise<void>;
   initializeAuth: () => (() => void) | undefined;
 }
 
@@ -142,6 +144,21 @@ export const useAuthStore = create<AuthState>()(
         } catch (error: any) {
           const errorMessage = "Erro ao fazer logout";
           console.error("AuthStore:", errorMessage, error);
+          set({ error: errorMessage, loading: false });
+          throw error;
+        }
+      },
+
+      sendPasswordResetEmail: async (email: string) => {
+        set({ loading: true, error: null });
+        try {
+          console.log("AuthStore: Enviando email de recuperação de senha...");
+          await firebaseSendPasswordResetEmail(auth, email);
+          console.log("AuthStore: Email de recuperação enviado com sucesso");
+          set({ loading: false });
+        } catch (error: any) {
+          const errorMessage = getErrorMessage(error);
+          console.error("AuthStore: Erro ao enviar email de recuperação:", errorMessage);
           set({ error: errorMessage, loading: false });
           throw error;
         }
