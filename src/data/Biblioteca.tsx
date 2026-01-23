@@ -20,9 +20,4 @@ export const Biblioteca: Biblioteca[] = [
     title: "Glossário\nEspírita",
     icon: BookA,
   },
-  {
-    id: "6",
-    title: "Pergunte \nao Sr. Allan",
-    icon: MessageCircleQuestion,
-  },
 ];

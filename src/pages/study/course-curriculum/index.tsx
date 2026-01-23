@@ -1,12 +1,5 @@
 import React, { useState, useRef } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -86,8 +79,10 @@ export function CourseCurriculumScreen() {
   const exercisesProgress =
     totalExercises > 0 ? Math.round((completedExercises / totalExercises) * 100) : 0;
 
-  // ✅ NOVO: Verificar elegibilidade para certificado
-  const certificateEligible = progress?.certificateEligible || false;
+  // ✅ NOVO: Verificar elegibilidade para certificado (Backend ou Local)
+  const serverCertificateEligible = progress?.certificateEligible || false;
+  const isReadyForCertificate =
+    serverCertificateEligible || (lessonsProgress === 100 && exercisesProgress === 100);
 
   // ✅ NOVO: Estado e ref para BottomSheet de certificado
   const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
@@ -134,14 +129,24 @@ export function CourseCurriculumScreen() {
   }
 
   // ✅ NOVO: Handler para botão de certificado
+  // ✅ NOVO: Handler para botão de certificado
   function handleGetCertificate() {
-    if (!certificateEligible) {
-      // Mostrar popup de aviso
+    if (!isReadyForCertificate) {
+      // Mostrar popup de aviso via BottomSheet
       const missingCount = totalExercises - completedExercises;
-      Alert.alert(
-        "Certificado Bloqueado",
-        `Você ainda precisa completar ${missingCount} exercícios para obter o certificado. Verifique as aulas e complete os exercícios pendentes.`
-      );
+
+      setMessageConfig({
+        type: "warning",
+        title: "Certificado Bloqueado",
+        message: `Você ainda precisa completar ${missingCount} exercícios para obter o certificado. Verifique as aulas e complete os exercícios pendentes.`,
+        primaryButton: {
+          label: "ENTENDI",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+          },
+        },
+      });
+      bottomSheetRef.current?.present();
       return;
     }
 
@@ -153,10 +158,18 @@ export function CourseCurriculumScreen() {
 
   async function handleLessonPress(lesson: ILesson, status: LessonStatus) {
     if (status === LessonStatus.LOCKED) {
-      Alert.alert(
-        "Aula Bloqueada",
-        "Complete as aulas anteriores para desbloquear esta aula."
-      );
+      setMessageConfig({
+        type: "info",
+        title: "Aula Bloqueada",
+        message: "Complete as aulas anteriores para desbloquear esta aula.",
+        primaryButton: {
+          label: "ENTENDI",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+          },
+        },
+      });
+      bottomSheetRef.current?.present();
       return;
     }
 
@@ -387,7 +400,7 @@ export function CourseCurriculumScreen() {
                 completedLessons={completedLessons}
                 totalExercises={totalExercises}
                 completedExercises={completedExercises}
-                certificateEligible={certificateEligible}
+                certificateEligible={isReadyForCertificate}
               />
             }
             renderItem={renderLessonItem}
@@ -409,9 +422,9 @@ export function CourseCurriculumScreen() {
         {lessonsProgress === 100 && (
           <View style={styles.certificateButtonContainer}>
             <Button
-              title={certificateEligible ? "OBTER CERTIFICADO" : "COMPLETAR EXERCÍCIOS"}
+              title={isReadyForCertificate ? "OBTER CERTIFICADO" : "COMPLETAR EXERCÍCIOS"}
               onPress={handleGetCertificate}
-              variant={certificateEligible ? "primary" : "outline"}
+              variant={isReadyForCertificate ? "primary" : "outline"}
               fullWidth
             />
           </View>

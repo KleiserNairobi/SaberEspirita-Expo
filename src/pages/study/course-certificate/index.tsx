@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Alert, Share } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AppStackParamList } from "@/routers/types";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import ViewShot, { captureRef } from "react-native-view-shot";
@@ -16,11 +18,18 @@ import { Button } from "@/components/Button";
 
 import { createStyles } from "./styles";
 
+type CertificateScreenRouteProp = RouteProp<AppStackParamList, "CourseCertificate">;
+type CertificateScreenNavProp = NativeStackNavigationProp<
+  AppStackParamList,
+  "CourseCertificate"
+>;
+
 export function CourseCertificateScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-  const router = useRouter();
-  const { courseId } = useLocalSearchParams<{ courseId: string }>();
+  const navigation = useNavigation<CertificateScreenNavProp>();
+  const route = useRoute<CertificateScreenRouteProp>();
+  const { courseId } = route.params;
   const viewShotRef = useRef<ViewShot>(null);
 
   const { user } = useAuthStore();
@@ -60,8 +69,7 @@ export function CourseCertificateScreen() {
   }
 
   function handleGoHome() {
-    router.dismissAll();
-    router.replace("/(tabs)/study");
+    navigation.navigate("Tabs");
   }
 
   if (isLoadingCourse || isLoadingProgress) {
@@ -76,7 +84,7 @@ export function CourseCertificateScreen() {
     return (
       <View style={styles.container}>
         <Text style={styles.errorText}>Curso ou progresso não encontrado.</Text>
-        <Button title="Voltar" onPress={() => router.back()} />
+        <Button title="Voltar" onPress={() => navigation.goBack()} />
       </View>
     );
   }
@@ -111,10 +119,10 @@ export function CourseCertificateScreen() {
 
             {/* Corpo do Certificado */}
             <View style={styles.certBody}>
-              <Text style={styles.certText}>Certificamos que</Text>
+              <Text style={styles.certTextIntro}>Certificamos que</Text>
               <Text style={styles.studentName}>{user?.displayName || "Aluno(a)"}</Text>
 
-              <Text style={styles.certText}>concluiu com êxito o curso</Text>
+              <Text style={styles.certTextConcluded}>concluiu com êxito o curso de</Text>
               <Text style={styles.courseTitle}>{course.title}</Text>
 
               <View style={styles.metadataContainer}>
@@ -139,14 +147,18 @@ export function CourseCertificateScreen() {
                   </Text>
                 </View>
               </View>
-
-              <Text style={styles.dateText}>{conclusionDate}</Text>
             </View>
 
             {/* Rodapé do Certificado */}
             <View style={styles.certFooter}>
-              <View style={styles.signatureLine} />
-              <Text style={styles.signatureText}>Saber Espírita</Text>
+              <Text style={styles.dateText}>{conclusionDate}</Text>
+
+              <View style={styles.signatureContainer}>
+                <Text style={styles.signatureText}>Saber Espírita</Text>
+                <View style={styles.signatureLine} />
+                <Text style={styles.signatureLabel}>Certificação Digital</Text>
+              </View>
+
               <Text style={styles.certHash}>Cod: {certificateNumber}</Text>
             </View>
           </View>

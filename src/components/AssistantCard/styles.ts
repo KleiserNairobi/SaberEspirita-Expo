@@ -5,8 +5,6 @@ import { ITheme } from "@/configs/theme/types";
 export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
-      marginHorizontal: 20,
-      marginBottom: 20,
       padding: 20,
       borderRadius: theme.radius.md,
       backgroundColor: theme.colors.card,

@@ -15,6 +15,8 @@ import { useFeaturedCourses } from "@/hooks/queries/useCourses";
 import { useLastAccessedCourse } from "@/hooks/queries/useLastAccessedCourse";
 import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
 import { ResumeCard } from "@/components/ResumeCard";
+import { AssistantCard } from "@/components/AssistantCard";
+import { Feather } from "lucide-react-native";
 
 import { createStyles } from "./styles";
 
@@ -37,21 +39,17 @@ export function StudyScreen() {
 
   function handleResumePress() {
     if (lastAccessed) {
-      if (lastAccessed.nextLesson) {
-        // Navegar direto para a aula
-        navigation.navigate("LessonPlayer", {
-          courseId: lastAccessed.course.id,
-          lessonId: lastAccessed.nextLesson.id,
-        });
-      } else {
-        // Se não tiver próxima aula (curso completo?), vai para o currículo
-        navigation.navigate("CourseCurriculum", { courseId: lastAccessed.course.id });
-      }
+      navigation.navigate("CourseCurriculum", { courseId: lastAccessed.course.id });
     }
   }
 
   function handleCoursePress(courseId: string) {
-    navigation.navigate("CourseDetails", { courseId });
+    const progress = allProgress[courseId];
+    if (progress) {
+      navigation.navigate("CourseCurriculum", { courseId });
+    } else {
+      navigation.navigate("CourseDetails", { courseId });
+    }
   }
 
   function handleLibraryItemPress(itemId: string) {
@@ -117,9 +115,25 @@ export function StudyScreen() {
         )}
 
         {/* Seção Biblioteca */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Explore a Biblioteca</Text>
+        <View style={{ marginTop: featuredCourses.length > 0 ? 24 : 20 }}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Explore a Biblioteca</Text>
+          </View>
         </View>
+      </View>
+    );
+  }
+
+  function renderFooter() {
+    return (
+      <View style={{ marginHorizontal: 20, marginBottom: 20, marginTop: 10 }}>
+        <AssistantCard
+          title="Pergunte ao Sr. Allan"
+          description="Tire suas dúvidas científicas e filosóficas com base nas obras básicas."
+          buttonText="Perguntar"
+          icon={Feather}
+          onPress={() => navigation.navigate("ScientificChat", {})}
+        />
       </View>
     );
   }
@@ -131,6 +145,7 @@ export function StudyScreen() {
         numColumns={1}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={renderHeader}
+        ListFooterComponent={renderFooter}
         contentContainerStyle={styles.contentContainer}
         renderItem={({ item }) => {
           const IconComponent = item.icon;

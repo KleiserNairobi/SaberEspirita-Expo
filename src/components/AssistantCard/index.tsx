@@ -1,41 +1,47 @@
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { Compass } from "lucide-react-native";
+import { LucideIcon } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { createStyles } from "./styles";
 
-export function AskGuideCard() {
+interface AssistantCardProps {
+  title: string;
+  description: string;
+  buttonText: string;
+  onPress: () => void;
+  icon: LucideIcon;
+}
+
+export function AssistantCard({
+  title,
+  description,
+  buttonText,
+  onPress,
+  icon: Icon,
+}: AssistantCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-  const navigation = useNavigation();
-
-  function handlePress() {
-    navigation.navigate("EmotionalChat" as never);
-  }
 
   return (
     <View style={styles.container}>
       <View style={styles.topRow}>
         {/* Ícone */}
         <View style={styles.iconContainer}>
-          <Compass size={24} color={theme.colors.primary} strokeWidth={2} />
+          <Icon size={24} color={theme.colors.primary} strokeWidth={2} />
         </View>
 
         {/* Texto + Botão */}
         <View style={styles.textColumn}>
-          <Text style={styles.title}>Converse com o Guia</Text>
-          <Text style={styles.description}>
-            Converse com nosso assistente espiritual baseado nos ensinamentos de Kardec.
-          </Text>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.description}>{description}</Text>
 
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={handlePress}
+            onPress={onPress}
             activeOpacity={0.7}
           >
-            <Text style={styles.actionText}>CONVERSAR</Text>
+            <Text style={styles.actionText}>{buttonText.toUpperCase()}</Text>
           </TouchableOpacity>
         </View>
       </View>

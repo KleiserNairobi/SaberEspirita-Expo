@@ -4,13 +4,13 @@ import { ITheme } from "@/configs/theme/types";
 export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
-      backgroundColor: theme.colors.card,
+      backgroundColor: `${theme.colors.primary}15`,
       borderRadius: theme.radius.md,
       padding: theme.spacing.md,
       marginHorizontal: theme.spacing.lg,
       marginBottom: theme.spacing.lg,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
+      // borderWidth: 1, // REMOVIDO para igualar ao estilo da imagem 2
+      // borderColor: theme.colors.border, // REMOVIDO
       borderLeftWidth: 4,
       borderLeftColor: theme.colors.primary,
     },

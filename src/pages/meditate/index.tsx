@@ -13,7 +13,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
 import { DailyThoughtCard } from "@/components/DailyThoughtCard";
-import { AskGuideCard } from "@/components/AskGuideCard";
+import { AssistantCard } from "@/components/AssistantCard";
+import { Compass } from "lucide-react-native";
 import { ReflectionCard } from "./components/ReflectionCard";
 import { useFeaturedReflections } from "./hooks/useFeaturedReflections";
 import { MeditateStackParamList } from "@/routers/types";
@@ -78,8 +79,16 @@ export default function MeditateScreen() {
         )}
 
         {/* Seção: Pergunte ao Guia */}
-        <Text style={styles.sectionTitle}>Converse com o Guia</Text>
-        <AskGuideCard />
+        <Text style={styles.sectionTitle}>Assistente Espiritual</Text>
+        <View style={{ marginHorizontal: 20, marginBottom: 20 }}>
+          <AssistantCard
+            title="Converse com o Guia"
+            description="Converse com nosso assistente espiritual baseado nos ensinamentos de Kardec."
+            buttonText="Conversar"
+            icon={Compass}
+            onPress={() => navigation.navigate("EmotionalChat" as never)}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
