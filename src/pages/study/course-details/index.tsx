@@ -89,141 +89,135 @@ export function CourseDetailsScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      {/* HEADER */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-          <ArrowLeft size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          {course.title}
-        </Text>
-      </View>
-
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* PROGRESS CARD */}
-        {isEnrolled && (
-          <View style={styles.progressCard}>
-            <View style={styles.progressHeader}>
-              <Text style={styles.progressLabel}>PROGRESSO DO CURSO</Text>
-              <Text style={styles.progressValue}>{userProgress}%</Text>
-            </View>
-            <View style={styles.progressBarBg}>
-              <View style={[styles.progressBarFill, { width: `${userProgress}%` }]} />
-            </View>
-            <Text style={styles.progressFooter}>
-              {completedCount} de {totalLessons} aulas concluídas
-            </Text>
-          </View>
-        )}
-
-        {/* DESCRIPTION */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Sobre o Curso</Text>
-          <Text style={styles.descriptionText}>
-            {course.description || "Sem descrição disponível."}
+    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+      <View style={styles.container}>
+        {/* HEADER */}
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+            <ArrowLeft size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            {course.title}
           </Text>
         </View>
 
-        {/* STATS LIST (2 COLUNAS) */}
-        <View style={styles.statsList}>
-          {/* Aulas */}
-          <View style={styles.statItem}>
-            <View style={styles.iconCircle}>
-              <BookOpen size={16} color={theme.colors.primary} />
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* PROGRESS CARD */}
+          {isEnrolled && (
+            <View style={styles.progressCard}>
+              <View style={styles.progressHeader}>
+                <Text style={styles.progressLabel}>PROGRESSO DO CURSO</Text>
+                <Text style={styles.progressValue}>{userProgress}%</Text>
+              </View>
+              <View style={styles.progressBarBg}>
+                <View style={[styles.progressBarFill, { width: `${userProgress}%` }]} />
+              </View>
+              <Text style={styles.progressFooter}>
+                {completedCount} de {totalLessons} aulas concluídas
+              </Text>
             </View>
-            <Text style={styles.statText}>{course.lessonCount || 0} Aulas</Text>
-          </View>
+          )}
 
-          {/* Duração */}
-          <View style={styles.statItem}>
-            <View style={styles.iconCircle}>
-              <Clock size={16} color={theme.colors.primary} />
-            </View>
-            <Text style={styles.statText}>
-              {course.workloadMinutes || 0} min de leitura
+          {/* DESCRIPTION */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Sobre o Curso</Text>
+            <Text style={styles.descriptionText}>
+              {course.description || "Sem descrição disponível."}
             </Text>
           </View>
 
-          {/* Nível */}
-          <View style={styles.statItem}>
-            <View style={styles.iconCircle}>
-              <BarChart2 size={16} color={theme.colors.primary} />
-            </View>
-            <Text style={styles.statText}>{course.difficultyLevel || "Iniciante"}</Text>
-          </View>
-
-          {/* Exercícios */}
-          <View style={styles.statItem}>
-            <View style={styles.iconCircle}>
-              <FileText size={16} color={theme.colors.primary} />
-            </View>
-            <Text style={styles.statText}>{exerciseCount} Exercícios</Text>
-          </View>
-
-          {/* Certificado */}
-          {hasCertification && (
+          {/* STATS LIST (2 COLUNAS) */}
+          <View style={styles.statsList}>
+            {/* Aulas */}
             <View style={styles.statItem}>
               <View style={styles.iconCircle}>
-                <Award size={16} color={theme.colors.primary} />
+                <BookOpen size={16} color={theme.colors.primary} />
               </View>
-              <Text style={styles.statText}>Emite Certificado</Text>
+              <Text style={styles.statText}>{course.lessonCount || 0} Aulas</Text>
+            </View>
+
+            {/* Duração */}
+            <View style={styles.statItem}>
+              <View style={styles.iconCircle}>
+                <Clock size={16} color={theme.colors.primary} />
+              </View>
+              <Text style={styles.statText}>
+                {course.workloadMinutes || 0} min de leitura
+              </Text>
+            </View>
+
+            {/* Nível */}
+            <View style={styles.statItem}>
+              <View style={styles.iconCircle}>
+                <BarChart2 size={16} color={theme.colors.primary} />
+              </View>
+              <Text style={styles.statText}>{course.difficultyLevel || "Iniciante"}</Text>
+            </View>
+
+            {/* Exercícios */}
+            <View style={styles.statItem}>
+              <View style={styles.iconCircle}>
+                <FileText size={16} color={theme.colors.primary} />
+              </View>
+              <Text style={styles.statText}>{exerciseCount} Exercícios</Text>
+            </View>
+          </View>
+
+          {/* REQUISITOS PARA CERTIFICADO */}
+          {hasCertification && (
+            <View style={styles.requirementsCard}>
+              <View style={styles.requirementsHeader}>
+                <Award size={20} color={theme.colors.warning} />
+                <Text style={styles.requirementsTitle}>Emite Certificado</Text>
+              </View>
+              <View style={styles.requirementsList}>
+                <View style={styles.requirementItem}>
+                  <Text style={styles.requirementBullet}>•</Text>
+                  <Text style={styles.requirementText}>
+                    {course.certification.requiredLessonsPercent}% das aulas concluídas
+                  </Text>
+                </View>
+                <View style={styles.requirementItem}>
+                  <Text style={styles.requirementBullet}>•</Text>
+                  <Text style={styles.requirementText}>
+                    {course.certification.requiredExercisesPercent}% dos exercícios com
+                    nota ≥ {course.certification.minimumGrade}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          )}
+        </ScrollView>
+
+        {/* FIXED FOOTER */}
+        <View style={styles.footer}>
+          {isEnrolled ? (
+            <TouchableOpacity style={styles.primaryButton} onPress={handleStartCourse}>
+              <Text style={styles.primaryButtonText}>
+                {userProgress === 100 ? "VER CURRÍCULO" : "CONTINUAR CURSO"}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.footerButtons}>
+              <TouchableOpacity
+                style={[styles.primaryButton, styles.flexButton]}
+                onPress={handleStartCourse}
+              >
+                <Text style={styles.primaryButtonText}>INICIAR CURSO</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.secondaryButton, styles.flexButton]}
+                onPress={handleViewLessons}
+              >
+                <Text style={styles.secondaryButtonText}>VER AULAS</Text>
+              </TouchableOpacity>
             </View>
           )}
         </View>
-
-        {/* REQUISITOS PARA CERTIFICADO */}
-        {hasCertification && (
-          <View style={styles.requirementsCard}>
-            <View style={styles.requirementsHeader}>
-              <AlertCircle size={20} color={theme.colors.warning} />
-              <Text style={styles.requirementsTitle}>Requisitos para Certificado</Text>
-            </View>
-            <View style={styles.requirementsList}>
-              <View style={styles.requirementItem}>
-                <Text style={styles.requirementBullet}>•</Text>
-                <Text style={styles.requirementText}>
-                  {course.certification.requiredLessonsPercent}% das aulas concluídas
-                </Text>
-              </View>
-              <View style={styles.requirementItem}>
-                <Text style={styles.requirementBullet}>•</Text>
-                <Text style={styles.requirementText}>
-                  {course.certification.requiredExercisesPercent}% dos exercícios com nota
-                  ≥ {course.certification.minimumGrade}
-                </Text>
-              </View>
-            </View>
-          </View>
-        )}
-      </ScrollView>
-
-      {/* FIXED FOOTER */}
-      <View style={styles.footer}>
-        {isEnrolled ? (
-          <TouchableOpacity style={styles.primaryButton} onPress={handleStartCourse}>
-            <Text style={styles.primaryButtonText}>{userProgress === 100 ? "VER CURRÍCULO" : "CONTINUAR CURSO"}</Text>
-          </TouchableOpacity>
-        ) : (
-          <View style={styles.footerButtons}>
-            <TouchableOpacity
-              style={[styles.primaryButton, styles.flexButton]}
-              onPress={handleStartCourse}
-            >
-              <Text style={styles.primaryButtonText}>INICIAR CURSO</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.secondaryButton, styles.flexButton]}
-              onPress={handleViewLessons}
-            >
-              <Text style={styles.secondaryButtonText}>VER AULAS</Text>
-            </TouchableOpacity>
-          </View>
-        )}
       </View>
     </SafeAreaView>
   );

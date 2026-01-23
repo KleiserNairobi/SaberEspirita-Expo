@@ -173,7 +173,9 @@ export const createStyles = (theme: ITheme) =>
     },
     requirementItem: {
       flexDirection: "row",
+      alignItems: "center",
       gap: theme.spacing.sm,
+      marginLeft: theme.spacing.md,
     },
     requirementBullet: {
       ...theme.text("md", "bold", theme.colors.warning),

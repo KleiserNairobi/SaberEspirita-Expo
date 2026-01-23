@@ -14,12 +14,11 @@ export function createStyles(theme: ITheme) {
       flexGrow: 1,
       paddingHorizontal: theme.spacing.lg,
       paddingTop: theme.spacing.xxl,
-      paddingBottom: theme.spacing.xl,
+      paddingBottom: theme.spacing.xxl,
     },
     header: {
       alignItems: "center",
-      marginTop: theme.spacing.md,
-      marginBottom: theme.spacing.xl,
+      marginBottom: theme.spacing.md,
     },
     logoText: {
       fontFamily: "Allura_400Regular",

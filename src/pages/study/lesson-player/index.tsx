@@ -67,6 +67,9 @@ export function LessonPlayerScreen() {
   // Ref para BottomSheet genérico
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
+  // Ref para ScrollView (scroll ao topo ao mudar de slide)
+  const scrollViewRef = useRef<ScrollView>(null);
+
   // Fetch da aula
   const { data: lesson, isLoading: isLoadingLesson } = useLesson(courseId, lessonId);
 
@@ -89,12 +92,14 @@ export function LessonPlayerScreen() {
   function handlePrevious() {
     if (currentSlideIndex > 0) {
       setCurrentSlideIndex((prev) => prev - 1);
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
     }
   }
 
   function handleNext() {
     if (currentSlideIndex < (lesson?.slides.length || 0) - 1) {
       setCurrentSlideIndex((prev) => prev + 1);
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
     }
   }
 
@@ -289,6 +294,7 @@ export function LessonPlayerScreen() {
 
       {/* Content */}
       <ScrollView
+        ref={scrollViewRef}
         style={styles.content}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}

@@ -34,8 +34,7 @@ export const createStyles = (theme: ITheme) =>
       fontFamily: "Baskervville_400Regular_Italic",
       fontSize: 22,
       textAlign: "center",
-      color: theme.colors.textSecondary,
-      marginBottom: theme.spacing.xs,
+      color: theme.colors.text,
     },
     titleSecondLine: {
       fontFamily: "Allura_400Regular",
@@ -67,7 +66,6 @@ export const createStyles = (theme: ITheme) =>
     },
     quoteText: {
       ...theme.text("sm", "regular"),
-      fontStyle: "italic",
       color: theme.colors.text,
       lineHeight: 18,
       marginBottom: theme.spacing.xs,
@@ -79,20 +77,15 @@ export const createStyles = (theme: ITheme) =>
     },
     buttonContainer: {
       width: "100%",
-      marginTop: 10,
+      // marginTop: 10,
     },
     button: {
       backgroundColor: theme.colors.primary,
       paddingVertical: theme.spacing.md,
       paddingHorizontal: theme.spacing.xl,
-      borderRadius: theme.radius.full,
+      borderRadius: theme.radius.md,
       alignItems: "center",
       justifyContent: "center",
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
     },
     buttonText: {
       ...theme.text("lg", "semibold"),

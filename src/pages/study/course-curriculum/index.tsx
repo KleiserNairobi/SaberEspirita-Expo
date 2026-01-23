@@ -334,63 +334,65 @@ export function CourseCurriculumScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      {/* HEADER DE NAVEGAÇÃO */}
-      <View style={styles.navHeader}>
-        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-          <ArrowLeft size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-        <Text style={styles.navTitle}>Aulas do Curso</Text>
-      </View>
-
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+      <View style={styles.container}>
+        {/* HEADER DE NAVEGAÇÃO */}
+        <View style={styles.navHeader}>
+          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+            <ArrowLeft size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+          <Text style={styles.navTitle}>Aulas do Curso</Text>
         </View>
-      ) : (
-        <FlatList
-          data={lessons}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-          ListHeaderComponent={
-            <ProgressSummaryCard
-              courseTitle={course?.title || "Curso"}
-              lessonsProgress={lessonsProgress}
-              exercisesProgress={exercisesProgress}
-              totalLessons={totalLessons}
-              completedLessons={completedLessons}
-              totalExercises={totalExercises}
-              completedExercises={completedExercises}
-              certificateEligible={certificateEligible}
-            />
-          }
-          renderItem={renderLessonItem}
-          ListEmptyComponent={
-            <Text
-              style={{
-                textAlign: "center",
-                color: theme.colors.textSecondary,
-                marginTop: 40,
-              }}
-            >
-              Nenhuma aula encontrada.
-            </Text>
-          }
-        />
-      )}
 
-      {/* ✅ NOVO: Botão de Certificado (aparece quando 100% aulas) */}
-      {lessonsProgress === 100 && (
-        <View style={styles.certificateButtonContainer}>
-          <Button
-            title={certificateEligible ? "OBTER CERTIFICADO" : "COMPLETAR EXERCÍCIOS"}
-            onPress={handleGetCertificate}
-            variant={certificateEligible ? "primary" : "outline"}
-            fullWidth
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={theme.colors.primary} />
+          </View>
+        ) : (
+          <FlatList
+            data={lessons}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={
+              <ProgressSummaryCard
+                courseTitle={course?.title || "Curso"}
+                lessonsProgress={lessonsProgress}
+                exercisesProgress={exercisesProgress}
+                totalLessons={totalLessons}
+                completedLessons={completedLessons}
+                totalExercises={totalExercises}
+                completedExercises={completedExercises}
+                certificateEligible={certificateEligible}
+              />
+            }
+            renderItem={renderLessonItem}
+            ListEmptyComponent={
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: theme.colors.textSecondary,
+                  marginTop: 40,
+                }}
+              >
+                Nenhuma aula encontrada.
+              </Text>
+            }
           />
-        </View>
-      )}
+        )}
+
+        {/* ✅ NOVO: Botão de Certificado (aparece quando 100% aulas) */}
+        {lessonsProgress === 100 && (
+          <View style={styles.certificateButtonContainer}>
+            <Button
+              title={certificateEligible ? "OBTER CERTIFICADO" : "COMPLETAR EXERCÍCIOS"}
+              onPress={handleGetCertificate}
+              variant={certificateEligible ? "primary" : "outline"}
+              fullWidth
+            />
+          </View>
+        )}
+      </View>
 
       {/* ✅ NOVO: BottomSheet para mensagens */}
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />

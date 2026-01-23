@@ -141,7 +141,7 @@ export function RegisterScreen() {
         </View>
 
         {/* Titles */}
-        <Text style={styles.welcomeTitle}>Crie sua conta.</Text>
+        <Text style={styles.welcomeTitle}>Crie sua conta</Text>
         <Text style={styles.subtitle}>
           Informe seus dados para começar sua jornada de conhecimento e luz.
         </Text>
