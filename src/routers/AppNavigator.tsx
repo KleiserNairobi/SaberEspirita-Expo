@@ -17,6 +17,7 @@ import { LessonPlayerScreen } from "@/pages/study/lesson-player";
 import { QuizScreen } from "@/pages/fix/quiz";
 import { QuizResultScreen } from "@/pages/fix/quiz/result";
 import { QuizReviewScreen } from "@/pages/fix/quiz/review";
+import { CourseCertificateScreen } from "@/pages/study/course-certificate";
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
@@ -42,6 +43,7 @@ export function AppNavigator() {
         <Stack.Screen name="CourseQuiz" component={QuizScreen} />
         <Stack.Screen name="QuizResult" component={QuizResultScreen} />
         <Stack.Screen name="QuizReview" component={QuizReviewScreen} />
+        <Stack.Screen name="CourseCertificate" component={CourseCertificateScreen} />
       </Stack.Navigator>
     </BottomSheetModalProvider>
   );

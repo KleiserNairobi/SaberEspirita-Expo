@@ -1,5 +1,6 @@
 import React from "react";
 import { FlatList, Text, View, TouchableOpacity } from "react-native";
+import { ChevronRight } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -11,6 +12,9 @@ import { useAuthStore } from "@/stores/authStore";
 import { AppStackParamList } from "@/routers/types";
 
 import { useFeaturedCourses } from "@/hooks/queries/useCourses";
+import { useLastAccessedCourse } from "@/hooks/queries/useLastAccessedCourse";
+import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
+import { ResumeCard } from "@/components/ResumeCard";
 
 import { createStyles } from "./styles";
 
@@ -24,6 +28,27 @@ export function StudyScreen() {
 
   // Fetching de cursos populares via React Query
   const { data: featuredCourses = [], isLoading: loadingFeatured } = useFeaturedCourses();
+
+  // Fetching de todos os progressos para o Carrossel Inteligente
+  const { data: allProgress = {} } = useAllCoursesProgress();
+
+  // Fetching do último curso acessado
+  const { data: lastAccessed } = useLastAccessedCourse();
+
+  function handleResumePress() {
+    if (lastAccessed) {
+      if (lastAccessed.nextLesson) {
+        // Navegar direto para a aula
+        navigation.navigate("LessonPlayer", {
+          courseId: lastAccessed.course.id,
+          lessonId: lastAccessed.nextLesson.id,
+        });
+      } else {
+        // Se não tiver próxima aula (curso completo?), vai para o currículo
+        navigation.navigate("CourseCurriculum", { courseId: lastAccessed.course.id });
+      }
+    }
+  }
 
   function handleCoursePress(courseId: string) {
     navigation.navigate("CourseDetails", { courseId });
@@ -63,6 +88,16 @@ export function StudyScreen() {
           </Text>
         </View>
 
+        {/* Card de Continuar (Resume) */}
+        {lastAccessed && (
+          <ResumeCard
+            course={lastAccessed.course}
+            progress={lastAccessed.progress}
+            nextLesson={lastAccessed.nextLesson}
+            onPress={handleResumePress}
+          />
+        )}
+
         {/* Seção Populares - Mostra apenas se tiver cursos carregados */}
         {featuredCourses.length > 0 && (
           <>
@@ -73,7 +108,11 @@ export function StudyScreen() {
               </TouchableOpacity>
             </View>
 
-            <Carousel data={featuredCourses} onCoursePress={handleCoursePress} />
+            <Carousel
+              data={featuredCourses}
+              onCoursePress={handleCoursePress}
+              progressMap={allProgress}
+            />
           </>
         )}
 
@@ -89,11 +128,10 @@ export function StudyScreen() {
     <SafeAreaView style={styles.container} edges={["top"]}>
       <FlatList
         data={Biblioteca}
-        numColumns={3}
+        numColumns={1}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={renderHeader}
         contentContainerStyle={styles.contentContainer}
-        columnWrapperStyle={styles.libraryColumnWrapper}
         renderItem={({ item }) => {
           const IconComponent = item.icon;
           return (
@@ -102,10 +140,16 @@ export function StudyScreen() {
               onPress={() => handleLibraryItemPress(item.id)}
               activeOpacity={0.7}
             >
-              <View style={styles.iconContainer}>
-                <IconComponent size={20} color={theme.colors.primary} />
+              <View style={styles.libraryContentGroup}>
+                <View style={styles.iconContainer}>
+                  <IconComponent size={20} color={theme.colors.primary} />
+                </View>
+                <Text style={styles.libraryItemText}>
+                  {item.title.replace("\n", " ")}
+                </Text>
               </View>
-              <Text style={styles.libraryItemText}>{item.title}</Text>
+
+              <ChevronRight size={20} color={theme.colors.textSecondary} />
             </TouchableOpacity>
           );
         }}

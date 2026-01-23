@@ -6,8 +6,9 @@ export const createStyles = (theme: ITheme) =>
     container: {
       flexDirection: "column",
       alignItems: "center",
-      paddingVertical: theme.spacing.lg,
-      gap: theme.spacing.xs,
+      gap: 2,
+      position: "relative",
+      top: 10, // Desloca para baixo para alinhar bolinhas com texto dos botões
     },
     dotsContainer: {
       flexDirection: "row",
@@ -25,6 +26,6 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: theme.colors.border,
     },
     counter: {
-      ...theme.text("sm", "medium", theme.colors.textSecondary),
+      ...theme.text("xs", "medium", theme.colors.textSecondary),
     },
   });

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   View,
@@ -12,7 +12,16 @@ import {
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ArrowLeft } from "lucide-react-native";
+import { ChevronLeft, ChevronRight } from "lucide-react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  Easing,
+  runOnJS,
+} from "react-native-reanimated";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
@@ -32,8 +41,7 @@ import { SlideContent } from "./components/SlideContent";
 import { HighlightCard } from "./components/HighlightCard";
 import { ReferenceCard } from "./components/ReferenceCard";
 import { SlideIndicator } from "./components/SlideIndicator";
-import { NavigationButtons } from "./components/NavigationButtons";
-import { ReadingToolbar } from "@/components/ReadingToolbar"; // Nova Toolbar
+import { ReadingToolbar } from "@/components/ReadingToolbar";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -70,6 +78,13 @@ export function LessonPlayerScreen() {
   // Ref para ScrollView (scroll ao topo ao mudar de slide)
   const scrollViewRef = useRef<ScrollView>(null);
 
+  // 📱 Swipe Gesture Config
+  const SWIPE_THRESHOLD = 50; // Distância mínima para considerar como swipe
+  const translateX = useSharedValue(0);
+  const contentOpacity = useSharedValue(1); // Para animação de fade na transição
+  const contentSlideX = useSharedValue(0); // Para animação de entrada do novo slide
+  const SCREEN_WIDTH = 300; // Largura aproximada para animação
+
   // Fetch da aula
   const { data: lesson, isLoading: isLoadingLesson } = useLesson(courseId, lessonId);
 
@@ -82,6 +97,20 @@ export function LessonPlayerScreen() {
   const currentSlide = lesson?.slides[currentSlideIndex];
   const isFirstSlide = currentSlideIndex === 0;
   const isLastSlide = currentSlideIndex === (lesson?.slides.length || 0) - 1;
+  const totalSlides = lesson?.slides.length || 0;
+
+  // Shared values para o worklet acessar valores atualizados
+  const currentIndexShared = useSharedValue(currentSlideIndex);
+  const totalSlidesShared = useSharedValue(totalSlides);
+
+  // Sincroniza shared values com estado React
+  React.useEffect(() => {
+    currentIndexShared.value = currentSlideIndex;
+  }, [currentSlideIndex]);
+
+  React.useEffect(() => {
+    totalSlidesShared.value = totalSlides;
+  }, [totalSlides]);
 
   // Loading unificado
   const isLoading = isLoadingLesson || isLoadingExercises;
@@ -89,17 +118,99 @@ export function LessonPlayerScreen() {
   // Verifica se tem exercícios
   const hasExercises = exercises && exercises.length > 0;
 
+  // 🎬 Função para animar transição de slide (RÁPIDA - 150ms)
+  const animateSlideTransition = useCallback((direction: "next" | "prev") => {
+    "worklet";
+    const duration = 150; // Animação rápida
+    const slideOffset = direction === "next" ? -30 : 30;
+
+    // Animação simples: desloca levemente na direção do swipe
+    contentSlideX.value = slideOffset;
+    contentOpacity.value = 0.5;
+
+    // Retorna ao normal rapidamente
+    contentSlideX.value = withTiming(0, { duration, easing: Easing.out(Easing.ease) });
+    contentOpacity.value = withTiming(1, { duration, easing: Easing.out(Easing.ease) });
+  }, []);
+
+  // 👆 Callbacks para navegação via swipe (chamados pelo worklet)
+  const goToPreviousSlide = useCallback(() => {
+    setCurrentSlideIndex((prev) => Math.max(0, prev - 1));
+    scrollViewRef.current?.scrollTo({ y: 0, animated: false }); // Sem animação de scroll
+  }, []);
+
+  const goToNextSlide = useCallback(() => {
+    setCurrentSlideIndex((prev) => prev + 1);
+    scrollViewRef.current?.scrollTo({ y: 0, animated: false }); // Sem animação de scroll
+  }, []);
+
+  // 🖐️ Gesto de Swipe Horizontal
+  const panGesture = Gesture.Pan()
+    .activeOffsetX([-20, 20]) // Ativa apenas com movimento horizontal
+    .failOffsetY([-20, 20]) // Falha se movimento for muito vertical (permite scroll)
+    .onUpdate((event) => {
+      // Limita o arrasto baseado na posição atual
+      const canGoLeft = currentIndexShared.value > 0;
+      const canGoRight = currentIndexShared.value < totalSlidesShared.value - 1;
+
+      if (event.translationX > 0 && !canGoLeft) {
+        // Tentando ir para esquerda mas já está no primeiro
+        translateX.value = event.translationX * 0.2; // Resistência
+      } else if (event.translationX < 0 && !canGoRight) {
+        // Tentando ir para direita mas já está no último
+        translateX.value = event.translationX * 0.2; // Resistência
+      } else {
+        translateX.value = event.translationX;
+      }
+    })
+    .onEnd((event) => {
+      const canGoLeft = currentIndexShared.value > 0;
+      const canGoRight = currentIndexShared.value < totalSlidesShared.value - 1;
+
+      if (event.translationX > SWIPE_THRESHOLD && canGoLeft) {
+        // Swipe para direita = slide anterior
+        animateSlideTransition("prev");
+        runOnJS(goToPreviousSlide)();
+      } else if (event.translationX < -SWIPE_THRESHOLD && canGoRight) {
+        // Swipe para esquerda = próximo slide
+        animateSlideTransition("next");
+        runOnJS(goToNextSlide)();
+      }
+      // Retorna à posição original com animação spring
+      translateX.value = withSpring(0, { damping: 20, stiffness: 200 });
+    });
+
+  // 🎨 Estilo animado para o conteúdo (combina arrasto + transição)
+  const animatedContentStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value + contentSlideX.value }],
+    opacity: contentOpacity.value,
+  }));
+
   function handlePrevious() {
     if (currentSlideIndex > 0) {
+      // Animação rápida de transição (150ms)
+      const duration = 150;
+      contentSlideX.value = 30;
+      contentOpacity.value = 0.5;
+      contentSlideX.value = withTiming(0, { duration, easing: Easing.out(Easing.ease) });
+      contentOpacity.value = withTiming(1, { duration, easing: Easing.out(Easing.ease) });
+
       setCurrentSlideIndex((prev) => prev - 1);
-      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+      scrollViewRef.current?.scrollTo({ y: 0, animated: false });
     }
   }
 
   function handleNext() {
     if (currentSlideIndex < (lesson?.slides.length || 0) - 1) {
+      // Animação rápida de transição (150ms)
+      const duration = 150;
+      contentSlideX.value = -30;
+      contentOpacity.value = 0.5;
+      contentSlideX.value = withTiming(0, { duration, easing: Easing.out(Easing.ease) });
+      contentOpacity.value = withTiming(1, { duration, easing: Easing.out(Easing.ease) });
+
       setCurrentSlideIndex((prev) => prev + 1);
-      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+      scrollViewRef.current?.scrollTo({ y: 0, animated: false });
     }
   }
 
@@ -268,15 +379,11 @@ export function LessonPlayerScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-      {/* Header - Apenas Título (Botão Voltar removido pois já existe na Toolbar) */}
+      {/* Header - Apenas Título */}
       <View style={styles.header}>
-        {/* Placeholder vazio para equilíbrio visual */}
-        <View style={styles.headerButton} />
         <Text style={styles.headerTitle} numberOfLines={1}>
           {lesson.title}
         </Text>
-        {/* Placeholder vazio para equilíbrio visual */}
-        <View style={styles.headerButton} />
       </View>
 
       {/* Toolbar de Leitura Padronizada */}
@@ -292,44 +399,88 @@ export function LessonPlayerScreen() {
         showFavorite={false} // Não exibe favorito em aulas
       />
 
-      {/* Content */}
-      <ScrollView
-        ref={scrollViewRef}
-        style={styles.content}
-        contentContainerStyle={styles.contentContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        <SlideContent
-          title={currentSlide.title}
-          content={currentSlide.content}
-          imagePrompt={currentSlide.imagePrompt}
-          fontSize={getFontSize()}
-        />
+      {/* Content com Swipe Gesture */}
+      <GestureDetector gesture={panGesture}>
+        <Animated.View style={[{ flex: 1 }, animatedContentStyle]}>
+          <ScrollView
+            ref={scrollViewRef}
+            style={styles.content}
+            contentContainerStyle={styles.contentContainer}
+            showsVerticalScrollIndicator={false}
+          >
+            <SlideContent
+              title={currentSlide.title}
+              content={currentSlide.content}
+              imagePrompt={currentSlide.imagePrompt}
+              fontSize={getFontSize()}
+              slideType={currentSlide.slideType}
+            />
 
-        {currentSlide.highlights && currentSlide.highlights.length > 0 && (
-          <HighlightCard highlights={currentSlide.highlights} fontSize={getFontSize()} />
+            {currentSlide.highlights && currentSlide.highlights.length > 0 && (
+              <HighlightCard
+                highlights={currentSlide.highlights}
+                fontSize={getFontSize()}
+              />
+            )}
+
+            {currentSlide.references && (
+              <ReferenceCard
+                references={currentSlide.references}
+                fontSize={getFontSize()}
+              />
+            )}
+          </ScrollView>
+        </Animated.View>
+      </GestureDetector>
+
+      {/* Bottom: Navegação Completa */}
+      <View style={styles.bottomNavigation}>
+        {/* Botão Anterior */}
+        <TouchableOpacity
+          style={[styles.navButton, isFirstSlide && styles.navButtonDisabled]}
+          onPress={handlePrevious}
+          disabled={isFirstSlide}
+        >
+          <ChevronLeft
+            size={20}
+            color={isFirstSlide ? theme.colors.border : theme.colors.primary}
+          />
+          <Text
+            style={[styles.navButtonText, isFirstSlide && styles.navButtonTextDisabled]}
+          >
+            Anterior
+          </Text>
+        </TouchableOpacity>
+
+        {/* Indicador Central */}
+        <View style={styles.bottomIndicatorCenter}>
+          <SlideIndicator
+            currentIndex={currentSlideIndex}
+            totalSlides={lesson.slides.length}
+          />
+        </View>
+
+        {/* Botão Próximo ou Finalizar */}
+        {isLastSlide ? (
+          <TouchableOpacity
+            style={styles.finishButton}
+            onPress={handleFinish}
+            disabled={isProcessing}
+          >
+            {isProcessing ? (
+              <ActivityIndicator size="small" color="#FFFFFF" />
+            ) : (
+              <Text style={styles.finishButtonText}>Finalizar</Text>
+            )}
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.navButton} onPress={handleNext}>
+            <Text style={styles.navButtonText}>Próximo</Text>
+            <ChevronRight size={20} color={theme.colors.primary} />
+          </TouchableOpacity>
         )}
+      </View>
 
-        {currentSlide.references && (
-          <ReferenceCard references={currentSlide.references} fontSize={getFontSize()} />
-        )}
-
-        <SlideIndicator
-          currentIndex={currentSlideIndex}
-          totalSlides={lesson.slides.length}
-        />
-      </ScrollView>
-
-      {/* Navigation */}
-      <NavigationButtons
-        onPrevious={handlePrevious}
-        onNext={handleNext}
-        isFirstSlide={isFirstSlide}
-        isLastSlide={isLastSlide}
-        onFinish={handleFinish}
-        finishLabel="FINALIZAR AULA"
-        isLoading={isProcessing}
-      />
       {/* BottomSheet Genérico para Mensagens */}
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
     </SafeAreaView>

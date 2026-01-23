@@ -16,7 +16,10 @@ import {
   PlayCircle,
   Lock,
   ChevronRight,
-  AlertTriangle, // ← NOVO: Ícone para badge de exercício pendente
+  AlertTriangle,
+  BookOpen,
+  Tag,
+  Clock,
 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -142,11 +145,10 @@ export function CourseCurriculumScreen() {
       return;
     }
 
-    // TODO: Navegar para tela de certificado
-    Alert.alert(
-      "Parabéns!",
-      "Você completou todas as aulas e exercícios! Em breve você poderá gerar seu certificado."
-    );
+    // Navegar para tela de certificado
+    if (course) {
+      navigation.navigate("CourseCertificate", { courseId: course.id });
+    }
   }
 
   async function handleLessonPress(lesson: ILesson, status: LessonStatus) {
@@ -301,13 +303,35 @@ export function CourseCurriculumScreen() {
                 <Text style={styles.lessonTitle} numberOfLines={1}>
                   {index + 1}. {item.title}
                 </Text>
-                <Text style={styles.lessonMeta}>
-                  {item.durationMinutes} min
-                  {status === LessonStatus.COMPLETED && " • Concluída"}
-                  {status === LessonStatus.IN_PROGRESS && " • Em andamento"}
-                  {status === LessonStatus.LOCKED && " • Bloqueada"}
-                  {status === LessonStatus.AVAILABLE && " • Disponível"}
-                </Text>
+                {/* Source com ícone */}
+                {item.source && (
+                  <View style={styles.metaRow}>
+                    <BookOpen size={12} color={theme.colors.textSecondary} />
+                    <Text style={styles.lessonMeta} numberOfLines={1}>
+                      {item.source}
+                    </Text>
+                  </View>
+                )}
+                {/* Chapter com ícone */}
+                {item.chapter && (
+                  <View style={styles.metaRow}>
+                    <Tag size={12} color={theme.colors.textSecondary} />
+                    <Text style={styles.lessonMeta} numberOfLines={1}>
+                      {item.chapter}
+                    </Text>
+                  </View>
+                )}
+                {/* Duração e Status */}
+                <View style={styles.metaRow}>
+                  <Clock size={12} color={theme.colors.textSecondary} />
+                  <Text style={styles.lessonMeta}>
+                    {item.durationMinutes} min
+                    {status === LessonStatus.COMPLETED && " • Concluída"}
+                    {status === LessonStatus.IN_PROGRESS && " • Em andamento"}
+                    {status === LessonStatus.LOCKED && " • Bloqueada"}
+                    {status === LessonStatus.AVAILABLE && " • Disponível"}
+                  </Text>
+                </View>
               </View>
             </View>
 

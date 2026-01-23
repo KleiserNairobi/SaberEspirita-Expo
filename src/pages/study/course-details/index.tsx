@@ -37,8 +37,11 @@ export function CourseDetailsScreen() {
   const { courseId } = route.params;
 
   // React Query Fetch
-  const { data: course, isLoading: loading } = useCourse(courseId);
-  const { data: progress } = useCourseProgress(courseId);
+  const { data: course, isLoading: isLoadingCourse } = useCourse(courseId);
+  const { data: progress, isLoading: isLoadingProgress } = useCourseProgress(courseId);
+
+  // Loading unificado: aguarda tanto curso quanto progresso
+  const loading = isLoadingCourse || isLoadingProgress;
 
   // Calcular progresso real
   const completedCount = progress?.completedLessons?.length || 0;

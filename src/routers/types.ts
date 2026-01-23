@@ -24,6 +24,7 @@ export type AppStackParamList = {
   CourseDetails: { courseId: string };
   CourseCurriculum: { courseId: string };
   LessonPlayer: { courseId: string; lessonId: string };
+  CourseCertificate: { courseId: string };
   CourseQuiz: {
     subcategoryId?: string;
     categoryId?: string;

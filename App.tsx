@@ -19,6 +19,7 @@ import {
 import {
   BarlowCondensed_300Light,
   BarlowCondensed_400Regular,
+  BarlowCondensed_400Regular_Italic,
   BarlowCondensed_500Medium,
   BarlowCondensed_600SemiBold,
   BarlowCondensed_700Bold,

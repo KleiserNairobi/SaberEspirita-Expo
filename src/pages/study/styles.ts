@@ -10,7 +10,7 @@ export const createStyles = (theme: ITheme) =>
     },
     headerContainer: {
       marginHorizontal: theme.spacing.lg,
-      marginBottom: theme.spacing.md,
+      marginBottom: theme.spacing.xl,
     },
     greetingText: {
       ...theme.text("xxxl", "semibold"),
@@ -38,28 +38,37 @@ export const createStyles = (theme: ITheme) =>
     },
     libraryItem: {
       flex: 1,
-      height: 110,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between", // Espaço entre conteúdo e seta
+
       backgroundColor: theme.colors.card,
+      marginHorizontal: theme.spacing.lg,
       borderWidth: 1,
       borderColor: theme.colors.border,
       borderRadius: theme.radius.md,
-      alignItems: "center",
-      justifyContent: "center",
+
       marginBottom: theme.spacing.sm,
       padding: theme.spacing.md,
-      gap: theme.spacing.sm,
+      gap: theme.spacing.md,
+    },
+    libraryContentGroup: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.md,
     },
     iconContainer: {
       width: 40,
       height: 40,
       borderRadius: 20,
-      backgroundColor: theme.colors.accent,
+      backgroundColor: theme.colors.background, // Alternativa mais leve
       alignItems: "center",
       justifyContent: "center",
     },
     libraryItemText: {
-      ...theme.text("sm", "regular"),
-      textAlign: "center",
+      ...theme.text("md", "medium"), // Fonte maior para lista
+      textAlign: "left",
+      color: theme.colors.text,
     },
     contentContainer: {
       paddingBottom: 200,

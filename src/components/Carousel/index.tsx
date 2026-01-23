@@ -17,7 +17,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { ICourse } from "@/types/course";
+import { ICourse, IUserCourseProgress } from "@/types/course";
 
 const { width } = Dimensions.get("window");
 const SPACING = 10;
@@ -26,17 +26,19 @@ const SPACER_ITEM_SIZE = (width - ITEM_SIZE) / 2;
 
 interface CarouselProps {
   data: ICourse[];
+  progressMap?: Record<string, IUserCourseProgress>;
   onCoursePress: (courseId: string) => void;
 }
 
 interface CarouselItemProps {
   index: number;
   item: ICourse;
+  progress?: IUserCourseProgress;
   scrollX: SharedValue<number>;
   onPress: (courseId: string) => void;
 }
 
-function CarouselItem({ index, item, scrollX, onPress }: CarouselItemProps) {
+function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemProps) {
   const { theme } = useAppTheme();
 
   const inputRange = [
@@ -69,6 +71,15 @@ function CarouselItem({ index, item, scrollX, onPress }: CarouselItemProps) {
       ? { uri: item.imageUrl }
       : require("@/assets/images/course-placeholder.jpg"); // Fallback
 
+  // Lógica "Smart": Se tem progresso iniciado (>0%), mostra CONTINUAR
+  const hasStarted = progress && progress.completedLessons.length > 0;
+  const buttonText = hasStarted ? "CONTINUAR" : "INICIAR CURSO";
+  const completionPercent =
+    item.lessonCount > 0
+      ? ((progress?.completedLessons.length || 0) / item.lessonCount) * 100
+      : 0;
+  const displayPercent = Math.min(Math.round(completionPercent), 100);
+
   return (
     <View style={{ width: ITEM_SIZE }}>
       <Animated.View style={[styles.itemContainer, animatedStyle]}>
@@ -86,12 +97,21 @@ function CarouselItem({ index, item, scrollX, onPress }: CarouselItemProps) {
                 {item.description}
               </Text>
             )}
+
+            {/* Barra de Progresso (se iniciado) */}
+            {hasStarted && (
+              <View style={styles.progressBarContainer}>
+                <View style={[styles.progressBarFill, { width: `${displayPercent}%` }]} />
+                <Text style={styles.percentText}>{displayPercent}%</Text>
+              </View>
+            )}
+
             <TouchableOpacity
               style={styles.button}
               activeOpacity={0.8}
               onPress={() => onPress(item.id)}
             >
-              <Text style={styles.buttonText}>INICIAR CURSO</Text>
+              <Text style={styles.buttonText}>{buttonText}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -100,7 +120,7 @@ function CarouselItem({ index, item, scrollX, onPress }: CarouselItemProps) {
   );
 }
 
-export function Carousel({ data, onCoursePress }: CarouselProps) {
+export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
   const scrollX = useSharedValue(0);
   // Adiciona spacers virtuais no array
   const DATA_WITH_SPACERS = [{ id: "left-spacer" }, ...data, { id: "right-spacer" }];
@@ -112,7 +132,7 @@ export function Carousel({ data, onCoursePress }: CarouselProps) {
   });
 
   if (data.length === 0) {
-    return null; // ou um esqueleto de loading
+    return null;
   }
 
   return (
@@ -130,11 +150,16 @@ export function Carousel({ data, onCoursePress }: CarouselProps) {
         if (item.id === "left-spacer" || item.id === "right-spacer") {
           return <View style={{ width: SPACER_ITEM_SIZE }} />;
         }
+
+        const courseItem = item as ICourse;
+        const progress = progressMap ? progressMap[courseItem.id] : undefined;
+
         return (
           <CarouselItem
             key={item.id}
             index={index}
-            item={item as ICourse}
+            item={courseItem}
+            progress={progress}
             scrollX={scrollX}
             onPress={onCoursePress}
           />
@@ -146,15 +171,9 @@ export function Carousel({ data, onCoursePress }: CarouselProps) {
 
 const styles = StyleSheet.create({
   itemContainer: {
-    // padding: SPACING,
     marginHorizontal: SPACING,
-    // alignItems: "center",
-    // backgroundColor: "white",
     borderRadius: 24,
-    // elevation: 5,
     overflow: "hidden",
-    // shadowColor: "#000",
-    // height: 600,
   },
   imageContainer: {
     width: "100%",
@@ -162,7 +181,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: "hidden",
     alignSelf: "center",
-    // marginBottom: 10,
   },
   imageView: {
     width: "100%",
@@ -178,17 +196,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     padding: SPACING * 2,
   },
-  textContainer: {
-    // alignItems: "center",
-    paddingHorizontal: SPACING,
-    paddingBottom: SPACING * 2,
-  },
   title: {
     fontFamily: "Oswald_300Light",
     fontSize: 20,
     marginBottom: 5,
     color: "white",
-    // textAlign: "center",
     textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
@@ -202,12 +214,38 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
+  progressBarContainer: {
+    width: "100%",
+    height: 6,
+    backgroundColor: "rgba(255,255,255,0.3)",
+    borderRadius: 3,
+    marginBottom: 12, // Espaço antes do botão
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  progressBarFill: {
+    height: "100%",
+    backgroundColor: "#FFF",
+    borderRadius: 3,
+  },
+  percentText: {
+    position: "absolute",
+    right: 0,
+    top: -18,
+    fontFamily: "BarlowCondensed_600SemiBold",
+    fontSize: 12,
+    color: "#FFF",
+    textShadowColor: "rgba(0,0,0,0.8)",
+    textShadowRadius: 2,
+  },
   button: {
     alignSelf: "stretch",
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     paddingHorizontal: 20,
     paddingVertical: 8,
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.4)",
   },
   buttonText: {
     fontFamily: "Oswald_600SemiBold",

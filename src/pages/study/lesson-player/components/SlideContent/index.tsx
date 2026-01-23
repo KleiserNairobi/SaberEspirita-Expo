@@ -10,6 +10,7 @@ interface SlideContentProps {
   content: string; // Markdown formatted
   imagePrompt?: string;
   fontSize?: number;
+  slideType?: string; // Tipo do slide (ex: "Contexto do Capítulo", "Tese Central")
 }
 
 export function SlideContent({
@@ -17,6 +18,7 @@ export function SlideContent({
   content,
   imagePrompt,
   fontSize = 16,
+  slideType,
 }: SlideContentProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -74,6 +76,12 @@ export function SlideContent({
 
   return (
     <View style={styles.slideCard}>
+      {/* Badge do tipo do slide */}
+      {slideType && (
+        <View style={styles.slideTypeBadge}>
+          <Text style={styles.slideTypeText}>{slideType}</Text>
+        </View>
+      )}
       <Text
         style={[
           styles.slideTitle,

@@ -152,6 +152,17 @@ export const createStyles = (theme: ITheme) =>
     },
     lessonMeta: {
       ...theme.text("sm", "regular", theme.colors.textSecondary),
+      flex: 1,
+    },
+    metaRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      marginTop: 2,
+    },
+    lessonStatus: {
+      ...theme.text("sm", "regular", theme.colors.textSecondary),
+      marginTop: 4,
     },
 
     // QUIZ BADGE

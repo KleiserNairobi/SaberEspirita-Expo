@@ -10,31 +10,71 @@ export const createStyles = (theme: ITheme) =>
     header: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "space-between",
+      justifyContent: "center",
       paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
       borderBottomWidth: 1,
       borderBottomColor: `${theme.colors.border}50`,
     },
-    headerButton: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      justifyContent: "center",
-      alignItems: "center",
-    },
     headerTitle: {
-      ...theme.text("sm", "medium"), // Menor e mais sutil (Contexto)
-      color: theme.colors.textSecondary, // Cor mais clara para tirar peso
-      flex: 1,
+      ...theme.text("sm", "medium"),
+      color: theme.colors.textSecondary,
       textAlign: "center",
-      paddingHorizontal: theme.spacing.sm,
     },
     content: {
       flex: 1,
     },
     contentContainer: {
-      paddingBottom: 100, // Garante que o conteúdo não fique atrás dos botões fixos
+      paddingBottom: theme.spacing.md,
+    },
+    // Navegação inferior completa
+    bottomNavigation: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      borderTopWidth: 1,
+      borderTopColor: `${theme.colors.border}30`,
+      backgroundColor: theme.colors.background,
+    },
+    // Botões de navegação (Anterior/Próximo)
+    navButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.sm,
+      gap: theme.spacing.xs,
+    },
+    navButtonDisabled: {
+      opacity: 0.4,
+    },
+    navButtonText: {
+      ...theme.text("sm", "medium"),
+      color: theme.colors.primary,
+    },
+    navButtonTextDisabled: {
+      color: theme.colors.border,
+    },
+    // Indicador central
+    bottomIndicatorCenter: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "flex-end", // Alinha ao bottom para ficar na linha do texto
+    },
+    // Botão finalizar
+    finishButton: {
+      backgroundColor: theme.colors.primary,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.lg,
+      borderRadius: theme.radius.md,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    finishButtonText: {
+      ...theme.text("sm", "bold"),
+      color: "#FFFFFF",
     },
     loadingContainer: {
       flex: 1,

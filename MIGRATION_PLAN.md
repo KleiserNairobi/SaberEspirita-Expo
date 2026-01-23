@@ -15,8 +15,8 @@ O projeto Expo já foi iniciado (`SaberEspirita-Expo`). A base está pronta, mas
 
 - [x] Setup Expo Router.
 - [x] Configuração de Fontes (Oswald, Barlow).
-- [ ] **Ação**: Instalar e configurar `firebase` (JS SDK) e `react-native-mmkv` (se ainda não estiverem configurados).
-- [ ] **Ação**: Configurar variáveis de ambiente (`.env`) com credenciais do Firebase.
+- [x] **Ação**: Instalar e configurar `firebase` (JS SDK) e `react-native-mmkv` (se ainda não estiverem configurados).
+- [x] **Ação**: Configurar variáveis de ambiente (`.env`) com credenciais do Firebase.
 
 ## 2. Autenticação e Usuários
 
@@ -66,165 +66,6 @@ Estrutura modular utilizando **React Navigation v7** com navegadores nativos.
   3.  **AppNavigator**: Stack principal das telas autenticadas
   4.  **TabNavigator**: Navegação por abas (bottom tabs)
   5.  **Navegadores de Módulo**: Stacks específicos (ex: PrayNavigator)
-
-- **Estrutura Atual de Navegação:**
-
-```
-RootNavigator (src/routers/RootNavigator.tsx)
-├── Auth → AuthNavigator
-│   ├── Login
-│   └── Register
-└── App → AppNavigator
-    ├── Tabs → TabNavigator (Bottom Tabs)
-    │   ├── StudyTab → StudyPlaceholderScreen
-    │   ├── FixTab → FixPlaceholderScreen
-    │   ├── MeditateTab → MeditatePlaceholderScreen
-    │   ├── PrayTab → PrayNavigator (Native Stack)
-    │   │   ├── PrayHome             # Tela principal de orações
-    │   │   ├── PrayCategory         # Lista de orações por categoria
-    │   │   └── Prayer               # Detalhes da oração individual
-    │   └── AccountTab → AccountScreen
-    ├── FAQ                           # Modal/Stack de FAQ
-    ├── Privacy                       # Modal/Stack de Privacidade
-    └── Terms                         # Modal/Stack de Termos
-```
-
-- **Estrutura de Pastas Atual:**
-
-```
-src/
-├── routers/                          # ✨ NOVA: Navegadores React Navigation
-│   ├── RootNavigator.tsx            # Navegador raiz (Auth vs App)
-│   ├── AuthNavigator.tsx            # Navegador de autenticação
-│   ├── AppNavigator.tsx             # Navegador principal do app
-│   ├── TabNavigator.tsx             # Navegador de abas (Bottom Tabs)
-│   ├── PrayNavigator.tsx            # Navegador do módulo ORE
-│   └── types.ts                     # Tipos TypeScript para navegação
-│
-├── pages/                            # Implementação das telas (Lógica + UI)
-│   ├── auth/                        # Telas de autenticação
-│   │   ├── login/
-│   │   │   └── index.tsx
-│   │   └── register/
-│   │       └── index.tsx
-│   ├── chat/                        # ✅ Módulo CHAT (Completo)
-│   │   ├── components/              # Componentes compartilhados entre chats
-│   │   │   ├── ChatHeader/
-│   │   │   ├── ChatInput/
-│   │   │   ├── MessageBubble/
-│   │   │   ├── TypingIndicator/
-│   │   │   └── styles.ts
-│   │   ├── emotional/               # Chat emocional (O Guia)
-│   │   │   └── index.tsx
-│   │   └── scientific/              # Chat científico (Sr. Allan)
-│   │       └── index.tsx
-│   ├── study/                       # ⏳ Módulo ESTUDE (Placeholder)
-│   │   └── index.tsx
-│   ├── fix/                         # ⏳ Módulo FIXE (Placeholder)
-│   │   └── index.tsx
-│   ├── meditate/                    # ⏳ Módulo MEDITE (Placeholder)
-│   │   └── index.tsx
-│   ├── pray/                        # ✅ Módulo ORE (Completo)
-│   │   ├── index.tsx                # PrayHome
-│   │   ├── styles.ts
-│   │   ├── category/                # PrayCategory
-│   │   │   ├── index.tsx
-│   │   │   └── styles.ts
-│   │   ├── prayer/                  # Prayer (detalhes)
-│   │   │   ├── index.tsx
-│   │   │   └── styles.ts
-│   │   ├── components/              # Componentes do módulo ORE
-│   │   │   ├── AmbientPlayer/
-│   │   │   ├── FilterBottomSheet/
-│   │   │   ├── MomentCard/
-│   │   │   ├── PrayerListItem/
-│   │   │   └── SearchBar/
-│   │   └── hooks/                   # Hooks específicos do módulo
-│   │       ├── useFeaturedPrayers.ts
-│   │       ├── usePrayer.ts
-│   │       ├── usePrayerCategories.ts
-│   │       └── usePrayersByCategory.ts
-│   └── account/                     # ✅ Módulo CONTA (Completo)
-│       ├── index.tsx                # Tela principal de conta
-│       ├── styles.ts
-│       ├── constants.ts
-│       ├── faq/                     # FAQ
-│       │   ├── index.tsx
-│       │   └── constants.ts
-│       ├── privacy/                 # Privacidade
-│       │   ├── index.tsx
-│       │   └── constants.ts
-│       ├── terms/                   # Termos
-│       │   ├── index.tsx
-│       │   └── constants.ts
-│       ├── components/
-│       │   ├── AccountHeader/
-│       │   ├── PreferenceItem/
-│       │   └── ...
-│       └── hooks/
-│
-├── components/                       # Componentes visuais reutilizáveis
-│   ├── AnimatedTabBar/              # Tab bar customizada com animações
-│   ├── AppBackground/               # Background padrão do app
-│   ├── AppInput/                    # Input compound component
-│   ├── Carousel/                    # Carrossel genérico
-│   ├── DismissKeyboard/             # Wrapper para fechar teclado
-│   ├── FilledTextInput/             # Input preenchido
-│   ├── LegalHeader/                 # Header para páginas legais
-│   ├── LegalSection/                # Seção para páginas legais
-│   ├── SettingsItem/                # Item de configuração
-│   ├── SettingsSection/             # Seção de configurações
-│   ├── Slider/                      # Slider genérico
-│   ├── SliderItem/                  # Item do slider
-│   └── TabBarButton/                # Botão customizado da tab bar
-│
-├── services/                         # Integração com APIs/Firebase
-│   └── firebase/
-│       └── prayerService.ts         # ✅ Serviço de orações (Firestore)
-│
-├── stores/                           # Stores Zustand
-│   ├── authStore.ts                 # ✅ Estado de autenticação
-│   ├── themeStore.ts                # ✅ Estado de tema
-│   ├── preferencesStore.ts          # ✅ Preferências do usuário
-│   ├── prayerFavoritesStore.ts      # ✅ Favoritos de orações
-│   ├── prayerPreferencesStore.ts    # ✅ Preferências de orações
-│   └── ambientPlayerStore.ts        # ✅ Player de áudio ambiente
-│
-├── types/                            # Definições de tipos TypeScript
-│   └── prayer.ts                    # ✅ Tipos do módulo ORE
-│
-├── configs/                          # Configurações globais
-│   ├── theme/                       # ✅ Sistema de temas
-│   │   ├── types.ts
-│   │   ├── light.ts
-│   │   ├── dark.ts
-│   │   └── index.ts
-│   └── firebase/
-│       └── firebase.ts              # ✅ Configuração do Firebase
-│
-├── hooks/                            # Custom hooks
-│   └── useAppTheme.ts               # ✅ Hook de tema
-│
-├── data/                             # Dados estáticos e mocks
-│   ├── Biblioteca.tsx               # Dados da biblioteca
-│   └── SliderData.tsx               # Dados do slider
-│
-├── utils/                            # Funções utilitárias
-├── assets/                           # Imagens e recursos
-└── app.backup-expo-router/          # 🗂️ Backup da estrutura Expo Router
-```
-
-**Observações sobre a estrutura atual:**
-
-- ✅ **Navegação modular** com React Navigation v7
-- ✅ **Separação clara**: `routers/` para navegação, `pages/` para implementação
-- ✅ **Módulo CHAT completo**: 2 telas (Emotional/Scientific), 4 componentes compartilhados
-- ✅ **Módulo ORE completo**: 3 telas, 5 componentes, 4 hooks, serviço Firebase
-- ✅ **Módulo CONTA completo**: Account, FAQ, Terms, Privacy
-- ✅ **Sistema de temas** completo com Light/Dark mode
-- ✅ **6 Stores Zustand**: Auth, Theme, Preferences, Prayer-related
-- ✅ **13 Componentes reutilizáveis** incluindo AnimatedTabBar
-- ⏳ **3 Módulos pendentes**: ESTUDE, FIXE, MEDITE (atualmente placeholders)
 
 ## 5. Migração de Features (Passo a Passo)
 
@@ -304,7 +145,7 @@ src/
 
 ### Fase 3: Módulo ESTUDE (Cursos & Home)
 
-- [/] **Tela ESTUDE (Dashboard)** - 🚧 **60% Concluído**:
+- [x] **Tela ESTUDE (Dashboard)** - ✅ **100% Concluído** (23/01/2026):
   - [x] **Estrutura Base Implementada** (29/12/2025):
     - [x] Componente `StudyScreen` migrado do backup Expo Router
     - [x] Arquivo `styles.ts` com `createStyles(theme)`
@@ -332,16 +173,16 @@ src/
     - [x] Especificação do componente `ResumeCard`
     - [x] Lógica condicional SEM/COM progresso
   - [ ] **Lógica Condicional** (Pendente):
-    - [ ] Detectar se usuário tem progresso em cursos
-    - [ ] _Com Progresso_: Exibir "Em Andamento" e "Continue de Onde Parou"
-    - [ ] _Sem Progresso_: Manter layout atual de descoberta
+    - [x] Detectar se usuário tem progresso em cursos
+    - [x] _Com Progresso_: Exibir "Em Andamento" e "Continue de Onde Parou"
+    - [x] _Sem Progresso_: Manter layout atual de descoberta
   - [ ] **Componentes Adicionais** (Pendente):
-    - [ ] `ProgressCarousel`: Lista horizontal de cursos iniciados
-    - [ ] `ResumeCard`: Card de ação rápida para última aula
-    - [ ] `LibraryGrid`: Navegação funcional (atualmente apenas visual)
-  - [ ] **Navegação dos Cards** (Pendente):
-    - [x] Implementar `onPress` nos cards da biblioteca (parcial)
-    - [ ] Criar telas de destino (Cursos, Conceitos, Quizzes, etc.)
+    - [ ] `ProgressCarousel`: Lista horizontal de cursos iniciados (Feature Futura)
+    - [x] `ResumeCard`: Card de ação rápida para última aula
+    - [x] `LibraryGrid`: Navegação funcional e limpa (apenas Glossário e Chat Científico)
+  - [x] **Navegação dos Cards** (Concluído):
+    - [x] Implementar `onPress` nos cards da biblioteca
+    - [x] Criar telas de destino (Glossário, Sr. Allan)
 
 - [/] **Módulo de Cursos Espíritas** - 🎨 **Especificado e Prototipado** (03/01/2026):
   - [x] **Especificação UX/UI Completa**:
@@ -361,21 +202,21 @@ src/
     5. [x] Player de Aula (Slides) - Prototipada
     6. [x] Quiz da Aula - Prototipada
     7. [x] Certificado de Conclusão - Prototipada
-  - [ ] **Implementação** (Pendente):
-    - [ ] Criar interfaces TypeScript (`src/types/course.ts`)
-    - [ ] Criar serviços Firebase (`courseService.ts`, `lessonService.ts`)
-    - [ ] Implementar componentes reutilizáveis (~15 componentes)
-    - [ ] Criar telas seguindo protótipos
-    - [ ] Integrar navegação (CourseNavigator)
-  - [ ] **Backend Firestore** (Pendente):
-    - [ ] Criar coleções: `courses`, `lessons`, `users/{userId}/courseProgress`
-    - [ ] Popular dados de exemplo
-    - [ ] Configurar regras de segurança
+  - [x] **Implementação** (Concluído):
+    - [x] Criar interfaces TypeScript (`src/types/course.ts`)
+    - [x] Criar serviços Firebase (`courseService.ts`, `lessonService.ts`)
+    - [x] Implementar componentes reutilizáveis (~15 componentes)
+    - [x] Criar telas seguindo protótipos
+    - [x] Integrar navegação (CourseNavigator)
+  - [x] **Backend Firestore** (Concluído):
+    - [x] Criar coleções: `courses`, `lessons`, `users/{userId}/courseProgress`
+    - [x] Popular dados de exemplo
+    - [x] Configurar regras de segurança
   - [ ] **Funcionalidades** (Pendente):
-    - [ ] Sistema de progresso (aulas concluídas, percentual)
-    - [ ] Desbloqueio sequencial de aulas
+    - [x] Sistema de progresso (aulas concluídas, percentual)
+    - [x] Desbloqueio sequencial de aulas
     - [x] Quiz integrado ao final de aulas
-    - [ ] Geração e compartilhamento de certificado
+    - [x] Geração e compartilhamento de certificado
     - [ ] Cache offline com React Query
     - [ ] Lazy loading de slides
 
@@ -630,9 +471,30 @@ Aproveitar a migração para limpar o visual.
 
 ---
 
-**Próximo Passo Imediato**: Confirmar estrutura de dados dos Cursos e iniciar implementação da Fase 1 (Auth).
+**Próximo Passo Imediato**: Implementar tela de Certificado (`CourseCertificateScreen`) e Lógica de Retomada (`ResumeCard`).
 
 ---
+
+### 23/01/2026 - Limpeza do Plano e Conclusão do Seeding
+
+- ✅ **Limpeza do `MIGRATION_PLAN.md`**:
+  - Remoção de seções obsoletas de estrutura de pastas e navegação CLI.
+  - Documento refatorado para focar no estado atual do projeto Expo.
+
+- ✅ **Seeding de Dados e Backend**:
+  - Marcadas como concluídas as tarefas de população de dados reais no Firestore para Cursos.
+  - Estrutura de coleções (`courses`, `lessons`) e regras de segurança validadas.
+
+### 23/01/2026 - Melhorias no Módulo de Cursos (Currículo e Player)
+
+- ✅ **Course Curriculum (Listagem de Aulas)**:
+  - Exibição de **Fonte** e **Capítulo** com ícones (`BookOpen`, `Tag`) para melhor contexto.
+  - Exibição de **Duração** e **Status** com ícone de relógio (`Clock`) e texto descritivo (Concluída, Em Andamento, etc.).
+  - Ajuste visual para alinhamento e consistência do design system.
+
+- ✅ **Lesson Player (Player de Aula)**:
+  - Adicionado **Badge de Tipo de Slide** (ex: "Contexto do Capítulo") acima do título.
+  - Ajuste na navegação e indicadores de progresso.
 
 ### 11/01/2026 - Módulo FIXE 100% Concluído (Gamificação)
 
@@ -1005,20 +867,20 @@ Aproveitar a migração para limpar o visual.
 
 **Integração com Firestore:**
 
-- [ ] Criar coleções `courses` e `users/{userId}/courseProgress`
-- [ ] Implementar hooks `useCourses` e `useCourseProgress`
-- [ ] Upload de imagens para Firebase Storage
-- [ ] Popular Firestore com dados iniciais
-- [ ] Substituir `MOCK_COURSES` por dados reais
-- [ ] Remover arquivo `mockCourses.ts`
+- [x] Criar coleções `courses` e `users/{userId}/courseProgress`
+- [x] Implementar hooks `useCourses` e `useCourseProgress`
+- [x] Upload de imagens para Firebase Storage
+- [x] Popular Firestore com dados iniciais
+- [x] Substituir `MOCK_COURSES` por dados reais
+- [x] Remover arquivo `mockCourses.ts`
 
 **Próximas Telas:**
 
-- [ ] CourseDetailsScreen - Detalhes do curso
-- [ ] CourseCurriculumScreen - Lista de aulas
-- [ ] LessonPlayerScreen - Player de aula
-- [ ] LessonQuizScreen - Quiz da aula
-- [ ] CourseCertificateScreen - Certificado
+- [x] CourseDetailsScreen - Detalhes do curso
+- [x] CourseCurriculumScreen - Lista de aulas
+- [x] LessonPlayerScreen - Player de aula
+- [x] LessonQuizScreen - Quiz da aula
+- [x] CourseCertificateScreen - Certificado
 
 #### **Documentação**
 
