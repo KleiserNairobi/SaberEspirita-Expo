@@ -1,8 +1,8 @@
-import { ref, getDownloadURL, listAll } from "firebase/storage";
+import { getDownloadURL, listAll, ref } from "firebase/storage";
 
 import { storage } from "@/configs/firebase/firebase";
-import { IAmbientAudio } from "@/types/ambientAudio";
 import { getCachedAudioUri } from "@/services/audio/audioCacheService";
+import { IAmbientAudio } from "@/types/ambientAudio";
 
 /**
  * Serviço para gerenciar áudios de ambiente do Firebase Storage
@@ -34,15 +34,15 @@ const AUDIO_METADATA: Record<
     title: "Nocturne",
     icon: "moon",
   },
-  "PianoMusicRelax.mp3": {
-    title: "Piano Music Relax",
-    icon: "music",
-  },
+  // "PianoMusicRelax.mp3": {
+  //   title: "Piano Music Relax",
+  //   icon: "music",
+  // },
 };
 
 /**
  * Lista todos os áudios disponíveis no Firebase Storage
- * Retorna apenas as 5 músicas essenciais definidas em AUDIO_METADATA
+ * Retorna apenas as 4 músicas essenciais definidas em AUDIO_METADATA
  */
 export async function getAmbientAudios(): Promise<IAmbientAudio[]> {
   try {
@@ -56,7 +56,7 @@ export async function getAmbientAudios(): Promise<IAmbientAudio[]> {
     for (const itemRef of result.items) {
       const fileName = itemRef.name;
 
-      // Apenas processar músicas que estão no AUDIO_METADATA (5 essenciais)
+      // Apenas processar músicas que estão no AUDIO_METADATA (4 essenciais)
       if (AUDIO_METADATA[fileName]) {
         const metadata = AUDIO_METADATA[fileName];
 

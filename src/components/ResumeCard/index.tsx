@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { Play } from "lucide-react-native";
+import { Play, Check, RotateCw } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { ICourse, ILesson, IUserCourseProgress } from "@/types/course";
@@ -39,14 +39,29 @@ export function ResumeCard({ course, progress, nextLesson, onPress }: ResumeCard
             {course.title}
           </Text>
           <Text style={styles.lessonTitle} numberOfLines={1}>
-            {nextLesson
-              ? `Aula ${nextLesson.order}: ${nextLesson.title}`
-              : "Continuar Curso"}
+            {displayPercent === 100
+              ? "Curso Concluído! Parabéns."
+              : nextLesson
+                ? `Aula ${nextLesson.order}: ${nextLesson.title}`
+                : "Continuar Curso"}
           </Text>
         </View>
 
-        <View style={styles.playButton}>
-          <Play size={20} color={theme.colors.onPrimary} fill={theme.colors.onPrimary} />
+        <View
+          style={[
+            styles.playButton,
+            displayPercent === 100 && { backgroundColor: theme.colors.success },
+          ]}
+        >
+          {displayPercent === 100 ? (
+            <Check size={20} color="#FFF" />
+          ) : (
+            <Play
+              size={20}
+              color={theme.colors.onPrimary}
+              fill={theme.colors.onPrimary}
+            />
+          )}
         </View>
       </View>
 

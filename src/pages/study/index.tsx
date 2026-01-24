@@ -1,21 +1,21 @@
-import React from "react";
-import { FlatList, Text, View, TouchableOpacity } from "react-native";
-import { ChevronRight } from "lucide-react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ChevronRight } from "lucide-react-native";
+import React from "react";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Carousel } from "@/components/Carousel";
 import { Biblioteca } from "@/data/Biblioteca";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { useAuthStore } from "@/stores/authStore";
 import { AppStackParamList } from "@/routers/types";
+import { useAuthStore } from "@/stores/authStore";
 
+import { AssistantCard } from "@/components/AssistantCard";
+import { ResumeCard } from "@/components/ResumeCard";
+import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
 import { useFeaturedCourses } from "@/hooks/queries/useCourses";
 import { useLastAccessedCourse } from "@/hooks/queries/useLastAccessedCourse";
-import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
-import { ResumeCard } from "@/components/ResumeCard";
-import { AssistantCard } from "@/components/AssistantCard";
 import { Feather } from "lucide-react-native";
 
 import { createStyles } from "./styles";

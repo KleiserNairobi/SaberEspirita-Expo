@@ -1,6 +1,6 @@
+import { LucideIcon } from "lucide-react-native";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { LucideIcon } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { createStyles } from "./styles";
@@ -28,7 +28,7 @@ export function AssistantCard({
       <View style={styles.topRow}>
         {/* Ícone */}
         <View style={styles.iconContainer}>
-          <Icon size={24} color={theme.colors.primary} strokeWidth={2} />
+          <Icon size={20} color={theme.colors.primary} strokeWidth={2} />
         </View>
 
         {/* Texto + Botão */}

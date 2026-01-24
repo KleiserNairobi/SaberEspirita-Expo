@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TouchableOpacity, View, Switch, StyleSheet } from "react-native";
+import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
 
 import { ChevronRight, LucideIcon } from "lucide-react-native";
 
@@ -74,7 +74,7 @@ export function SettingsItem({
     styles.iconContainer,
     {
       borderRadius: 20, // Circular para seguir padrão do app
-      backgroundColor: theme.colors.accent,
+      backgroundColor: `${theme.colors.primary}15`,
     },
   ];
 

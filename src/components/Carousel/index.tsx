@@ -73,11 +73,17 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
 
   // Lógica "Smart": Se tem progresso iniciado (>0%), mostra CONTINUAR
   const hasStarted = progress && progress.completedLessons.length > 0;
-  const buttonText = hasStarted ? "CONTINUAR" : "INICIAR CURSO";
   const completionPercent =
     item.lessonCount > 0
       ? ((progress?.completedLessons.length || 0) / item.lessonCount) * 100
       : 0;
+  const isCompleted = completionPercent >= 100;
+
+  const buttonText = isCompleted
+    ? "REVISAR / CERTIFICADO"
+    : hasStarted
+      ? "CONTINUAR"
+      : "INICIAR CURSO";
   const displayPercent = Math.min(Math.round(completionPercent), 100);
 
   return (
