@@ -27,15 +27,17 @@ export function StatCard({
   const containerStyle = [
     styles.container,
     {
-      backgroundColor: theme.colors.card, // Fundo sempre card como padrão
+      backgroundColor: theme.colors.card,
       borderColor: theme.colors.border,
     },
   ];
 
   const content = (
     <>
-      <View style={[styles.iconContainer, { backgroundColor: theme.colors.accent }]}>
-        <Icon size={20} color={theme.colors.muted} />
+      <View
+        style={[styles.iconContainer, { backgroundColor: `${theme.colors.primary}15` }]}
+      >
+        <Icon size={20} color={theme.colors.primary} />
       </View>
       <View style={styles.textContainer}>
         <Text style={styles.label}>{label}</Text>

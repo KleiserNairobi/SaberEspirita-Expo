@@ -125,25 +125,25 @@ export function TruthOrFalseQuestionScreen() {
         <View style={styles.questionCard}>
           <View style={styles.questionHeader}>
             <View style={styles.iconContainer}>
-              <HelpCircle size={20} color={theme.colors.icon} />
+              <HelpCircle size={20} color={theme.colors.primary} />
             </View>
             <View style={styles.questionTextContainer}>
               <Text style={styles.question}>{todayQuestion.question}</Text>
             </View>
           </View>
 
-          <View style={styles.metadata}>
-            {/* Tópico */}
-            <View style={styles.metadataItem}>
+          {/* <View style={styles.metadata}> */}
+          {/* Tópico */}
+          {/* <View style={styles.metadataItem}>
               <Tag size={16} color={theme.colors.muted} />
               <Text style={styles.metadataText} numberOfLines={1}>
                 {todayQuestion.topic}
               </Text>
-            </View>
+            </View> */}
 
-            {/* Dificuldade */}
-            <DifficultyBadge level={todayQuestion.difficulty} />
-          </View>
+          {/* Dificuldade */}
+          {/* <DifficultyBadge level={todayQuestion.difficulty} /> */}
+          {/* </View> */}
         </View>
 
         {/* Botões de Resposta */}

@@ -106,25 +106,25 @@ export function TruthOrFalseResultScreen() {
         <View style={styles.questionCard}>
           <View style={styles.questionHeader}>
             <View style={styles.iconContainer}>
-              <HelpCircle size={20} color={theme.colors.icon} />
+              <HelpCircle size={20} color={theme.colors.primary} />
             </View>
             <View style={styles.questionTextContainer}>
               <Text style={styles.question}>{question.question}</Text>
             </View>
           </View>
 
-          <View style={styles.metadata}>
-            {/* Tópico - Estilo Medite */}
-            <View style={styles.metadataItem}>
+          {/* <View style={styles.metadata}> */}
+          {/* Tópico - Estilo Medite */}
+          {/* <View style={styles.metadataItem}>
               <Tag size={16} color={theme.colors.muted} />
               <Text style={styles.metadataText} numberOfLines={1}>
                 {question.topic}
               </Text>
-            </View>
+            </View> */}
 
-            {/* Dificuldade - Badge com Estrelas */}
-            <DifficultyBadge level={question.difficulty} />
-          </View>
+          {/* Dificuldade - Badge com Estrelas */}
+          {/* <DifficultyBadge level={question.difficulty} /> */}
+          {/* </View> */}
         </View>
 
         {/* Feedback */}

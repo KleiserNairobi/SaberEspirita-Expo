@@ -21,9 +21,8 @@ export function AnswerButton({
   const { theme } = useAppTheme();
 
   const isTruth = type === "truth";
-  // Usando cores do tema para manter consistência com o design system (tons pastéis/terrosos)
   const buttonColor = isTruth ? theme.colors.success : theme.colors.error;
-  const contentColor = theme.colors.onPrimary; // Garante contraste (Branco no Light, Escuro no Dark)
+  const contentColor = theme.colors.onPrimary;
 
   return (
     <TouchableOpacity
@@ -57,13 +56,12 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   iconContainer: {
-    // Mantendo container para alinhamento se necessário, ou removendo background
     alignItems: "center",
     justifyContent: "center",
   },
   label: {
-    fontSize: 18,
-    fontWeight: "600",
+    fontSize: 17,
+    fontWeight: "500",
     letterSpacing: 0.5,
   },
 });

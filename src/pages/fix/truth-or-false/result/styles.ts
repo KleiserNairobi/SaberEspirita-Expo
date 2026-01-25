@@ -91,7 +91,7 @@ export const createStyles = (theme: ITheme) =>
       width: 40,
       height: 40,
       borderRadius: 20,
-      backgroundColor: theme.colors.accent,
+      backgroundColor: `${theme.colors.primary}15`,
       alignItems: "center",
       justifyContent: "center",
       flexShrink: 0,
@@ -100,8 +100,10 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
     },
     question: {
-      ...theme.text("lg", "regular"),
-      lineHeight: 24,
+      fontFamily: theme.typography.weights.regular,
+      fontSize: 17,
+      color: theme.colors.text,
+      lineHeight: 22,
     },
     // Explicação
     explanationCard: {
