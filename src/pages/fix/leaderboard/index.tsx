@@ -49,6 +49,17 @@ export function LeaderboardScreen() {
             <ActivityIndicator size="large" color={theme.colors.primary} />
             <Text style={styles.loadingText}>Carregando ranking...</Text>
           </View>
+        ) : players.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyTitle}>Nenhum registro ainda</Text>
+            <Text style={styles.emptyMessage}>
+              {selectedFilter === TimeFilterEnum.WEEK
+                ? "Seja o primeiro a responder um quiz esta semana!"
+                : selectedFilter === TimeFilterEnum.MONTH
+                  ? "Seja o primeiro a responder um quiz este mês!"
+                  : "Ainda não há registros no ranking geral."}
+            </Text>
+          </View>
         ) : (
           <ScrollView
             showsVerticalScrollIndicator={false}

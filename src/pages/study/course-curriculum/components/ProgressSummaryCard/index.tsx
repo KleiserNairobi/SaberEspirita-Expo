@@ -32,7 +32,7 @@ export function ProgressSummaryCard({
   // Mensagem condicional baseada no progresso de exercícios
   function getProgressMessage() {
     if (certificateEligible) {
-      return "🎉 Parabéns! Você está pronto para o certificado!";
+      return "Parabéns! Você está pronto para o certificado!";
     }
     if (exercisesProgress === 0) {
       return "Complete os exercícios para obter seu certificado!";
@@ -45,7 +45,7 @@ export function ProgressSummaryCard({
       {/* Título do Curso */}
       <View style={styles.header}>
         <Text style={styles.title}>{courseTitle}</Text>
-        {certificateEligible && <Award size={24} color={theme.colors.success} />}
+        {certificateEligible && <Award size={24} color={theme.colors.primary} />}
       </View>
 
       {/* Progresso de Aulas */}

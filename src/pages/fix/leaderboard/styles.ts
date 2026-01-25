@@ -38,6 +38,22 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("md", "regular", theme.colors.textSecondary),
       marginTop: theme.spacing.sm,
     },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingHorizontal: theme.spacing.xl,
+    },
+    emptyTitle: {
+      ...theme.text("xl", "bold", theme.colors.text),
+      marginBottom: theme.spacing.sm,
+      textAlign: "center",
+    },
+    emptyMessage: {
+      ...theme.text("md", "regular", theme.colors.textSecondary),
+      textAlign: "center",
+      lineHeight: 22,
+    },
     // Styles for podium and list will be in their respective component files or here if shared
     // Podium Styles
     podiumContainer: {

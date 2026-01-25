@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
-import { useAudioPlayer } from "expo-audio";
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { Music, Waves, Moon, Play, Pause, Download } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -29,8 +29,14 @@ export function AmbientPlayer() {
   // Estado para rastrear qual música está sendo baixada
   const [downloadingTrack, setDownloadingTrack] = useState<string | null>(null);
 
+  // Ref para evitar processar didJustFinish múltiplas vezes
+  const hasProcessedFinish = useRef(false);
+
   // Player de áudio usando expo-audio
   const player = useAudioPlayer(currentTrack || "");
+
+  // Monitorar status do player para detectar quando música termina
+  const status = useAudioPlayerStatus(player);
 
   // Quando a track mudar, tocar automaticamente
   useEffect(() => {
@@ -47,12 +53,45 @@ export function AmbientPlayer() {
     }
   }, [currentTrack]);
 
-  // Sincronizar estado do player com o store
+  // Sincronizar estado do player com o store usando status
   useEffect(() => {
-    if (player.playing !== isPlaying) {
-      setPlaying(player.playing);
+    if (status.playing !== isPlaying) {
+      setPlaying(status.playing);
     }
-  }, [player.playing]);
+  }, [status.playing]);
+
+  // Detectar quando música termina e tocar a próxima
+  useEffect(() => {
+    if (
+      status.didJustFinish &&
+      audios &&
+      audios.length > 0 &&
+      !hasProcessedFinish.current
+    ) {
+      console.log("[AmbientPlayer] Música terminou, tocando próxima...");
+      hasProcessedFinish.current = true; // Marcar como processado
+
+      const currentIndex = audios.findIndex((audio) => audio.localUri === currentTrack);
+
+      if (currentIndex !== -1) {
+        // Próximo índice (circular)
+        const nextIndex = (currentIndex + 1) % audios.length;
+        const nextTrack = audios[nextIndex];
+
+        if (nextTrack.localUri) {
+          console.log("[AmbientPlayer] Tocando próxima música:", nextTrack.title);
+          setPlaying(false); // Resetar estado temporariamente
+          setDownloadingTrack(nextTrack.localUri);
+          setCurrentTrack(nextTrack.localUri);
+        }
+      }
+    }
+
+    // Resetar flag quando didJustFinish volta a false
+    if (!status.didJustFinish && hasProcessedFinish.current) {
+      hasProcessedFinish.current = false;
+    }
+  }, [status.didJustFinish, audios, currentTrack]);
 
   function handleTrackPress(trackUri: string) {
     try {

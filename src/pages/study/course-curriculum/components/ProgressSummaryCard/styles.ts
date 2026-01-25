@@ -49,10 +49,10 @@ export const createStyles = (theme: ITheme) =>
       borderRadius: theme.radius.xs,
     },
     progressBarLessons: {
-      backgroundColor: theme.colors.success,
+      backgroundColor: theme.colors.icon,
     },
     progressBarExercises: {
-      backgroundColor: theme.colors.warning,
+      backgroundColor: theme.colors.icon,
     },
     progressFooter: {
       ...theme.text("sm", "regular", theme.colors.textSecondary),

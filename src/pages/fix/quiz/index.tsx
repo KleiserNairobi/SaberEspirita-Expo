@@ -304,6 +304,7 @@ export function QuizScreen() {
             queryClient.invalidateQueries({ queryKey: ["userQuizProgress", user.uid] });
           }
           queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
+          queryClient.invalidateQueries({ queryKey: ["userScore", user.uid] });
         }
       }
 

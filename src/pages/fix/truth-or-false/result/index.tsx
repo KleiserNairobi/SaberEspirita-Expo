@@ -32,13 +32,9 @@ export function TruthOrFalseResultScreen() {
   // ...
 
   function handleGoBack() {
-    if (origin === "history") {
-      navigation.goBack();
-    } else {
-      // Padrão (home) ou se origin não for especificado
-      // Força a navegação para Home para garantir atualização dos dados
-      navigation.navigate("TruthOrFalseHome");
-    }
+    // Sempre usa goBack() para manter a navegação natural da pilha
+    // Exceto quando vem do histórico, que já usa goBack()
+    navigation.goBack();
   }
 
   function handleGoHome() {
