@@ -14,6 +14,7 @@ interface ProgressSummaryCardProps {
   totalExercises: number;
   completedExercises: number;
   certificateEligible: boolean;
+  hasCertificate?: boolean; // Prop opcional, default true para retrocompatibilidade se necessário
 }
 
 export function ProgressSummaryCard({
@@ -25,6 +26,7 @@ export function ProgressSummaryCard({
   totalExercises,
   completedExercises,
   certificateEligible,
+  hasCertificate = true,
 }: ProgressSummaryCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -34,6 +36,16 @@ export function ProgressSummaryCard({
     if (certificateEligible) {
       return "Parabéns! Você está pronto para o certificado!";
     }
+
+    // Se não tem certificado, mensagens genéricas de incentivo
+    if (!hasCertificate) {
+      if (lessonsProgress === 100 && exercisesProgress === 100) {
+        return "Parabéns! Curso concluído com sucesso!";
+      }
+      return "Continue avançando em seus estudos!";
+    }
+
+    // Se tem certificado, mensagens focadas no certificado
     if (exercisesProgress === 0) {
       return "Complete os exercícios para obter seu certificado!";
     }

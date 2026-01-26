@@ -80,9 +80,13 @@ export function CourseCurriculumScreen() {
     totalExercises > 0 ? Math.round((completedExercises / totalExercises) * 100) : 0;
 
   // ✅ NOVO: Verificar elegibilidade para certificado (Backend ou Local)
+  const certificateEnabled = course?.certification?.enabled ?? false;
   const serverCertificateEligible = progress?.certificateEligible || false;
+
+  // Apenas elegível se certificado estiver habilitado E (backend autorizou OU cumpriu requisitos locais)
   const isReadyForCertificate =
-    serverCertificateEligible || (lessonsProgress === 100 && exercisesProgress === 100);
+    certificateEnabled &&
+    (serverCertificateEligible || (lessonsProgress === 100 && exercisesProgress === 100));
 
   // ✅ NOVO: Estado e ref para BottomSheet de certificado
   const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
@@ -401,6 +405,7 @@ export function CourseCurriculumScreen() {
                 totalExercises={totalExercises}
                 completedExercises={completedExercises}
                 certificateEligible={isReadyForCertificate}
+                hasCertificate={certificateEnabled}
               />
             }
             renderItem={renderLessonItem}
@@ -418,8 +423,8 @@ export function CourseCurriculumScreen() {
           />
         )}
 
-        {/* ✅ NOVO: Botão de Certificado (aparece quando 100% aulas) */}
-        {lessonsProgress === 100 && (
+        {/* ✅ NOVO: Botão de Certificado (aparece quando 100% aulas E certificado habilitado) */}
+        {lessonsProgress === 100 && certificateEnabled && (
           <View style={styles.certificateButtonContainer}>
             <Button
               title={isReadyForCertificate ? "OBTER CERTIFICADO" : "COMPLETAR EXERCÍCIOS"}

@@ -80,7 +80,7 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
   const isCompleted = completionPercent >= 100;
 
   const buttonText = isCompleted
-    ? "REVISAR / CERTIFICADO"
+    ? "CONCLUÍDO"
     : hasStarted
       ? "CONTINUAR"
       : "INICIAR CURSO";
