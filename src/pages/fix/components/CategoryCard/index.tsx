@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, Text, View } from "react-native";
+import { TouchableOpacity, Text, View, Image, ImageSourcePropType } from "react-native";
 import * as LucideIcons from "lucide-react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { createStyles } from "./styles";
@@ -11,6 +11,7 @@ interface CategoryCardProps {
   icon: keyof typeof LucideIcons;
   gradientColors: [string, string]; // Não usado mais
   onPress: () => void;
+  imageSource?: ImageSourcePropType;
 }
 
 export function CategoryCard({
@@ -19,10 +20,14 @@ export function CategoryCard({
   progress,
   icon,
   onPress,
+  imageSource,
 }: CategoryCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const IconComponent = LucideIcons[icon] as React.ComponentType<any>;
+
+  // Ajuste de cor para o modo escuro (inverter/clarear a gravura preta)
+  const imageTintColor = theme.isDark ? theme.colors.textSecondary : undefined;
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
@@ -30,6 +35,14 @@ export function CategoryCard({
       <View style={styles.iconContainer}>
         <IconComponent size={20} color={theme.colors.primary} />
       </View>
+
+      {imageSource && (
+        <Image
+          source={imageSource}
+          style={[styles.backgroundImage, { tintColor: imageTintColor }]}
+          resizeMode="cover"
+        />
+      )}
 
       {/* Nome */}
       <Text style={styles.name} numberOfLines={2}>

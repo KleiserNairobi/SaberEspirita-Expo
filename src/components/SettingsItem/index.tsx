@@ -85,7 +85,7 @@ export function SettingsItem({
       </View>
 
       <View style={styles.textContainer}>
-        <Text style={theme.text("lg", "semibold")}>{title}</Text>
+        <Text style={theme.text("md", "medium")}>{title}</Text>
         {subtitle && (
           <Text
             style={[

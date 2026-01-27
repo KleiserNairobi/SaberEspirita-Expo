@@ -20,7 +20,7 @@ export const createStyles = (theme: ITheme) =>
       marginRight: 8,
     },
     title: {
-      ...theme.text("md", "semibold"),
+      ...theme.text("md", "medium"),
       color: theme.colors.text,
       marginBottom: 4,
     },

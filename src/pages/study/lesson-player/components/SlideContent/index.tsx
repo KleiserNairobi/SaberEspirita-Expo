@@ -35,8 +35,9 @@ export function SlideContent({
       marginBottom: theme.spacing.md,
     },
     strong: {
-      ...theme.text("md", "semibold"),
+      ...theme.text("md", "medium"),
       fontSize: fontSize,
+      fontWeight: "normal", // Override default bold
       color: theme.colors.text,
     },
     em: {
@@ -72,6 +73,48 @@ export function SlideContent({
       marginBottom: theme.spacing.md,
       borderRadius: theme.radius.xs,
     },
+    // heading1: {
+    //   ...theme.text("md", "medium"),
+    //   fontSize: fontSize * 1.1,
+    //   fontWeight: "normal",
+    //   color: theme.colors.text,
+    //   marginBottom: theme.spacing.sm,
+    // },
+    // heading2: {
+    //   ...theme.text("md", "medium"),
+    //   fontSize: fontSize * 1.1,
+    //   fontWeight: "normal",
+    //   color: theme.colors.text,
+    //   marginBottom: theme.spacing.sm,
+    // },
+    // heading3: {
+    //   ...theme.text("md", "medium"),
+    //   fontSize: fontSize * 1.1,
+    //   fontWeight: "normal",
+    //   color: theme.colors.text,
+    //   marginBottom: theme.spacing.sm,
+    // },
+    // heading4: {
+    //   ...theme.text("md", "medium"),
+    //   fontSize: fontSize * 1.0,
+    //   fontWeight: "normal",
+    //   color: theme.colors.text,
+    //   marginBottom: theme.spacing.sm,
+    // },
+    // heading5: {
+    //   ...theme.text("md", "medium"),
+    //   fontSize: fontSize * 1.0,
+    //   fontWeight: "normal",
+    //   color: theme.colors.text,
+    //   marginBottom: theme.spacing.sm,
+    // },
+    // heading6: {
+    //   ...theme.text("md", "medium"),
+    //   fontSize: fontSize * 1.0,
+    //   fontWeight: "normal",
+    //   color: theme.colors.text,
+    //   marginBottom: theme.spacing.sm,
+    // },
   } as any;
 
   return (

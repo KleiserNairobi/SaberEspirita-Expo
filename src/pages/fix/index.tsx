@@ -13,6 +13,7 @@ import { ICategory } from "@/types/quiz";
 import { DailyChallengeCard } from "./components/DailyChallengeCard";
 import { ProgressSummary } from "./components/ProgressSummary";
 import { TruthOrFalseBanner } from "./components/TruthOrFalseBanner";
+import { CATEGORY_IMAGES } from "./constants/categoryImages";
 
 type ICategoryWithProgress = ICategory & { progress: number };
 type FixHomeNavigationProp = NativeStackNavigationProp<FixStackParamList, "FixHome">;
@@ -131,6 +132,7 @@ export default function FixHomeScreen() {
             progress={(item as any).progress || 0}
             icon={item.icon as any}
             gradientColors={item.gradientColors}
+            imageSource={CATEGORY_IMAGES[item.name.toUpperCase()]}
             onPress={() => handleCategoryPress(item.id, item.name)}
           />
         )}

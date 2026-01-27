@@ -18,7 +18,7 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.md,
     },
     title: {
-      ...theme.text("lg", "semibold"),
+      ...theme.text("md", "medium"),
       color: theme.colors.text,
       flex: 1,
     },

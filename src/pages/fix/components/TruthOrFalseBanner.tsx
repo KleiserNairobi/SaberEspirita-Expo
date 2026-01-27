@@ -49,7 +49,7 @@ export function TruthOrFalseBanner() {
         </View>
 
         <View style={{ flex: 1 }}>
-          <Text style={{ ...theme.text("md", "semibold"), color: theme.colors.text }}>
+          <Text style={{ ...theme.text("md", "medium"), color: theme.colors.text }}>
             Verdade ou Mentira
           </Text>
           <Text

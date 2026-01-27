@@ -72,7 +72,7 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
       ? { uri: item.imageUrl }
       : typeof item.imageUrl === "number"
         ? item.imageUrl
-        : require("@/assets/images/course-placeholder.jpg"); // Fallback
+        : require("@/assets/images/placeholder.png"); // Fallback
 
   // Lógica "Smart": Se tem progresso iniciado (>0%), mostra CONTINUAR
   const hasStarted = progress && progress.completedLessons.length > 0;

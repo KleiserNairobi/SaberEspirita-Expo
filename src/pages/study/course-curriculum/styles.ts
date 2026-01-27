@@ -146,7 +146,7 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
     },
     lessonTitle: {
-      ...theme.text("md", "semibold"),
+      ...theme.text("md", "medium"),
       color: theme.colors.text,
       marginBottom: 2,
     },

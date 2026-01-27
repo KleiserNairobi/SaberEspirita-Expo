@@ -23,7 +23,7 @@ export function createStyles(theme: ITheme) {
       marginBottom: theme.spacing.sm,
     },
     name: {
-      ...theme.text("md", "semibold"),
+      ...theme.text("md", "medium"),
       color: theme.colors.text,
       textAlign: "left",
       marginBottom: theme.spacing.xs,
@@ -57,6 +57,13 @@ export function createStyles(theme: ITheme) {
       color: theme.colors.textSecondary,
       minWidth: 32,
       textAlign: "right",
+    },
+    backgroundImage: {
+      ...StyleSheet.absoluteFillObject,
+      width: "100%",
+      height: "100%",
+      zIndex: -1,
+      opacity: 0.15, // Ajuste de opacidade para não atrapalhar o texto
     },
   });
 }

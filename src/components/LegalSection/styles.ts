@@ -48,7 +48,7 @@ export const createStyles = (theme: ITheme) => {
 
   const textStyles = StyleSheet.create({
     title: {
-      ...theme.text("lg", "semibold"),
+      ...theme.text("md", "medium"),
       marginBottom: theme.spacing.xs,
     } as TextStyle,
     summary: {

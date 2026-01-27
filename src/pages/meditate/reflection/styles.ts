@@ -12,57 +12,33 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
     },
     scrollContent: {
-      paddingBottom: 120,
+      paddingHorizontal: theme.spacing.lg,
+      paddingBottom: 150,
     },
-    coverImageContainer: {
-      position: "relative",
-      width: "100%",
-      height: 250,
+    header: {
+      marginTop: theme.spacing.xxl,
+      marginBottom: theme.spacing.md,
     },
-    coverImage: {
-      width: "100%",
-      height: "100%",
-      backgroundColor: theme.colors.muted,
+    title: {
+      ...theme.text("xxxl", "semibold"),
+      marginBottom: theme.spacing.sm,
+      textAlign: "center",
+      color: theme.colors.text,
     },
-    imageGradient: {
-      position: "absolute",
-      bottom: 0,
-      left: 0,
-      right: 0,
-      height: 120,
-    },
-    overlayContent: {
-      position: "absolute",
-      bottom: 0,
-      left: 0,
-      right: 0,
-      padding: 20,
-      paddingBottom: 24,
-    },
-    overlayTitle: {
-      ...theme.text("xxl", "bold"),
-      color: "#FFFFFF",
-      marginBottom: 8,
-      lineHeight: 32,
-      textShadowColor: "rgba(0, 0, 0, 0.75)",
-      textShadowOffset: { width: 0, height: 2 },
-      textShadowRadius: 4,
-    },
-    overlaySubtitle: {
-      ...theme.text("md", "regular"),
-      color: "rgba(255, 255, 255, 0.9)",
-      lineHeight: 22,
-      textShadowColor: "rgba(0, 0, 0, 0.75)",
-      textShadowOffset: { width: 0, height: 1 },
-      textShadowRadius: 3,
-    },
-    content: {
-      padding: 20,
+    subtitle: {
+      ...theme.text("lg", "regular", theme.colors.textSecondary),
+      textAlign: "center",
+      marginBottom: theme.spacing.sm,
     },
     metadata: {
-      gap: 6,
-      // marginBottom: 16,
+      gap: theme.spacing.sm,
+      alignItems: "center",
+      marginBottom: theme.spacing.md,
     },
+    content: {
+      // padding removed since scrollContent handles horizontal padding
+    },
+
     metadataRow: {
       flexDirection: "row",
       justifyContent: "space-between",

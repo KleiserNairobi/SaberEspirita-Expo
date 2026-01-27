@@ -28,7 +28,7 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
     },
     title: {
-      ...theme.text("lg", "semibold"),
+      ...theme.text("md", "medium"),
       color: theme.colors.text,
       marginBottom: 4,
     },

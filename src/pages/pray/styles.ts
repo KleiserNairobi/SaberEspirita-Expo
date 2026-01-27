@@ -85,7 +85,7 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
     },
     prayerTitle: {
-      ...theme.text("lg", "semibold"),
+      ...theme.text("md", "medium"),
     },
     prayerAuthor: {
       ...theme.text("sm", "regular", theme.colors.textSecondary),

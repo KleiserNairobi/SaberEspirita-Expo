@@ -34,7 +34,7 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
       ? { uri: course.imageUrl }
       : typeof course.imageUrl === "number"
         ? course.imageUrl
-        : require("@/assets/images/course-placeholder.jpg");
+        : require("@/assets/images/placeholder.png");
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>

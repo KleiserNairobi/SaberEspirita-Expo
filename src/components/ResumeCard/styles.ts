@@ -37,7 +37,7 @@ export const createStyles = (theme: ITheme) =>
       marginRight: theme.spacing.md,
     },
     courseTitle: {
-      ...theme.text("md", "bold"),
+      ...theme.text("md", "medium"),
       color: theme.colors.text,
       marginBottom: 2,
     },

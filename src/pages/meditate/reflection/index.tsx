@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { ScrollView, Text, View, Image, TouchableOpacity, Alert } from "react-native";
+import { ScrollView, Text, View, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery } from "@tanstack/react-query";
@@ -127,25 +126,13 @@ export default function ReflectionScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Imagem de capa com degradê e título sobreposto */}
-        {reflection.imageUrl && (
-          <View style={styles.coverImageContainer}>
-            <Image source={{ uri: reflection.imageUrl }} style={styles.coverImage} />
-            <LinearGradient
-              colors={["transparent", "rgba(0, 0, 0, 0.8)"]}
-              style={styles.imageGradient}
-              locations={[0, 1]}
-            />
-
-            {/* Título e subtítulo sobrepostos */}
-            <View style={styles.overlayContent}>
-              <Text style={styles.overlayTitle}>{reflection.title}</Text>
-              {reflection.subtitle && (
-                <Text style={styles.overlaySubtitle}>{reflection.subtitle}</Text>
-              )}
-            </View>
-          </View>
-        )}
+        {/* Header (Título e Subtítulo) */}
+        <View style={styles.header}>
+          <Text style={styles.title}>{reflection.title}</Text>
+          {reflection.subtitle && (
+            <Text style={styles.subtitle}>{reflection.subtitle}</Text>
+          )}
+        </View>
 
         {/* Conteúdo */}
         <View style={styles.content}>
