@@ -475,6 +475,19 @@ Aproveitar a migração para limpar o visual.
 
 ---
 
+### 27/01/2026 - Melhorias Visuais no Módulo FIXE (Cards de Categorias)
+
+- ✅ **Integração de Imagens de Fundo**:
+  - Implementação de imagens ilustrativas (estilo gravura/cobre) para cada categoria.
+  - **Design Premium**: Imagens posicionadas com alinhamento vertical centralizado e sangria lateral ("marca d'água"), substituindo o estilo antigo de gradiente flat.
+  - **Ajustes Visuais**: Opacidade calibrada (0.12) e remoção de `tintColor` para preservar a integridade visual dos assets originais.
+
+- ✅ **Robustez e Limpeza de Código**:
+  - **Asset Management**: Centralização do mapeamento de imagens em `src/pages/fix/constants/categoryImages.ts`.
+  - **Normalização**: Implementação de lógica para remover acentos automaticamente das chaves de categoria (`ESPÍRITOS` -> `ESPIRITOS`), prevenindo erros de lookup.
+  - **Limpeza**: Remoção de código legado não utilizado (`gradientColors`, `colorMapping`) do `quizService.ts` e componentes.
+  - **Correção de Build**: Substituição de placeholder problemático por arquivo PNG válido.
+
 ### 23/01/2026 - Limpeza do Plano e Conclusão do Seeding
 
 - ✅ **Limpeza do `MIGRATION_PLAN.md`**:
