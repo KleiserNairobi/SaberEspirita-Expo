@@ -85,7 +85,7 @@ export function TruthOrFalseHomeScreen() {
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}
+            onPress={() => navigation.navigate("FixHome")}
             activeOpacity={0.7}
           >
             <ArrowLeft size={20} color={theme.colors.muted} />

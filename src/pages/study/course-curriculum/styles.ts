@@ -22,7 +22,7 @@ export const createStyles = (theme: ITheme) =>
       borderRadius: 20,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: "rgba(255,255,255,0.05)",
+      backgroundColor: theme.colors.accent,
       marginRight: 16,
     },
     navTitle: {

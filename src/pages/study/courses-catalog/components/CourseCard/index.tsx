@@ -28,10 +28,11 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
       ? `${course.description.substring(0, 60)}...`
       : course.description;
 
+  /* Lógica corrigida para exibir placeholder caso a URL venha vazia ou indefinida */
   const imageSource =
-    typeof course.imageUrl === "string"
+    typeof course.imageUrl === "string" && course.imageUrl.trim()
       ? { uri: course.imageUrl }
-      : course.imageUrl
+      : typeof course.imageUrl === "number"
         ? course.imageUrl
         : require("@/assets/images/course-placeholder.jpg");
 

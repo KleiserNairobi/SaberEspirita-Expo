@@ -14,6 +14,12 @@ export const createStyles = (theme: ITheme) =>
       borderBottomColor: theme.colors.border,
     },
     backButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: theme.colors.accent,
+      alignItems: "center",
+      justifyContent: "center",
       marginRight: 12,
     },
     textContainer: {
@@ -35,7 +41,7 @@ export const createStyles = (theme: ITheme) =>
       width: 40,
       height: 40,
       borderRadius: 20,
-      backgroundColor: theme.colors.accent,
+      backgroundColor: `${theme.colors.primary}15`,
       alignItems: "center",
       justifyContent: "center",
     },

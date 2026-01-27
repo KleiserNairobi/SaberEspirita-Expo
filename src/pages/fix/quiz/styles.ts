@@ -16,6 +16,14 @@ export function createStyles(theme: ITheme) {
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
+    backButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: theme.colors.accent,
+    },
     headerTitle: {
       ...theme.text("lg", "bold"),
       color: theme.colors.text,

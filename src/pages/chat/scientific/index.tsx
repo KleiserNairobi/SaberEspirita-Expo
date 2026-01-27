@@ -15,7 +15,14 @@ import { ChatHeader } from "../components/ChatHeader";
 import { MessageBubble } from "../components/MessageBubble";
 import { ChatInput } from "../components/ChatInput";
 import { TypingIndicator } from "../components/TypingIndicator";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+
 import { createStyles } from "../components/styles";
+
+import { useChatLimits, useIncrementChatUsage } from "@/hooks/queries/useChatLimits";
+import { ChatLimitIndicator } from "@/components/ChatLimitIndicator";
+import { BottomSheetMessage } from "@/components/BottomSheetMessage";
+import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 
 type RouteParams = RouteProp<AppStackParamList, "ScientificChat">;
 
@@ -31,12 +38,48 @@ export function ScientificChatScreen() {
     ChatType.SCIENTIFIC
   );
 
+  // Importações adicionais
+  const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
+  const [bottomSheetConfig, setBottomSheetConfig] =
+    React.useState<BottomSheetMessageConfig | null>(null);
+
+  const { data: limits } = useChatLimits("scientific");
+  const incrementUsage = useIncrementChatUsage();
+
+  async function handleSendMessage(text: string) {
+    if (!text.trim()) return;
+
+    // 1. Verificar limites antes de enviar
+    if (limits && !limits.canSend) {
+      setBottomSheetConfig({
+        type: "info",
+        title: "Limite diário atingido",
+        message: `${limits.reason || "Limite atingido"}\n\nEnquanto isso, que tal explorar nossos cursos ou fazer uma leitura edificante?`,
+        primaryButton: {
+          label: "Entendi",
+          onPress: () => bottomSheetModalRef.current?.dismiss(),
+        },
+      });
+      bottomSheetModalRef.current?.present();
+      return;
+    }
+
+    // 2. Enviar mensagem
+    await sendMessage(text);
+
+    // 3. Incrementar uso
+    incrementUsage.mutate("scientific");
+  }
+
   // Envia mensagem inicial se fornecida
   useEffect(() => {
     if (initialMessage && messages.length === 0) {
-      sendMessage(initialMessage);
+      // Pequeno delay para garantir que os limites foram carregados
+      setTimeout(() => {
+        handleSendMessage(initialMessage);
+      }, 500);
     }
-  }, [initialMessage]);
+  }, [initialMessage]); // Removido messages.length do dep array para evitar loop, embora a lógica interna proteja
 
   // Auto-scroll para última mensagem
   useEffect(() => {
@@ -115,6 +158,16 @@ export function ScientificChatScreen() {
           onClear={messages.length > 0 ? clearChat : undefined}
         />
 
+        {/* Indicador de Limites */}
+        {limits && limits.canSend && (
+          <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
+            <ChatLimitIndicator
+              remainingToday={limits.remainingToday || 0}
+              remainingMonth={limits.remainingMonth || 0}
+            />
+          </View>
+        )}
+
         {/* Lista de mensagens */}
         <FlatList
           ref={flatListRef}
@@ -138,10 +191,13 @@ export function ScientificChatScreen() {
 
         {/* Input */}
         <ChatInput
-          onSend={sendMessage}
+          onSend={handleSendMessage}
           disabled={isLoading}
           placeholder="Faça sua pergunta..."
         />
+
+        {/* Modal de Limite Atingido (BottomSheet) */}
+        <BottomSheetMessage ref={bottomSheetModalRef} config={bottomSheetConfig} />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

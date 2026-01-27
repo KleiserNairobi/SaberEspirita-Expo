@@ -50,7 +50,7 @@ export const createStyles = (theme: ITheme) =>
       width: 40,
       height: 40,
       borderRadius: theme.radius.full,
-      backgroundColor: theme.colors.accent, // Verde claro
+      backgroundColor: `${theme.colors.primary}15`,
       alignItems: "center",
       justifyContent: "center",
     },

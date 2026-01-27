@@ -66,10 +66,13 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
     };
   });
 
+  /* Lógica corrigida para exibir placeholder caso a URL venha vazia ou indefinida */
   const imageSource =
-    typeof item.imageUrl === "string"
+    typeof item.imageUrl === "string" && item.imageUrl.trim()
       ? { uri: item.imageUrl }
-      : require("@/assets/images/course-placeholder.jpg"); // Fallback
+      : typeof item.imageUrl === "number"
+        ? item.imageUrl
+        : require("@/assets/images/course-placeholder.jpg"); // Fallback
 
   // Lógica "Smart": Se tem progresso iniciado (>0%), mostra CONTINUAR
   const hasStarted = progress && progress.completedLessons.length > 0;

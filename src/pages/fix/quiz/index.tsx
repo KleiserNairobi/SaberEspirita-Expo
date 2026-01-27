@@ -1,5 +1,11 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from "react";
-import { View, Text, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -15,7 +21,6 @@ import { useQuiz } from "@/hooks/queries/useQuiz";
 import { useDailyChallenge } from "@/hooks/queries/useDailyChallenge";
 import { QuizProgressBar } from "@/components/QuizProgressBar";
 import { QuestionCard } from "@/components/QuestionCard";
-import { IconButton } from "@/components/IconButton";
 import { Button } from "@/components/Button";
 import { createStyles } from "./styles";
 import { useAuthStore } from "@/stores/authStore";
@@ -369,6 +374,7 @@ export function QuizScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
           <Text style={styles.loadingText}>Carregando quiz...</Text>
         </View>
       </SafeAreaView>
@@ -379,12 +385,9 @@ export function QuizScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <IconButton
-          icon={ArrowLeft}
-          onPress={goToBack}
-          size={24}
-          color={theme.colors.text}
-        />
+        <TouchableOpacity style={styles.backButton} onPress={goToBack}>
+          <ArrowLeft size={20} color={theme.colors.primary} />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>{categoryName || "Desafio Diário"}</Text>
       </View>
 

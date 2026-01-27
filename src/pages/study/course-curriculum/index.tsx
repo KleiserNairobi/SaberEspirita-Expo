@@ -380,7 +380,7 @@ export function CourseCurriculumScreen() {
         {/* HEADER DE NAVEGAÇÃO */}
         <View style={styles.navHeader}>
           <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-            <ArrowLeft size={24} color={theme.colors.text} />
+            <ArrowLeft size={20} color={theme.colors.primary} />
           </TouchableOpacity>
           <Text style={styles.navTitle}>Aulas do Curso</Text>
         </View>

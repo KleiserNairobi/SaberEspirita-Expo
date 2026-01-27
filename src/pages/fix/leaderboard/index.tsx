@@ -1,11 +1,16 @@
 import React, { useState } from "react";
-import { View, ScrollView, ActivityIndicator, Text } from "react-native";
+import {
+  View,
+  ScrollView,
+  ActivityIndicator,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { createStyles } from "./styles";
 import { ArrowLeft } from "lucide-react-native";
-import { IconButton } from "@/components/IconButton";
 import { LeaderboardFilter } from "./components/LeaderboardFilter";
 import { LeaderboardPodium } from "./components/Podium";
 import { RankingList } from "./components/RankingList";
@@ -27,12 +32,9 @@ export function LeaderboardScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <IconButton
-          icon={ArrowLeft}
-          onPress={() => navigation.goBack()}
-          size={24}
-          color={theme.colors.text}
-        />
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <ArrowLeft size={20} color={theme.colors.primary} />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>Placar</Text>
       </View>
 

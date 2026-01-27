@@ -33,14 +33,14 @@ export function shouldBlockMessage(
   if (intention.type === IntentionType.GREETING) {
     const greetingResponse =
       chatType === ChatType.EMOTIONAL
-        ? `Olá, meu amigo! 🕊️
+        ? `Olá, amigo(a)! 🕊️
 
-Seja bem-vindo. Estou aqui para oferecer apoio emocional e consolo espiritual.
+Seja muito bem-vindo(a). Estou aqui para oferecer apoio emocional e consolo espiritual.
 
 Como posso ajudar seu coração hoje?`
         : `Olá! 📚
 
-Seja bem-vindo. Estou aqui para esclarecer suas dúvidas sobre a Doutrina Espírita.
+Seja muito bem-vindo(a). Estou aqui para esclarecer suas dúvidas sobre a Doutrina Espírita.
 
 Qual é sua pergunta?`;
 
@@ -54,7 +54,7 @@ Qual é sua pergunta?`;
   if (intention.type === IntentionType.END_CONVERSATION) {
     const farewellResponse =
       chatType === ChatType.EMOTIONAL
-        ? `Que a paz esteja com você, meu amigo. 🙏
+        ? `Que a paz esteja com você, amigo(a). 🙏
 
 Estarei aqui sempre que precisar de apoio e consolo.
 
@@ -76,10 +76,10 @@ Até a próxima!`;
     if (intention.type === IntentionType.OFF_TOPIC) {
       return {
         blocked: true,
-        response: `Desculpe, meu amigo...  
+        response: `Desculpe, amigo(a)...  
 Compreendo sua curiosidade, mas fui criado especificamente para oferecer apoio emocional e consolo espiritual.
 
-Posso ajudá-lo se você estiver passando por:
+Posso ajudar você se estiver passando por:
 - Momentos de tristeza ou angústia
 - Dificuldades emocionais
 - Busca por paz interior
@@ -92,7 +92,7 @@ Como posso oferecer conforto ao seu coração hoje?`,
     if (intention.type === IntentionType.DOCTRINAL_QUESTION) {
       return {
         blocked: true,
-        response: `Percebo que sua pergunta é de natureza doutrinária, meu amigo. 📚
+        response: `Percebo que sua pergunta é de natureza doutrinária, amigo(a). 📚
 
 Para questões sobre os ensinamentos espíritas, recomendo conversar com o **Sr. Allan Kardec**, nosso assistente especializado em doutrina.
 
@@ -108,7 +108,7 @@ Estou aqui para oferecer **apoio emocional e consolo espiritual**. Há algo que 
         blocked: true,
         response: `Perdão, mas minha especialidade é a Doutrina Espírita. 📚
 
-Posso ajudá-lo com questões sobre:
+Posso ajudar você com questões sobre:
 - As obras básicas do Espiritismo
 - Conceitos doutrinários
 - Princípios espíritas

@@ -14,6 +14,15 @@ export const createStyles = (theme: ITheme) =>
       paddingTop: theme.spacing.md,
       paddingBottom: theme.spacing.sm,
     },
+    backButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: theme.colors.accent,
+      marginRight: 12,
+    },
     headerTitle: {
       ...theme.text("xxl", "bold"),
       marginLeft: theme.spacing.sm,

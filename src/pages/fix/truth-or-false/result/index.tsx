@@ -11,6 +11,7 @@ import { FixStackParamList } from "@/routers/types";
 import { truthOrFalseQuestions } from "@/data/truthOrFalseQuestions";
 import { ResultFeedback } from "@/components/ResultFeedback";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
+import { Button } from "@/components/Button";
 // TODO: Imports comentados temporariamente (funcionalidade "Salvar para Revisar")
 // import { BookmarkPlus, BookmarkCheck } from "lucide-react-native";
 // import { Alert } from "react-native";
@@ -141,6 +142,14 @@ export function TruthOrFalseResultScreen() {
             </View>
           )}
         </View>
+
+        {/* Botão Voltar ao Início */}
+        <Button
+          title="Voltar ao Início"
+          onPress={handleGoHome}
+          // variant="outline"
+          fullWidth
+        />
       </ScrollView>
     </SafeAreaView>
   );

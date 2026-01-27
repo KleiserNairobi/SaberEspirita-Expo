@@ -33,11 +33,6 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: theme.colors.card,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.08,
-      shadowRadius: 2,
-      elevation: 1,
     },
     userBubble: {
       borderTopRightRadius: 4,

@@ -24,7 +24,7 @@ export function ChatHeader({ title, subtitle, onClear }: ChatHeaderProps) {
         onPress={() => navigation.goBack()}
         activeOpacity={0.7}
       >
-        <ArrowLeft size={24} color={theme.colors.text} />
+        <ArrowLeft size={20} color={theme.colors.primary} />
       </TouchableOpacity>
 
       <View style={styles.textContainer}>
