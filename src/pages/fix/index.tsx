@@ -131,8 +131,14 @@ export default function FixHomeScreen() {
             questionCount={item.questionCount}
             progress={(item as any).progress || 0}
             icon={item.icon as any}
-            gradientColors={item.gradientColors}
-            imageSource={CATEGORY_IMAGES[item.name.toUpperCase()]}
+            imageSource={
+              CATEGORY_IMAGES[
+                item.name
+                  .toUpperCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+              ]
+            }
             onPress={() => handleCategoryPress(item.id, item.name)}
           />
         )}

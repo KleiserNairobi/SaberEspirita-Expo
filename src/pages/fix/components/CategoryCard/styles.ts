@@ -12,6 +12,7 @@ export function createStyles(theme: ITheme) {
       borderWidth: 1,
       borderColor: theme.colors.border,
       alignItems: "flex-start",
+      overflow: "hidden", // Garante que a imagem escalada não vaze
     },
     iconContainer: {
       width: 40,
@@ -59,11 +60,14 @@ export function createStyles(theme: ITheme) {
       textAlign: "right",
     },
     backgroundImage: {
-      ...StyleSheet.absoluteFillObject,
-      width: "100%",
-      height: "100%",
+      position: "absolute",
+      right: 0, // Leve "sangria" para a direita
+      top: "50%", // Centralizar verticalmente
+      width: 120, // Aumentar tamanho para dar peso visual
+      height: 120,
       zIndex: -1,
-      opacity: 0.15, // Ajuste de opacidade para não atrapalhar o texto
+      opacity: 0.12, // Levemente mais visível para destacar a gravura
+      transform: [{ translateY: -50 }], // Compensar metade da altura para centralizar exato
     },
   });
 }

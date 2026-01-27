@@ -20,18 +20,8 @@ const iconMapping: Record<string, string> = {
   PERSONAGENS: "Users",
   LIVROS: "Library",
   FILMES: "Film",
-  ESPÍRITOS: "Ghost",
+  ESPIRITOS: "User",
   DIVERSOS: "Sparkles",
-};
-
-// Mapeamento de cores (mesmo do CLI)
-const colorMapping: Record<string, [string, string]> = {
-  CONCEITOS: ["#8B5CF6", "#6D28D9"],
-  PERSONAGENS: ["#F97316", "#EA580C"],
-  LIVROS: ["#3B82F6", "#2563EB"],
-  FILMES: ["#EC4899", "#DB2777"],
-  ESPÍRITOS: ["#10B981", "#059669"],
-  DIVERSOS: ["#F59E0B", "#D97706"],
 };
 
 // ==================== CATEGORIAS ====================
@@ -41,7 +31,9 @@ export async function getCategories(): Promise<ICategory[]> {
     const categoriesSnapshot = await getDocs(collection(db, "categories"));
     const categoriesData: ICategory[] = categoriesSnapshot.docs.map((docSnap) => {
       const data = docSnap.data();
-      const titleUpper = data.title?.toUpperCase() || "";
+      const titleUpper = (data.title?.toUpperCase() || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
 
       return {
         id: docSnap.id,
@@ -50,7 +42,6 @@ export async function getCategories(): Promise<ICategory[]> {
         questionCount: data.quizCount || 0,
         subcategoryCount: data.subcategoryCount || 0,
         icon: iconMapping[titleUpper] || "HelpCircle",
-        gradientColors: colorMapping[titleUpper] || ["#6B7280", "#4B5563"],
       };
     });
     return categoriesData;

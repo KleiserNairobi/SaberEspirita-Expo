@@ -9,7 +9,6 @@ interface CategoryCardProps {
   questionCount: number;
   progress: number; // 0-100
   icon: keyof typeof LucideIcons;
-  gradientColors: [string, string]; // Não usado mais
   onPress: () => void;
   imageSource?: ImageSourcePropType;
 }
@@ -26,9 +25,6 @@ export function CategoryCard({
   const styles = createStyles(theme);
   const IconComponent = LucideIcons[icon] as React.ComponentType<any>;
 
-  // Ajuste de cor para o modo escuro (inverter/clarear a gravura preta)
-  const imageTintColor = theme.isDark ? theme.colors.textSecondary : undefined;
-
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
       {/* Ícone */}
@@ -37,11 +33,7 @@ export function CategoryCard({
       </View>
 
       {imageSource && (
-        <Image
-          source={imageSource}
-          style={[styles.backgroundImage, { tintColor: imageTintColor }]}
-          resizeMode="cover"
-        />
+        <Image source={imageSource} style={styles.backgroundImage} resizeMode="contain" />
       )}
 
       {/* Nome */}

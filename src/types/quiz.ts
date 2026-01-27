@@ -50,7 +50,6 @@ export interface ICategory {
   questionCount: number;
   subcategoryCount?: number; // Total de subcategorias (do Firestore)
   icon: string; // Nome do ícone Lucide
-  gradientColors: [string, string]; // Cores do gradiente
 }
 
 // Subcategoria de quiz
