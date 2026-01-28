@@ -22,22 +22,24 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
   const minutes = course.workloadMinutes % 60;
   const durationText = hours > 0 ? `${hours}h ${minutes}min` : `${minutes} min`;
 
-  // Truncar descrição em 2 linhas (aproximadamente 60 caracteres para layout horizontal)
-  const truncatedDescription =
-    course.description.length > 60
-      ? `${course.description.substring(0, 60)}...`
-      : course.description;
-
   /* Lógica corrigida para exibir placeholder caso a URL venha vazia ou indefinida */
   const imageSource =
-    typeof course.imageUrl === "string" && course.imageUrl.trim()
+    typeof course.imageUrl === "string" && course.imageUrl.trim().length > 0
       ? { uri: course.imageUrl }
       : typeof course.imageUrl === "number"
         ? course.imageUrl
         : require("@/assets/images/placeholder.png");
 
+  // Verificar se o curso está em breve
+  const isComingSoon = course.status === "COMING_SOON";
+
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity
+      style={[styles.card, isComingSoon && styles.cardDisabled]}
+      onPress={isComingSoon ? undefined : onPress}
+      activeOpacity={isComingSoon ? 1 : 0.7}
+      disabled={isComingSoon}
+    >
       {/* Imagem à Esquerda (Formato Retrato 3:4) */}
       <View style={styles.imagePlaceholder}>
         <Image
@@ -57,44 +59,53 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
           </Text>
 
           {/* Descrição */}
-          <Text style={styles.description} numberOfLines={2}>
-            {truncatedDescription}
+          <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">
+            {course.description}
           </Text>
         </View>
 
-        {/* Metadados */}
-        <View style={styles.metadataRow}>
-          {/* Aulas */}
-          <View style={styles.metadataItem}>
-            <BookOpen size={12} color={theme.colors.muted} />
-            <Text style={styles.metadataText}>{course.lessonCount} aulas</Text>
+        {/* Se COMING_SOON: Badge laranja no lugar dos metadados */}
+        {isComingSoon ? (
+          <View style={styles.comingSoonBadgeLarge}>
+            <Text style={styles.comingSoonTextLarge}>EM BREVE</Text>
           </View>
+        ) : (
+          <>
+            {/* Metadados */}
+            <View style={styles.metadataRow}>
+              {/* Aulas */}
+              <View style={styles.metadataItem}>
+                <BookOpen size={12} color={theme.colors.muted} />
+                <Text style={styles.metadataText}>{course.lessonCount} aulas</Text>
+              </View>
 
-          <Text style={styles.metadataSeparator}>•</Text>
+              <Text style={styles.metadataSeparator}>•</Text>
 
-          {/* Duração */}
-          <View style={styles.metadataItem}>
-            <Clock size={12} color={theme.colors.muted} />
-            <Text style={styles.metadataText}>{durationText}</Text>
-          </View>
+              {/* Duração */}
+              <View style={styles.metadataItem}>
+                <Clock size={12} color={theme.colors.muted} />
+                <Text style={styles.metadataText}>{durationText}</Text>
+              </View>
 
-          <Text style={styles.metadataSeparator}>•</Text>
+              <Text style={styles.metadataSeparator}>•</Text>
 
-          {/* Nível */}
-          <View style={styles.metadataItem}>
-            <BarChart3 size={12} color={theme.colors.muted} />
-            <Text style={styles.metadataText}>{course.difficultyLevel}</Text>
-          </View>
-        </View>
-
-        {/* Barra de Progresso (se houver) */}
-        {progress !== undefined && progress > 0 && (
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBar}>
-              <View style={[styles.progressFill, { width: `${progress}%` }]} />
+              {/* Nível */}
+              <View style={styles.metadataItem}>
+                <BarChart3 size={12} color={theme.colors.muted} />
+                <Text style={styles.metadataText}>{course.difficultyLevel}</Text>
+              </View>
             </View>
-            <Text style={styles.progressText}>{progress}% concluído</Text>
-          </View>
+
+            {/* Barra de Progresso (se houver) */}
+            {progress !== undefined && progress > 0 && (
+              <View style={styles.progressContainer}>
+                <View style={styles.progressBar}>
+                  <View style={[styles.progressFill, { width: `${progress}%` }]} />
+                </View>
+                <Text style={styles.progressText}>{progress}% concluído</Text>
+              </View>
+            )}
+          </>
         )}
       </View>
     </TouchableOpacity>

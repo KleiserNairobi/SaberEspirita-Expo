@@ -41,7 +41,7 @@ export const MOCK_COURSES: ICourse[] = [
     author: "Allan Kardec",
     lessonCount: 16,
     releaseYear: 2023,
-    imageUrl: require("@/assets/images/bkp/evangelho_segundo_espiritismo.png"),
+
     featured: true, // ⭐ Destaque em "Populares"
   },
   {

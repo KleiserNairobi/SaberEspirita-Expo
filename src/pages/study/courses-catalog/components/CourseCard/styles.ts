@@ -86,4 +86,34 @@ export const createStyles = (theme: ITheme) =>
       fontSize: 10,
       marginTop: 2,
     },
+    cardDisabled: {
+      opacity: 0.6,
+    },
+    comingSoonBadge: {
+      position: "absolute",
+      top: 8,
+      right: 8,
+      backgroundColor: theme.colors.primary,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: theme.radius.sm,
+    },
+    comingSoonText: {
+      ...theme.text("xs", "semibold", theme.colors.background),
+      fontSize: 10,
+      letterSpacing: 0.5,
+    },
+    comingSoonBadgeLarge: {
+      alignSelf: "flex-start",
+      backgroundColor: theme.colors.warning,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: theme.radius.sm,
+      marginTop: 4,
+    },
+    comingSoonTextLarge: {
+      ...theme.text("sm", "semibold", theme.colors.background),
+      fontSize: 11,
+      letterSpacing: 0.8,
+    },
   });

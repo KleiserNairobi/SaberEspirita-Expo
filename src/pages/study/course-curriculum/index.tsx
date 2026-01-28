@@ -257,6 +257,9 @@ export function CourseCurriculumScreen() {
   };
 
   const renderLessonItem = ({ item, index }: { item: ILesson; index: number }) => {
+    // Verificar se a lição está em breve
+    const isComingSoon = item.status === "COMING_SOON";
+
     const status = getLessonStatus(item, index);
 
     // Obter exercícios desta aula
@@ -278,40 +281,67 @@ export function CourseCurriculumScreen() {
         <TouchableOpacity
           style={containerStyle}
           onPress={() => handleLessonPress(item, status)}
-          disabled={status === LessonStatus.LOCKED}
+          disabled={status === LessonStatus.LOCKED || isComingSoon}
           activeOpacity={0.7}
         >
           <View style={styles.cardHeaderRow}>
             <View style={styles.cardLeftContent}>
-              {/* ÍCONE / NÚMERO */}
-              <View style={styles.iconContainer}>
-                {status === LessonStatus.COMPLETED && (
-                  <CheckCircle
-                    size={32}
-                    color={theme.colors.success}
-                    fill={theme.colors.success}
-                    fillOpacity={0.1}
-                  />
-                )}
-                {status === LessonStatus.IN_PROGRESS && (
-                  <PlayCircle
-                    size={32}
-                    color={theme.colors.primary}
-                    fill={theme.colors.primary}
-                    fillOpacity={0.1}
-                  />
-                )}
-                {status === LessonStatus.LOCKED && (
-                  <View style={styles.lockedIconDetails}>
-                    <Lock size={20} color={theme.colors.textSecondary} />
+              {/* ÍCONE / NÚMERO + BADGE */}
+              <View style={styles.iconBadgeContainer}>
+                <View style={styles.iconContainer}>
+                  {/* EM BREVE - Ícone de Relógio */}
+                  {isComingSoon && (
+                    <View style={styles.comingSoonIconDetails}>
+                      <Clock size={20} color={theme.colors.warning} />
+                    </View>
+                  )}
+
+                  {/* Status normais (apenas se NÃO for coming soon) */}
+                  {!isComingSoon && status === LessonStatus.COMPLETED && (
+                    <CheckCircle
+                      size={32}
+                      color={theme.colors.success}
+                      fill={theme.colors.success}
+                      fillOpacity={0.1}
+                    />
+                  )}
+                  {!isComingSoon && status === LessonStatus.IN_PROGRESS && (
+                    <PlayCircle
+                      size={32}
+                      color={theme.colors.primary}
+                      fill={theme.colors.primary}
+                      fillOpacity={0.1}
+                    />
+                  )}
+                  {!isComingSoon && status === LessonStatus.LOCKED && (
+                    <View style={styles.lockedIconDetails}>
+                      <Lock size={20} color={theme.colors.textSecondary} />
+                    </View>
+                  )}
+                  {!isComingSoon && status === LessonStatus.AVAILABLE && (
+                    <PlayCircle
+                      size={32}
+                      color={theme.colors.textSecondary}
+                      fill="transparent"
+                    />
+                  )}
+                </View>
+
+                {/* Badge abaixo do ícone */}
+                {isComingSoon && (
+                  <View style={styles.statusBadgeComingSoon}>
+                    <Text style={styles.statusBadgeTextComingSoon}>EM BREVE</Text>
                   </View>
                 )}
-                {status === LessonStatus.AVAILABLE && (
-                  <PlayCircle
-                    size={32}
-                    color={theme.colors.textSecondary}
-                    fill="transparent"
-                  />
+                {!isComingSoon && status === LessonStatus.LOCKED && (
+                  <View style={styles.statusBadgeLocked}>
+                    <Text style={styles.statusBadgeTextLocked}>BLOQUEADA</Text>
+                  </View>
+                )}
+                {!isComingSoon && status === LessonStatus.AVAILABLE && (
+                  <View style={styles.statusBadgeAvailable}>
+                    <Text style={styles.statusBadgeTextAvailable}>DISPONÍVEL</Text>
+                  </View>
                 )}
               </View>
 
@@ -338,16 +368,10 @@ export function CourseCurriculumScreen() {
                     </Text>
                   </View>
                 )}
-                {/* Duração e Status */}
+                {/* Duração */}
                 <View style={styles.metaRow}>
                   <Clock size={12} color={theme.colors.textSecondary} />
-                  <Text style={styles.lessonMeta}>
-                    {item.durationMinutes} min
-                    {status === LessonStatus.COMPLETED && " • Concluída"}
-                    {status === LessonStatus.IN_PROGRESS && " • Em andamento"}
-                    {status === LessonStatus.LOCKED && " • Bloqueada"}
-                    {status === LessonStatus.AVAILABLE && " • Disponível"}
-                  </Text>
+                  <Text style={styles.lessonMeta}>{item.durationMinutes} min</Text>
                 </View>
               </View>
             </View>

@@ -140,6 +140,18 @@ export const createStyles = (theme: ITheme) =>
       justifyContent: "center",
       alignItems: "center",
     },
+    comingSoonIconDetails: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: `${theme.colors.warning}15`,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    iconBadgeContainer: {
+      alignItems: "center",
+      gap: 6,
+    },
 
     // TEXTOS DO CARD
     textContainer: {
@@ -178,7 +190,6 @@ export const createStyles = (theme: ITheme) =>
       textTransform: "uppercase",
     },
 
-    // COMING SOON BADGE
     comingSoonBadge: {
       paddingHorizontal: 8,
       paddingVertical: 4,
@@ -189,6 +200,41 @@ export const createStyles = (theme: ITheme) =>
     comingSoonText: {
       ...theme.text("xs", "bold", theme.colors.primary), // ✅ Usar primary
       textTransform: "uppercase",
+    },
+
+    // STATUS BADGES (para lições - abaixo do ícone)
+    statusBadgeComingSoon: {
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 4,
+      backgroundColor: theme.colors.warning,
+    },
+    statusBadgeTextComingSoon: {
+      ...theme.text("xs", "semibold", theme.colors.background),
+      fontSize: 8,
+      letterSpacing: 0.3,
+    },
+    statusBadgeLocked: {
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 4,
+      backgroundColor: theme.colors.muted,
+    },
+    statusBadgeTextLocked: {
+      ...theme.text("xs", "semibold", theme.colors.background),
+      fontSize: 8,
+      letterSpacing: 0.3,
+    },
+    statusBadgeAvailable: {
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 4,
+      backgroundColor: theme.colors.success,
+    },
+    statusBadgeTextAvailable: {
+      ...theme.text("xs", "semibold", theme.colors.background),
+      fontSize: 8,
+      letterSpacing: 0.3,
     },
 
     // INTERNAL PROGRESS BAR (Para aulas em andamento)

@@ -67,12 +67,17 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
   });
 
   /* Lógica corrigida para exibir placeholder caso a URL venha vazia ou indefinida */
+  /* Lógica corrigida para exibir placeholder caso a URL venha vazia ou indefinida */
+  // Prioriza URL válida, depois require numérico (se local), e por fim placeholder
   const imageSource =
-    typeof item.imageUrl === "string" && item.imageUrl.trim()
+    typeof item.imageUrl === "string" && item.imageUrl.trim().length > 0
       ? { uri: item.imageUrl }
       : typeof item.imageUrl === "number"
         ? item.imageUrl
-        : require("@/assets/images/placeholder.png"); // Fallback
+        : require("@/assets/images/placeholder.png");
+
+  // Verificar se o curso está em breve
+  const isComingSoon = item.status === "COMING_SOON";
 
   // Lógica "Smart": Se tem progresso iniciado (>0%), mostra CONTINUAR
   const hasStarted = progress && progress.completedLessons.length > 0;
@@ -82,11 +87,13 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
       : 0;
   const isCompleted = completionPercent >= 100;
 
-  const buttonText = isCompleted
-    ? "CONCLUÍDO"
-    : hasStarted
-      ? "CONTINUAR"
-      : "INICIAR CURSO";
+  const buttonText = isComingSoon
+    ? "EM BREVE"
+    : isCompleted
+      ? "CONCLUÍDO"
+      : hasStarted
+        ? "CONTINUAR"
+        : "INICIAR CURSO";
   const displayPercent = Math.min(Math.round(completionPercent), 100);
 
   return (
@@ -107,8 +114,8 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
               </Text>
             )}
 
-            {/* Barra de Progresso (se iniciado) */}
-            {hasStarted && (
+            {/* Barra de Progresso (se iniciado e não for coming soon) */}
+            {hasStarted && !isComingSoon && (
               <View style={styles.progressBarContainer}>
                 <View style={[styles.progressBarFill, { width: `${displayPercent}%` }]} />
                 <Text style={styles.percentText}>{displayPercent}%</Text>
@@ -116,9 +123,10 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
             )}
 
             <TouchableOpacity
-              style={styles.button}
-              activeOpacity={0.8}
-              onPress={() => onPress(item.id)}
+              style={[styles.button, isComingSoon && styles.buttonDisabled]}
+              activeOpacity={isComingSoon ? 1 : 0.8}
+              onPress={isComingSoon ? undefined : () => onPress(item.id)}
+              disabled={isComingSoon}
             >
               <Text style={styles.buttonText}>{buttonText}</Text>
             </TouchableOpacity>
@@ -255,6 +263,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.4)",
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   buttonText: {
     fontFamily: "Oswald_600SemiBold",
