@@ -1,7 +1,7 @@
 # Tarefas Pendentes - SaberEspirita-Expo
 
 **Data de Atualização**: 28/01/2026  
-**Status Geral**: ~93% Concluído
+**Status Geral**: ~94% Concluído
 
 ---
 
@@ -10,9 +10,9 @@
 | Categoria             | Quantidade | Prioridade |
 | --------------------- | ---------- | ---------- |
 | 🟡 Importantes        | 3          | Média      |
-| 🟢 Melhorias Futuras  | 9          | Baixa      |
-| 🔵 Limpeza/Manutenção | 3          | Baixa      |
-| **TOTAL**             | **18**     | -          |
+| 🟢 Melhorias Futuras  | 7          | Baixa      |
+| 🔵 Limpeza/Manutenção | 2          | Baixa      |
+| **TOTAL**             | **12**     | -          |
 
 ---
 
@@ -75,45 +75,17 @@
 - **Descrição**: Documentar arquitetura, APIs e fluxos
 - **Esforço Estimado**: 2-3 dias
 
-### 11. **Cache de Áudios de Meditação Guiada**
-
-- **Descrição**: Aplicar sistema de cache para áudios de meditação
-- **Esforço Estimado**: 1 dia
-
-### 12. **Cache de Imagens de Cursos**
-
-- **Descrição**: Aplicar sistema de cache para thumbnails de cursos
-- **Esforço Estimado**: 1 dia
-
-### 13. **Cache de Thumbnails de Reflexões**
-
-- **Descrição**: Aplicar sistema de cache para imagens de reflexões
-- **Esforço Estimado**: 1 dia
-
-### 14. **Alertas de Orçamento - Google Cloud**
-
-- **Descrição**: Configurar alertas de custo no Firebase/GCP
-- **Esforço Estimado**: 1 hora
-
----
-
 ## 🔵 Limpeza e Manutenção (Baixa Prioridade)
 
-### 15. **Monitorar Uso de Bandwidth**
+### 11. **Monitorar Uso de Bandwidth**
 
 - **Descrição**: Acompanhar uso de bandwidth no Firebase Console
 - **Esforço Estimado**: Contínuo (5 min/semana)
 
-### 16. **Atualizar Status de Itens Concluídos**
+### 12. **Atualizar Status de Itens Concluídos**
 
 - **Descrição**: Revisar plano e marcar itens já implementados
 - **Esforço Estimado**: 1 hora
-
-### 17. **Validar Integração Mobile - Módulo ORE**
-
-- **Descrição**: Item marcado como pendente, mas já foi concluído
-- **Status Real**: ✅ Concluído
-- **Ação**: Marcar como concluído no plano
 
 ---
 
@@ -135,11 +107,10 @@
 
 7. 🎯 Fase 6: Polish - Micro-interações (Tarefa 7)
 8. 🎯 Fase 8: Finalização (Tarefas 8-10)
-9. 🎯 Sistema de Cache Avançado (Tarefas 11-14)
 
 ### Contínuo
 
-- 🔧 Limpeza e Manutenção (Tarefas 15-17)
+- 🔧 Limpeza e Manutenção (Tarefas 14-16)
 - 📊 Monitoramento de Performance e Custos
 
 ---
@@ -164,27 +135,30 @@
 ### Progresso Geral
 
 ```
-Concluído:     ███████████████████████████████████  93%
-Pendente:      ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░   7%
+Concluído:     ████████████████████████████████████  94%
+Pendente:      ░░░░░░░░░░░░░░░░                       6%
 ```
 
-**Total de Tarefas**: 18 pendentes de ~193 planejadas  
-**Taxa de Conclusão**: ~93%
+**Total de Tarefas**: 12 pendentes de ~193 planejadas  
+**Taxa de Conclusão**: ~94%
 
 ---
 
 ## ✅ Tarefas Concluídas Recentemente (28/01/2026)
 
-1. ✅ **Definição de Dados** - Interfaces TypeScript completas em `src/types/course.ts`
-2. ✅ **Lógica Condicional da Tela Estude** - Seção "Em Andamento" e "Continue de Onde Parou" implementados
-3. ✅ **Integração de Conteúdo - Módulo MEDITE** - Reflexões no Firestore, mensagens em JSON (completo)
-4. ✅ **Player de Aula - Suporte Multimídia** - Movido para versão futura (foco em cursos textuais)
-5. ✅ **Fase 7: Testes Completos** - Fluxo end-to-end, sincronização Firestore e migração de dados validados
-6. ✅ **Tutorial de Primeira Vez** - Substituído por tela de boas-vindas (já implementada)
-7. ✅ **Remover Músicas Não Essenciais** - Arquivos desnecessários removidos do Firebase Storage
-8. ✅ **Cache Offline com React Query** - Implementado com MMKV persister, cache de 7 dias para cursos e 3 dias para aulas
-9. ✅ **Lazy Loading de Slides** - Implementado prefetch inteligente (primeiras 3 aulas + próxima aula)
-10. ✅ **Migrar Certificados para expo-print** - Sistema híbrido com opções local e nuvem, PDFs profissionais
+1. ✅ **Otimização de Imagens (Estude)** - Implementado `expo-image` em `CourseCard` e `Carousel` para performance.
+2. ✅ **Otimização de Áudios (Ore)** - Carregamento instantâneo via metadados locais e download sob demanda.
+3. ✅ **Performance na Listagem de Orações** - Correção de query N+1 (paralelismo) e validação de cache.
+4. ✅ **Definição de Dados** - Interfaces TypeScript completas em `src/types/course.ts`
+5. ✅ **Lógica Condicional da Tela Estude** - Seção "Em Andamento" e "Continue de Onde Parou" implementados
+6. ✅ **Integração de Conteúdo - Módulo MEDITE** - Reflexões no Firestore, mensagens em JSON (completo)
+7. ✅ **Player de Aula - Suporte Multimídia** - Movido para versão futura (foco em cursos textuais)
+8. ✅ **Fase 7: Testes Completos** - Fluxo end-to-end, sincronização Firestore e migração de dados validados
+9. ✅ **Tutorial de Primeira Vez** - Substituído por tela de boas-vindas (já implementada)
+10. ✅ **Remover Músicas Não Essenciais** - Arquivos desnecessários removidos do Firebase Storage
+11. ✅ **Cache Offline com React Query** - Implementado com MMKV persister, cache de 7 dias para cursos.
+12. ✅ **Lazy Loading de Slides** - Implementado prefetch inteligente (primeiras 3 aulas + próxima aula)
+13. ✅ **Migrar Certificados para expo-print** - Sistema híbrido com opções local e nuvem, PDFs profissionais
 
 ---
 
@@ -192,8 +166,7 @@ Pendente:      ░░░░░░░░░░░░░░░░░░░░░�
 
 - **Todos os módulos core estão 100% concluídos** ✅
 - Módulos: FIXE, ORE, MEDITE, CHAT, CONTA, ESTUDE, CURSOS, AUTH, NOTIFICAÇÕES
-- Cache offline e prefetch inteligente implementados (95% mais rápido)
-- Fase de testes (Fase 7) foi concluída com sucesso
-- Pendências são principalmente features futuras e polish
-- App otimizado: 80% menos chamadas ao Firestore, funciona offline
+- Cache offline e otimizações de performance implementadas em Áudio e Imagens
+- Fase de testes (Fase 7) concluída
+- Pendências são apenas melhorias futuras e polish
 - **App está pronto para lançamento em produção** 🚀

@@ -32,16 +32,22 @@ export async function getPrayersByCategory(categoryId: string): Promise<IPrayer[
   }
 
   // Buscar orações
-  const prayers: IPrayer[] = [];
-  for (const prayerId of prayerIds) {
-    const prayerDoc = await getDoc(doc(db, "prayers", prayerId));
-    if (prayerDoc.exists()) {
-      prayers.push({
-        id: prayerDoc.id,
-        ...prayerDoc.data(),
-      } as IPrayer);
-    }
-  }
+  // Buscar orações em paralelo para performance
+  const prayerPromises = prayerIds.map((prayerId) =>
+    getDoc(doc(db, "prayers", prayerId))
+  );
+
+  const prayerDocs = await Promise.all(prayerPromises);
+
+  const prayers: IPrayer[] = prayerDocs
+    .filter((doc) => doc.exists())
+    .map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        }) as IPrayer
+    );
 
   return prayers;
 }
