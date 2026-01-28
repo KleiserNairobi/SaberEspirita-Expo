@@ -24,15 +24,57 @@ export const createStyles = (theme: ITheme) =>
       paddingBottom: 40,
     },
     header: {
-      marginBottom: theme.spacing.lg,
+      paddingTop: theme.spacing.xl,
+      paddingBottom: theme.spacing.lg,
       alignItems: "center",
-      marginTop: theme.spacing.md,
+    },
+    // Ícone Central com Anéis
+    iconRingsContainer: {
+      width: 104,
+      height: 104,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: theme.spacing.md,
+    },
+    ringInner: {
+      position: "absolute",
+      width: 88,
+      height: 88,
+      borderRadius: 44,
+      borderWidth: 4,
+      borderColor: theme.colors.primary + "40",
+    },
+    ringMiddle: {
+      position: "absolute",
+      width: 96,
+      height: 96,
+      borderRadius: 48,
+      borderWidth: 2,
+      borderColor: theme.colors.primary + "25",
+    },
+    ringOuter: {
+      position: "absolute",
+      width: 104,
+      height: 104,
+      borderRadius: 52,
+      borderWidth: 1,
+      borderColor: theme.colors.primary + "15",
+    },
+    iconLargeContainer: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: theme.colors.primary,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    headerTextContainer: {
+      alignItems: "center",
     },
     headerTitle: {
-      ...theme.text("xxl", "bold"),
-      color: theme.colors.text,
+      ...theme.text("xxxl", "semibold"),
       textAlign: "center",
-      marginBottom: 4,
+      marginBottom: theme.spacing.xs,
     },
     headerSubtitle: {
       ...theme.text("md", "regular"),
@@ -237,5 +279,131 @@ export const createStyles = (theme: ITheme) =>
     homeButtonText: {
       ...theme.text("lg", "medium"),
       color: theme.colors.text,
+    },
+    // Info Card
+    infoCard: {
+      backgroundColor: theme.colors.card,
+      padding: theme.spacing.md,
+      borderRadius: theme.radius.md,
+      marginBottom: theme.spacing.md,
+      width: "100%",
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    infoTitle: {
+      ...theme.text("xl", "bold"),
+      color: theme.colors.text,
+      marginBottom: theme.spacing.sm,
+      textAlign: "center",
+    },
+    infoText: {
+      ...theme.text("md", "regular"),
+      color: theme.colors.textSecondary,
+      textAlign: "center",
+      lineHeight: 22,
+    },
+    // Options
+    optionsTitle: {
+      ...theme.text("lg", "semibold"),
+      color: theme.colors.text,
+      marginBottom: theme.spacing.md,
+      textAlign: "center",
+    },
+    optionButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      padding: theme.spacing.lg,
+      borderRadius: theme.radius.lg,
+      marginBottom: theme.spacing.md,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    optionButtonLocal: {
+      backgroundColor: theme.colors.primary,
+    },
+    optionButtonCloud: {
+      backgroundColor: "#667eea",
+    },
+    optionIconContainer: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      backgroundColor: "rgba(255,255,255,0.2)",
+      alignItems: "center",
+      justifyContent: "center",
+      marginRight: theme.spacing.md,
+    },
+    optionTextContainer: {
+      flex: 1,
+    },
+    optionTitle: {
+      ...theme.text("lg", "semibold"),
+      color: "#FFF",
+      marginBottom: 4,
+    },
+    optionDescription: {
+      ...theme.text("sm", "regular"),
+      color: "rgba(255,255,255,0.8)",
+    },
+    // Loading
+    loadingContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: theme.spacing.md,
+      gap: theme.spacing.sm,
+    },
+    loadingText: {
+      ...theme.text("md", "medium"),
+      color: theme.colors.textSecondary,
+    },
+    // Success
+    successContainer: {
+      backgroundColor: theme.colors.card,
+      padding: theme.spacing.md,
+      borderRadius: theme.radius.md,
+      alignItems: "center",
+      marginBottom: theme.spacing.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.success,
+    },
+    successText: {
+      ...theme.text("lg", "semibold"),
+      color: theme.colors.success,
+      marginTop: theme.spacing.md,
+      marginBottom: theme.spacing.sm,
+      textAlign: "center",
+    },
+    certNumber: {
+      ...theme.text("md", "medium"),
+      color: theme.colors.textSecondary,
+    },
+    // Validation
+    validationContainer: {
+      marginTop: theme.spacing.lg,
+      padding: theme.spacing.md,
+      backgroundColor: theme.colors.background,
+      borderRadius: theme.radius.md,
+      alignItems: "center",
+    },
+    validationLabel: {
+      ...theme.text("sm", "regular"),
+      color: theme.colors.textSecondary,
+      marginBottom: 4,
+    },
+    validationCode: {
+      ...theme.text("xl", "bold"),
+      color: theme.colors.primary,
+      fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
+      marginBottom: theme.spacing.sm,
+    },
+    validationHint: {
+      ...theme.text("xs", "regular"),
+      color: theme.colors.textSecondary,
+      textAlign: "center",
+      fontStyle: "italic",
     },
   });

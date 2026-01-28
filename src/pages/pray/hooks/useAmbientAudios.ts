@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import {
+  checkLocalAudioAvailability,
   getAmbientAudios,
   getAudioLocalUri,
 } from "@/services/firebase/ambientAudioService";
@@ -15,32 +16,33 @@ export function useAmbientAudios() {
   return useQuery({
     queryKey: ["ambientAudios"],
     queryFn: async (): Promise<IAmbientAudio[]> => {
-      // Buscar lista de áudios do Firebase Storage
-      const audios = await getAmbientAudios();
+      // Buscar lista de metadados locais (Instantâneo)
+      const baseAudios = await getAmbientAudios();
 
-      // Para cada áudio, obter URI local (com cache)
-      const audiosWithLocalUri = await Promise.all(
-        audios.map(async (audio) => {
+      // Verificar cache local em paralelo (Rápido)
+      const audiosWithStatus = await Promise.all(
+        baseAudios.map(async (audio) => {
           try {
-            const localUri = await getAudioLocalUri(audio.storagePath);
+            // Verifica se o arquivo físico existe no cache baseado no nome
+            // Não faz nenhuma chamada de rede
+            const localUri = await checkLocalAudioAvailability(audio.fileName);
             return {
               ...audio,
-              localUri,
+              localUri: localUri || undefined, // undefined se não estiver em cache
             };
           } catch (error) {
             console.error(
-              `[useAmbientAudios] Erro ao obter URI para ${audio.title}:`,
+              `[useAmbientAudios] Erro ao verificar cache para ${audio.title}:`,
               error
             );
-            // Retorna sem localUri em caso de erro
             return audio;
           }
         })
       );
 
-      return audiosWithLocalUri;
+      return audiosWithStatus;
     },
-    staleTime: 1000 * 60 * 60, // 1 hora - metadados não mudam frequentemente
+    staleTime: 1000 * 60 * 60, // 1 hora
     gcTime: 1000 * 60 * 60 * 24, // 24 horas
   });
 }

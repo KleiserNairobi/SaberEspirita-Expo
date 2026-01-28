@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -17,10 +17,12 @@ import {
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
-import { useLessons } from "@/hooks/queries/useLessons";
+import { useLessons, LESSONS_KEYS } from "@/hooks/queries/useLessons";
 import { useCourse } from "@/hooks/queries/useCourses";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
 import { useExercises, useCourseExercises } from "@/hooks/queries/useExercises";
+import { useQueryClient } from "@tanstack/react-query";
+import { getLessonById } from "@/services/firebase/lessonService";
 import { ILesson } from "@/types/course";
 import { ProgressSummaryCard } from "./components/ProgressSummaryCard";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage"; // ✅ NOVO
@@ -93,6 +95,29 @@ export function CourseCurriculumScreen() {
     null
   );
   const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+  // ✅ NOVO: QueryClient para prefetch
+  const queryClient = useQueryClient();
+
+  // ✅ NOVO: Prefetch inteligente das primeiras 3 aulas
+  useEffect(() => {
+    if (!lessons || lessons.length === 0) return;
+
+    // Prefetch das primeiras 3 aulas para carregamento instantâneo
+    const lessonsToPrefetch = lessons.slice(0, 3);
+
+    lessonsToPrefetch.forEach((lesson) => {
+      queryClient.prefetchQuery({
+        queryKey: LESSONS_KEYS.detail(courseId, lesson.id),
+        queryFn: () => getLessonById(courseId, lesson.id),
+        staleTime: 1000 * 60 * 60 * 12, // 12 horas
+      });
+    });
+
+    console.log(
+      `✅ [CourseCurriculum] Prefetch de ${lessonsToPrefetch.length} aulas iniciado`
+    );
+  }, [lessons, courseId, queryClient]);
 
   function getLessonStatus(lesson: ILesson, index: number): LessonStatus {
     // Se não tiver progresso OU se completedLessons estiver vazio

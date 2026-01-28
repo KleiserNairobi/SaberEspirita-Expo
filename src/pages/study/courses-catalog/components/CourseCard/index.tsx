@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
 
 import { BookOpen, Clock, BarChart3 } from "lucide-react-native";
 
@@ -35,17 +36,18 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
 
   return (
     <TouchableOpacity
-      style={[styles.card, isComingSoon && styles.cardDisabled]}
+      style={styles.card}
       onPress={isComingSoon ? undefined : onPress}
       activeOpacity={isComingSoon ? 1 : 0.7}
       disabled={isComingSoon}
     >
-      {/* Imagem à Esquerda (Formato Retrato 3:4) */}
       <View style={styles.imagePlaceholder}>
         <Image
           source={imageSource as any}
           style={styles.courseImage}
-          resizeMode="cover"
+          contentFit="cover"
+          transition={200}
+          placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
         />
         <View style={styles.gradientOverlay} />
       </View>

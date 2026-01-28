@@ -4,7 +4,10 @@ import { OneSignal, LogLevel } from "react-native-onesignal";
 import { registerRootComponent } from "expo";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+import { createMMKV } from "react-native-mmkv";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -33,12 +36,27 @@ import { useVersionControl } from "./src/hooks/useVersionControl";
 import { useUpdateModal } from "./src/hooks/useUpdateModal";
 import { UpdateModal } from "./src/components/UpdateModal";
 
+// Configurar MMKV storage para cache do React Query
+const mmkvStorage = createMMKV({ id: "react-query-cache" });
+
+// Criar persister usando MMKV
+const persister = createAsyncStoragePersister({
+  storage: {
+    getItem: (key) => mmkvStorage.getString(key) ?? null,
+    setItem: (key, value) => mmkvStorage.set(key, value),
+    removeItem: (key) => {
+      mmkvStorage.remove(key);
+    },
+  },
+});
+
 // Criar QueryClient fora do componente para evitar recriação
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 2,
-      staleTime: 1000 * 60 * 5, // 5 minutos
+      staleTime: 1000 * 60 * 5, // 5 minutos (padrão)
+      gcTime: 1000 * 60 * 60 * 24, // 24 horas (padrão para garbage collection)
     },
   },
 });
@@ -167,10 +185,13 @@ function AppContent() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <BottomSheetModalProvider>
-          <QueryClientProvider client={queryClient}>
+          <PersistQueryClientProvider
+            client={queryClient}
+            persistOptions={{ persister, buster: "1.0.0" }}
+          >
             <StatusBar style={resolvedThemeType === "dark" ? "light" : "dark"} />
             <RootNavigator />
-          </QueryClientProvider>
+          </PersistQueryClientProvider>
         </BottomSheetModalProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

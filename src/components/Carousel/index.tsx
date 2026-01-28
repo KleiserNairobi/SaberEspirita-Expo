@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -100,7 +94,14 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
     <View style={{ width: ITEM_SIZE }}>
       <Animated.View style={[styles.itemContainer, animatedStyle]}>
         <View style={styles.imageContainer}>
-          <Image source={imageSource} style={styles.imageView} />
+          <Image
+            source={imageSource}
+            style={styles.imageView}
+            contentFit="cover"
+            transition={200}
+            placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
+            priority={index <= 2 ? "high" : "normal"}
+          />
           {/* Overlay escuro */}
           <View style={styles.overlay} />
           {/* Texto sobreposto */}

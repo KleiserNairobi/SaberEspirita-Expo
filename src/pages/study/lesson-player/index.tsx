@@ -27,8 +27,9 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore"; // Store de preferências de leitura
 import { AppStackParamList } from "@/routers/types";
-import { useLesson } from "@/hooks/queries/useLessons";
+import { useLesson, useLessons, LESSONS_KEYS } from "@/hooks/queries/useLessons";
 import { useExercises } from "@/hooks/queries/useExercises"; // Import Hook updated to Plural
+import { getLessonById } from "@/services/firebase/lessonService";
 
 import {
   useCourseProgress,
@@ -117,6 +118,26 @@ export function LessonPlayerScreen() {
 
   // Verifica se tem exercícios
   const hasExercises = exercises && exercises.length > 0;
+
+  // ✅ NOVO: Fetch da lista de aulas para prefetch da próxima
+  const { data: allLessons } = useLessons(courseId);
+
+  // ✅ NOVO: Prefetch da próxima aula ao chegar no último slide
+  React.useEffect(() => {
+    if (!isLastSlide || !allLessons || !lesson) return;
+
+    const currentLessonIndex = allLessons.findIndex((l) => l.id === lesson.id);
+    const nextLesson = allLessons[currentLessonIndex + 1];
+
+    if (nextLesson) {
+      queryClient.prefetchQuery({
+        queryKey: LESSONS_KEYS.detail(courseId, nextLesson.id),
+        queryFn: () => getLessonById(courseId, nextLesson.id),
+        staleTime: 1000 * 60 * 60 * 12, // 12 horas
+      });
+      console.log(`✅ [LessonPlayer] Prefetch da próxima aula: ${nextLesson.title}`);
+    }
+  }, [isLastSlide, allLessons, lesson, courseId, queryClient]);
 
   // 🎬 Função para animar transição de slide (RÁPIDA - 150ms)
   const animateSlideTransition = useCallback((direction: "next" | "prev") => {

@@ -172,7 +172,7 @@ Estrutura modular utilizando **React Navigation v7** com navegadores nativos.
     - [x] Decisão: Reutilizar `Carousel` com barra de progresso
     - [x] Especificação do componente `ResumeCard`
     - [x] Lógica condicional SEM/COM progresso
-  - [ ] **Lógica Condicional** (Pendente):
+  - [x] **Lógica Condicional** (Concluído):
     - [x] Detectar se usuário tem progresso em cursos
     - [x] _Com Progresso_: Exibir "Em Andamento" e "Continue de Onde Parou"
     - [x] _Sem Progresso_: Manter layout atual de descoberta
@@ -220,10 +220,12 @@ Estrutura modular utilizando **React Navigation v7** com navegadores nativos.
     - [ ] Cache offline com React Query
     - [ ] Lazy loading de slides
 
-- [ ] **Definição de Dados**: Modelos para `Course`, `Lesson`, `UserProgress`.
+- [x] **Definição de Dados**: Modelos para `Course`, `Lesson`, `UserProgress` (Concluído - interfaces em `src/types/course.ts`).
 - [ ] **Player de Aula**:
-  - Suporte a Texto (Markdown/HTML), Vídeo (Expo Video) e Áudio.
-  - Navegação entre aulas (Anterior/Próximo).
+  - [x] Suporte a Texto (Markdown/HTML)
+  - [ ] Suporte a Vídeo (Expo Video)
+  - [ ] Suporte a Áudio
+  - [ ] Navegação entre aulas (Anterior/Próximo)
 
 ### Fase 4: Módulos MEDITE e ORE (Novas Features)
 
@@ -330,16 +332,13 @@ Estrutura modular utilizando **React Navigation v7** com navegadores nativos.
     - ✅ Comparação de personas (Guia vs Sr. Allan)
     - ✅ Estatísticas: 80% de reutilização de código
     - ✅ Text-to-Speech para narração de reflexões
-- [ ] **Integração de Conteúdo**: Definir fonte de dados (Firestore ou JSON estático inicial) para Mensagens e Textos.
-  - Ações de Curtir (Favoritar) e Compartilhar.
-  - **Seção 2: Pergunte ao Guia**:
-    - Interface "Placeholder" acolhedora (Feature futura via AI).
-    - Botão "Conversar" (inicialmente levando a um formulário ou info).
-  - **Seção 3: Pensamentos**:
-    - Coleção de citações curtas em cards verticais.
-    - Filtros de Tags (#Fé, #Esperança, etc.).
-  - **Seção 4: Reflexões**:
-    - Lista de leitura com artigos/textos médios.
+- [x] **Integração de Conteúdo**: ✅ **Concluído** (28/01/2026)
+  - [x] Reflexões armazenadas no Firestore com sistema completo de favoritos
+  - [x] Mensagens do Dia em JSON com rotação por dia da semana
+  - [x] Ações de Curtir (Favoritar) e Compartilhar implementadas
+  - [x] **Seção 1: Pensamento do Dia**: Sistema de mensagens diárias com 7 imagens rotativas
+  - [x] **Seção 2: Pergunte ao Guia**: Chat emocional com DeepSeek implementado
+  - [x] **Seção 3: Reflexões**: Lista completa com busca, filtros e TTS
 - [x] **Tela ORE (Foco Espiritual)** - ✅ **CONCLUÍDO**:
   - [x] **Navegação**: PrayNavigator com 3 telas (PrayHome, PrayCategory, Prayer)
   - [x] **Arquitetura de Dados**:
@@ -1604,5 +1603,134 @@ bold: "Oswald_700Bold";
 - ✅ **Consistência**: Sombras sutis em todos os títulos cursivos
 - ✅ **Personalização**: Saudação com nome real do usuário
 - ✅ **Identidade Única**: Cada tela de autenticação tem mensagem distinta
+
+---
+
+### 28/01/2026 - Push Notifications e Refinamento de Status de Cursos
+
+- ✅ **Push Notifications com OneSignal - 100% Concluído**
+- **Objetivo**: Implementar sistema completo de notificações push com segmentação por tags e integração com preferências do usuário.
+
+#### **Funcionalidades Implementadas**
+
+1. **Integração OneSignal**:
+   - SDK OneSignal configurado no `App.tsx` com inicialização condicional
+   - App ID configurado via variável de ambiente (`EXPO_PUBLIC_ONESIGNAL_APP_ID`)
+   - Permissões de notificação solicitadas automaticamente no primeiro acesso
+   - Logs detalhados para debugging (subscription ID, push token, external ID)
+
+2. **Sistema de Tags para Segmentação**:
+   - **Tags Implementadas**:
+     - `app_updates`: Notificações sobre atualizações do app
+     - `course_notifications`: Notificações sobre novos cursos e conteúdos
+   - **Sincronização Automática**:
+     - Tags sincronizadas no login do usuário (`authStore`)
+     - Tags atualizadas em tempo real ao alterar preferências (`preferencesStore`)
+     - Tags sincronizadas na inicialização do app (`App.tsx`)
+
+3. **Integração com Preferências**:
+   - Store `preferencesStore` modificada para sincronizar tags com OneSignal
+   - Função `syncTagsWithOneSignal()` criada para mapear preferências → tags
+   - Preferências persistidas com MMKV e refletidas no OneSignal Dashboard
+
+4. **Gerenciamento de External ID**:
+   - External ID (UID do Firebase Auth) vinculado ao usuário no login
+   - External ID desvinculado no logout para evitar notificações após sair
+   - Permite envio de notificações direcionadas por usuário específico
+
+5. **Arquitetura de Sincronização**:
+   - **Login** (`authStore.signIn`):
+     1. Autentica usuário no Firebase
+     2. Vincula External ID ao OneSignal
+     3. Sincroniza tags baseadas nas preferências salvas
+   - **Logout** (`authStore.signOut`):
+     1. Desvincula External ID do OneSignal
+     2. Desloga do Firebase
+   - **Alteração de Preferências** (`preferencesStore.toggleNotification`):
+     1. Atualiza estado local
+     2. Persiste no MMKV
+     3. Sincroniza tags com OneSignal imediatamente
+   - **Inicialização do App** (`App.tsx`):
+     1. Inicializa OneSignal SDK
+     2. Solicita permissões
+     3. Sincroniza tags se usuário estiver autenticado
+
+#### **Arquivos Modificados**
+
+- `App.tsx` - Inicialização do OneSignal SDK e sincronização inicial de tags
+- `src/stores/authStore.ts` - Vinculação/desvinculação de External ID e sincronização de tags no login/logout
+- `src/stores/preferencesStore.ts` - Sincronização automática de tags ao alterar preferências
+- `app.json` - Configuração do plugin OneSignal com modo development
+
+#### **Testes Realizados**
+
+- ✅ Verificação de tags no OneSignal Dashboard após login
+- ✅ Atualização de tags ao alternar preferências na tela de Conta
+- ✅ Envio de notificação segmentada para tag `app_updates`
+- ✅ Recebimento de notificação no dispositivo físico (iOS)
+- ✅ Logs de subscription ID e external ID funcionando corretamente
+
+#### **Decisões Técnicas**
+
+- **Modo Development**: Plugin configurado com `mode: "development"` para facilitar testes
+- **Sincronização Tripla**: Tags sincronizadas em 3 pontos (login, mudança de preferência, inicialização) para garantir consistência
+- **Verificação de Autenticação**: Sincronização de tags só ocorre se `user` estiver presente
+- **Logs Detalhados**: Mantidos para facilitar debugging em produção
+
+---
+
+- ✅ **Refinamento de Exibição de Status de Cursos - 100% Concluído**
+- **Objetivo**: Implementar sistema robusto de exibição de status "EM BREVE" para cursos e aulas, com feedback visual claro e tratamento adequado de interações.
+
+#### **Funcionalidades Implementadas**
+
+1. **Status "EM BREVE" para Cursos**:
+   - Campo `status: "AVAILABLE" | "COMING_SOON"` adicionado à interface `ICourse`
+   - Filtro automático no `CourseCatalogScreen` para exibir apenas cursos disponíveis
+   - Badge visual "🚀 EM BREVE" nos cards de cursos com status `COMING_SOON`
+   - Desabilitação de interação (opacity 0.7, sem navegação) para cursos em breve
+
+2. **Status "EM BREVE" para Aulas**:
+   - Campo `status: "AVAILABLE" | "COMING_SOON"` adicionado à interface `ILesson`
+   - Badge visual "🚀 EM BREVE" nos cards de aulas no `CourseCurriculumScreen`
+   - Lógica de bloqueio refinada:
+     - Aulas "EM BREVE" sempre bloqueadas (independente de progresso)
+     - Aulas disponíveis seguem lógica sequencial normal
+   - Feedback visual claro: opacity 0.7 + ícone de cadeado para aulas bloqueadas
+
+3. **Componente CourseCard Refinado**:
+   - Adicionado suporte a badge "EM BREVE" com estilo consistente
+   - Tratamento condicional de navegação (não navega se status for `COMING_SOON`)
+   - Efeito visual de opacidade para indicar indisponibilidade
+   - Mantida consistência com design system (cores, espaçamento, tipografia)
+
+4. **Lógica de Bloqueio de Aulas Aprimorada**:
+   - Função `getLessonStatus` refatorada para considerar 3 fatores:
+     1. Status da aula (`COMING_SOON` → sempre bloqueada)
+     2. Progresso do usuário (aulas concluídas)
+     3. Desbloqueio sequencial (apenas próxima aula disponível)
+   - Prioridade: Status "EM BREVE" > Lógica sequencial
+
+#### **Arquivos Modificados**
+
+- `src/types/course.ts` - Adicionado campo `status` em `ICourse` e `ILesson`
+- `src/pages/study/course-catalog/index.tsx` - Filtro de cursos disponíveis
+- `src/pages/study/course-curriculum/index.tsx` - Lógica de bloqueio de aulas refinada
+- `src/components/CourseCard/index.tsx` - Suporte a badge "EM BREVE" e desabilitação de navegação
+- `src/components/CourseCard/styles.ts` - Estilos para badge e estado desabilitado
+
+#### **Benefícios UX/UI**
+
+- ✅ **Transparência**: Usuários sabem quais cursos/aulas estão disponíveis
+- ✅ **Antecipação**: Badge "EM BREVE" gera expectativa para conteúdo futuro
+- ✅ **Feedback Visual Claro**: Opacity + badge + ícone de cadeado comunicam indisponibilidade
+- ✅ **Prevenção de Frustração**: Navegação bloqueada evita cliques em conteúdo indisponível
+- ✅ **Consistência**: Design system aplicado em todos os estados (disponível, bloqueado, em breve)
+
+#### **Próximos Passos Recomendados**
+
+- [ ] Adicionar data de lançamento no badge "EM BREVE" (ex: "EM BREVE - 15/02")
+- [ ] Implementar notificação push quando curso/aula "EM BREVE" for liberado
+- [ ] Criar tela de "Cursos em Breve" com lista completa e opção de "Me Avise"
 
 ---
