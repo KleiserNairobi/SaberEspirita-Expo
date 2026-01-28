@@ -15,7 +15,14 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "app.saberespirita"
+      "bundleIdentifier": "app.saberespirita",
+      "infoPlist": {
+        "UIBackgroundModes": ["remote-notification"]
+      },
+      "entitlements": {
+        "aps-environment": "production",
+        "com.apple.security.application-groups": ["group.app.saberespirita.onesignal"]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -33,6 +40,12 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+        "onesignal-expo-plugin",
+        {
+          "mode": "production"
+        }
+      ],
       [
         "expo-build-properties",
         {

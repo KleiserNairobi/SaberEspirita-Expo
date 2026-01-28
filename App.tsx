@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { Platform } from "react-native";
+import { OneSignal, LogLevel } from "react-native-onesignal";
 import { registerRootComponent } from "expo";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -104,6 +106,40 @@ export default function App() {
     }
     prepare();
   }, [fontsLoaded]);
+
+  // Inicializar OneSignal
+  useEffect(() => {
+    if (appIsReady) {
+      // App IDs do OneSignal
+      const oneSignalAppId =
+        Platform.OS === "ios"
+          ? "53fdc0bb-07b5-49c2-822e-963720610ebd"
+          : "10a5e77f-2de1-43ed-8bdb-817d357df2d9";
+
+      // Configurar log level para debug
+      OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+
+      // Inicializar OneSignal
+      OneSignal.initialize(oneSignalAppId);
+
+      // Solicitar permissões de notificação
+      OneSignal.Notifications.requestPermission(true);
+
+      // Sincronizar tags de preferências
+      try {
+        const { usePreferencesStore } = require("./src/stores/preferencesStore");
+        const preferences = usePreferencesStore.getState();
+
+        OneSignal.User.addTags({
+          app_updates: preferences.appUpdateNotifications.toString(),
+          course_reminders: preferences.courseNotifications.toString(),
+        });
+        console.log("OneSignal: Tags iniciais sincronizadas");
+      } catch (error) {
+        console.error("Erro ao sincronizar tags iniciais:", error);
+      }
+    }
+  }, [appIsReady]);
 
   if (!appIsReady) {
     return null;

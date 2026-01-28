@@ -9,8 +9,10 @@ import {
   User,
   UserCredential,
 } from "firebase/auth";
+import { OneSignal } from "react-native-onesignal";
 import { auth } from "@/configs/firebase/firebase";
 import * as Storage from "@/utils/Storage";
+import { usePreferencesStore } from "./preferencesStore";
 
 // Adapter MMKV para Zustand (mesmo padrão do themeStore)
 const zustandStorage = {
@@ -106,6 +108,23 @@ export const useAuthStore = create<AuthState>()(
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           console.log("AuthStore: Login bem-sucedido:", userCredential.user.uid);
           set({ user: userCredential.user, loading: false });
+
+          // Sincronizar com OneSignal
+          try {
+            // Vincular External ID (UID do Firebase)
+            OneSignal.login(userCredential.user.uid);
+            console.log("OneSignal: External ID vinculado:", userCredential.user.uid);
+
+            // Sincronizar tags de preferências
+            const preferences = usePreferencesStore.getState();
+            OneSignal.User.addTags({
+              app_updates: preferences.appUpdateNotifications.toString(),
+              course_reminders: preferences.courseNotifications.toString(),
+            });
+            console.log("OneSignal: Tags sincronizadas após login");
+          } catch (onesignalError) {
+            console.error("Erro ao sincronizar OneSignal no login:", onesignalError);
+          }
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
           console.error("AuthStore: Erro no login:", errorMessage);
@@ -141,6 +160,14 @@ export const useAuthStore = create<AuthState>()(
           await firebaseSignOut(auth);
           set({ user: null, loading: false });
           console.log("AuthStore: Logout concluído");
+
+          // Deslogar do OneSignal
+          try {
+            OneSignal.logout();
+            console.log("OneSignal: Logout realizado");
+          } catch (onesignalError) {
+            console.error("Erro ao deslogar do OneSignal:", onesignalError);
+          }
         } catch (error: any) {
           const errorMessage = "Erro ao fazer logout";
           console.error("AuthStore:", errorMessage, error);
