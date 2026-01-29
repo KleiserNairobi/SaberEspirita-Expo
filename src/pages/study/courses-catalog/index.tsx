@@ -51,7 +51,7 @@ const CatalogCourseItem = React.memo(
     styles,
   }: {
     course: ICourse;
-    onPress: (course: ICourse) => void;
+    onPress: (course: ICourse, hasProgress: boolean) => void;
     theme: any;
     styles: any;
   }) => {
@@ -66,12 +66,15 @@ const CatalogCourseItem = React.memo(
     const progressPercent =
       totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
+    // Verifica se o curso tem progresso (foi iniciado)
+    const hasProgress = !!progressData && completedCount > 0;
+
     return (
       <View style={{ paddingHorizontal: theme.spacing.lg }}>
         <CourseCard
           course={course}
           progress={progressPercent}
-          onPress={() => onPress(course)}
+          onPress={() => onPress(course, hasProgress)}
         />
       </View>
     );
@@ -134,8 +137,14 @@ export function CoursesCatalogScreen({ navigation }: any) {
     return result;
   }, [courses, searchQuery, filterType]);
 
-  function handleCoursePress(course: ICourse) {
-    navigation.navigate("CourseDetails", { courseId: course.id });
+  function handleCoursePress(course: ICourse, hasProgress: boolean) {
+    // Se o curso tem progresso (foi iniciado), vai direto para o currículo
+    // Caso contrário, vai para os detalhes
+    if (hasProgress) {
+      navigation.navigate("CourseCurriculum", { courseId: course.id });
+    } else {
+      navigation.navigate("CourseDetails", { courseId: course.id });
+    }
   }
 
   function renderCourse({ item }: { item: ICourse }) {

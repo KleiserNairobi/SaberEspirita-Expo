@@ -31,27 +31,6 @@ export function ProgressSummaryCard({
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  // Mensagem condicional baseada no progresso de exercícios
-  function getProgressMessage() {
-    if (certificateEligible) {
-      return "Parabéns! Você está pronto para o certificado!";
-    }
-
-    // Se não tem certificado, mensagens genéricas de incentivo
-    if (!hasCertificate) {
-      if (lessonsProgress === 100 && exercisesProgress === 100) {
-        return "Parabéns! Curso concluído com sucesso!";
-      }
-      return "Continue avançando em seus estudos!";
-    }
-
-    // Se tem certificado, mensagens focadas no certificado
-    if (exercisesProgress === 0) {
-      return "Complete os exercícios para obter seu certificado!";
-    }
-    return "Continue completando os exercícios!";
-  }
-
   return (
     <View style={styles.container}>
       {/* Título do Curso */}
@@ -97,20 +76,6 @@ export function ProgressSummaryCard({
         </View>
         <Text style={styles.progressFooter}>
           {completedExercises} de {totalExercises} exercícios completos
-        </Text>
-      </View>
-
-      {/* Mensagem de Status */}
-      <View
-        style={[
-          styles.messageContainer,
-          certificateEligible && styles.messageContainerSuccess,
-        ]}
-      >
-        <Text
-          style={[styles.messageText, certificateEligible && styles.messageTextSuccess]}
-        >
-          {getProgressMessage()}
         </Text>
       </View>
     </View>
