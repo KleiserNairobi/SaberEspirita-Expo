@@ -15,7 +15,7 @@ export function createStyles(theme: ITheme) {
     containerOutline: {
       backgroundColor: "transparent",
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: theme.colors.muted,
     },
     containerFullWidth: {
       width: "100%",

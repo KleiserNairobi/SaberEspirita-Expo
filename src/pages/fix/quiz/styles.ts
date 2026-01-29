@@ -39,12 +39,12 @@ export function createStyles(theme: ITheme) {
       marginBottom: theme.spacing.lg,
     },
     questionText: {
-      ...theme.text("lg", "medium"),
+      ...theme.text("md", "medium"),
       color: theme.colors.text,
-      lineHeight: 28,
+      lineHeight: 22,
     },
     footer: {
-      padding: theme.spacing.lg,
+      padding: theme.spacing.md,
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
       flexDirection: "row",

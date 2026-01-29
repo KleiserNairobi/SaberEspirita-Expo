@@ -57,7 +57,7 @@ export function createStyles(theme: ITheme) {
       width: 12,
       height: 12,
       borderRadius: 6,
-      backgroundColor: theme.colors.warning,
+      backgroundColor: theme.colors.error,
       borderWidth: 2,
       borderColor: theme.colors.background,
     },

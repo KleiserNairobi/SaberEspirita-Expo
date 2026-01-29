@@ -15,7 +15,6 @@ export function createStyles(theme: ITheme) {
       alignItems: "center",
     },
     starsContainer: {
-      marginTop: theme.spacing.xl,
       marginBottom: theme.spacing.lg,
     },
     resultImage: {
@@ -27,7 +26,7 @@ export function createStyles(theme: ITheme) {
       marginBottom: theme.spacing.lg,
     },
     subcategoryName: {
-      ...theme.text("lg", "bold"),
+      ...theme.text("lg", "semibold"),
       color: theme.colors.text,
       textAlign: "center",
       marginBottom: theme.spacing.xs,
@@ -51,8 +50,8 @@ export function createStyles(theme: ITheme) {
       marginBottom: theme.spacing.xs,
     },
     statLabel: {
-      ...theme.text("sm", "regular"),
-      color: theme.colors.textSecondary,
+      ...theme.text("sm", "medium"),
+      color: theme.colors.primary,
       textAlign: "center",
     },
     unlockMessage: {
@@ -66,10 +65,10 @@ export function createStyles(theme: ITheme) {
       paddingHorizontal: theme.spacing.md,
     },
     feedbackTitle: {
-      ...theme.text("xl", "bold"),
+      ...theme.text("xl", "semibold"),
       color: theme.colors.text,
       textAlign: "center",
-      marginBottom: theme.spacing.md,
+      marginBottom: theme.spacing.xs,
     },
     feedbackMessage: {
       ...theme.text("md", "regular"),
@@ -78,7 +77,8 @@ export function createStyles(theme: ITheme) {
       lineHeight: 24,
     },
     footer: {
-      padding: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       gap: theme.spacing.sm,
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,

@@ -190,9 +190,9 @@ export function QuizResultScreen() {
         </View>
 
         {/* Mensagem de Desbloqueio */}
-        <Text style={styles.unlockMessage}>
+        {/* <Text style={styles.unlockMessage}>
           Você desbloqueou {totalQuestions} explicações doutrinárias
-        </Text>
+        </Text> */}
 
         {/* Feedback */}
         <View style={styles.feedbackContainer}>

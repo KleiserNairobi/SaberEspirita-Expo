@@ -63,6 +63,7 @@ export function QuizScreen() {
   } = route.params;
 
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const scrollViewRef = useRef<ScrollView>(null);
   const snapPoints = useMemo(() => ["40%"], []);
 
   const [stop, setStop] = useState(false);
@@ -185,6 +186,8 @@ export function QuizScreen() {
     // 3. Next or Finish
     if (currentQuestionIndex < quiz.questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
+      // Scroll para o topo ao avançar para próxima pergunta
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
     } else {
       handleFinish(newAnswers);
     }
@@ -216,6 +219,8 @@ export function QuizScreen() {
     // 3. Next or Finish
     if (currentQuestionIndex < quiz!.questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
+      // Scroll para o topo ao avançar para próxima pergunta
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
     } else {
       handleFinish(newAnswers);
     }
@@ -401,6 +406,7 @@ export function QuizScreen() {
 
       {/* Conteúdo */}
       <ScrollView
+        ref={scrollViewRef}
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
