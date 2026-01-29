@@ -25,7 +25,7 @@ export const generateCertificateHTML = (data: CertificateData): string => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Oswald:wght@400;700&family=Baskervville:ital@0;1&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -39,252 +39,277 @@ export const generateCertificateHTML = (data: CertificateData): string => {
     }
 
     body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Baskervville', serif;
+      background: #F7F8F6;
       width: 297mm;
       height: 210mm;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 15mm;
+      padding: 0;
     }
 
     .certificate {
       width: 100%;
       height: 100%;
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      padding: 30px 50px;
+      background: #FFFFFF;
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
       position: relative;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 48px;
+      overflow: hidden;
     }
 
+    /* Borda interna sutil */
     .certificate::before {
       content: '';
       position: absolute;
-      top: 12px;
-      left: 12px;
-      right: 12px;
-      bottom: 12px;
-      border: 3px solid #764ba2;
-      border-radius: 15px;
-      opacity: 0.3;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      border: 2px solid #E3E2DA;
+      pointer-events: none;
+      z-index: 0;
     }
 
-    .header {
-      text-align: center;
+    /* Marca d'água central */
+    .watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 640px;
+      opacity: 0.03;
+      z-index: 0;
+      pointer-events: none;
+      color: #6F7C60;
+      line-height: 1;
+    }
+
+    /* Logo/Brand */
+    .brand-name {
+      font-family: 'Allura', cursive;
+      font-size: 48px;
+      color: #6F7C60;
+      margin-bottom: 24px;
+      z-index: 10;
       position: relative;
-      z-index: 1;
     }
 
-    .logo {
-      width: 60px;
-      height: 60px;
-      margin: 0 auto 15px;
+    /* Título */
+    .title-section {
+      margin-bottom: 40px;
+      z-index: 10;
+      position: relative;
     }
 
     .title {
-      font-family: 'Playfair Display', serif;
-      font-size: 42px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 36px;
       font-weight: 700;
-      color: #764ba2;
-      margin-bottom: 5px;
-      letter-spacing: 3px;
-    }
-
-    .subtitle {
-      font-size: 16px;
-      color: #666;
-      font-weight: 600;
-      letter-spacing: 4px;
+      letter-spacing: 0.15em;
+      color: #222222;
       text-transform: uppercase;
     }
 
-    .body {
-      text-align: center;
-      padding: 20px 0;
-      position: relative;
-      z-index: 1;
+    .title-underline {
+      width: 128px;
+      height: 2px;
+      background: #6F7C60;
+      margin: 8px auto 0;
+      opacity: 0.3;
     }
 
-    .intro {
-      font-size: 16px;
-      color: #666;
-      margin-bottom: 15px;
+    /* Corpo do texto */
+    .body-section {
+      z-index: 10;
+      position: relative;
+      max-width: 700px;
+    }
+
+    .intro-text {
+      font-family: 'Baskervville', serif;
+      font-size: 20px;
+      color: #222222;
+      line-height: 1.6;
     }
 
     .student-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 32px;
-      font-weight: 700;
-      color: #333;
-      margin: 15px 0;
-      padding: 8px 0;
-      border-bottom: 2px solid #764ba2;
-      display: inline-block;
+      font-family: 'Allura', cursive;
+      font-size: 60px;
+      color: #6F7C60;
+      margin: 24px 0;
+      display: block;
     }
 
     .conclusion-text {
-      font-size: 16px;
-      color: #666;
-      margin: 15px 0;
+      font-family: 'Baskervville', serif;
+      font-size: 20px;
+      color: #222222;
+      line-height: 1.6;
+      margin-bottom: 48px;
     }
 
     .course-title {
-      font-size: 24px;
+      font-family: 'Oswald', sans-serif;
       font-weight: 700;
-      color: #764ba2;
-      margin: 15px 0;
-    }
-
-    .metadata {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
-
-    .metadata-item {
-      text-align: center;
-    }
-
-    .metadata-label {
-      font-size: 11px;
-      color: #999;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 4px;
+      letter-spacing: 0.05em;
+      font-size: 18px;
+      color: #222222;
     }
 
-    .metadata-value {
-      font-size: 16px;
-      font-weight: 700;
-      color: #333;
-    }
-
-    .footer {
+    /* Rodapé */
+    .footer-section {
+      width: 100%;
+      margin-top: auto;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
+      padding: 0 48px 16px;
+      z-index: 10;
       position: relative;
-      z-index: 1;
-      margin-top: auto;
     }
 
-    .date {
+    .footer-left {
       text-align: left;
     }
 
-    .date-text {
-      font-size: 13px;
-      color: #666;
-    }
-
-    .signature {
-      text-align: center;
-    }
-
-    .signature-line {
-      width: 180px;
-      height: 2px;
-      background: #333;
-      margin: 8px auto;
-    }
-
-    .signature-text {
-      font-size: 15px;
-      font-weight: 700;
-      color: #333;
+    .signature-handwritten {
+      font-family: 'Allura', cursive;
+      font-size: 28px;
+      color: #222222;
       margin-bottom: 4px;
     }
 
-    .signature-label {
-      font-size: 11px;
-      color: #999;
+    .signature-line {
+      width: 192px;
+      border-top: 1px solid rgba(34, 34, 34, 0.3);
+      padding-top: 8px;
+      margin-bottom: 4px;
     }
 
-    .validation {
-      text-align: right;
+    .signature-text {
+      font-family: 'Oswald', sans-serif;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #6F7C60;
     }
 
-    .cert-number {
-      font-size: 11px;
-      color: #999;
-      margin-bottom: 8px;
-    }
-
-    .validation-code {
+    .signature-id {
+      font-family: 'Oswald', sans-serif;
       font-size: 10px;
-      color: #764ba2;
-      font-weight: 600;
-      margin-top: 5px;
+      color: rgba(111, 124, 96, 0.6);
+      margin-top: 4px;
     }
 
-    .validation-url {
-      font-size: 9px;
-      color: #999;
-      margin-top: 3px;
+    .footer-center {
+      text-align: center;
+      font-family: 'Baskervville', serif;
+      font-style: italic;
+      color: #6F7C60;
+      font-size: 14px;
+      padding: 0 32px;
+    }
+
+    .footer-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .seal-container {
+      width: 80px;
+      height: 80px;
+      border: 3px solid #D9E4CC;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: rgba(247, 248, 246, 0.3);
+      margin-bottom: 16px;
+    }
+
+    .seal-icon {
+      font-size: 40px;
+      color: #6F7C60;
+      opacity: 0.7;
+    }
+
+    .seal-badge {
+      position: absolute;
+      bottom: -8px;
+      background: #FFFFFF;
+      padding: 2px 8px;
+      border: 1px solid #E3E2DA;
+      border-radius: 4px;
+      font-size: 8px;
+      font-weight: 700;
+      color: #6F7C60;
+      font-family: 'Oswald', sans-serif;
+    }
+
+    .footer-date {
+      font-family: 'Oswald', sans-serif;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #6F7C60;
     }
   </style>
 </head>
 <body>
   <div class="certificate">
-    <div class="header">
-      <div class="logo">
-        <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="30" cy="30" r="28" fill="#764ba2" opacity="0.1"/>
-          <path d="M30 10L35 22L48 22L38 30L42 42L30 34L18 42L22 30L12 22L25 22L30 10Z" fill="#764ba2"/>
-        </svg>
-      </div>
-      <h1 class="title">CERTIFICADO</h1>
-      <p class="subtitle">de Conclusão</p>
+    <!-- Marca d'água central -->
+    <div class="watermark">🌿</div>
+
+    <!-- Logo/Brand -->
+    <div class="brand-name">Saber Espírita</div>
+
+    <!-- Título -->
+    <div class="title-section">
+      <h1 class="title">Certificado de Conclusão</h1>
+      <div class="title-underline"></div>
     </div>
 
-    <div class="body">
-      <p class="intro">Certificamos que</p>
-      <h2 class="student-name">${data.studentName}</h2>
-      <p class="conclusion-text">concluiu com êxito o curso de</p>
-      <h3 class="course-title">${data.courseTitle}</h3>
-
-      <div class="metadata">
-        <div class="metadata-item">
-          <p class="metadata-label">Carga Horária</p>
-          <p class="metadata-value">${data.workloadHours}h</p>
-        </div>
-        <div class="metadata-item">
-          <p class="metadata-label">Nota Final</p>
-          <p class="metadata-value">${data.finalGrade.toFixed(1)}/10</p>
-        </div>
-        <div class="metadata-item">
-          <p class="metadata-label">Aulas</p>
-          <p class="metadata-value">${data.completedLessons}</p>
-        </div>
-        <div class="metadata-item">
-          <p class="metadata-label">Exercícios</p>
-          <p class="metadata-value">${data.completedExercises}</p>
-        </div>
-      </div>
+    <!-- Corpo -->
+    <div class="body-section">
+      <p class="intro-text">Certificamos, para os devidos fins, que o aluno(a)</p>
+      <span class="student-name">${data.studentName}</span>
+      <p class="conclusion-text">
+        concluiu com êxito e dedicação o curso de 
+        <strong class="course-title">${data.courseTitle}</strong>, 
+        ministrado pela plataforma Saber Espírita, cumprindo integralmente a carga horária e os requisitos pedagógicos estabelecidos.
+      </p>
     </div>
 
-    <div class="footer">
-      <div class="date">
-        <p class="date-text">${data.issuedDate}</p>
-      </div>
-
-      <div class="signature">
-        <p class="signature-text">Saber Espírita</p>
+    <!-- Rodapé -->
+    <div class="footer-section">
+      <div class="footer-left">
+        <p class="signature-handwritten">Saber Espírita</p>
         <div class="signature-line"></div>
-        <p class="signature-label">Certificação Digital</p>
+        <p class="signature-text">Saber Espírita</p>
+        <p class="signature-id">ID: ${data.certificateNumber}</p>
       </div>
 
-      <div class="validation">
-        <p class="cert-number">Nº ${data.certificateNumber}</p>
-        ${data.validationCode ? `<p class="validation-code">Código: ${data.validationCode.substring(0, 8).toUpperCase()}</p>` : ""}
-        ${data.validationUrl ? `<p class="validation-url">${data.validationUrl}</p>` : ""}
+      <div class="footer-center">
+        "Na luz do conhecimento, o espírito se eleva"
+      </div>
+
+      <div class="footer-right">
+        <div class="seal-container">
+          <span class="seal-icon">✓</span>
+          <div class="seal-badge">SELO DIGITAL</div>
+        </div>
+        <p class="footer-date">${data.issuedDate}</p>
       </div>
     </div>
   </div>
