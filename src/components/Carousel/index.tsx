@@ -237,6 +237,7 @@ const styles = StyleSheet.create({
     height: 6,
     backgroundColor: "rgba(255,255,255,0.3)",
     borderRadius: 3,
+    marginTop: 10,
     marginBottom: 12, // Espaço antes do botão
     flexDirection: "row",
     alignItems: "center",
@@ -260,7 +261,7 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     paddingHorizontal: 20,
-    paddingVertical: 8,
+    paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.4)",

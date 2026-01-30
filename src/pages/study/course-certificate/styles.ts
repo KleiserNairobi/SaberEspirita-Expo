@@ -28,6 +28,25 @@ export const createStyles = (theme: ITheme) =>
       paddingBottom: theme.spacing.lg,
       alignItems: "center",
     },
+    headerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: theme.spacing.md,
+      width: "100%",
+    },
+    headerSide: {
+      width: 40,
+      alignItems: "center",
+    },
+    backButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: theme.colors.accent,
+      alignItems: "center",
+      justifyContent: "center",
+    },
     // Ícone Central com Anéis
     iconRingsContainer: {
       width: 104,
@@ -246,7 +265,6 @@ export const createStyles = (theme: ITheme) =>
       width: "100%",
       marginTop: theme.spacing.xl,
       gap: theme.spacing.md,
-      paddingHorizontal: theme.spacing.md,
     },
     shareButton: {
       backgroundColor: theme.colors.primary,
@@ -312,14 +330,9 @@ export const createStyles = (theme: ITheme) =>
     optionButton: {
       flexDirection: "row",
       alignItems: "center",
-      padding: theme.spacing.lg,
-      borderRadius: theme.radius.lg,
+      padding: theme.spacing.md,
+      borderRadius: theme.radius.md,
       marginBottom: theme.spacing.md,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
     },
     optionButtonLocal: {
       backgroundColor: theme.colors.primary,

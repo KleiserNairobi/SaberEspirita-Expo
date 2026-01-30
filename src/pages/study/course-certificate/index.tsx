@@ -10,6 +10,7 @@ import {
   Download,
   Cloud,
   CheckCircle,
+  ArrowLeft,
 } from "lucide-react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
@@ -218,17 +219,34 @@ export function CourseCertificateScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          {/* Ícone Central com Anéis (sem botões laterais) */}
-          <View style={styles.iconRingsContainer}>
-            <View style={styles.ringOuter} />
-            <View style={styles.ringMiddle} />
-            <View style={styles.ringInner} />
-            <View style={styles.iconLargeContainer}>
-              <Award size={40} color={theme.colors.background} />
+          {/* Linha 1: Botão Voltar | Ícone | Espaço */}
+          <View style={styles.headerRow}>
+            {/* Coluna Esquerda: Botão Voltar */}
+            <View style={styles.headerSide}>
+              <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => navigation.goBack()}
+                activeOpacity={0.7}
+              >
+                <ArrowLeft size={20} color={theme.colors.primary} />
+              </TouchableOpacity>
             </View>
+
+            {/* Coluna Central: Ícone com Anéis */}
+            <View style={styles.iconRingsContainer}>
+              <View style={styles.ringOuter} />
+              <View style={styles.ringMiddle} />
+              <View style={styles.ringInner} />
+              <View style={styles.iconLargeContainer}>
+                <Award size={40} color={theme.colors.background} />
+              </View>
+            </View>
+
+            {/* Coluna Direita: Espaço vazio para manter simetria */}
+            <View style={styles.headerSide} />
           </View>
 
-          {/* Título e Subtítulo */}
+          {/* Linha 2: Título e Subtítulo */}
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerTitle}>Certificado de Mérito</Text>
             <Text style={styles.headerSubtitle}>
