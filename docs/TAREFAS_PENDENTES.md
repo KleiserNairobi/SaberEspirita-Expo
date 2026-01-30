@@ -7,12 +7,11 @@
 
 ## 📊 Resumo Executivo
 
-| Categoria             | Quantidade | Prioridade |
-| --------------------- | ---------- | ---------- |
-| 🟡 Importantes        | 3          | Média      |
-| 🟢 Melhorias Futuras  | 7          | Baixa      |
-| 🔵 Limpeza/Manutenção | 2          | Baixa      |
-| **TOTAL**             | **12**     | -          |
+| Categoria            | Quantidade | Prioridade |
+| -------------------- | ---------- | ---------- |
+| 🟡 Importantes       | 3          | Média      |
+| 🟢 Melhorias Futuras | 6          | Baixa      |
+| **TOTAL**            | **9**      | -          |
 
 ---
 
@@ -40,52 +39,35 @@
 
 ## 🟢 Melhorias Futuras (Baixa Prioridade)
 
-### 4. **Data de Lançamento no Badge "EM BREVE"**
-
-- **Descrição**: Exibir data prevista no badge (ex: "EM BREVE - 15/02")
-- **Esforço Estimado**: 2 horas
-
-### 5. **Fase 6: Polish - Animações**
+### 4. **Fase 6: Polish - Animações**
 
 - **Descrição**: Adicionar animações de transição entre telas
 - **Esforço Estimado**: 2-3 dias
 
-### 6. **Fase 6: Polish - Haptic Feedback**
+### 5. **Fase 6: Polish - Haptic Feedback**
 
 - **Descrição**: Implementar feedback tátil em interações
 - **Esforço Estimado**: 1 dia
 
-### 7. **Fase 6: Polish - Micro-interações**
+### 6. **Fase 6: Polish - Micro-interações**
 
 - **Descrição**: Melhorar micro-interações (hover, press, etc.)
 - **Esforço Estimado**: 2 dias
 
-### 8. **Fase 8: Filtros no Histórico**
+### 7. **Fase 8: Filtros no Histórico**
 
 - **Descrição**: Implementar filtros avançados no histórico de quizzes
 - **Esforço Estimado**: 1 dia
 
-### 9. **Fase 8: Tela "Biblioteca"**
+### 8. **Fase 8: Tela "Biblioteca"**
 
 - **Descrição**: Exibir perguntas salvas/favoritas
 - **Esforço Estimado**: 2 dias
 
-### 10. **Fase 8: Documentação Final**
+### 9. **Fase 8: Documentação Final**
 
 - **Descrição**: Documentar arquitetura, APIs e fluxos
 - **Esforço Estimado**: 2-3 dias
-
-## 🔵 Limpeza e Manutenção (Baixa Prioridade)
-
-### 11. **Monitorar Uso de Bandwidth**
-
-- **Descrição**: Acompanhar uso de bandwidth no Firebase Console
-- **Esforço Estimado**: Contínuo (5 min/semana)
-
-### 12. **Atualizar Status de Itens Concluídos**
-
-- **Descrição**: Revisar plano e marcar itens já implementados
-- **Esforço Estimado**: 1 hora
 
 ---
 
@@ -99,19 +81,13 @@
 
 ### Médio Prazo (1 mês)
 
-4. 🎯 Adicionar Data de Lançamento no Badge (Tarefa 4)
-5. 🎯 Fase 6: Polish - Animações (Tarefa 5)
-6. 🎯 Fase 6: Polish - Haptic Feedback (Tarefa 6)
+4. 🎯 Fase 6: Polish - Animações (Tarefa 4)
+5. 🎯 Fase 6: Polish - Haptic Feedback (Tarefa 5)
 
 ### Longo Prazo (2-3 meses)
 
-7. 🎯 Fase 6: Polish - Micro-interações (Tarefa 7)
-8. 🎯 Fase 8: Finalização (Tarefas 8-10)
-
-### Contínuo
-
-- 🔧 Limpeza e Manutenção (Tarefas 14-16)
-- 📊 Monitoramento de Performance e Custos
+6. 🎯 Fase 6: Polish - Micro-interações (Tarefa 6)
+7. 🎯 Fase 8: Finalização (Tarefas 7-9)
 
 ---
 
@@ -139,8 +115,8 @@ Concluído:     █████████████████████�
 Pendente:      ░░░░░░░░░░░░░░░░                       6%
 ```
 
-**Total de Tarefas**: 12 pendentes de ~193 planejadas  
-**Taxa de Conclusão**: ~94%
+**Total de Tarefas**: 9 pendentes de ~193 planejadas  
+**Taxa de Conclusão**: ~95%
 
 ---
 
