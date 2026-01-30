@@ -9,6 +9,7 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { createMMKV } from "react-native-mmkv";
 import { StatusBar } from "expo-status-bar";
+import * as SplashScreen from "expo-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Allura_400Regular } from "@expo-google-fonts/allura";
@@ -38,6 +39,9 @@ import { UpdateModal } from "./src/components/UpdateModal";
 
 // Configurar MMKV storage para cache do React Query
 const mmkvStorage = createMMKV({ id: "react-query-cache" });
+
+// Prevenir que o splash screen seja ocultado automaticamente
+SplashScreen.preventAutoHideAsync();
 
 // Criar persister usando MMKV
 const persister = createAsyncStoragePersister({
@@ -117,6 +121,8 @@ export default function App() {
         if (fontsLoaded) {
           await new Promise((resolve) => setTimeout(resolve, 500));
           setAppIsReady(true);
+          // Ocultar splash screen após app estar pronto
+          await SplashScreen.hideAsync();
         }
       } catch (e: any) {
         console.error(e);

@@ -8,11 +8,7 @@
     "newArchEnabled": true,
     "userInterfaceStyle": "automatic",
     "icon": "./assets/images/icon.png",
-    "splash": {
-      "image": "./assets/images/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "app.saberespirita",
@@ -24,6 +20,7 @@
         "com.apple.security.application-groups": ["group.app.saberespirita.onesignal"]
       }
     },
+
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
@@ -34,12 +31,20 @@
       "package": "app.saberespirita",
       "softwareKeyboardLayoutMode": "pan"
     },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
-    },
+
     "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F2F7F2",
+          "image": "./assets/images/splash-icon.png",
+          "resizeMode": "contain",
+          "dark": {
+            "backgroundColor": "#121E31",
+            "image": "./assets/images/splash-icon.png"
+          }
+        }
+      ],
       [
         "onesignal-expo-plugin",
         {
