@@ -32,22 +32,19 @@ export interface ICourse {
 export interface ILesson {
   id: string;
   courseId: string;
-  moduleId?: string; // ✅ NOVO - Agrupamento opcional
+  moduleId?: string;
   title: string;
-  description?: string; // ✅ NOVO
+  description?: string;
   order: number;
   slides: ISlide[];
   durationMinutes: number;
   source?: string;
   chapter?: string;
-  status: LessonStatus; // ✅ NOVO
-
-  // ✅ NOVO - Conteúdo multimídia
+  status: LessonStatus;
   videoUrl?: string;
   audioUrl?: string;
-
-  // ✅ NOVO - Materiais Complementares
   supplementaryMaterials?: ISupplementaryMaterial[];
+  reflectionQuestions?: IReflectionQuestion[];
 }
 
 export interface ISlide {
@@ -60,6 +57,11 @@ export interface ISlide {
     kardeciana?: string;
     biblica?: string;
   };
+}
+
+export interface IReflectionQuestion {
+  question: string;
+  focus: "Autoconhecimento" | "Aplicação prática" | "Transformação moral";
 }
 
 export interface IUserCourseProgress {

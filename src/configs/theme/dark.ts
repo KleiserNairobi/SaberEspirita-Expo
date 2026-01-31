@@ -19,6 +19,7 @@ export const DarkTheme: ITheme = {
     error: "#CF6679",
     success: "#81C784",
     warning: "#FFA726", // ✅ NOVO - Laranja claro para avisos
+    reflection: "#90A4AE", // ✅ NOVO - Azul Petróleo claro para reflexão
     onPrimary: "#0C1624",
     onSecondary: "#FFFFFF",
   },

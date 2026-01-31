@@ -27,6 +27,7 @@ export function SlideContent({
   const markdownStyles = {
     body: {
       ...theme.text("md", "regular"),
+      textAlign: "justify",
       fontSize: fontSize,
       color: theme.colors.text,
       lineHeight: fontSize * 1.5,

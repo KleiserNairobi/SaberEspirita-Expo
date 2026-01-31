@@ -1,8 +1,35 @@
 import * as Speech from "expo-speech";
 
 /**
- * Narra um texto usando Text-to-Speech
+ * Remove formatação markdown de um texto para narração limpa
+ * @param text Texto com markdown
+ * @returns Texto limpo sem formatação
  */
+export function stripMarkdown(text: string): string {
+  return (
+    text
+      // Remove negrito: **texto**
+      .replace(/\*\*([^*]+)\*\*/g, "$1")
+      // Remove itálico: *texto* (apenas se não for parte de **)
+      .replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, "$1")
+      // Remove links: [texto](url)
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      // Remove headers: # Título
+      .replace(/^#{1,6}\s+/gm, "")
+      // Remove listas: - item ou * item
+      .replace(/^[-*]\s+/gm, "")
+      // Remove código inline: `código`
+      .replace(/`([^`]+)`/g, "$1")
+      // Remove quebras de linha duplas e substitui por pausa
+      .replace(/\n{2,}/g, ". ")
+      // Remove quebras de linha simples
+      .replace(/\n/g, " ")
+      // Remove espaços múltiplos
+      .replace(/\s{2,}/g, " ")
+      .trim()
+  );
+}
+
 /**
  * Lista as vozes disponíveis no dispositivo
  */
@@ -22,11 +49,15 @@ export async function getAvailableVoices() {
 
 /**
  * Narra um texto usando Text-to-Speech
- * @param text Texto a ser narrado
+ * ✅ Remove automaticamente formatação markdown para narração limpa
+ * @param text Texto a ser narrado (pode conter markdown)
  * @param voiceIdentifier ID da voz opcional (ex: identificador único da voz)
  */
 export async function speakText(text: string, voiceIdentifier?: string): Promise<void> {
   try {
+    // ✅ Remove markdown automaticamente antes de narrar
+    const cleanText = stripMarkdown(text);
+
     const options: Speech.SpeechOptions = {
       language: "pt-BR",
       pitch: 1.0,
@@ -37,7 +68,7 @@ export async function speakText(text: string, voiceIdentifier?: string): Promise
       options.voice = voiceIdentifier;
     }
 
-    await Speech.speak(text, options);
+    await Speech.speak(cleanText, options);
   } catch (error) {
     console.error("Erro ao narrar texto:", error);
     throw error;

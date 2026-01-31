@@ -41,6 +41,7 @@ import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech"; // U
 import { SlideContent } from "./components/SlideContent";
 import { HighlightCard } from "./components/HighlightCard";
 import { ReferenceCard } from "./components/ReferenceCard";
+import { ReflectionQuestionsCard } from "./components/ReflectionQuestionsCard";
 import { SlideIndicator } from "./components/SlideIndicator";
 import { ReadingToolbar } from "@/components/ReadingToolbar";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
@@ -450,6 +451,16 @@ export function LessonPlayerScreen() {
                 fontSize={getFontSize()}
               />
             )}
+
+            {/* Perguntas Reflexivas - Apenas no último slide */}
+            {isLastSlide &&
+              lesson.reflectionQuestions &&
+              lesson.reflectionQuestions.length > 0 && (
+                <ReflectionQuestionsCard
+                  questions={lesson.reflectionQuestions}
+                  fontSize={getFontSize()}
+                />
+              )}
           </ScrollView>
         </Animated.View>
       </GestureDetector>

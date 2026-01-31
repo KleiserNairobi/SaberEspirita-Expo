@@ -17,6 +17,7 @@ export type ThemeColors = {
   error: string;
   success: string;
   warning: string;
+  reflection: string;
   onPrimary: string;
   onSecondary: string;
 };

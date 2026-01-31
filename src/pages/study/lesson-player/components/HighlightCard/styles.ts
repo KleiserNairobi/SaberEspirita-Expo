@@ -30,6 +30,7 @@ export const createStyles = (theme: ITheme) =>
     },
     highlightContent: {
       ...theme.text("sm", "regular"),
+      textAlign: "justify",
       lineHeight: 20,
       opacity: 0.9,
     },

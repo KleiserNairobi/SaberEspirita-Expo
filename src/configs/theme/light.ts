@@ -19,6 +19,7 @@ export const LightTheme: ITheme = {
     error: "#C94B4B",
     success: "#5C8A5C",
     warning: "#F59E0B", // ✅ NOVO - Laranja para avisos
+    reflection: "#546E7A", // ✅ NOVO - Azul Petróleo (Blue Grey) para harmonia
     onPrimary: "#FFFFFF",
     onSecondary: "#FFFFFF",
 
