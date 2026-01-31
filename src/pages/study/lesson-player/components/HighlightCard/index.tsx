@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text } from "react-native";
+import Markdown from "react-native-markdown-display";
 import { Lightbulb } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -17,6 +18,31 @@ export function HighlightCard({ highlights, fontSize = 16 }: HighlightCardProps)
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
+  const markdownStyles = {
+    body: {
+      ...theme.text("md", "regular"),
+      textAlign: "justify",
+      fontSize: fontSize,
+      color: theme.colors.text,
+      lineHeight: fontSize * 1.5,
+    },
+    paragraph: {
+      marginBottom: 0,
+    },
+    strong: {
+      ...theme.text("md", "medium"),
+      fontSize: fontSize,
+      fontWeight: "bold",
+      color: theme.colors.text,
+    },
+    em: {
+      ...theme.text("md", "regular"),
+      fontStyle: "italic",
+      fontSize: fontSize,
+      color: theme.colors.text,
+    },
+  } as any;
+
   if (!highlights || highlights.length === 0) {
     return null;
   }
@@ -30,11 +56,9 @@ export function HighlightCard({ highlights, fontSize = 16 }: HighlightCardProps)
       {highlights.map((highlight, index) => (
         <View key={index} style={styles.highlightItem}>
           <Text style={[styles.highlightTitle, { fontSize }]}>{highlight.title}</Text>
-          <Text
-            style={[styles.highlightContent, { fontSize, lineHeight: fontSize * 1.5 }]}
-          >
-            {highlight.content}
-          </Text>
+          <View style={styles.highlightContent}>
+            <Markdown style={markdownStyles}>{highlight.content}</Markdown>
+          </View>
         </View>
       ))}
     </View>

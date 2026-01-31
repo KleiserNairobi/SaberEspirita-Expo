@@ -26,12 +26,10 @@ export const createStyles = (theme: ITheme) =>
     },
     highlightTitle: {
       ...theme.text("sm", "semibold"),
-      marginBottom: 4,
+      marginBottom: -6,
     },
     highlightContent: {
-      ...theme.text("sm", "regular"),
-      textAlign: "justify",
-      lineHeight: 20,
       opacity: 0.9,
+      marginBottom: 6,
     },
   });
