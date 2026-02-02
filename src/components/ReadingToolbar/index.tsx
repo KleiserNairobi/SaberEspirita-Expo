@@ -69,12 +69,15 @@ export function ReadingToolbar({
 
       {/* Narrar */}
       <TouchableOpacity
-        style={styles.actionButton}
+        style={[
+          styles.actionButton,
+          isNarrating && { backgroundColor: theme.colors.primary },
+        ]}
         onPress={onNarrate}
         activeOpacity={0.7}
       >
         {isNarrating ? (
-          <VolumeX size={20} color={theme.colors.primary} />
+          <VolumeX size={20} color="#FFFFFF" />
         ) : (
           <Volume2 size={20} color={theme.colors.primary} />
         )}

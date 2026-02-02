@@ -40,6 +40,11 @@ import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types"
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { createStyles } from "./styles";
 
+import { useRateApp } from "@/hooks/useRateApp";
+import { RateAppBottomSheet } from "@/components/RateAppBottomSheet";
+
+// ... existing imports
+
 type LessonPlayerRouteProp = RouteProp<AppStackParamList, "LessonPlayer">;
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
@@ -56,6 +61,15 @@ export function LessonPlayerScreen() {
   // Controle de Fonte
   const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } =
     usePrayerPreferencesStore();
+
+  // Rate App Hook
+  const {
+    checkIfShouldAsk,
+    handleRateNow,
+    handleRemindLater,
+    incrementLessonsCompletedCount,
+  } = useRateApp();
+  const rateAppSheetRef = useRef<BottomSheetModal>(null);
 
   const { courseId, lessonId } = route.params;
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -152,6 +166,7 @@ export function LessonPlayerScreen() {
 
     try {
       await markLessonAsCompleted(lesson.courseId, lesson.id, user?.uid);
+      incrementLessonsCompletedCount();
 
       if (user?.uid) {
         await queryClient.invalidateQueries({
@@ -159,7 +174,16 @@ export function LessonPlayerScreen() {
         });
       }
 
-      navigation.goBack();
+      // Verificar se deve pedir avaliação
+      if (checkIfShouldAsk()) {
+        setIsProcessing(false);
+        // Pequeno delay para garantir que a UI atualizou (opcional, mas bom pra UX)
+        setTimeout(() => {
+          rateAppSheetRef.current?.present();
+        }, 300);
+      } else {
+        navigation.goBack();
+      }
     } catch (error) {
       console.error("Erro ao finalizar:", error);
       setIsProcessing(false);
@@ -204,8 +228,13 @@ export function LessonPlayerScreen() {
             ". Destaques: " +
             currentSlide.highlights.map((h) => `${h.title}: ${h.content}.`).join(" ");
         }
-        await speakText(fullText);
-        setIsNarrating(false);
+        await speakText(
+          fullText,
+          undefined,
+          () => setIsNarrating(false), // onDone
+          () => setIsNarrating(false) // onStopped
+        );
+        // Não setamos false aqui imediatamente, pois o speakText roda em background
       }
     } catch (error) {
       setIsNarrating(false);
@@ -315,6 +344,22 @@ export function LessonPlayerScreen() {
       </View>
 
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
+
+      <RateAppBottomSheet
+        ref={rateAppSheetRef}
+        onRate={handleRateNow}
+        onRemindLater={() => {
+          handleRemindLater();
+          navigation.goBack();
+        }}
+        onDismiss={() => {
+          // Se fechar sem interagir (tap fora ou swipe down), consideramos como navegar de volta (sem marcar remind later explicitamente talvez?
+          // Ou melhor, checkar se interagiu. Mas para simplicidade, se dismiss e não interagiu, apenas sai.
+          // O hook não muda estado no dismiss puro para não spammar 'remind later' se for só um misclick, mas talvez seja melhor tratar.
+          // Pelo plano: "Na ação do BottomSheet ou fechar -> goBack."
+          navigation.goBack();
+        }}
+      />
     </SafeAreaView>
   );
 }

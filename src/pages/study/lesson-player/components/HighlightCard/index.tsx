@@ -25,6 +25,7 @@ export function HighlightCard({ highlights, fontSize = 16 }: HighlightCardProps)
       fontSize: fontSize,
       color: theme.colors.text,
       lineHeight: fontSize * 1.5,
+      width: "100%",
     },
     paragraph: {
       marginBottom: 0,

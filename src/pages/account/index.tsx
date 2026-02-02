@@ -1,6 +1,7 @@
-import React from "react";
+import { useRef, useState } from "react";
 import { ScrollView, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 import {
   Volume2,
@@ -23,6 +24,8 @@ import { LogoutButton } from "@/pages/account/components/LogoutButton";
 import { APP_VERSION } from "@/pages/account/constants";
 import { createStyles } from "@/pages/account/styles";
 import { useAccountScreen } from "@/pages/account/hooks/useAccountScreen";
+import { BottomSheetMessage } from "@/components/BottomSheetMessage";
+import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 
 export default function AccountScreen() {
   const {
@@ -40,10 +43,44 @@ export default function AccountScreen() {
     handleRateApp,
     handleInstagram,
     handleShareApp,
-    handleLogout,
+    signOut,
   } = useAccountScreen();
 
   const styles = createStyles(theme);
+
+  // Logout BottomSheet Logic
+  const logoutSheetRef = useRef<BottomSheetModal>(null);
+  const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
+    null
+  );
+
+  function handleLogoutPress() {
+    setMessageConfig({
+      type: "question",
+      title: "Sair",
+      message: "Tem certeza que deseja sair da sua conta?",
+      primaryButton: {
+        label: "Sair",
+        onPress: async () => {
+          try {
+            await signOut();
+          } catch (error) {
+            console.error("Erro ao fazer logout:", error);
+          }
+        },
+      },
+      secondaryButton: {
+        label: "Cancelar",
+        onPress: () => {
+          logoutSheetRef.current?.dismiss();
+        },
+      },
+    });
+    // Pequeno delay para garantir que a config foi setada antes de abrir
+    setTimeout(() => {
+      logoutSheetRef.current?.present();
+    }, 100);
+  }
 
   return (
     <SafeAreaView
@@ -166,7 +203,7 @@ export default function AccountScreen() {
             />
           </SettingsSection>
 
-          <LogoutButton onPress={handleLogout} />
+          <LogoutButton onPress={handleLogoutPress} />
 
           <Text
             style={[
@@ -178,6 +215,8 @@ export default function AccountScreen() {
           </Text>
         </ScrollView>
       </AppBackground>
+
+      <BottomSheetMessage ref={logoutSheetRef} config={messageConfig} />
     </SafeAreaView>
   );
 }

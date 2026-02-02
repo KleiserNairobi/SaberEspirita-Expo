@@ -17,6 +17,8 @@ import {
   PLAY_STORE_URL,
 } from "../constants";
 
+import { useRateApp } from "@/hooks/useRateApp";
+
 export function useAccountScreen() {
   const { theme, themeType, setThemeType } = useAppTheme();
   const { user, signOut } = useAuthStore();
@@ -74,30 +76,12 @@ export function useAccountScreen() {
     navigation.navigate("Privacy");
   }
 
+  const { openStore } = useRateApp();
+
+  // ... (existing code)
+
   async function handleRateApp() {
-    const storeUrl = Platform.OS === "ios" ? APP_STORE_URL : PLAY_STORE_URL;
-
-    try {
-      const canOpen = await Linking.canOpenURL(storeUrl);
-
-      if (canOpen) {
-        await Linking.openURL(storeUrl);
-      } else {
-        // Fallback para simulador ou quando o link não pode ser aberto
-        Alert.alert(
-          "Avaliar App",
-          Platform.OS === "ios"
-            ? "Para avaliar o app, acesse a App Store em um dispositivo real."
-            : "Para avaliar o app, acesse a Play Store em um dispositivo real."
-        );
-      }
-    } catch (error) {
-      console.error("Erro ao abrir loja:", error);
-      Alert.alert(
-        "Erro",
-        "Não foi possível abrir a loja. Por favor, tente novamente mais tarde."
-      );
-    }
+    await openStore();
   }
 
   function handleInstagram() {
@@ -110,23 +94,6 @@ export function useAccountScreen() {
     } catch (error) {
       console.error("Erro ao compartilhar:", error);
     }
-  }
-
-  function handleLogout() {
-    Alert.alert(ALERTS.logout.title, ALERTS.logout.message, [
-      { text: ALERTS.logout.cancelText, style: "cancel" },
-      {
-        text: ALERTS.logout.confirmText,
-        style: "destructive",
-        onPress: async () => {
-          try {
-            await signOut();
-          } catch (error) {
-            console.error("Erro ao fazer logout:", error);
-          }
-        },
-      },
-    ]);
   }
 
   return {
@@ -147,6 +114,6 @@ export function useAccountScreen() {
     handleRateApp,
     handleInstagram,
     handleShareApp,
-    handleLogout,
+    signOut,
   };
 }

@@ -53,7 +53,12 @@ export async function getAvailableVoices() {
  * @param text Texto a ser narrado (pode conter markdown)
  * @param voiceIdentifier ID da voz opcional (ex: identificador único da voz)
  */
-export async function speakText(text: string, voiceIdentifier?: string): Promise<void> {
+export async function speakText(
+  text: string,
+  voiceIdentifier?: string,
+  onDone?: () => void,
+  onStopped?: () => void
+): Promise<void> {
   try {
     // ✅ Remove markdown automaticamente antes de narrar
     const cleanText = stripMarkdown(text);
@@ -62,6 +67,9 @@ export async function speakText(text: string, voiceIdentifier?: string): Promise
       language: "pt-BR",
       pitch: 1.0,
       rate: 0.9,
+      onDone: onDone,
+      onStopped: onStopped,
+      onError: onStopped, // Trata erro como parada também
     };
 
     if (voiceIdentifier) {
@@ -71,6 +79,7 @@ export async function speakText(text: string, voiceIdentifier?: string): Promise
     await Speech.speak(cleanText, options);
   } catch (error) {
     console.error("Erro ao narrar texto:", error);
+    onStopped?.(); // Garante limpeza de estado
     throw error;
   }
 }

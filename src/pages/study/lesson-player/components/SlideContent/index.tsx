@@ -31,6 +31,7 @@ export function SlideContent({
       fontSize: fontSize,
       color: theme.colors.text,
       lineHeight: fontSize * 1.5,
+      width: "100%", // Fix para justificação no Android
     },
     paragraph: {
       marginBottom: theme.spacing.md,
