@@ -1,5 +1,6 @@
-import React, { forwardRef, useMemo } from "react";
+import React, { forwardRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -37,9 +38,8 @@ export const FilterBottomSheet = forwardRef<BottomSheetModal, FilterBottomSheetP
     ref
   ) => {
     const { theme } = useAppTheme();
+    const insets = useSafeAreaInsets();
     const styles = createStyles(theme);
-
-    const snapPoints = useMemo(() => ["60%"], []);
 
     function handleFilterSelect(filter: ContentFilterType) {
       onFilterChange(filter);
@@ -61,13 +61,15 @@ export const FilterBottomSheet = forwardRef<BottomSheetModal, FilterBottomSheetP
     return (
       <BottomSheetModal
         ref={ref}
-        snapPoints={snapPoints}
+        enableDynamicSizing={true}
         enablePanDownToClose
         backdropComponent={renderBackdrop}
         backgroundStyle={styles.bottomSheetBackground}
         handleIndicatorStyle={styles.handleIndicator}
       >
-        <BottomSheetView style={styles.container}>
+        <BottomSheetView
+          style={[styles.container, { paddingBottom: Math.max(insets.bottom, 40) + 10 }]}
+        >
           <Text style={styles.title}>{title}</Text>
 
           {filterOptions.map((option, index) => {

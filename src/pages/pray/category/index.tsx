@@ -276,7 +276,12 @@ export function PrayCategoryScreen() {
           ref={bottomSheetRef}
           filterType={filterType}
           onFilterChange={(filter) => {
-            if (filter !== "BY_TOPIC") {
+            if (
+              filter === "ALL" ||
+              filter === "FAVORITES" ||
+              filter === "BY_AUTHOR" ||
+              filter === "BY_SOURCE"
+            ) {
               setFilterType(filter);
             }
           }}

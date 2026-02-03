@@ -1,5 +1,6 @@
 import React, { forwardRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   BottomSheetModal,
   BottomSheetBackdrop,
@@ -34,6 +35,7 @@ export const SubcategoryFilterBottomSheet = forwardRef<
   SubcategoryFilterBottomSheetProps
 >(function SubcategoryFilterBottomSheet({ filterType, onFilterChange }, ref) {
   const { theme } = useAppTheme();
+  const insets = useSafeAreaInsets();
   const styles = createStyles(theme);
 
   function handleFilterSelect(newFilter: SubcategoryFilterType) {
@@ -57,13 +59,15 @@ export const SubcategoryFilterBottomSheet = forwardRef<
     <BottomSheetModal
       ref={ref}
       index={0}
-      snapPoints={["40%"]}
+      enableDynamicSizing={true}
       enablePanDownToClose={true}
       backdropComponent={renderBackdrop}
       backgroundStyle={styles.bottomSheetBackground}
       handleIndicatorStyle={styles.handleIndicator}
     >
-      <BottomSheetView style={styles.container}>
+      <BottomSheetView
+        style={[styles.container, { paddingBottom: Math.max(insets.bottom, 40) + 10 }]}
+      >
         <Text style={styles.title}>Filtrar Subcategorias</Text>
 
         {FILTER_OPTIONS.map((option, index) => {

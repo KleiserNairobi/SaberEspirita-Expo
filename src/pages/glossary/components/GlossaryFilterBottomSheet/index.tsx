@@ -1,5 +1,6 @@
 import React, { forwardRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   BottomSheetModal,
   BottomSheetBackdrop,
@@ -28,6 +29,7 @@ export const GlossaryFilterBottomSheet = forwardRef<
   GlossaryFilterBottomSheetProps
 >(function GlossaryFilterBottomSheet({ filterType, onFilterChange }, ref) {
   const { theme } = useAppTheme();
+  const insets = useSafeAreaInsets();
   const styles = createStyles(theme);
 
   function handleFilterSelect(newFilter: GlossaryFilterType) {
@@ -53,13 +55,15 @@ export const GlossaryFilterBottomSheet = forwardRef<
     <BottomSheetModal
       ref={ref}
       index={0}
-      snapPoints={["40%"]}
+      enableDynamicSizing={true}
       enablePanDownToClose={true}
       backdropComponent={renderBackdrop}
       backgroundStyle={styles.bottomSheetBackground}
       handleIndicatorStyle={styles.handleIndicator}
     >
-      <BottomSheetView style={styles.container}>
+      <BottomSheetView
+        style={[styles.container, { paddingBottom: Math.max(insets.bottom, 40) + 10 }]}
+      >
         <Text style={styles.title}>Filtrar Termos</Text>
 
         {filterOptions.map((option, index) => {
