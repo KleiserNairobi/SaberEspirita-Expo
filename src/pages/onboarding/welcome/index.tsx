@@ -64,10 +64,10 @@ export function WelcomeScreen() {
             {/* Citação de Allan Kardec */}
             <View style={styles.quoteContainer}>
               <Text style={styles.quoteText}>
-                "O Espiritismo é a ciência que trata da natureza, origem e destino dos
-                Espíritos, e de suas relações com o mundo corporal."
+                O Espiritismo é a ciência que trata da natureza, origem e destino dos
+                Espíritos, e de suas relações com o mundo corporal.
               </Text>
-              <Text style={styles.quoteAuthor}>— Allan Kardec</Text>
+              <Text style={styles.quoteAuthor}>Allan Kardec</Text>
             </View>
           </View>
         </View>

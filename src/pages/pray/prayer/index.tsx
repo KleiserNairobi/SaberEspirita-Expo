@@ -12,15 +12,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { PrayStackParamList } from "@/routers/types";
-import {
-  Heart,
-  Share2,
-  Volume2,
-  VolumeX,
-  ArrowLeft,
-  AArrowDown,
-  AArrowUp,
-} from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
@@ -28,7 +19,9 @@ import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { usePrayer } from "@/pages/pray/hooks/usePrayer";
 import { createStyles } from "@/pages/pray/prayer/styles";
 import { sharePrayer } from "@/utils/sharing";
+
 import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
+import { ReadingToolbar } from "@/components/ReadingToolbar";
 
 export function PrayerScreen() {
   const { theme } = useAppTheme();
@@ -65,8 +58,12 @@ export function PrayerScreen() {
         setIsNarrating(false);
       } else {
         setIsNarrating(true);
-        await speakText(`${prayer.title}. ${prayer.content}`);
-        setIsNarrating(false);
+        await speakText(
+          `${prayer.title}. ${prayer.content}`,
+          undefined,
+          () => setIsNarrating(false),
+          () => setIsNarrating(false)
+        );
       }
     } catch (error) {
       setIsNarrating(false);
@@ -127,71 +124,19 @@ export function PrayerScreen() {
         </View>
 
         {/* Barra de Ações */}
-        <View style={styles.actionsContainer}>
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={handleGoBack}
-            activeOpacity={0.7}
-          >
-            <ArrowLeft size={20} color={theme.colors.primary} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={handleToggleFavorite}
-            activeOpacity={0.7}
-          >
-            <Heart
-              size={20}
-              color={theme.colors.primary}
-              fill={isFav ? theme.colors.primary : "transparent"}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={handleNarrate}
-            activeOpacity={0.7}
-          >
-            {isNarrating ? (
-              <VolumeX size={20} color={theme.colors.primary} />
-            ) : (
-              <Volume2 size={20} color={theme.colors.primary} />
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={handleShare}
-            activeOpacity={0.7}
-          >
-            <Share2 size={20} color={theme.colors.primary} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={decreaseFontSize}
-            activeOpacity={0.7}
-            disabled={fontSizeLevel === 0}
-          >
-            <AArrowDown
-              size={20}
-              color={fontSizeLevel === 0 ? theme.colors.muted : theme.colors.primary}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={increaseFontSize}
-            activeOpacity={0.7}
-            disabled={fontSizeLevel === 4}
-          >
-            <AArrowUp
-              size={20}
-              color={fontSizeLevel === 4 ? theme.colors.muted : theme.colors.primary}
-            />
-          </TouchableOpacity>
-        </View>
+        <ReadingToolbar
+          onBack={handleGoBack}
+          onShare={handleShare}
+          onNarrate={handleNarrate}
+          isNarrating={isNarrating}
+          onIncreaseFontSize={increaseFontSize}
+          onDecreaseFontSize={decreaseFontSize}
+          canIncreaseFontSize={fontSizeLevel < 4}
+          canDecreaseFontSize={fontSizeLevel > 0}
+          showFavorite={true}
+          isFavorite={isFav}
+          onFavorite={handleToggleFavorite}
+        />
 
         {/* Conteúdo */}
         <Text style={[styles.content, { fontSize: getFontSize() }]}>

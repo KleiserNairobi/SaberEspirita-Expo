@@ -25,6 +25,8 @@ import { useReflections } from "../hooks/useReflections";
 import { ContentFilterType } from "@/types/prayer";
 import { REFLECTION_TOPICS } from "@/types/reflection";
 import { createStyles } from "./styles";
+import { useQueryClient } from "@tanstack/react-query";
+import { getReflectionById } from "@/services/firebase/reflectionService";
 
 // Opções de filtro específicas para reflexões (inclui "Por Tópico")
 const REFLECTION_FILTER_OPTIONS = [
@@ -39,6 +41,7 @@ export default function AllReflectionsScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
+  const queryClient = useQueryClient();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<ContentFilterType>("ALL");
@@ -101,6 +104,14 @@ export default function AllReflectionsScreen() {
 
   function handleReflectionPress(reflectionId: string) {
     navigation.navigate("Reflection", { id: reflectionId });
+  }
+
+  function prefetchReflection(id: string) {
+    queryClient.prefetchQuery({
+      queryKey: ["reflection", id],
+      queryFn: () => getReflectionById(id),
+      staleTime: 1000 * 60 * 60, // 1 hora
+    });
   }
 
   if (isLoading) {
@@ -192,6 +203,7 @@ export default function AllReflectionsScreen() {
             <ReflectionCard
               reflection={item}
               onPress={() => handleReflectionPress(item.id)}
+              onPressIn={() => prefetchReflection(item.id)}
             />
           )}
           style={styles.list}

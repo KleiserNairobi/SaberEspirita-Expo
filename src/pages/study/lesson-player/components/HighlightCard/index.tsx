@@ -28,7 +28,13 @@ export function HighlightCard({ highlights, fontSize = 16 }: HighlightCardProps)
       width: "100%",
     },
     paragraph: {
-      marginBottom: 0,
+      marginBottom: 0, // Destaques geralmente são compactos
+      ...theme.text("md", "regular"),
+      textAlign: "justify",
+      fontSize: fontSize,
+      color: theme.colors.text,
+      lineHeight: fontSize * 1.5,
+      width: "100%",
     },
     strong: {
       ...theme.text("md", "medium"),
@@ -58,7 +64,18 @@ export function HighlightCard({ highlights, fontSize = 16 }: HighlightCardProps)
         <View key={index} style={styles.highlightItem}>
           <Text style={[styles.highlightTitle, { fontSize }]}>{highlight.title}</Text>
           <View style={styles.highlightContent}>
-            <Markdown style={markdownStyles}>{highlight.content}</Markdown>
+            <Markdown
+              style={markdownStyles}
+              rules={{
+                paragraph: (node, children, parent, styles) => (
+                  <Text key={node.key} style={styles.paragraph}>
+                    {children}
+                  </Text>
+                ),
+              }}
+            >
+              {highlight.content}
+            </Markdown>
           </View>
         </View>
       ))}

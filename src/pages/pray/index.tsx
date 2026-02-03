@@ -31,6 +31,8 @@ import { PRAYER_MOMENTS } from "@/types/prayer";
 import { useFeaturedPrayers } from "@/pages/pray/hooks/useFeaturedPrayers";
 import { AmbientPlayer } from "@/pages/pray/components/AmbientPlayer";
 import { createStyles } from "@/pages/pray/styles";
+import { useQueryClient } from "@tanstack/react-query";
+import { getPrayersByCategory } from "@/services/firebase/prayerService";
 
 // Mapeamento de ícones para cada momento
 const MOMENT_ICONS = {
@@ -49,6 +51,7 @@ export default function PrayScreen() {
   const styles = createStyles(theme);
   const navigation = useNavigation<NativeStackNavigationProp<PrayStackParamList>>();
   const { user } = useAuthStore();
+  const queryClient = useQueryClient();
 
   const { data: featuredPrayers, isLoading: featuredLoading } = useFeaturedPrayers();
 
@@ -56,6 +59,14 @@ export default function PrayScreen() {
 
   function handleMomentPress(categoryId: string) {
     navigation.navigate("PrayCategory", { id: categoryId });
+  }
+
+  function prefetchCategory(categoryId: string) {
+    queryClient.prefetchQuery({
+      queryKey: ["prayers", "category", categoryId],
+      queryFn: () => getPrayersByCategory(categoryId),
+      staleTime: 1000 * 60 * 60, // 1 hora
+    });
   }
 
   function handlePrayerPress(prayerId: string) {
@@ -90,6 +101,7 @@ export default function PrayScreen() {
                 key={key}
                 style={styles.momentCard}
                 onPress={() => handleMomentPress(key)}
+                onPressIn={() => prefetchCategory(key)}
                 activeOpacity={0.7}
               >
                 <View style={styles.iconContainer}>

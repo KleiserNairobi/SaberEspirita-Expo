@@ -330,7 +330,12 @@ export function LessonPlayerScreen() {
             disabled={isProcessing}
           >
             {isProcessing ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
+              <>
+                <ActivityIndicator size="small" color="#FFFFFF" />
+                <Text style={[styles.finishButtonText, { marginLeft: 8 }]}>
+                  Finalizando
+                </Text>
+              </>
             ) : (
               <Text style={styles.finishButtonText}>Finalizar</Text>
             )}

@@ -63,8 +63,12 @@ export function TermDetailScreen() {
       } else {
         setIsNarrating(true);
         const fullText = `${term.term}. ${term.definition}. Referências: ${term.references.join(". ")}`;
-        await speakText(fullText);
-        setIsNarrating(false);
+        await speakText(
+          fullText,
+          undefined,
+          () => setIsNarrating(false),
+          () => setIsNarrating(false)
+        );
       }
     } catch (error) {
       setIsNarrating(false);

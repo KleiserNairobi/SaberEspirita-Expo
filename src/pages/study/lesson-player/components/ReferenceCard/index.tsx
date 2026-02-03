@@ -29,12 +29,16 @@ export function ReferenceCard({ references, fontSize = 16 }: ReferenceCardProps)
       </View>
       {references.kardeciana && (
         <Text style={[styles.referenceText, { fontSize, lineHeight: fontSize * 1.5 }]}>
-          Kardeciana: {references.kardeciana}
+          <Text style={{ fontFamily: theme.typography.weights.semibold }}>
+            Kardeciana:{" "}
+          </Text>
+          {references.kardeciana}
         </Text>
       )}
       {references.biblica && (
         <Text style={[styles.referenceText, { fontSize, lineHeight: fontSize * 1.5 }]}>
-          Bíblica: {references.biblica}
+          <Text style={{ fontFamily: theme.typography.weights.semibold }}>Bíblica: </Text>
+          {references.biblica}
         </Text>
       )}
     </View>

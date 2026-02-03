@@ -1,4 +1,12 @@
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  documentId,
+} from "firebase/firestore";
 
 import { db } from "@/configs/firebase/firebase";
 import { IPrayer, IPrayerCategory, IPrayerCategoryLink } from "@/types/prayer";
@@ -31,25 +39,30 @@ export async function getPrayersByCategory(categoryId: string): Promise<IPrayer[
     return [];
   }
 
-  // Buscar orações
-  // Buscar orações em paralelo para performance
-  const prayerPromises = prayerIds.map((prayerId) =>
-    getDoc(doc(db, "prayers", prayerId))
-  );
+  // Buscar orações em lotes de 10 (limite do Firestore para operador 'in')
+  const prayersRef = collection(db, "prayers");
+  const chunks: string[][] = [];
 
-  const prayerDocs = await Promise.all(prayerPromises);
+  for (let i = 0; i < prayerIds.length; i += 10) {
+    chunks.push(prayerIds.slice(i, i + 10));
+  }
 
-  const prayers: IPrayer[] = prayerDocs
-    .filter((doc) => doc.exists())
-    .map(
+  const prayersPromises = chunks.map(async (chunk) => {
+    const q = query(prayersRef, where(documentId(), "in", chunk));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(
       (doc) =>
         ({
           id: doc.id,
           ...doc.data(),
         }) as IPrayer
     );
+  });
 
-  return prayers;
+  const results = await Promise.all(prayersPromises);
+
+  // Flatten dos resultados
+  return results.flat();
 }
 
 /**

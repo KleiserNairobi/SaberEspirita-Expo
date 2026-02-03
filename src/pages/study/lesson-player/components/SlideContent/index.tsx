@@ -35,6 +35,12 @@ export function SlideContent({
     },
     paragraph: {
       marginBottom: theme.spacing.md,
+      ...theme.text("md", "regular"),
+      textAlign: "justify",
+      fontSize: fontSize,
+      color: theme.colors.text,
+      lineHeight: fontSize * 1.5,
+      width: "100%",
     },
     strong: {
       ...theme.text("md", "medium"),
@@ -139,7 +145,18 @@ export function SlideContent({
       >
         {title}
       </Text>
-      <Markdown style={markdownStyles}>{content}</Markdown>
+      <Markdown
+        style={markdownStyles}
+        rules={{
+          paragraph: (node, children, parent, styles) => (
+            <Text key={node.key} style={styles.paragraph}>
+              {children}
+            </Text>
+          ),
+        }}
+      >
+        {content}
+      </Markdown>
     </View>
   );
 }

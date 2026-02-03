@@ -7,6 +7,6 @@ export function usePrayersByCategory(categoryId: string) {
     queryKey: ["prayers", "category", categoryId],
     queryFn: () => getPrayersByCategory(categoryId),
     enabled: !!categoryId,
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 1000 * 60 * 60, // 1 hora
   });
 }

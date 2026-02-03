@@ -73,7 +73,7 @@ export const createStyles = (theme: ITheme) =>
     quoteAuthor: {
       ...theme.text("xs", "medium"),
       color: theme.colors.textSecondary,
-      textAlign: "right",
+      textAlign: "left",
     },
     buttonContainer: {
       width: "100%",

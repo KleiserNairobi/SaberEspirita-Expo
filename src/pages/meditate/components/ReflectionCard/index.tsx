@@ -10,9 +10,10 @@ import { createStyles } from "./styles";
 interface ReflectionCardProps {
   reflection: IReflection;
   onPress: () => void;
+  onPressIn?: () => void;
 }
 
-export function ReflectionCard({ reflection, onPress }: ReflectionCardProps) {
+export function ReflectionCard({ reflection, onPress, onPressIn }: ReflectionCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const isFavorite = useReflectionFavoritesStore((state) =>
@@ -20,7 +21,12 @@ export function ReflectionCard({ reflection, onPress }: ReflectionCardProps) {
   );
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={onPress}
+      onPressIn={onPressIn}
+      activeOpacity={0.7}
+    >
       {/* Conteúdo */}
       <View style={styles.content}>
         <Text style={styles.title} numberOfLines={2}>

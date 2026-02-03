@@ -4,19 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Clock,
-  User,
-  BookOpen,
-  Tag,
-  Heart,
-  Share2,
-  Volume2,
-  VolumeX,
-  ArrowLeft,
-  AArrowDown,
-  AArrowUp,
-} from "lucide-react-native";
+import { Clock, User, BookOpen, Tag } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getReflectionById } from "@/services/firebase/reflectionService";
@@ -27,6 +15,7 @@ import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
 import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
 import { shareReflection } from "@/utils/sharing";
 import { createStyles } from "./styles";
+import { ReadingToolbar } from "@/components/ReadingToolbar";
 
 type ReflectionScreenRouteProp = RouteProp<MeditateStackParamList, "Reflection">;
 
@@ -76,9 +65,11 @@ export default function ReflectionScreen() {
       } else {
         setIsNarrating(true);
         await speakText(
-          `${reflection.title}. ${reflection.subtitle || ""}. ${reflection.content}`
+          `${reflection.title}. ${reflection.subtitle || ""}. ${reflection.content}`,
+          undefined,
+          () => setIsNarrating(false),
+          () => setIsNarrating(false)
         );
-        setIsNarrating(false);
       }
     } catch (error) {
       setIsNarrating(false);
@@ -176,71 +167,19 @@ export default function ReflectionScreen() {
           </View>
 
           {/* Barra de Ações */}
-          <View style={styles.actionsContainer}>
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleGoBack}
-              activeOpacity={0.7}
-            >
-              <ArrowLeft size={20} color={theme.colors.primary} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleToggleFavorite}
-              activeOpacity={0.7}
-            >
-              <Heart
-                size={20}
-                color={theme.colors.primary}
-                fill={isFavorite(route.params.id) ? theme.colors.primary : "transparent"}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleNarrate}
-              activeOpacity={0.7}
-            >
-              {isNarrating ? (
-                <VolumeX size={20} color={theme.colors.primary} />
-              ) : (
-                <Volume2 size={20} color={theme.colors.primary} />
-              )}
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleShare}
-              activeOpacity={0.7}
-            >
-              <Share2 size={20} color={theme.colors.primary} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={decreaseFontSize}
-              activeOpacity={0.7}
-              disabled={fontSizeLevel === 0}
-            >
-              <AArrowDown
-                size={20}
-                color={fontSizeLevel === 0 ? theme.colors.muted : theme.colors.primary}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={increaseFontSize}
-              activeOpacity={0.7}
-              disabled={fontSizeLevel === 4}
-            >
-              <AArrowUp
-                size={20}
-                color={fontSizeLevel === 4 ? theme.colors.muted : theme.colors.primary}
-              />
-            </TouchableOpacity>
-          </View>
+          <ReadingToolbar
+            onBack={handleGoBack}
+            onShare={handleShare}
+            onNarrate={handleNarrate}
+            isNarrating={isNarrating}
+            onIncreaseFontSize={increaseFontSize}
+            onDecreaseFontSize={decreaseFontSize}
+            canIncreaseFontSize={fontSizeLevel < 4}
+            canDecreaseFontSize={fontSizeLevel > 0}
+            showFavorite={true}
+            isFavorite={isFavorite(route.params.id)}
+            onFavorite={handleToggleFavorite}
+          />
 
           {/* Divisor */}
           {/* <View style={styles.divider} /> */}

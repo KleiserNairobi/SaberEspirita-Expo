@@ -56,6 +56,12 @@ export function CourseDetailsScreen() {
   const hasCertification = course?.certification?.enabled || false;
   const exerciseCount = course?.stats?.exerciseCount || 0;
 
+  // Formatação de duração (igual ao CourseCard)
+  const workloadMinutes = course?.workloadMinutes || 0;
+  const hours = Math.floor(workloadMinutes / 60);
+  const minutes = workloadMinutes % 60;
+  const durationText = hours > 0 ? `${hours}h ${minutes}min` : `${minutes} min`;
+
   function handleGoBack() {
     navigation.goBack();
   }
@@ -147,9 +153,7 @@ export function CourseDetailsScreen() {
               <View style={styles.iconCircle}>
                 <Clock size={16} color={theme.colors.primary} />
               </View>
-              <Text style={styles.statText}>
-                {course.workloadMinutes || 0} min de leitura
-              </Text>
+              <Text style={styles.statText}>{durationText}</Text>
             </View>
 
             {/* Nível */}

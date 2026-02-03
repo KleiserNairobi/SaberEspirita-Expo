@@ -19,6 +19,8 @@ import { ReflectionCard } from "./components/ReflectionCard";
 import { useFeaturedReflections } from "./hooks/useFeaturedReflections";
 import { MeditateStackParamList } from "@/routers/types";
 import { createStyles } from "./styles";
+import { useQueryClient } from "@tanstack/react-query";
+import { getReflectionById } from "@/services/firebase/reflectionService";
 
 export default function MeditateScreen() {
   const { theme } = useAppTheme();
@@ -28,6 +30,15 @@ export default function MeditateScreen() {
 
   const { data: featuredReflections, isLoading: reflectionsLoading } =
     useFeaturedReflections();
+  const queryClient = useQueryClient();
+
+  function prefetchReflection(id: string) {
+    queryClient.prefetchQuery({
+      queryKey: ["reflection", id],
+      queryFn: () => getReflectionById(id),
+      staleTime: 1000 * 60 * 60, // 1 hora
+    });
+  }
 
   function handleReflectionPress(reflectionId: string) {
     navigation.navigate("Reflection", { id: reflectionId });
@@ -69,6 +80,7 @@ export default function MeditateScreen() {
                 key={reflection.id}
                 reflection={reflection}
                 onPress={() => handleReflectionPress(reflection.id)}
+                onPressIn={() => prefetchReflection(reflection.id)}
               />
             ))}
           </View>

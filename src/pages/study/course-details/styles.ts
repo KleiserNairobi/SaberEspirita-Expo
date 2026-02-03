@@ -146,6 +146,7 @@ export const createStyles = (theme: ITheme) =>
     },
     descriptionText: {
       ...theme.text("md", "regular", theme.colors.textSecondary),
+      textAlign: "justify",
       lineHeight: 24,
     },
 
