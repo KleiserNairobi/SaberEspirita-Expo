@@ -115,7 +115,7 @@ export const BottomSheetMessage = forwardRef<BottomSheetModal, BottomSheetMessag
         onDismiss={onDismiss}
       >
         <BottomSheetView
-          style={[styles.container, { paddingBottom: Math.max(insets.bottom, 24) }]}
+          style={[styles.container, { paddingBottom: Math.max(insets.bottom, 30) + 10 }]}
         >
           {config && (
             <>
