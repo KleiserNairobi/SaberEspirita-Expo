@@ -154,16 +154,19 @@ export async function saveExerciseResult(
     };
   } else {
     // Criar novo resultado
-    updatedResults = [
-      ...exerciseResults,
-      {
-        exerciseId,
-        attempts: [newAttempt],
-        bestScore: score,
-        passed,
-        completedAt: passed ? new Date() : undefined,
-      },
-    ];
+    const newResult: any = {
+      exerciseId,
+      attempts: [newAttempt],
+      bestScore: score,
+      passed,
+    };
+
+    // ✅ Apenas adiciona completedAt se passou (Firestore não aceita undefined)
+    if (passed) {
+      newResult.completedAt = new Date();
+    }
+
+    updatedResults = [...exerciseResults, newResult];
   }
 
   console.log("🔄 [saveExerciseResult] Atualizando progresso com novos resultados...");
