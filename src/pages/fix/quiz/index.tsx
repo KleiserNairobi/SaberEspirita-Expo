@@ -116,7 +116,7 @@ export function QuizScreen() {
 
   const courseQuiz = useQuery({
     queryKey: ["quiz", quizId],
-    queryFn: () => getQuizById(quizId!),
+    queryFn: () => getQuizById(quizId!, "lesson_quizzes"), // ✅ Busca na coleção correta
     enabled: isCourse && !!quizId,
   });
 

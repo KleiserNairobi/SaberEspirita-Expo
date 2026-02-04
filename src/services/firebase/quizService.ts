@@ -81,18 +81,22 @@ export async function getSubcategories(idCategory: string): Promise<ISubcategory
 // ==================== QUIZZES ====================
 
 // ✅ NOVA: Busca por ID exato (genérico)
-export async function getQuizById(quizId: string): Promise<IQuiz | null> {
+// Suporta busca em diferentes coleções para otimizar custos
+export async function getQuizById(
+  quizId: string,
+  collection: "quizes" | "lesson_quizzes" = "quizes"
+): Promise<IQuiz | null> {
   try {
-    const quizDoc = await getDoc(doc(db, "quizes", quizId));
+    const quizDoc = await getDoc(doc(db, collection, quizId));
     if (quizDoc.exists()) {
       const quizData = quizDoc.data() as IQuiz;
       return quizData;
     } else {
-      console.log(`Quiz não encontrado pelo ID: ${quizId}`);
+      console.log(`Quiz não encontrado pelo ID: ${quizId} na coleção: ${collection}`);
       return null;
     }
   } catch (error) {
-    console.log(`Erro ao obter quiz pelo ID: ${quizId}`, error);
+    console.log(`Erro ao obter quiz pelo ID: ${quizId} na coleção: ${collection}`, error);
     return null;
   }
 }
