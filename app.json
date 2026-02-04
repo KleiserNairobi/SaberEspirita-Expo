@@ -10,7 +10,7 @@
     "icon": "./assets/images/icon.png",
 
     "ios": {
-      "buildNumber": "17",
+      "buildNumber": "18",
       "supportsTablet": false,
       "bundleIdentifier": "app.saberespirita",
       "infoPlist": {
@@ -23,7 +23,7 @@
     },
 
     "android": {
-      "versionCode": 16,
+      "versionCode": 17,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "app.saberespirita",
