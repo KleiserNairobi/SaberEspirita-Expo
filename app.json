@@ -14,7 +14,8 @@
       "supportsTablet": false,
       "bundleIdentifier": "app.saberespirita",
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": ["remote-notification"],
+        "NSLocationWhenInUseUsageDescription": "Permita sua localização em uso para receber notificações personalizadas sobre o Saber Espírita."
       },
       "entitlements": {
         "aps-environment": "production",
