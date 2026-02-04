@@ -10,7 +10,7 @@
     "icon": "./assets/images/icon.png",
 
     "ios": {
-      "buildNumber": "18",
+      "buildNumber": "20",
       "supportsTablet": false,
       "bundleIdentifier": "app.saberespirita",
       "infoPlist": {
