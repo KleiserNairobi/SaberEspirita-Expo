@@ -17,6 +17,7 @@ import {
   FileText,
   Award,
   AlertCircle,
+  CheckCircle2,
 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -137,6 +138,23 @@ export function CourseDetailsScreen() {
               {course.description || "Sem descrição disponível."}
             </Text>
           </View>
+
+          {/* LEARNING OBJECTIVES */}
+          {course.learningObjectives && course.learningObjectives.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Objetivos do Curso</Text>
+              <View style={styles.objectivesList}>
+                {course.learningObjectives.map((objective, index) => (
+                  <View key={index} style={styles.objectiveItem}>
+                    <View style={styles.objectiveIcon}>
+                      <CheckCircle2 size={18} color={theme.colors.primary} />
+                    </View>
+                    <Text style={styles.objectiveText}>{objective}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
 
           {/* STATS LIST (2 COLUNAS) */}
           <View style={styles.statsList}>

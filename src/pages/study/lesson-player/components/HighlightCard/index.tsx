@@ -39,7 +39,7 @@ export function HighlightCard({ highlights, fontSize = 16 }: HighlightCardProps)
     strong: {
       ...theme.text("md", "medium"),
       fontSize: fontSize,
-      fontWeight: "bold",
+      fontWeight: "normal",
       color: theme.colors.text,
     },
     em: {

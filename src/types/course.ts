@@ -2,25 +2,22 @@ export interface ICourse {
   id: string;
   title: string;
   description: string;
+  learningObjectives?: string[];
   workloadMinutes: number;
   difficultyLevel: CourseDifficultyLevel;
   author: string;
   lessonCount: number;
-  imageUrl?: string | number; // string para URL ou number para require()
+  imageUrl?: string | number;
   categoryId?: string;
   releaseYear?: number;
-  featured?: boolean; // Curso em destaque (aparece em "Populares")
-  status: CourseStatus; // ✅ NOVO - Status de publicação
-
-  // ✅ NOVO - Requisitos de Certificação
+  featured?: boolean;
+  status: CourseStatus;
   certification: {
     enabled: boolean;
     minimumGrade: number;
     requiredLessonsPercent: number;
     requiredExercisesPercent: number;
   };
-
-  // ✅ NOVO - Estatísticas
   stats?: {
     exerciseCount: number;
     totalDurationMinutes: number;

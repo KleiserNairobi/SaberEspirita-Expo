@@ -17,7 +17,7 @@ export const createStyles = (theme: ITheme) =>
       borderBottomColor: `${theme.colors.border}50`,
     },
     headerTitle: {
-      ...theme.text("sm", "medium"),
+      ...theme.text("md", "medium"),
       color: theme.colors.textSecondary,
       textAlign: "center",
     },

@@ -136,8 +136,7 @@ export const createStyles = (theme: ITheme) =>
 
     // SECTION
     section: {
-      marginTop: theme.spacing.lg,
-      marginBottom: theme.spacing.md,
+      marginVertical: theme.spacing.md,
     },
     sectionTitle: {
       ...theme.text("lg", "semibold"),
@@ -148,6 +147,24 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("md", "regular", theme.colors.textSecondary),
       textAlign: "justify",
       lineHeight: 24,
+    },
+
+    // LEARNING OBJECTIVES
+    objectivesList: {
+      gap: theme.spacing.xs,
+    },
+    objectiveItem: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: theme.spacing.sm,
+    },
+    objectiveIcon: {
+      marginTop: 3,
+    },
+    objectiveText: {
+      ...theme.text("md", "regular", theme.colors.textSecondary),
+      flex: 1,
+      lineHeight: 20,
     },
 
     // REQUIREMENTS CARD

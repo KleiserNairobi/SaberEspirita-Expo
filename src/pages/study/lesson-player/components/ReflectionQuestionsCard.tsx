@@ -91,7 +91,7 @@ const createStyles = (theme: ITheme) =>
       borderLeftWidth: 4,
       borderLeftColor: theme.colors.reflection,
       borderRadius: theme.radius.sm,
-      marginTop: 16,
+      // marginTop: 6,
     },
     header: {
       flexDirection: "row",

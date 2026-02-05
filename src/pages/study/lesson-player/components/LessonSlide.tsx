@@ -41,16 +41,16 @@ export const LessonSlide = memo(
             <HighlightCard highlights={slide.highlights} fontSize={fontSize} />
           )}
 
-          {slide.references && (
-            <ReferenceCard references={slide.references} fontSize={fontSize} />
-          )}
-
-          {/* Perguntas Reflexivas - Apenas no último slide */}
+          {/* Perguntas Reflexivas - Apenas no último slide (antes das referências) */}
           {isLastSlide && reflectionQuestions && reflectionQuestions.length > 0 && (
             <ReflectionQuestionsCard
               questions={reflectionQuestions}
               fontSize={fontSize}
             />
+          )}
+
+          {slide.references && (
+            <ReferenceCard references={slide.references} fontSize={fontSize} />
           )}
 
           {/* Espaço extra no final para não ficar colado no botão */}
