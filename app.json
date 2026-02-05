@@ -62,6 +62,7 @@
           }
         }
       ],
+      "./dev/scripts/withAndroidForegroundPermissions.js",
       "expo-web-browser"
     ]
   }
