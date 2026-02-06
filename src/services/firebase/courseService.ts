@@ -90,7 +90,7 @@ export async function getCoursesByDifficulty(
 export async function getFeaturedCourses(): Promise<ICourse[]> {
   try {
     const coursesRef = collection(db, "courses");
-    const q = query(coursesRef, where("featured", "==", true), orderBy("title", "asc"));
+    const q = query(coursesRef, where("featured", "==", true), orderBy("order", "asc"));
     const querySnapshot = await getDocs(q);
 
     const courses: ICourse[] = [];

@@ -2,6 +2,7 @@ export interface ICourse {
   id: string;
   title: string;
   description: string;
+  order: number;
   learningObjectives?: string[];
   workloadMinutes: number;
   difficultyLevel: CourseDifficultyLevel;
