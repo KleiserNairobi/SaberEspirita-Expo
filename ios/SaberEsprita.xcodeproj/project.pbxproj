@@ -3,41 +3,40 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		17E2F9CC41044E7B99AD0EA3 /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 30A78644510842D7A67FBA93 /* NotificationService.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		453522DF2F2C34A30051D20B /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453522DE2F2C34A30051D20B /* NotificationService.swift */; };
-		453522E02F2C34A30051D20B /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453522DE2F2C34A30051D20B /* NotificationService.swift */; };
-		467E093692C73C81B61DF877 /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8F9FDF11903DA638ED5B772 /* libPods-OneSignalNotificationServiceExtension.a */; };
-		5E620CEFD44C3E7B5CD6FA26 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460535D6E4AA4C5AE19C09F9 /* ExpoModulesProvider.swift */; };
-		7F92C67DAF094B1594A08553 /* OneSignalNotificationServiceExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = 63273AC1F4454F85B7854393 /* OneSignalNotificationServiceExtension.appex */; };
-		80D64EEA186206C65CCCBA74 /* libPods-SaberEsprita.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C1A1A8181A27890EA8E86635 /* libPods-SaberEsprita.a */; };
-		82A009EC4C9D9F7F573F6EAB /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 62FFB15DC4418C19CDD7850B /* PrivacyInfo.xcprivacy */; };
+		5D4FD223B36F8877710B4703 /* libPods-SaberEsprita.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A048F3202034D5173CE0589A /* libPods-SaberEsprita.a */; };
+		6A93D1325E12D6072A34FC3B /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9DB16CEC5DC388B838E23FA /* libPods-OneSignalNotificationServiceExtension.a */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		F2B8C71B6DC46EB8BFE8CF9A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = CF7747EC3A1B503FEFAB78C4 /* PrivacyInfo.xcprivacy */; };
+		FDD018BD33694A938C640924 /* OneSignalNotificationServiceExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = 87F851DE7E094613B2355059 /* OneSignalNotificationServiceExtension.appex */; };
+		FF5C908DFD0E9B5412A15726 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A33D0620B20AF3716C05BD /* ExpoModulesProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		E539F6C1B19348D8A79A2450 /* PBXContainerItemProxy */ = {
+		455752A0298D4726B1ECAC4B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 57E5C327F2934DE2B12796E7;
+			remoteGlobalIDString = 9D60B0FE85F5498C929B8ACF;
 			remoteInfo = OneSignalNotificationServiceExtension;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		B457893011CE48CF9E9825F0 /* Copy Files */ = {
+		CA3565D1147241318F784DA7 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				7F92C67DAF094B1594A08553 /* OneSignalNotificationServiceExtension.appex in Copy Files */,
+				FDD018BD33694A938C640924 /* OneSignalNotificationServiceExtension.appex in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -48,40 +47,40 @@
 		13B07F961A680F5B00A75B9A /* SaberEsprita.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SaberEsprita.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = SaberEsprita/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SaberEsprita/Info.plist; sourceTree = "<group>"; };
-		197975D42E21FD0E5D80ACCA /* Pods-SaberEsprita.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SaberEsprita.debug.xcconfig"; path = "Target Support Files/Pods-SaberEsprita/Pods-SaberEsprita.debug.xcconfig"; sourceTree = "<group>"; };
-		371558A4FECB419EBD23D5D4 /* OneSignalNotificationServiceExtension-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = "OneSignalNotificationServiceExtension-Info.plist"; sourceTree = "<group>"; };
-		453522DE2F2C34A30051D20B /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
-		453522E12F2C34A70051D20B /* OneSignalNotificationServiceExtension-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OneSignalNotificationServiceExtension-Bridging-Header.h"; sourceTree = "<group>"; };
-		460535D6E4AA4C5AE19C09F9 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-SaberEsprita/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		4CBEA3D51930447F96CA8D6B /* OneSignalNotificationServiceExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; path = OneSignalNotificationServiceExtension.entitlements; sourceTree = "<group>"; };
-		62FFB15DC4418C19CDD7850B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = SaberEsprita/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		63273AC1F4454F85B7854393 /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 9; includeInIndex = 0; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		6C20C575503E8685B1F5187B /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; path = "Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
-		A17F7E16757CDAB812CFC264 /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.release.xcconfig"; path = "Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
-		A8F9FDF11903DA638ED5B772 /* libPods-OneSignalNotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OneSignalNotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		30A78644510842D7A67FBA93 /* NotificationService.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = NotificationService.m; path = NotificationService.m; sourceTree = "<group>"; };
+		64508C23B34F404B8E0583D7 /* NotificationService.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = NotificationService.h; path = NotificationService.h; sourceTree = "<group>"; };
+		708BA956B7AD13706172FD95 /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.release.xcconfig"; path = "Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
+		87F851DE7E094613B2355059 /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = undefined; name = OneSignalNotificationServiceExtension.appex; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		8884FA021A194A3E9FC03130 /* OneSignalNotificationServiceExtension-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "OneSignalNotificationServiceExtension-Info.plist"; path = "OneSignalNotificationServiceExtension-Info.plist"; sourceTree = "<group>"; };
+		965D330884D3415EBB9F9591 /* OneSignalNotificationServiceExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = OneSignalNotificationServiceExtension.entitlements; path = OneSignalNotificationServiceExtension.entitlements; sourceTree = "<group>"; };
+		A048F3202034D5173CE0589A /* libPods-SaberEsprita.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SaberEsprita.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4A33D0620B20AF3716C05BD /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-SaberEsprita/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		A84ADA815BC5079E5D3421F3 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; path = "Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
+		A9DB16CEC5DC388B838E23FA /* libPods-OneSignalNotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OneSignalNotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = SaberEsprita/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C1A1A8181A27890EA8E86635 /* libPods-SaberEsprita.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SaberEsprita.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CFC503B276721E8BAF9234C3 /* Pods-SaberEsprita.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SaberEsprita.release.xcconfig"; path = "Target Support Files/Pods-SaberEsprita/Pods-SaberEsprita.release.xcconfig"; sourceTree = "<group>"; };
+		CF7747EC3A1B503FEFAB78C4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = SaberEsprita/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		E4FF7FEA68CAB994A3517432 /* Pods-SaberEsprita.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SaberEsprita.release.xcconfig"; path = "Target Support Files/Pods-SaberEsprita/Pods-SaberEsprita.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = SaberEsprita/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* SaberEsprita-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "SaberEsprita-Bridging-Header.h"; path = "SaberEsprita/SaberEsprita-Bridging-Header.h"; sourceTree = "<group>"; };
+		F78BF9A246AEC25A2961E863 /* Pods-SaberEsprita.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SaberEsprita.debug.xcconfig"; path = "Target Support Files/Pods-SaberEsprita/Pods-SaberEsprita.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		05C69074E1D54F3EAB982C78 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6A93D1325E12D6072A34FC3B /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				80D64EEA186206C65CCCBA74 /* libPods-SaberEsprita.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FBCCBE22263941559DDD8D98 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				467E093692C73C81B61DF877 /* libPods-OneSignalNotificationServiceExtension.a in Frameworks */,
+				5D4FD223B36F8877710B4703 /* libPods-SaberEsprita.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,7 +96,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				62FFB15DC4418C19CDD7850B /* PrivacyInfo.xcprivacy */,
+				CF7747EC3A1B503FEFAB78C4 /* PrivacyInfo.xcprivacy */,
 			);
 			name = SaberEsprita;
 			sourceTree = "<group>";
@@ -106,10 +105,22 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				A8F9FDF11903DA638ED5B772 /* libPods-OneSignalNotificationServiceExtension.a */,
-				C1A1A8181A27890EA8E86635 /* libPods-SaberEsprita.a */,
+				A9DB16CEC5DC388B838E23FA /* libPods-OneSignalNotificationServiceExtension.a */,
+				A048F3202034D5173CE0589A /* libPods-SaberEsprita.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7ACC16AAC36F5AFF1E460247 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A84ADA815BC5079E5D3421F3 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */,
+				708BA956B7AD13706172FD95 /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */,
+				F78BF9A246AEC25A2961E863 /* Pods-SaberEsprita.debug.xcconfig */,
+				E4FF7FEA68CAB994A3517432 /* Pods-SaberEsprita.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -126,9 +137,9 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				BA1DE667F0D244C4BC983364 /* OneSignalNotificationServiceExtension */,
-				D34DB41D87207623747DB0E9 /* Pods */,
-				8CC848975FDBA7FC7EDBF0FB /* ExpoModulesProviders */,
+				C8E137BBD1574F7F94262A82 /* OneSignalNotificationServiceExtension */,
+				7ACC16AAC36F5AFF1E460247 /* Pods */,
+				FAF43BAEA0CE05E372D0AD31 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -139,36 +150,9 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* SaberEsprita.app */,
-				63273AC1F4454F85B7854393 /* OneSignalNotificationServiceExtension.appex */,
+				87F851DE7E094613B2355059 /* OneSignalNotificationServiceExtension.appex */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		8926A3FC0078465BF8D17CAE /* SaberEsprita */ = {
-			isa = PBXGroup;
-			children = (
-				460535D6E4AA4C5AE19C09F9 /* ExpoModulesProvider.swift */,
-			);
-			name = SaberEsprita;
-			sourceTree = "<group>";
-		};
-		8CC848975FDBA7FC7EDBF0FB /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				8926A3FC0078465BF8D17CAE /* SaberEsprita */,
-			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
-		BA1DE667F0D244C4BC983364 /* OneSignalNotificationServiceExtension */ = {
-			isa = PBXGroup;
-			children = (
-				453522DE2F2C34A30051D20B /* NotificationService.swift */,
-				4CBEA3D51930447F96CA8D6B /* OneSignalNotificationServiceExtension.entitlements */,
-				371558A4FECB419EBD23D5D4 /* OneSignalNotificationServiceExtension-Info.plist */,
-				453522E12F2C34A70051D20B /* OneSignalNotificationServiceExtension-Bridging-Header.h */,
-			);
-			path = OneSignalNotificationServiceExtension;
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
@@ -180,15 +164,32 @@
 			path = SaberEsprita/Supporting;
 			sourceTree = "<group>";
 		};
-		D34DB41D87207623747DB0E9 /* Pods */ = {
+		BDBDE7734365B9FA2FE9093B /* SaberEsprita */ = {
 			isa = PBXGroup;
 			children = (
-				6C20C575503E8685B1F5187B /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */,
-				A17F7E16757CDAB812CFC264 /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */,
-				197975D42E21FD0E5D80ACCA /* Pods-SaberEsprita.debug.xcconfig */,
-				CFC503B276721E8BAF9234C3 /* Pods-SaberEsprita.release.xcconfig */,
+				A4A33D0620B20AF3716C05BD /* ExpoModulesProvider.swift */,
 			);
-			path = Pods;
+			name = SaberEsprita;
+			sourceTree = "<group>";
+		};
+		C8E137BBD1574F7F94262A82 /* OneSignalNotificationServiceExtension */ = {
+			isa = PBXGroup;
+			children = (
+				64508C23B34F404B8E0583D7 /* NotificationService.h */,
+				30A78644510842D7A67FBA93 /* NotificationService.m */,
+				965D330884D3415EBB9F9591 /* OneSignalNotificationServiceExtension.entitlements */,
+				8884FA021A194A3E9FC03130 /* OneSignalNotificationServiceExtension-Info.plist */,
+			);
+			name = OneSignalNotificationServiceExtension;
+			path = OneSignalNotificationServiceExtension;
+			sourceTree = "<group>";
+		};
+		FAF43BAEA0CE05E372D0AD31 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				BDBDE7734365B9FA2FE9093B /* SaberEsprita */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -199,33 +200,33 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "SaberEsprita" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				402A6508F4885767276ECBD2 /* [Expo] Configure project */,
+				C186D69FED4F37045E44E064 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				B457893011CE48CF9E9825F0 /* Copy Files */,
-				69FD6BF0D94BF95A36995D18 /* [CP] Embed Pods Frameworks */,
+				CA3565D1147241318F784DA7 /* Copy Files */,
+				896C43410DA8EDFAE1C9F846 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				49119AB7C3134168B90B990E /* PBXTargetDependency */,
+				C61BF5ABC1AC4D0999181361 /* PBXTargetDependency */,
 			);
 			name = SaberEsprita;
 			productName = SaberEsprita;
 			productReference = 13B07F961A680F5B00A75B9A /* SaberEsprita.app */;
 			productType = "com.apple.product-type.application";
 		};
-		57E5C327F2934DE2B12796E7 /* OneSignalNotificationServiceExtension */ = {
+		9D60B0FE85F5498C929B8ACF /* OneSignalNotificationServiceExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 700576E45FCC44E6A3364A00 /* Build configuration list for PBXNativeTarget "OneSignalNotificationServiceExtension" */;
+			buildConfigurationList = FAB929AC501D419E8FEBA12D /* Build configuration list for PBXNativeTarget "OneSignalNotificationServiceExtension" */;
 			buildPhases = (
-				8E1426DCA0EFDCCA2104330E /* [CP] Check Pods Manifest.lock */,
-				5CA9FAC218A94EFDB296EA89 /* Sources */,
-				0EE1EAE87E474874B014921F /* Resources */,
-				FBCCBE22263941559DDD8D98 /* Frameworks */,
+				3247A2913540FAFC666230AF /* [CP] Check Pods Manifest.lock */,
+				3D9CA191FFEF442CAA041E60 /* Sources */,
+				575011CE4FE4476C9FD68975 /* Resources */,
+				05C69074E1D54F3EAB982C78 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -233,7 +234,7 @@
 			);
 			name = OneSignalNotificationServiceExtension;
 			productName = OneSignalNotificationServiceExtension;
-			productReference = 63273AC1F4454F85B7854393 /* OneSignalNotificationServiceExtension.appex */;
+			productReference = 87F851DE7E094613B2355059 /* OneSignalNotificationServiceExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -245,15 +246,16 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = undefined;
 						LastSwiftMigration = 1250;
 					};
-					57E5C327F2934DE2B12796E7 = {
-						LastSwiftMigration = 2600;
+					9D60B0FE85F5498C929B8ACF = {
+						DevelopmentTeam = undefined;
 					};
 				};
 			};
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "SaberEsprita" */;
-			compatibilityVersion = "Xcode 15.3";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -266,19 +268,12 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* SaberEsprita */,
-				57E5C327F2934DE2B12796E7 /* OneSignalNotificationServiceExtension */,
+				9D60B0FE85F5498C929B8ACF /* OneSignalNotificationServiceExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0EE1EAE87E474874B014921F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		13B07F8E1A680F5B00A75B9A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -286,7 +281,14 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				82A009EC4C9D9F7F573F6EAB /* PrivacyInfo.xcprivacy in Resources */,
+				F2B8C71B6DC46EB8BFE8CF9A /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		575011CE4FE4476C9FD68975 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,31 +334,65 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		402A6508F4885767276ECBD2 /* [Expo] Configure project */ = {
+		3247A2913540FAFC666230AF /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/.xcode.env",
-				"$(SRCROOT)/.xcode.env.local",
-				"$(SRCROOT)/SaberEsprita/SaberEsprita.entitlements",
-				"$(SRCROOT)/Pods/Target Support Files/Pods-SaberEsprita/expo-configure-project.sh",
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
-			name = "[Expo] Configure project";
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(SRCROOT)/Pods/Target Support Files/Pods-SaberEsprita/ExpoModulesProvider.swift",
+				"$(DERIVED_FILE_DIR)/Pods-OneSignalNotificationServiceExtension-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-SaberEsprita/expo-configure-project.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
-		69FD6BF0D94BF95A36995D18 /* [CP] Embed Pods Frameworks */ = {
+		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SaberEsprita/Pods-SaberEsprita-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXApplication/ExpoApplication_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoSystemUI/ExpoSystemUI_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage/RNCAsyncStorage_resources.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/RNSVG/RNSVGFilters.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImage/SDWebImage.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoApplication_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoSystemUI_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNCAsyncStorage_resources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNSVGFilters.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SDWebImage.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SaberEsprita/Pods-SaberEsprita-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		896C43410DA8EDFAE1C9F846 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -398,63 +434,29 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SaberEsprita/Pods-SaberEsprita-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
+		C186D69FED4F37045E44E064 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SaberEsprita/Pods-SaberEsprita-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/EXApplication/ExpoApplication_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoSystemUI/ExpoSystemUI_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage/RNCAsyncStorage_resources.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/RNSVG/RNSVGFilters.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImage/SDWebImage.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoApplication_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoSystemUI_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNCAsyncStorage_resources.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNSVGFilters.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SDWebImage.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SaberEsprita/Pods-SaberEsprita-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8E1426DCA0EFDCCA2104330E /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
+				"$(SRCROOT)/.xcode.env",
+				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/SaberEsprita/SaberEsprita.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-SaberEsprita/expo-configure-project.sh",
 			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = "[Expo] Configure project";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-OneSignalNotificationServiceExtension-checkManifestLockResult.txt",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-SaberEsprita/ExpoModulesProvider.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-SaberEsprita/expo-configure-project.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -464,42 +466,37 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				453522DF2F2C34A30051D20B /* NotificationService.swift in Sources */,
-				5E620CEFD44C3E7B5CD6FA26 /* ExpoModulesProvider.swift in Sources */,
+				FF5C908DFD0E9B5412A15726 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5CA9FAC218A94EFDB296EA89 /* Sources */ = {
+		3D9CA191FFEF442CAA041E60 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				453522E02F2C34A30051D20B /* NotificationService.swift in Sources */,
+				17E2F9CC41044E7B99AD0EA3 /* NotificationService.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		49119AB7C3134168B90B990E /* PBXTargetDependency */ = {
+		C61BF5ABC1AC4D0999181361 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 57E5C327F2934DE2B12796E7 /* OneSignalNotificationServiceExtension */;
-			targetProxy = E539F6C1B19348D8A79A2450 /* PBXContainerItemProxy */;
+			target = 9D60B0FE85F5498C929B8ACF /* OneSignalNotificationServiceExtension */;
+			targetProxy = 455752A0298D4726B1ECAC4B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 197975D42E21FD0E5D80ACCA /* Pods-SaberEsprita.debug.xcconfig */;
+			baseConfigurationReference = F78BF9A246AEC25A2961E863 /* Pods-SaberEsprita.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SaberEsprita/SaberEsprita.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 24;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XRJDMVY267;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -511,7 +508,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2.0;
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -520,12 +517,6 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = app.saberespirita;
 				PRODUCT_NAME = SaberEsprita;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = SaberEspiritaProfileAppStore;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "SaberEsprita/SaberEsprita-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -536,24 +527,19 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CFC503B276721E8BAF9234C3 /* Pods-SaberEsprita.release.xcconfig */;
+			baseConfigurationReference = E4FF7FEA68CAB994A3517432 /* Pods-SaberEsprita.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SaberEsprita/SaberEsprita.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 24;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XRJDMVY267;
+				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = SaberEsprita/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2.0;
+				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -562,16 +548,32 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = app.saberespirita;
 				PRODUCT_NAME = SaberEsprita;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = SaberEspiritaProfileAppStore;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "SaberEsprita/SaberEsprita-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		6E860AB7159048AF9C14BB38 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 708BA956B7AD13706172FD95 /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = undefined;
+				INFOPLIST_FILE = "OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = app.saberespirita.OneSignalNotificationServiceExtension;
+				PRODUCT_NAME = OneSignalNotificationServiceExtension;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -668,7 +670,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -694,16 +695,13 @@
 			};
 			name = Release;
 		};
-		A1BC84185BF245D2B970E1D7 /* Debug */ = {
+		C0559962031D4D6B960CD35B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6C20C575503E8685B1F5187B /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */;
+			baseConfigurationReference = A84ADA815BC5079E5D3421F3 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XRJDMVY267;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = undefined;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -718,44 +716,10 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = app.saberespirita.OneSignalNotificationServiceExtension;
 				PRODUCT_NAME = OneSignalNotificationServiceExtension;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = SaberEspiritaProfileAppStoreExtension;
 				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
-		};
-		D51B0E22DA5D4C6E97486ED4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A17F7E16757CDAB812CFC264 /* Pods-OneSignalNotificationServiceExtension.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XRJDMVY267;
-				INFOPLIST_FILE = "OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = app.saberespirita.OneSignalNotificationServiceExtension;
-				PRODUCT_NAME = OneSignalNotificationServiceExtension;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = SaberEspiritaProfileAppStoreExtension;
-				SKIP_INSTALL = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension-Bridging-Header.h";
-				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
@@ -769,20 +733,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		700576E45FCC44E6A3364A00 /* Build configuration list for PBXNativeTarget "OneSignalNotificationServiceExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A1BC84185BF245D2B970E1D7 /* Debug */,
-				D51B0E22DA5D4C6E97486ED4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "SaberEsprita" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FAB929AC501D419E8FEBA12D /* Build configuration list for PBXNativeTarget "OneSignalNotificationServiceExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0559962031D4D6B960CD35B /* Debug */,
+				6E860AB7159048AF9C14BB38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
