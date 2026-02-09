@@ -10,7 +10,7 @@
     "icon": "./assets/images/icon.png",
 
     "ios": {
-      "buildNumber": "26",
+      "buildNumber": "27",
       "supportsTablet": false,
       "bundleIdentifier": "app.saberespirita",
       "infoPlist": {
@@ -24,11 +24,12 @@
     },
 
     "android": {
-      "versionCode": 26,
+      "versionCode": 27,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "app.saberespirita",
       "softwareKeyboardLayoutMode": "pan",
+      "permissions": ["com.google.android.gms.permission.AD_ID"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -63,6 +64,8 @@
         }
       ],
       "./dev/scripts/withAndroidForegroundPermissions.js",
+      "expo-font",
+      "expo-audio",
       "expo-web-browser"
     ]
   }
