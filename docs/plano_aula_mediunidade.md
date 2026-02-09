@@ -40,8 +40,10 @@ Ao concluir este curso, o estudante será capaz de:
 
 - **ID:** `LESSON-MED-001`
 - **Duração:** 25 minutos
-- **Fonte:** LM, Introdução; LE, Questões 459-461
-- **Tema Central:** Definição e natureza da mediunidade
+- **Tema:** Natureza e Definição da Mediunidade
+- **Fonte:** O Livro dos Médiuns e O Livro dos Espíritos
+- **Capítulo:** LM - Introdução; LE - Livro Segundo, Cap. IX (Questões 459-461)
+- **Subtema FOCO:** Faculdade Natural e Universalidade da Mediunidade
 
 **Conteúdo Principal:**
 
@@ -64,8 +66,10 @@ Ao concluir este curso, o estudante será capaz de:
 
 - **ID:** `LESSON-MED-002`
 - **Duração:** 25 minutos
-- **Fonte:** LM, Primeira Parte, Cap. I-II
-- **Tema Central:** Como ocorre a comunicação entre encarnados e desencarnados
+- **Tema:** Mecanismos da Comunicação Espiritual
+- **Fonte:** O Livro dos Médiuns
+- **Capítulo:** Primeira Parte, Cap. I-II - Noções Preliminares
+- **Subtema FOCO:** Perispírito, Fluidos e Vontade
 
 **Conteúdo Principal:**
 
@@ -88,8 +92,10 @@ Ao concluir este curso, o estudante será capaz de:
 
 - **ID:** `LESSON-MED-003`
 - **Duração:** 25 minutos
-- **Fonte:** LM, Segunda Parte, Cap. XIV-XVI
-- **Tema Central:** Mediunidade de efeitos físicos
+- **Tema:** Mediunidade de Efeitos Físicos
+- **Fonte:** O Livro dos Médiuns
+- **Capítulo:** Segunda Parte, Cap. XIV-XVI - Das Manifestações Físicas
+- **Subtema FOCO:** Fenômenos Físicos e Seus Limites
 
 **Conteúdo Principal:**
 
@@ -112,8 +118,10 @@ Ao concluir este curso, o estudante será capaz de:
 
 - **ID:** `LESSON-MED-004`
 - **Duração:** 25 minutos
-- **Fonte:** LM, Segunda Parte, Cap. XVII-XIX
-- **Tema Central:** Mediunidade intelectual e suas variedades
+- **Tema:** Mediunidade Intelectual e Variedades
+- **Fonte:** O Livro dos Médiuns
+- **Capítulo:** Segunda Parte, Cap. XVII-XIX - Das Manifestações Intelectuais
+- **Subtema FOCO:** Psicografia, Intuição e Inspiração
 
 **Conteúdo Principal:**
 
@@ -136,8 +144,10 @@ Ao concluir este curso, o estudante será capaz de:
 
 - **ID:** `LESSON-MED-005`
 - **Duração:** 25 minutos
-- **Fonte:** LM, Segunda Parte, Cap. XX
-- **Tema Central:** Influência moral do médium nas comunicações
+- **Tema:** Influência Moral do Médium
+- **Fonte:** O Livro dos Médiuns
+- **Capítulo:** Segunda Parte, Cap. XX - Da Influência Moral do Médium
+- **Subtema FOCO:** Reforma Íntima e Humildade
 
 **Conteúdo Principal:**
 
@@ -160,8 +170,10 @@ Ao concluir este curso, o estudante será capaz de:
 
 - **ID:** `LESSON-MED-006`
 - **Duração:** 25 minutos
-- **Fonte:** LM, Segunda Parte, Cap. XXIII; LE, Questões 473-480
-- **Tema Central:** Perigos da mediunidade mal conduzida
+- **Tema:** Obsessão e Seus Graus
+- **Fonte:** O Livro dos Médiuns e O Livro dos Espíritos
+- **Capítulo:** LM - Segunda Parte, Cap. XXIII; LE - Livro Segundo, Cap. IX (Questões 473-480)
+- **Subtema FOCO:** Prevenção, Identificação e Tratamento da Obsessão
 
 **Conteúdo Principal:**
 
@@ -184,8 +196,10 @@ Ao concluir este curso, o estudante será capaz de:
 
 - **ID:** `LESSON-MED-007`
 - **Duração:** 25 minutos
-- **Fonte:** LM, Segunda Parte, Cap. XXIV
-- **Tema Central:** Como reconhecer a identidade e qualidade dos espíritos
+- **Tema:** Identidade e Qualidade dos Espíritos
+- **Fonte:** O Livro dos Médiuns
+- **Capítulo:** Segunda Parte, Cap. XXIV - Da Identidade dos Espíritos
+- **Subtema FOCO:** Discernimento e Critérios de Avaliação
 
 **Conteúdo Principal:**
 
@@ -208,8 +222,10 @@ Ao concluir este curso, o estudante será capaz de:
 
 - **ID:** `LESSON-MED-008`
 - **Duração:** 25 minutos
-- **Fonte:** LM, Segunda Parte, Cap. XXV
-- **Tema Central:** Quando e como evocar espíritos
+- **Tema:** Evocações Espirituais
+- **Fonte:** O Livro dos Médiuns
+- **Capítulo:** Segunda Parte, Cap. XXV - Das Evocações
+- **Subtema FOCO:** Respeito, Utilidade e Livre-Arbítrio
 
 **Conteúdo Principal:**
 
@@ -233,8 +249,10 @@ Ao concluir este curso, o estudante será capaz de:
 
 - **ID:** `LESSON-MED-009`
 - **Duração:** 25 minutos
-- **Fonte:** LM, Segunda Parte, Cap. XXIX
-- **Tema Central:** Organização e condução de trabalhos mediúnicos
+- **Tema:** Organização de Trabalhos Mediúnicos
+- **Fonte:** O Livro dos Médiuns
+- **Capítulo:** Segunda Parte, Cap. XXIX - Das Reuniões e dos Centros
+- **Subtema FOCO:** Disciplina, Harmonia e Seriedade
 
 **Conteúdo Principal:**
 
@@ -258,8 +276,10 @@ Ao concluir este curso, o estudante será capaz de:
 
 - **ID:** `LESSON-MED-010`
 - **Duração:** 25 minutos
-- **Fonte:** LM, Segunda Parte, Cap. XXXI; ESE, Cap. XXIV
-- **Tema Central:** O fim moral da mediunidade
+- **Tema:** Finalidade Moral da Mediunidade
+- **Fonte:** O Livro dos Médiuns e O Evangelho Segundo o Espiritismo
+- **Capítulo:** LM - Segunda Parte, Cap. XXXI; ESE - Cap. XXIV - Dai de Graça
+- **Subtema FOCO:** Caridade, Desapego e Serviço
 
 **Conteúdo Principal:**
 
@@ -283,8 +303,10 @@ Ao concluir este curso, o estudante será capaz de:
 
 - **ID:** `LESSON-MED-011`
 - **Duração:** 25 minutos
-- **Fonte:** LM, Segunda Parte, Cap. XVIII e XX
-- **Tema Central:** Como desenvolver a mediunidade com segurança
+- **Tema:** Desenvolvimento Seguro da Mediunidade
+- **Fonte:** O Livro dos Médiuns
+- **Capítulo:** Segunda Parte, Cap. XVIII e XX - Formação e Educação dos Médiuns
+- **Subtema FOCO:** Preparação Moral e Orientação Responsável
 
 **Conteúdo Principal:**
 
@@ -308,8 +330,10 @@ Ao concluir este curso, o estudante será capaz de:
 
 - **ID:** `LESSON-MED-012`
 - **Duração:** 25 minutos
-- **Fonte:** LM, Segunda Parte, Cap. XXVII-XXVIII
-- **Tema Central:** Como identificar fraudes e ilusões
+- **Tema:** Fraudes e Mistificações Mediúnicas
+- **Fonte:** O Livro dos Médiuns
+- **Capítulo:** Segunda Parte, Cap. XXVII-XXVIII - Das Contradições e Mistificações
+- **Subtema FOCO:** Razão, Bom Senso e Vigilância
 
 **Conteúdo Principal:**
 
@@ -333,8 +357,10 @@ Ao concluir este curso, o estudante será capaz de:
 
 - **ID:** `LESSON-MED-013`
 - **Duração:** 25 minutos
-- **Fonte:** LM, Primeira Parte, Cap. I-III; Obras Póstumas
-- **Tema Central:** A mediunidade sob a ótica científica
+- **Tema:** Mediunidade e Método Científico
+- **Fonte:** O Livro dos Médiuns e Obras Póstumas
+- **Capítulo:** LM - Primeira Parte, Cap. I-III - Noções Preliminares; OP - Manifestações dos Espíritos
+- **Subtema FOCO:** Ciência, Fé e Razão
 
 **Conteúdo Principal:**
 
@@ -358,8 +384,10 @@ Ao concluir este curso, o estudante será capaz de:
 
 - **ID:** `LESSON-MED-014`
 - **Duração:** 25 minutos
-- **Fonte:** LM, Conclusão; ESE, Cap. V, XXVIII
-- **Tema Central:** Vivendo com mediunidade de forma equilibrada
+- **Tema:** Mediunidade e Vida Equilibrada
+- **Fonte:** O Livro dos Médiuns e O Evangelho Segundo o Espiritismo
+- **Capítulo:** LM - Conclusão; ESE - Cap. V (Bem-aventurados os Aflitos) e XXVIII (Coletânea de Preces)
+- **Subtema FOCO:** Equilíbrio, Vigilância e Oração
 
 **Conteúdo Principal:**
 

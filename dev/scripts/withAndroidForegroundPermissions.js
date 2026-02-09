@@ -2,7 +2,8 @@ const { withAndroidManifest } = require("@expo/config-plugins");
 
 /**
  * Config plugin para adicionar permissões de foreground service
- * necessárias para conformidade com Android 14
+ * e declarar o serviço de reprodução de áudio necessário para
+ * conformidade com Android 14+
  */
 const withAndroidForegroundPermissions = (config) => {
   return withAndroidManifest(config, async (config) => {
@@ -34,6 +35,36 @@ const withAndroidForegroundPermissions = (config) => {
         });
       }
     });
+
+    // Garantir que o array de application existe
+    if (!mainApplication.application) {
+      mainApplication.application = [{}];
+    }
+
+    const application = mainApplication.application[0];
+
+    // Garantir que o array de services existe
+    if (!application.service) {
+      application.service = [];
+    }
+
+    const services = application.service;
+
+    // Declarar o serviço de reprodução de áudio
+    const audioServiceName = "expo.modules.audio.AudioPlayerService";
+    const audioServiceExists = services.some(
+      (s) => s.$?.["android:name"] === audioServiceName
+    );
+
+    if (!audioServiceExists) {
+      services.push({
+        $: {
+          "android:name": audioServiceName,
+          "android:foregroundServiceType": "mediaPlayback",
+          "android:exported": "false",
+        },
+      });
+    }
 
     return config;
   });
