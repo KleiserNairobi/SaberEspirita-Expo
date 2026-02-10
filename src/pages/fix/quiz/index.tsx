@@ -71,6 +71,7 @@ export function QuizScreen() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<IQuizAnswer[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { soundEffects } = usePreferencesStore();
 
@@ -227,9 +228,10 @@ export function QuizScreen() {
   }
 
   async function handleFinish(finalAnswers: IQuizAnswer[] = userAnswers) {
-    if (!quiz) return;
+    if (!quiz || isSubmitting) return;
 
     try {
+      setIsSubmitting(true);
       const correctAnswers = finalAnswers.filter(
         (a) => a.selectedAnswerIndex === a.correctAnswerIndex
       ).length;
@@ -347,6 +349,8 @@ export function QuizScreen() {
         courseId,
         lessonId,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -393,14 +397,22 @@ export function QuizScreen() {
         <TouchableOpacity style={styles.backButton} onPress={goToBack}>
           <ArrowLeft size={20} color={theme.colors.primary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{categoryName || "Desafio Diário"}</Text>
+        <Text style={styles.headerTitle}>
+          {isDaily && currentQuestion.originCategory
+            ? currentQuestion.originCategory
+            : categoryName || "Desafio Diário"}
+        </Text>
       </View>
 
       {/* Progress Bar */}
       <QuizProgressBar
         current={currentQuestionIndex + 1}
         total={quiz.questions.length}
-        title={subcategoryName || "Perguntas Aleatórias"}
+        title={
+          isDaily && currentQuestion.originSubcategory
+            ? currentQuestion.originSubcategory
+            : subcategoryName || "Perguntas Aleatórias"
+        }
         subtitle={subtitle}
       />
 
@@ -444,6 +456,8 @@ export function QuizScreen() {
             title={isLastQuestion ? "Finalizar" : "Próxima"}
             onPress={handleConfirm}
             fullWidth
+            loading={isLastQuestion && isSubmitting}
+            disabled={isSubmitting}
           />
         </View>
       </View>

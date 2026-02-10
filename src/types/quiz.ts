@@ -13,6 +13,8 @@ export interface IQuestion {
   alternatives: string[]; // Array de alternativas
   correct: number; // Índice da alternativa correta (0-based)
   explanation?: string; // Explicação doutrinária opcional
+  originCategory?: string; // Para desafios diários: Categoria de origem
+  originSubcategory?: string; // Para desafios diários: Subcategoria de origem
 }
 
 // Resposta do usuário (baseado em IUserAnswer do CLI)

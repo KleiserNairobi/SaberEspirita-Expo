@@ -82,10 +82,10 @@ export async function getLeaderboard(period: TimeFilter): Promise<ILeaderboardUs
 
       return {
         userId: data.userId,
-        userName: data.userName,
-        photoURL: data.photoURL,
+        userName: data.userName || "Usuário", // Fallback para evitar crash
+        photoURL: data.photoURL || null,
         score: score,
-        level: data.level,
+        level: data.level || 0,
         // Keep raw data for tie-breaking or debug if needed
       };
     });

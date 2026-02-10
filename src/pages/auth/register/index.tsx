@@ -5,9 +5,11 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Mail, Lock, Eye, EyeOff, User } from "lucide-react-native";
 import { updateProfile } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 import { useAuthStore } from "@/stores/authStore";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { db } from "@/configs/firebase/firebase";
 import type { AuthStackParamList } from "@/routers/types";
 import { Button } from "@/components/Button";
 import { TermsAndPrivacy } from "@/components/TermsAndPrivacy";
@@ -91,6 +93,36 @@ export function RegisterScreen() {
         });
         // Recarregar user para garantir atualização
         await userCredential.user.reload();
+
+        // Forçar gravação do usuário no Firestore para garantir integridade
+        // Isso previne que delays em Cloud Functions deixem o usuário sem nome
+        const userData = {
+          userId: userCredential.user.uid,
+          userName: fullName.trim(),
+          email: email.trim(),
+          photoURL: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          totalAllTime: 0,
+          totalThisWeek: 0,
+          totalThisMonth: 0,
+          level: 1,
+        };
+
+        // Salvar em users_scores (coleção usada pelo leaderboard)
+        await setDoc(doc(db, "users_scores", userCredential.user.uid), userData, {
+          merge: true,
+        });
+
+        // Salvar em users (coleção principal de perfil)
+        await setDoc(
+          doc(db, "users", userCredential.user.uid),
+          {
+            ...userData,
+            role: "user",
+          },
+          { merge: true }
+        );
       }
 
       // Sucesso - auth guard vai redirecionar

@@ -27,7 +27,7 @@ export function RankingList({ player }: Props) {
         <Text style={styles.listName} numberOfLines={1}>
           {player.userName}
         </Text>
-        {player.level && <Text style={styles.listLevel}>{player.level}</Text>}
+        {!!player.level && <Text style={styles.listLevel}>{player.level}</Text>}
       </View>
       <Text style={styles.listScore}>{player.score}</Text>
     </View>
