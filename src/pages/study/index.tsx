@@ -82,7 +82,9 @@ export function StudyScreen() {
         <View style={styles.headerContainer}>
           <Text style={styles.greetingText}>Olá, {user?.displayName || "Usuário"}!</Text>
           <Text style={styles.subtitleText}>
-            Vamos começar sua jornada de conhecimento?
+            {lastAccessed
+              ? "Vamos continuar sua jornada de conhecimento?"
+              : "Vamos começar sua jornada de conhecimento?"}
           </Text>
         </View>
 
