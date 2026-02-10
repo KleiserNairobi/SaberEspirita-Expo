@@ -1,4 +1,6 @@
-export const APP_VERSION = "1.0.0";
+import Constants from "expo-constants";
+
+export const APP_VERSION = Constants.expoConfig?.version ?? "1.0.0";
 export const CONTACT_EMAIL = "app.saberespirita@gmail.com";
 export const INSTAGRAM_URL = "https://instagram.com/comunidade.saberespirita";
 export const PLAY_STORE_URL =
