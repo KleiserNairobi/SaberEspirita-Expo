@@ -33,15 +33,9 @@ export function DailyChallengeCard() {
     });
   }
 
-  // Cores dinâmicas baseadas no tema e estado
-  const containerBg = theme.colors.primary + "10"; // 10% opacity
+  const containerBg = theme.colors.primary + "10";
   const containerBorder = theme.colors.primary;
   const iconBg = isCompleted ? theme.colors.primary + "20" : theme.colors.primary;
-
-  // Ícone principal agora é o Troféu para manter contexto de gamificação, ou Flame se preferir.
-  // No layout de referência, o ícone muda quando completado? O código de referência usa BookOpen vs Calendar.
-  // Vamos usar Trophy sempre ou CheckCircle?
-  // O usuário pede "estilo do card Desafio de Hoje".
 
   return (
     <TouchableOpacity
@@ -82,10 +76,12 @@ export function DailyChallengeCard() {
 
       {/* Footer Row: Action */}
       {isCompleted ? (
-        // Estado Concluído: Botão Grande (Estilo Image 0)
-        <View style={[styles.completedButton, { backgroundColor: theme.colors.primary }]}>
-          <Text style={styles.completedButtonText}>Concluído</Text>
-          <CheckCircle size={16} color="#FFFFFF" style={styles.buttonIcon} />
+        // Estado Concluído: Link de Texto (Sutil)
+        <View style={styles.footer}>
+          <Text style={[styles.textLink, { color: theme.colors.success }]}>
+            Concluído
+          </Text>
+          <CheckCircle size={20} color={theme.colors.success} />
         </View>
       ) : (
         // Estado Pendente: Link de Texto (Estilo Image 1 - Reference)

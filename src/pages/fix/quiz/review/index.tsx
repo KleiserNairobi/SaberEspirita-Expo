@@ -56,10 +56,7 @@ export function QuizReviewScreen() {
   const filledStars = getFilledStarsCount(level);
 
   function handleContinue() {
-    // ✅ MODIFICADO: Se for exercício de curso, voltar para QuizResult
-    // para que a lógica de próximo exercício seja executada
     if (courseId) {
-      // ✅ MODIFICADO: Voltar para o currículo para manter fluxo linear
       navigation.reset({
         index: 1,
         routes: [
@@ -70,8 +67,12 @@ export function QuizReviewScreen() {
           },
         ],
       });
+    } else if (categoryId === "DAILY") {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "FixHome" }],
+      });
     } else {
-      // Contexto de FIXE: Usar reset para limpar a pilha
       navigation.reset({
         index: 1,
         routes: [

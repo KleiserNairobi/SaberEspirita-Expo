@@ -55,28 +55,10 @@ export function createStyles(theme: ITheme) {
       alignItems: "center",
       justifyContent: "space-between",
     },
-    // Styles for the Text Link mode (Pending)
+
+    // Styles for the Text Link mode (Pending & Completed)
     textLink: {
       ...theme.text("md", "bold"),
-    },
-    // Styles for the Button mode (Completed)
-    completedButton: {
-      borderRadius: theme.radius.full,
-      paddingVertical: 12,
-      paddingHorizontal: theme.spacing.xl,
-      alignItems: "center",
-      flexDirection: "row",
-      justifyContent: "center",
-      alignSelf: "stretch",
-      width: "100%",
-    },
-    completedButtonText: {
-      ...theme.text("md", "bold"),
-      color: "#FFFFFF",
-      textTransform: "uppercase",
-    },
-    buttonIcon: {
-      marginLeft: 8,
     },
   });
 }

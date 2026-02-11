@@ -7,6 +7,7 @@ import {
   where,
   doc,
   getDoc,
+  setDoc,
 } from "firebase/firestore";
 import { db } from "@/configs/firebase/firebase";
 import { ILeaderboardUser, TimeFilter, TimeFilterEnum } from "@/types/leaderboard";
@@ -114,23 +115,86 @@ export async function getUserScore(userId: string): Promise<ILeaderboardUser | n
 
     if (docSnap.exists()) {
       const data = docSnap.data();
-      // Note: Position calculation for a single user without fetching all is complex in NoSQL.
-      // For now, we return 0 or fetch it from a denormalized field if it exists.
       return {
         userId: data.userId,
         userName: data.userName,
-        photoURL: data.photoURL,
+        photoURL: data.photoURL || undefined,
         score: data.totalAllTime || 0,
         totalAllTime: data.totalAllTime || 0,
         totalThisWeek: data.totalThisWeek || 0,
         totalThisMonth: data.totalThisMonth || 0,
-        position: 0, // Placeholder
-        level: data.level,
+        position: 0,
+        level: String(data.level || 1),
       };
     }
-    return null;
+
+    // Auto-healing: documento não existe, tentar criar
+    console.log(
+      "getUserScore: Documento users_scores não encontrado. Tentando autocura..."
+    );
+
+    // Buscar dados do usuário na coleção 'users'
+    const userDocRef = doc(db, "users", userId);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()) {
+      const userData = userDocSnap.data();
+
+      const newScoreData = {
+        userId: userId,
+        userName: userData.userName || userData.displayName || "Usuário",
+        email: userData.email,
+        photoURL: userData.photoURL || null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        totalAllTime: 0,
+        totalThisWeek: 0,
+        totalThisMonth: 0,
+        level: 1,
+      };
+
+      // Criar documento scores
+      await setDoc(docRef, newScoreData);
+      console.log("getUserScore: Documento users_scores recriado com sucesso.");
+
+      return {
+        userId: userId,
+        userName: newScoreData.userName,
+        photoURL: newScoreData.photoURL || undefined,
+        score: 0,
+        totalAllTime: 0,
+        totalThisWeek: 0,
+        totalThisMonth: 0,
+        position: 0,
+        level: String(newScoreData.level),
+      };
+    }
+
+    // Se nem o usuário existir (muito raro), retornar objeto zerado padrão
+    return {
+      userId: userId,
+      userName: "Usuário",
+      photoURL: undefined,
+      score: 0,
+      totalAllTime: 0,
+      totalThisWeek: 0,
+      totalThisMonth: 0,
+      position: 0,
+      level: "0",
+    };
   } catch (error) {
     console.error("Erro ao buscar score do usuário:", error);
-    return null;
+    // Em caso de erro, retornar objeto zerado para não quebrar a UI
+    return {
+      userId: userId,
+      userName: "Usuário",
+      photoURL: undefined,
+      score: 0,
+      totalAllTime: 0,
+      totalThisWeek: 0,
+      totalThisMonth: 0,
+      position: 0,
+      level: "0",
+    };
   }
 }
