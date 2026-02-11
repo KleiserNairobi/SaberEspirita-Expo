@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   sendPasswordResetEmail as firebaseSendPasswordResetEmail,
+  sendEmailVerification,
   User,
   UserCredential,
 } from "firebase/auth";
@@ -50,6 +51,7 @@ interface AuthState {
   signUp: (email: string, password: string) => Promise<UserCredential>;
   signOut: () => Promise<void>;
   sendPasswordResetEmail: (email: string) => Promise<void>;
+  sendVerificationEmail: (user: User) => Promise<void>;
   initializeAuth: () => (() => void) | undefined;
 }
 
@@ -191,17 +193,35 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      sendVerificationEmail: async (user: User) => {
+        set({ loading: true, error: null });
+        try {
+          console.log("AuthStore: Enviando email de verificação...");
+          await sendEmailVerification(user);
+          console.log("AuthStore: Email de verificação enviado.");
+          set({ loading: false });
+        } catch (error: any) {
+          const errorMessage = getErrorMessage(error);
+          console.error("AuthStore: Erro ao enviar email de verificação:", errorMessage);
+          set({ error: errorMessage, loading: false });
+          throw error;
+        }
+      },
+
       initializeAuth: () => {
         console.log("AuthStore: Inicializando listener do Firebase...");
 
         // Listener do Firebase para sincronizar estado
-        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
           console.log(
             "AuthStore: Estado do Firebase:",
             firebaseUser ? `Usuário logado (${firebaseUser.uid})` : "Sem usuário"
           );
 
           if (firebaseUser) {
+            // Recarregar status para garantir que emailVerified esteja atualizado
+            await firebaseUser.reload().catch(() => {});
+
             // Firebase retornou usuário autenticado
             set({ user: firebaseUser, initialized: true, loading: false });
           } else {
@@ -223,7 +243,7 @@ export const useAuthStore = create<AuthState>()(
           }
         });
 
-        // Retorna função de cleanup (não usada aqui, mas poderia ser útil)
+        // Retorna função de cleanup
         return unsubscribe;
       },
     }),

@@ -31,14 +31,14 @@ export function RootNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!user ? (
-          // Usuário não autenticado - mostrar telas de autenticação
+        {!user || !user.emailVerified ? (
+          // Usuário não autenticado ou e-mail não verificado - mostrar telas de autenticação
           <Stack.Screen name="Auth" component={AuthNavigator} />
         ) : !hasSeenWelcome ? (
-          // Usuário autenticado mas ainda não viu a tela de boas-vindas
+          // Usuário autenticado e verificado mas ainda não viu a tela de boas-vindas
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
         ) : (
-          // Usuário autenticado e já viu a tela de boas-vindas - mostrar app
+          // Usuário autenticado, verificado e já viu a tela de boas-vindas - mostrar app
           <Stack.Screen name="App" component={AppNavigator} />
         )}
       </Stack.Navigator>

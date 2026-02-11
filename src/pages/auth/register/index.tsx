@@ -91,41 +91,30 @@ export function RegisterScreen() {
         await updateProfile(userCredential.user, {
           displayName: fullName.trim(),
         });
-        // Recarregar user para garantir atualização
-        await userCredential.user.reload();
 
-        // Forçar gravação do usuário no Firestore para garantir integridade
-        // Isso previne que delays em Cloud Functions deixem o usuário sem nome
-        const userData = {
-          userId: userCredential.user.uid,
-          userName: fullName.trim(),
-          email: email.trim(),
-          photoURL: null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          totalAllTime: 0,
-          totalThisWeek: 0,
-          totalThisMonth: 0,
-          level: 1,
-        };
+        // Enviar email de verificação
+        await useAuthStore.getState().sendVerificationEmail(userCredential.user);
 
-        // Salvar em users_scores (coleção usada pelo leaderboard)
-        await setDoc(doc(db, "users_scores", userCredential.user.uid), userData, {
-          merge: true,
+        // Deslogar para impedir acesso imediato
+        await useAuthStore.getState().signOut();
+
+        // Exibir mensagem de sucesso
+        setBottomSheetConfig({
+          type: "success",
+          title: "Conta Criada!",
+          message: `Enviamos um e-mail de verificação para\n ${email}.\n\nPor favor, verifique sua caixa de entrada (e spam) e clique no link para ativar sua conta.`,
+          primaryButton: {
+            label: "Ir para Login",
+            onPress: () => {
+              navigation.navigate("Login");
+            },
+          },
         });
 
-        // Salvar em users (coleção principal de perfil)
-        await setDoc(
-          doc(db, "users", userCredential.user.uid),
-          {
-            ...userData,
-            role: "user",
-          },
-          { merge: true }
-        );
+        setTimeout(() => {
+          bottomSheetModalRef.current?.present();
+        }, 100);
       }
-
-      // Sucesso - auth guard vai redirecionar
     } catch (err: any) {
       console.error("Register error:", err);
       let errorMessage =

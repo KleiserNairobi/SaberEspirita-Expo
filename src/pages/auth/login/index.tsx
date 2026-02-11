@@ -12,8 +12,11 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Mail, Lock, Eye, EyeOff, Key, UserPlus } from "lucide-react-native";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+
 import { useAuthStore } from "@/stores/authStore";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { db } from "@/configs/firebase/firebase";
 import type { AuthStackParamList } from "@/routers/types";
 import { Button } from "@/components/Button";
 import { TermsAndPrivacy } from "@/components/TermsAndPrivacy";
@@ -77,6 +80,84 @@ export function LoginScreen() {
     try {
       clearError();
       await signIn(email.trim().toLowerCase(), password);
+
+      // Verificar status do usuário e criar docs se necessário
+      const currentUser = useAuthStore.getState().user;
+
+      if (currentUser) {
+        await currentUser.reload();
+
+        if (!currentUser.emailVerified) {
+          await useAuthStore.getState().signOut();
+
+          setBottomSheetConfig({
+            type: "error",
+            title: "E-mail não verificado",
+            message: "Por favor, verifique seu e-mail para acessar o aplicativo.",
+            primaryButton: {
+              label: "Reenviar E-mail",
+              onPress: async () => {
+                try {
+                  await useAuthStore.getState().sendVerificationEmail(currentUser);
+                  setBottomSheetConfig({
+                    type: "success",
+                    title: "E-mail Enviado",
+                    message: "Verifique sua caixa de entrada (e spam).",
+                    primaryButton: { label: "Ok", onPress: () => {} },
+                  });
+                  setTimeout(() => bottomSheetModalRef.current?.present(), 500);
+                } catch (e) {
+                  console.error(e);
+                }
+              },
+            },
+            secondaryButton: {
+              label: "Cancelar",
+              onPress: () => {
+                bottomSheetModalRef.current?.dismiss();
+              },
+            },
+          });
+          setTimeout(() => {
+            bottomSheetModalRef.current?.present();
+          }, 100);
+          return;
+        }
+
+        // Se verificado, garantir que existe no Firestore
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (!userDoc.exists()) {
+          const userData = {
+            userId: currentUser.uid,
+            userName: currentUser.displayName || "Usuário",
+            email: currentUser.email,
+            photoURL: currentUser.photoURL,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            totalAllTime: 0,
+            totalThisWeek: 0,
+            totalThisMonth: 0,
+            level: 1,
+          };
+
+          // Salvar em users_scores
+          await setDoc(doc(db, "users_scores", currentUser.uid), userData, {
+            merge: true,
+          });
+
+          // Salvar em users
+          await setDoc(
+            doc(db, "users", currentUser.uid),
+            {
+              ...userData,
+              role: "user",
+            },
+            { merge: true }
+          );
+        }
+      }
     } catch (err: any) {
       console.error("Login error:", err);
 
