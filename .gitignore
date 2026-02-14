@@ -61,3 +61,4 @@ expo-env.d.ts
 dev/configs/google-services.json
 dev/configs/GoogleService-Info.plist
 android/app/google-services.json
+ios/GoogleService-Info.plist
