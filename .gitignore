@@ -56,8 +56,8 @@ ios/build/
 # @end expo-cli
 expo-env.d.ts
 
+
 # Firebase config files (not for versioning)
 dev/configs/google-services.json
 dev/configs/GoogleService-Info.plist
 android/app/google-services.json
-ios/GoogleService-Info.plist
