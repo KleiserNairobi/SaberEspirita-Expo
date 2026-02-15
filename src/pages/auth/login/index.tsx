@@ -29,7 +29,7 @@ type LoginScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, "
 export function LoginScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-  const { signIn, loading, error, clearError } = useAuthStore();
+  const { signIn, loading, error, clearError, loginAsGuest } = useAuthStore();
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -386,6 +386,27 @@ export function LoginScreen() {
               <Text style={styles.secondaryButtonText}>Criar minha conta</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Botão Convidado */}
+          {/* Continue as Guest (Link style) */}
+          <TouchableOpacity
+            style={{
+              alignSelf: "center",
+              marginBottom: theme.spacing.lg,
+            }}
+            onPress={loginAsGuest}
+            disabled={loading}
+          >
+            <Text
+              style={{
+                ...theme.text("md", "medium"),
+                color: theme.colors.textSecondary,
+                textDecorationLine: "underline",
+              }}
+            >
+              Continuar como visitante
+            </Text>
+          </TouchableOpacity>
 
           {/* Termos e Privacidade */}
           <TermsAndPrivacy />

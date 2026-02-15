@@ -38,6 +38,7 @@ interface StoredUser {
 // Estado da store
 interface AuthState {
   user: User | null;
+  isGuest: boolean; // Novo estado para controlar modo convidado
   loading: boolean;
   initialized: boolean;
   error: string | null;
@@ -49,6 +50,7 @@ interface AuthState {
   clearError: () => void;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<UserCredential>;
+  loginAsGuest: () => Promise<void>; // Nova ação
   signOut: () => Promise<void>;
   sendPasswordResetEmail: (email: string) => Promise<void>;
   sendVerificationEmail: (user: User) => Promise<void>;
@@ -94,6 +96,7 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
+      isGuest: false,
       loading: false,
       initialized: false,
       error: null,
@@ -103,13 +106,15 @@ export const useAuthStore = create<AuthState>()(
       setError: (error) => set({ error }),
       clearError: () => set({ error: null }),
 
+      // ... (signIn implementation)
       signIn: async (email: string, password: string) => {
         set({ loading: true, error: null });
         try {
           console.log("AuthStore: Iniciando login...");
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           console.log("AuthStore: Login bem-sucedido:", userCredential.user.uid);
-          set({ user: userCredential.user, loading: false });
+          // Ao logar, desativa modo convidado
+          set({ user: userCredential.user, isGuest: false, loading: false });
 
           // Sincronizar com OneSignal
           try {
@@ -145,7 +150,8 @@ export const useAuthStore = create<AuthState>()(
             password
           );
           console.log("AuthStore: Conta criada:", userCredential.user.uid);
-          set({ user: userCredential.user, loading: false });
+          // Ao criar conta, desativa modo convidado
+          set({ user: userCredential.user, isGuest: false, loading: false });
           return userCredential;
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
@@ -155,12 +161,25 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      loginAsGuest: async () => {
+        set({ loading: true, error: null });
+        try {
+          console.log("AuthStore: Entrando como convidado...");
+          // Define isGuest como true e user como null
+          set({ user: null, isGuest: true, loading: false });
+        } catch (error) {
+          console.error("AuthStore: Erro ao entrar como convidado", error);
+          set({ error: "Erro ao entrar como convidado", loading: false });
+        }
+      },
+
       signOut: async () => {
         set({ loading: true, error: null });
         try {
           console.log("AuthStore: Fazendo logout...");
           await firebaseSignOut(auth);
-          set({ user: null, loading: false });
+          // Limpa usuário E modo convidado
+          set({ user: null, isGuest: false, loading: false });
           console.log("AuthStore: Logout concluído");
 
           // Deslogar do OneSignal
@@ -178,7 +197,9 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      // ... (sendPasswordResetEmail, sendVerificationEmail implementations)
       sendPasswordResetEmail: async (email: string) => {
+        // ... (keep existing implementation)
         set({ loading: true, error: null });
         try {
           console.log("AuthStore: Enviando email de recuperação de senha...");
@@ -194,6 +215,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       sendVerificationEmail: async (user: User) => {
+        // ... (keep existing implementation)
         set({ loading: true, error: null });
         try {
           console.log("AuthStore: Enviando email de verificação...");
@@ -222,12 +244,17 @@ export const useAuthStore = create<AuthState>()(
             // Recarregar status para garantir que emailVerified esteja atualizado
             await firebaseUser.reload().catch(() => {});
 
-            // Firebase retornou usuário autenticado
-            set({ user: firebaseUser, initialized: true, loading: false });
+            // Firebase retornou usuário autenticado - Desativa guest
+            set({
+              user: firebaseUser,
+              isGuest: false,
+              initialized: true,
+              loading: false,
+            });
           } else {
             // Firebase retornou null
-            // Verificar se há usuário persistido no MMKV
-            const currentUser = get().user;
+            // Verificar se há usuário persistido no MMKV OU se é Guest
+            const { user: currentUser, isGuest } = get();
 
             if (currentUser) {
               console.log(
@@ -235,10 +262,15 @@ export const useAuthStore = create<AuthState>()(
               );
               // Mantém o usuário do MMKV (persistência offline)
               set({ initialized: true, loading: false });
+            } else if (isGuest) {
+              console.log(
+                "AuthStore: Usuário convidado detectado. Mantendo sessão de convidado."
+              );
+              set({ initialized: true, loading: false });
             } else {
-              // Nenhum usuário
+              // Nenhum usuário e não é guest
               console.log("AuthStore: Nenhum usuário autenticado");
-              set({ user: null, initialized: true, loading: false });
+              set({ user: null, isGuest: false, initialized: true, loading: false });
             }
           }
         });
@@ -250,14 +282,18 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "auth-storage", // Chave no MMKV
       storage: createJSONStorage(() => zustandStorage),
-      // Particializar para salvar apenas dados serializáveis do user
+      // Particializar para salvar apenas dados serializáveis do user E isGuest
       partialize: (state) => ({
         user: state.user ? userToStoredUser(state.user) : null,
+        isGuest: state.isGuest,
       }),
       // Após hidratar do MMKV, reconstruir o objeto User
       onRehydrateStorage: () => (state) => {
         if (state?.user) {
           console.log("AuthStore: Usuário restaurado do MMKV:", state.user.uid);
+        }
+        if (state?.isGuest) {
+          console.log("AuthStore: Modo convidado restaurado do MMKV");
         }
       },
     }

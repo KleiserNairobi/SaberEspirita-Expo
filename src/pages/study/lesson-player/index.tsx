@@ -162,6 +162,35 @@ export function LessonPlayerScreen() {
 
   async function handleFinish() {
     if (!lesson) return;
+
+    // Verificar se é convidado
+    if (useAuthStore.getState().isGuest) {
+      setMessageConfig({
+        type: "info",
+        title: "Modo Visitante",
+        message:
+          "Seu progresso não será salvo pois você está navegando como visitante. Crie uma conta para registrar suas conquistas!",
+        primaryButton: {
+          label: "Criar Conta",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+            // Navegar para a aba de conta onde tem o botão de criar conta
+            // @ts-ignore
+            navigation.navigate("Tabs", { screen: "AccountTab" });
+          },
+        },
+        secondaryButton: {
+          label: "Sair sem salvar",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+            navigation.goBack();
+          },
+        },
+      });
+      setTimeout(() => bottomSheetRef.current?.present(), 100);
+      return;
+    }
+
     setIsProcessing(true);
 
     try {

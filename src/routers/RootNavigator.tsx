@@ -84,7 +84,7 @@ function getActiveRouteName(state: NavigationState | undefined): string | undefi
 }
 
 export function RootNavigator() {
-  const { user, initialized, initializeAuth } = useAuthStore();
+  const { user, isGuest, initialized, initializeAuth } = useAuthStore();
   const { hasSeenWelcome } = useOnboardingStore();
   const routeNameRef = useRef<string | undefined>(undefined);
 
@@ -103,12 +103,10 @@ export function RootNavigator() {
 
   return (
     <NavigationContainer
+      ref={navigationRef}
       onReady={() => {
         // Captura o nome da tela inicial
-        const initialRoute = getActiveRouteName(
-          // @ts-ignore - navigationRef não está tipado aqui
-          navigationRef.current?.getRootState()
-        );
+        const initialRoute = getActiveRouteName(navigationRef.current?.getRootState());
         if (initialRoute) {
           routeNameRef.current = initialRoute;
         }
@@ -119,6 +117,7 @@ export function RootNavigator() {
 
         if (previousRouteName !== currentRouteName && currentRouteName) {
           // Mapear nome técnico para nome amigável
+          // @ts-ignore - SCREEN_NAME_MAP pode não ter todas as chaves
           const friendlyName = SCREEN_NAME_MAP[currentRouteName] || currentRouteName;
 
           // Logar visualização de tela
@@ -130,14 +129,11 @@ export function RootNavigator() {
       }}
     >
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!user || !user.emailVerified ? (
-          // Usuário não autenticado ou e-mail não verificado - mostrar telas de autenticação
+        {(!user && !isGuest) || (user && !user.emailVerified) ? (
           <Stack.Screen name="Auth" component={AuthNavigator} />
         ) : !hasSeenWelcome ? (
-          // Usuário autenticado e verificado mas ainda não viu a tela de boas-vindas
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
         ) : (
-          // Usuário autenticado, verificado e já viu a tela de boas-vindas - mostrar app
           <Stack.Screen name="App" component={AppNavigator} />
         )}
       </Stack.Navigator>
@@ -145,5 +141,5 @@ export function RootNavigator() {
   );
 }
 
-// Ref para acessar o estado de navegação
-const navigationRef = React.createRef<any>();
+// Ref para acessar o estado de navegação e analytics
+export const navigationRef = React.createRef<any>();

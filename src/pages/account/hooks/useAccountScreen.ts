@@ -21,13 +21,15 @@ import { useRateApp } from "@/hooks/useRateApp";
 
 export function useAccountScreen() {
   const { theme, themeType, setThemeType } = useAppTheme();
-  const { user, signOut } = useAuthStore();
+  const { user, signOut, isGuest } = useAuthStore();
   const preferences = usePreferencesStore();
   const navigation = useNavigation<NativeStackNavigationProp<AppStackParamList>>();
 
   // Computed values
-  const displayName = user?.displayName || user?.email?.split("@")[0] || "Usuário";
-  const email = user?.email || "";
+  const displayName = isGuest
+    ? "Visitante"
+    : user?.displayName || user?.email?.split("@")[0] || "Usuário";
+  const email = isGuest ? "Crie uma conta para salvar seu progresso" : user?.email || "";
 
   // Theme helpers
   function getThemeLabel(): string {
@@ -99,6 +101,7 @@ export function useAccountScreen() {
   return {
     // Data
     theme,
+    isGuest,
     displayName,
     email,
     themeIcon: getThemeIcon(),

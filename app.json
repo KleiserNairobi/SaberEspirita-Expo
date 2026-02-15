@@ -20,7 +20,8 @@
       "entitlements": {
         "aps-environment": "production",
         "com.apple.security.application-groups": ["group.app.saberespirita.onesignal"]
-      }
+      },
+      "googleServicesFile": "./dev/configs/GoogleService-Info.plist"
     },
 
     "android": {
@@ -30,6 +31,7 @@
       "package": "app.saberespirita",
       "softwareKeyboardLayoutMode": "pan",
       "permissions": ["com.google.android.gms.permission.AD_ID"],
+      "googleServicesFile": "./dev/configs/google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -63,7 +65,19 @@
           }
         }
       ],
+      [
+        "@react-native-firebase/app",
+        {
+          "android": {
+            "googleServicesFile": "./dev/configs/google-services.json"
+          },
+          "ios": {
+            "googleServiceInfoPlist": "./dev/configs/GoogleService-Info.plist"
+          }
+        }
+      ],
       "./dev/scripts/withAndroidForegroundPermissions.js",
+      "./dev/plugins/withModularHeaders.js",
       "expo-font",
       "expo-audio",
       "expo-web-browser"

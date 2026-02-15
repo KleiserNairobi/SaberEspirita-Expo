@@ -36,6 +36,9 @@ import {
 } from "@/services/firebase/progressService";
 import { COURSE_PROGRESS_KEYS } from "@/hooks/queries/useCourseProgress";
 import { IQuizHistory, IQuizAnswer } from "@/types/quiz";
+import { BottomSheetMessage } from "@/components/BottomSheetMessage";
+import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FixStackParamList, AppStackParamList } from "@/routers/types";
 
 // Combine params type to support both stacks if needed, or just use FixStackParamList which we extended
@@ -63,8 +66,13 @@ export function QuizScreen() {
   } = route.params;
 
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const guestSheetRef = useRef<BottomSheetModal>(null);
   const scrollViewRef = useRef<ScrollView>(null);
   const snapPoints = useMemo(() => ["40%"], []);
+
+  const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
+    null
+  );
 
   const [stop, setStop] = useState(false);
   const [next, setNext] = useState(false);
@@ -229,6 +237,35 @@ export function QuizScreen() {
 
   async function handleFinish(finalAnswers: IQuizAnswer[] = userAnswers) {
     if (!quiz || isSubmitting) return;
+
+    // Verificar se é convidado
+    if (useAuthStore.getState().isGuest) {
+      setMessageConfig({
+        type: "info",
+        title: "Modo Visitante",
+        message:
+          "Seu progresso não será salvo pois você está navegando como visitante. Crie uma conta para registrar suas conquistas!",
+        primaryButton: {
+          label: "Criar Conta",
+          onPress: () => {
+            guestSheetRef.current?.dismiss();
+            // Navegar para a aba de conta
+            // @ts-ignore
+            navigation.navigate("Tabs", { screen: "AccountTab" });
+          },
+        },
+        secondaryButton: {
+          label: "Sair sem salvar",
+          onPress: () => {
+            guestSheetRef.current?.dismiss();
+            navigation.goBack();
+          },
+        },
+      });
+      // Pequeno timeout para garantir que a config foi setada
+      setTimeout(() => guestSheetRef.current?.present(), 100);
+      return;
+    }
 
     try {
       setIsSubmitting(true);
@@ -527,6 +564,8 @@ export function QuizScreen() {
           )}
         </BottomSheetView>
       </BottomSheet>
+
+      <BottomSheetMessage ref={guestSheetRef} config={messageConfig} />
     </SafeAreaView>
   );
 }

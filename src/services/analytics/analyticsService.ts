@@ -1,5 +1,8 @@
-import { logEvent as firebaseLogEvent } from "firebase/analytics";
-import { analytics } from "@/configs/firebase/firebase";
+import {
+  getAnalytics,
+  logEvent as firebaseLogEvent,
+  logScreenView as firebaseLogScreenView,
+} from "@react-native-firebase/analytics";
 
 /**
  * Serviço centralizado para logging de eventos do Firebase Analytics
@@ -10,17 +13,10 @@ import { analytics } from "@/configs/firebase/firebase";
  * @param screenName Nome da tela (ex: "Estude", "Fixe", "Medite")
  * @param screenClass Classe da tela (opcional, ex: "StudyTab", "FixHome")
  */
-export function logScreenView(screenName: string, screenClass?: string) {
-  if (!analytics) {
-    if (__DEV__) {
-      console.log(`[Analytics] Screen view (não enviado): ${screenName}`);
-    }
-    return;
-  }
-
+export async function logScreenView(screenName: string, screenClass?: string) {
   try {
-    // @ts-ignore - analytics pode ser null mas já verificamos acima
-    firebaseLogEvent(analytics, "screen_view", {
+    const analytics = getAnalytics();
+    await firebaseLogScreenView(analytics, {
       screen_name: screenName,
       screen_class: screenClass || screenName,
     });
@@ -42,17 +38,10 @@ export function logScreenView(screenName: string, screenClass?: string) {
  * @param eventName Nome do evento
  * @param params Parâmetros do evento (opcional)
  */
-export function logEvent(eventName: string, params?: Record<string, any>) {
-  if (!analytics) {
-    if (__DEV__) {
-      console.log(`[Analytics] Event (não enviado): ${eventName}`, params);
-    }
-    return;
-  }
-
+export async function logEvent(eventName: string, params?: Record<string, any>) {
   try {
-    // @ts-ignore - analytics pode ser null mas já verificamos acima
-    firebaseLogEvent(analytics, eventName, params);
+    const analytics = getAnalytics();
+    await firebaseLogEvent(analytics, eventName, params);
 
     if (__DEV__) {
       console.log(`[Analytics] Event: ${eventName}`, params);

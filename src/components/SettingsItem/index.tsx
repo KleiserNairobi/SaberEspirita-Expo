@@ -1,5 +1,12 @@
-import React from "react";
-import { StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+  StyleProp,
+  TextStyle,
+} from "react-native";
 
 import { ChevronRight, LucideIcon } from "lucide-react-native";
 
@@ -19,6 +26,7 @@ interface SettingsItemProps {
   showDivider?: boolean;
   isFirst?: boolean;
   isLast?: boolean;
+  titleStyle?: StyleProp<TextStyle>;
 }
 
 export function SettingsItem({
@@ -35,6 +43,7 @@ export function SettingsItem({
   showDivider = false,
   isFirst = false,
   isLast = false,
+  titleStyle,
 }: SettingsItemProps) {
   const { theme } = useAppTheme();
 
@@ -85,7 +94,7 @@ export function SettingsItem({
       </View>
 
       <View style={styles.textContainer}>
-        <Text style={theme.text("md", "medium")}>{title}</Text>
+        <Text style={[theme.text("md", "medium"), titleStyle]}>{title}</Text>
         {subtitle && (
           <Text
             style={[

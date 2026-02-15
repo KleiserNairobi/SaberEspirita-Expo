@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ScrollView, Text } from "react-native";
+import { ScrollView, Text, Linking, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
@@ -14,10 +14,12 @@ import {
   Star,
   Instagram,
   Share2,
+  Trash,
 } from "lucide-react-native";
 
 import { AppBackground } from "@/components/AppBackground";
 import { SettingsItem } from "@/components/SettingsItem";
+import { Button } from "@/components/Button";
 import { SettingsSection } from "@/components/SettingsSection";
 import { AccountHeader } from "@/pages/account/components/AccountHeader";
 import { LogoutButton } from "@/pages/account/components/LogoutButton";
@@ -44,17 +46,47 @@ export default function AccountScreen() {
     handleInstagram,
     handleShareApp,
     signOut,
+    isGuest,
   } = useAccountScreen();
 
   const styles = createStyles(theme);
 
-  // Logout BottomSheet Logic
-  const logoutSheetRef = useRef<BottomSheetModal>(null);
+  // BottomSheet Logic for Logout and Delete Account
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
   const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
     null
   );
 
   function handleLogoutPress() {
+    if (isGuest) {
+      setMessageConfig({
+        type: "question",
+        title: "Criar Conta / Entrar",
+        message:
+          "Deseja criar uma conta ou fazer login para salvar seu progresso e acessar todos os recursos?",
+        primaryButton: {
+          label: "Sim, conectar",
+          onPress: async () => {
+            try {
+              await signOut();
+            } catch (error) {
+              console.error("Erro ao sair do modo visitante:", error);
+            }
+          },
+        },
+        secondaryButton: {
+          label: "Continuar como visitante",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+          },
+        },
+      });
+      setTimeout(() => {
+        bottomSheetRef.current?.present();
+      }, 100);
+      return;
+    }
+
     setMessageConfig({
       type: "question",
       title: "Sair",
@@ -72,13 +104,38 @@ export default function AccountScreen() {
       secondaryButton: {
         label: "Cancelar",
         onPress: () => {
-          logoutSheetRef.current?.dismiss();
+          bottomSheetRef.current?.dismiss();
         },
       },
     });
     // Pequeno delay para garantir que a config foi setada antes de abrir
     setTimeout(() => {
-      logoutSheetRef.current?.present();
+      bottomSheetRef.current?.present();
+    }, 100);
+  }
+
+  function handleDeleteAccountPress() {
+    setMessageConfig({
+      type: "question",
+      title: "Excluir Conta",
+      message:
+        "Você será redirecionado para uma página onde poderá solicitar a exclusão da sua conta e de seus dados. Deseja continuar?",
+      primaryButton: {
+        label: "Continuar",
+        onPress: () => {
+          Linking.openURL("https://kleisernairobi.github.io/SaberEspirita-Exclusion/");
+          bottomSheetRef.current?.dismiss();
+        },
+      },
+      secondaryButton: {
+        label: "Cancelar",
+        onPress: () => {
+          bottomSheetRef.current?.dismiss();
+        },
+      },
+    });
+    setTimeout(() => {
+      bottomSheetRef.current?.present();
     }, 100);
   }
 
@@ -203,7 +260,32 @@ export default function AccountScreen() {
             />
           </SettingsSection>
 
-          <LogoutButton onPress={handleLogoutPress} />
+          {!isGuest && (
+            <SettingsSection title="Zona de Perigo">
+              <SettingsItem
+                icon={Trash}
+                title="Excluir Conta"
+                subtitle="Solicitar exclusão de conta e dados"
+                onPress={handleDeleteAccountPress}
+                showDivider={false} // Removing divider since it's the only item
+                titleStyle={{ color: theme.colors.error }} // Optional: make it red
+                isFirst
+                isLast
+              />
+            </SettingsSection>
+          )}
+
+          {isGuest ? (
+            <View style={{ paddingHorizontal: 24, marginBottom: 24 }}>
+              <Button
+                title="Criar Conta / Entrar"
+                onPress={handleLogoutPress}
+                fullWidth
+              />
+            </View>
+          ) : (
+            <LogoutButton onPress={handleLogoutPress} />
+          )}
 
           <Text
             style={[
@@ -216,7 +298,7 @@ export default function AccountScreen() {
         </ScrollView>
       </AppBackground>
 
-      <BottomSheetMessage ref={logoutSheetRef} config={messageConfig} />
+      <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
     </SafeAreaView>
   );
 }
