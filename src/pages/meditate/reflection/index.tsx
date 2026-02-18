@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ScrollView, Text, View, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
@@ -8,10 +8,12 @@ import { Clock, User, BookOpen, Tag } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getReflectionById } from "@/services/firebase/reflectionService";
+import { logMeditationUsage } from "@/services/firebase/meditationService";
 import { REFLECTION_TOPICS } from "@/types/reflection";
 import { MeditateStackParamList } from "@/routers/types";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
+import { useAuth } from "@/stores/authStore";
 import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
 import { shareReflection } from "@/utils/sharing";
 import { createStyles } from "./styles";
@@ -24,8 +26,10 @@ export default function ReflectionScreen() {
   const styles = createStyles(theme);
   const route = useRoute<ReflectionScreenRouteProp>();
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
+  const { user, isGuest } = useAuth();
 
   const [isNarrating, setIsNarrating] = useState(false);
+  const hasLogged = useRef(false);
 
   const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } =
     usePrayerPreferencesStore();
@@ -42,6 +46,15 @@ export default function ReflectionScreen() {
     queryFn: () => getReflectionById(route.params.id),
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
+
+  // Registrar leitura da reflexão
+  useEffect(() => {
+    if (reflection && (user || isGuest) && !hasLogged.current) {
+      const userId = user?.uid || "guest";
+      logMeditationUsage(reflection.id, userId);
+      hasLogged.current = true;
+    }
+  }, [reflection, user, isGuest]);
 
   async function handleShare() {
     if (!reflection) return;

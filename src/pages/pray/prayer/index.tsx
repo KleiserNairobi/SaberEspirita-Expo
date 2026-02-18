@@ -1,12 +1,5 @@
-import React, { useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { ActivityIndicator, Alert, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
@@ -17,6 +10,8 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { usePrayer } from "@/pages/pray/hooks/usePrayer";
+import { useAuth } from "@/stores/authStore";
+import { logPrayerUsage } from "@/services/firebase/prayerUsageService";
 import { createStyles } from "@/pages/pray/prayer/styles";
 import { sharePrayer } from "@/utils/sharing";
 
@@ -29,13 +24,24 @@ export function PrayerScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<PrayStackParamList>>();
   const route = useRoute<RouteProp<PrayStackParamList, "Prayer">>();
   const { id } = route.params;
+  const { user, isGuest } = useAuth();
 
+  const hasLogged = useRef(false);
   const [isNarrating, setIsNarrating] = useState(false);
 
   const { data: prayer, isLoading } = usePrayer(id);
   const { isFavorite, toggleFavorite } = usePrayerFavoritesStore();
   const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } =
     usePrayerPreferencesStore();
+
+  // Registrar uso da oração
+  useEffect(() => {
+    if (prayer && (user || isGuest) && !hasLogged.current) {
+      const userId = user?.uid || "guest";
+      logPrayerUsage(prayer.id, userId);
+      hasLogged.current = true;
+    }
+  }, [prayer, user, isGuest]);
 
   async function handleShare() {
     if (!prayer) return;
