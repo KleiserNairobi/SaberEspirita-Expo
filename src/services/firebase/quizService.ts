@@ -13,6 +13,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { ICategory, ISubcategory, IQuiz, IQuizHistory } from "@/types/quiz";
+import { StatsService } from "@/services/firebase/statsService";
 
 // Mapeamento de ícones (mesmo do CLI, adaptado para Lucide)
 const iconMapping: Record<string, string> = {
@@ -210,6 +211,9 @@ export async function addUserHistory(
     );
     await setDoc(userHistoryRef, history);
     console.log("Histórico adicionado com sucesso!");
+
+    // Incrementa contador global de quizzes
+    StatsService.incrementQuizCount("general");
   } catch (error) {
     console.log("Erro ao adicionar histórico:", error);
   }

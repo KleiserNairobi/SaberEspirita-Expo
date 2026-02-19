@@ -198,9 +198,17 @@ export function LessonPlayerScreen() {
       incrementLessonsCompletedCount();
 
       if (user?.uid) {
-        await queryClient.invalidateQueries({
-          queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, lesson.courseId),
-        });
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, lesson.courseId),
+          }),
+          queryClient.invalidateQueries({
+            queryKey: ["allCoursesProgress", user.uid],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: ["lastAccessedCourse", user.uid],
+          }),
+        ]);
       }
 
       // Verificar se deve pedir avaliação

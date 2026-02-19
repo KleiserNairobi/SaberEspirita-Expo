@@ -8,6 +8,8 @@ import {
 } from "firebase/firestore";
 import { db, auth } from "@/configs/firebase/firebase";
 
+import { StatsService } from "@/services/firebase/statsService";
+
 /**
  * Marca uma aula como concluída e atualiza o progresso do usuário no curso
  */
@@ -177,5 +179,9 @@ export async function saveExerciseResult(
   });
 
   console.log("✅ [saveExerciseResult] Resultado salvo com sucesso");
+
+  // Incrementa contador global de quizzes (Tentativas)
+  StatsService.incrementQuizCount("lesson");
+
   console.log("🎉 [saveExerciseResult] FIM - Sucesso!");
 }
