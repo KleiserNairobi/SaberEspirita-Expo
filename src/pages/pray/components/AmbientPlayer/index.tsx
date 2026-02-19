@@ -11,6 +11,8 @@ import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
 import { createStyles } from "./styles";
 import { IAmbientAudio } from "@/types/ambientAudio";
 import { getAudioLocalUri } from "@/services/firebase/ambientAudioService";
+import { logAmbientPlay } from "@/services/firebase/ambientAnalyticsService";
+import { useAuth } from "@/stores/authStore";
 
 // Mapeamento de ícones
 const ICON_MAP = {
@@ -23,6 +25,7 @@ export function AmbientPlayer() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const { isPlaying, currentTrack, setPlaying, setCurrentTrack } =
     useAmbientPlayerStore();
@@ -112,6 +115,11 @@ export function AmbientPlayer() {
           console.log("[AmbientPlayer] Selecionando nova track:", audio.localUri);
           setDownloadingId(audio.id); // Breve feedback antes de currenTrack mudar
           setCurrentTrack(audio.localUri);
+
+          // Log Analytics
+          if (user?.uid) {
+            void logAmbientPlay(user.uid, audio.title, audio.id);
+          }
         }
         return;
       }

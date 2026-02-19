@@ -13,6 +13,8 @@ import { IGlossaryTerm } from "@/types/glossary";
 import { GlossaryFilterType } from "@/types/glossaryFilter";
 import { useFilteredGlossaryTerms } from "../hooks/useGlossaryTerms";
 import { useGlossaryFavoritesStore } from "@/stores/glossaryFavoritesStore";
+import { useAuth } from "@/stores/authStore";
+import { logGlossaryView } from "@/services/firebase/glossaryService";
 
 import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { GlossaryCard } from "../components/GlossaryCard";
@@ -27,6 +29,8 @@ export function AllTermsScreen() {
   const navigation = useNavigation<NavigationProp>();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
+  const { user } = useAuth();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<GlossaryFilterType>("ALL");
   const favoriteIds = useGlossaryFavoritesStore((s) => s.favorites);
@@ -34,6 +38,8 @@ export function AllTermsScreen() {
   const filteredTerms = useFilteredGlossaryTerms(searchQuery, filterType, favoriteIds);
 
   function handleTermPress(term: IGlossaryTerm) {
+    const userId = user?.uid || "guest";
+    logGlossaryView(term.id, userId);
     navigation.navigate("TermDetail", { id: term.id });
   }
 

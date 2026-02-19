@@ -23,10 +23,13 @@ import { useChatLimits, useIncrementChatUsage } from "@/hooks/queries/useChatLim
 import { ChatLimitIndicator } from "@/components/ChatLimitIndicator";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { useAuth } from "@/stores/authStore";
+import { logScientificChat } from "@/services/firebase/chatAnalyticsService";
 
 type RouteParams = RouteProp<AppStackParamList, "ScientificChat">;
 
 export function ScientificChatScreen() {
+  const { user } = useAuth();
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const flatListRef = useRef<FlatList>(null);
@@ -69,6 +72,9 @@ export function ScientificChatScreen() {
 
     // 3. Incrementar uso
     incrementUsage.mutate("scientific");
+
+    // 4. Log Analytics
+    logScientificChat(user?.uid || "guest", text.length);
   }
 
   // Envia mensagem inicial se fornecida

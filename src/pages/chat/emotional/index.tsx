@@ -21,8 +21,11 @@ import { useChatLimits, useIncrementChatUsage } from "@/hooks/queries/useChatLim
 import { ChatLimitIndicator } from "@/components/ChatLimitIndicator";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { useAuth } from "@/stores/authStore";
+import { logEmotionalChat } from "@/services/firebase/chatAnalyticsService";
 
 export function EmotionalChatScreen() {
+  const { user } = useAuth();
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const flatListRef = useRef<FlatList>(null);
@@ -123,6 +126,9 @@ export function EmotionalChatScreen() {
 
     // 3. Incrementar uso (sem bloquear o usuário se falhar)
     incrementUsage.mutate("emotional");
+
+    // 4. Log Analytics
+    logEmotionalChat(user?.uid || "guest", text.length);
   }
 
   return (

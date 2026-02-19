@@ -1,4 +1,13 @@
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 
 import { db } from "@/configs/firebase/firebase";
 import { IGlossaryTerm, GlossaryCategory } from "@/types/glossary";
@@ -52,4 +61,30 @@ export async function getGlossaryTermsByCategory(
     createdAt: doc.data().createdAt?.toDate() || new Date(),
     updatedAt: doc.data().updatedAt?.toDate() || new Date(),
   })) as IGlossaryTerm[];
+}
+
+/**
+ * Registra a visualização de um termo do glossário
+ * @param termId ID do termo visualizado
+ * @param userId ID do usuário ou "guest"
+ */
+export async function logGlossaryView(termId: string, userId: string): Promise<void> {
+  try {
+    const logsRef = collection(db, "glossary_logs");
+    const logData = {
+      termId,
+      userId,
+      action: "view",
+      timestamp: serverTimestamp(),
+    };
+
+    await addDoc(logsRef, logData);
+    if (__DEV__) {
+      console.log(`[GlossaryService] Log registrado: ${termId} por ${userId}`);
+    }
+  } catch (error) {
+    if (__DEV__) {
+      console.warn("[GlossaryService] Erro ao registrar log:", error);
+    }
+  }
 }
