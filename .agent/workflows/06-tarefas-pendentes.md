@@ -80,8 +80,8 @@ A ordem lógica recomendada para a implementação (onde a feature anterior ajud
 ### Novo Ciclo: 6 Tarefas de Expansão
 
 ```text
-Concluído:     ██████                                    16%
-Pendente:      ████████████████████████████████          84%
+Concluído:     ████                                      10%
+Pendente:      ██████████████████████████████████        90%
 ```
 
 **Total de Tarefas V2**: 5 pendentes (3 Core, 1 Evolução, 1 Perfumaria).
