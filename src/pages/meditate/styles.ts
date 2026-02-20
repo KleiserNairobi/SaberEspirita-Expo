@@ -61,4 +61,37 @@ export const createStyles = (theme: ITheme) =>
       color: theme.colors.muted,
       textAlign: "center",
     },
+    // Novas Tabs
+    segmentContainer: {
+      flexDirection: "row",
+      backgroundColor: theme.colors.card,
+      marginHorizontal: 20,
+      borderRadius: theme.radius.lg,
+      padding: 4,
+      marginBottom: 10,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    segmentButton: {
+      flex: 1,
+      paddingVertical: 10,
+      alignItems: "center",
+      borderRadius: theme.radius.md,
+    },
+    segmentButtonActive: {
+      backgroundColor: theme.colors.background,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+      elevation: 2,
+    },
+    segmentText: {
+      ...theme.text("sm", "medium"),
+      color: theme.colors.textSecondary,
+    },
+    segmentTextActive: {
+      color: theme.colors.primary,
+      fontFamily: "Oswald_600SemiBold",
+    },
   });

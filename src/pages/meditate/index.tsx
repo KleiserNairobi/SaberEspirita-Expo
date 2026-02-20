@@ -1,26 +1,31 @@
-import React from "react";
-import {
-  ScrollView,
-  Text,
-  View,
-  ActivityIndicator,
-  TouchableOpacity,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React from "react";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { useAuthStore } from "@/stores/authStore";
-import { DailyThoughtCard } from "@/components/DailyThoughtCard";
 import { AssistantCard } from "@/components/AssistantCard";
+import { DailyThoughtCard } from "@/components/DailyThoughtCard";
+import { useFeaturedMeditations } from "@/hooks/queries/useMeditations";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { MeditateStackParamList } from "@/routers/types";
+import { getMeditationById } from "@/services/firebase/meditationService";
+import { getReflectionById } from "@/services/firebase/reflectionService";
+import { useAuthStore } from "@/stores/authStore";
+import { useQueryClient } from "@tanstack/react-query";
 import { Compass } from "lucide-react-native";
+import { MeditationCard } from "./components/MeditationCard";
 import { ReflectionCard } from "./components/ReflectionCard";
 import { useFeaturedReflections } from "./hooks/useFeaturedReflections";
-import { MeditateStackParamList } from "@/routers/types";
 import { createStyles } from "./styles";
-import { useQueryClient } from "@tanstack/react-query";
-import { getReflectionById } from "@/services/firebase/reflectionService";
+
+type TabType = "REFLECTIONS" | "MEDITATIONS";
 
 export default function MeditateScreen() {
   const { theme } = useAppTheme();
@@ -28,8 +33,14 @@ export default function MeditateScreen() {
   const { user } = useAuthStore();
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
 
+  const [activeTab, setActiveTab] = React.useState<TabType>("REFLECTIONS");
+
   const { data: featuredReflections, isLoading: reflectionsLoading } =
     useFeaturedReflections();
+
+  const { data: featuredMeditations, isLoading: meditationsLoading } =
+    useFeaturedMeditations();
+
   const queryClient = useQueryClient();
 
   function prefetchReflection(id: string) {
@@ -40,8 +51,20 @@ export default function MeditateScreen() {
     });
   }
 
+  function prefetchMeditation(id: string) {
+    queryClient.prefetchQuery({
+      queryKey: ["meditations", "detail", id],
+      queryFn: () => getMeditationById(id),
+      staleTime: 1000 * 60 * 60,
+    });
+  }
+
   function handleReflectionPress(reflectionId: string) {
     navigation.navigate("Reflection", { id: reflectionId });
+  }
+
+  function handleMeditationPress(meditationId: string) {
+    navigation.navigate("MeditationPlayer", { id: meditationId });
   }
 
   return (
@@ -61,32 +84,102 @@ export default function MeditateScreen() {
         <Text style={styles.sectionTitle}>Pensamento do Dia</Text>
         <DailyThoughtCard />
 
-        {/* Seção: Textos para Reflexão */}
+        {/* Tabs de Seleção */}
+        <View style={styles.segmentContainer}>
+          <TouchableOpacity
+            style={[
+              styles.segmentButton,
+              activeTab === "REFLECTIONS" && styles.segmentButtonActive,
+            ]}
+            onPress={() => setActiveTab("REFLECTIONS")}
+            activeOpacity={0.8}
+          >
+            <Text
+              style={[
+                styles.segmentText,
+                activeTab === "REFLECTIONS" && styles.segmentTextActive,
+              ]}
+            >
+              Leitura Diária
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.segmentButton,
+              activeTab === "MEDITATIONS" && styles.segmentButtonActive,
+            ]}
+            onPress={() => setActiveTab("MEDITATIONS")}
+            activeOpacity={0.8}
+          >
+            <Text
+              style={[
+                styles.segmentText,
+                activeTab === "MEDITATIONS" && styles.segmentTextActive,
+              ]}
+            >
+              Meditação Guiada
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Seção Dinâmica (Reflexões ou Meditações) */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitleInHeader}>Textos para Reflexão</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("AllReflections")}>
+          <Text style={styles.sectionTitleInHeader}>
+            {activeTab === "REFLECTIONS" ? "Textos para Reflexão" : "Pausas Guiadas"}
+          </Text>
+          <TouchableOpacity
+            onPress={() =>
+              activeTab === "REFLECTIONS"
+                ? navigation.navigate("AllReflections")
+                : navigation.navigate("AllMeditations")
+            }
+          >
             <Text style={styles.viewAllButton}>Ver todos</Text>
           </TouchableOpacity>
         </View>
 
-        {reflectionsLoading ? (
+        {activeTab === "REFLECTIONS" ? (
+          reflectionsLoading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={theme.colors.primary} />
+            </View>
+          ) : featuredReflections && featuredReflections.length > 0 ? (
+            <View style={styles.reflectionsContainer}>
+              {featuredReflections.slice(0, 3).map((reflection) => (
+                <ReflectionCard
+                  key={reflection.id}
+                  reflection={reflection}
+                  onPress={() => handleReflectionPress(reflection.id)}
+                  onPressIn={() => prefetchReflection(reflection.id)}
+                />
+              ))}
+            </View>
+          ) : (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Nenhuma reflexão disponível</Text>
+            </View>
+          )
+        ) : meditationsLoading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={theme.colors.primary} />
           </View>
-        ) : featuredReflections && featuredReflections.length > 0 ? (
+        ) : featuredMeditations && featuredMeditations.length > 0 ? (
           <View style={styles.reflectionsContainer}>
-            {featuredReflections.slice(0, 3).map((reflection) => (
-              <ReflectionCard
-                key={reflection.id}
-                reflection={reflection}
-                onPress={() => handleReflectionPress(reflection.id)}
-                onPressIn={() => prefetchReflection(reflection.id)}
-              />
+            {featuredMeditations.slice(0, 3).map((meditation) => (
+              <View
+                key={meditation.id}
+                onTouchStart={() => prefetchMeditation(meditation.id)}
+              >
+                <MeditationCard
+                  meditation={meditation}
+                  onPress={() => handleMeditationPress(meditation.id)}
+                />
+              </View>
             ))}
           </View>
         ) : (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Nenhuma reflexão em destaque no momento</Text>
+            <Text style={styles.emptyText}>Em breve novas meditações</Text>
           </View>
         )}
 

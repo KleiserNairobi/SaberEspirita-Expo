@@ -86,6 +86,8 @@ export type MeditateStackParamList = {
   MeditateHome: undefined;
   AllReflections: undefined;
   Reflection: { id: string };
+  AllMeditations: undefined;
+  MeditationPlayer: { id: string };
 };
 
 export type FixStackParamList = {

@@ -46,13 +46,29 @@ A estrutura segue uma arquitetura modular com React Navigation:
 ```
 SaberEspirita-Expo/
 ├── src/
-│   ├── routers/                      # Navegadores React Navigation
-│   │   ├── RootNavigator.tsx        # Navegador raiz (Auth vs App)
-│   │   ├── AuthNavigator.tsx        # Stack de autenticação (Login, Register)
-│   │   ├── AppNavigator.tsx         # Stack principal do app
-│   │   ├── TabNavigator.tsx         # Bottom tabs (Study, Pray, Meditate, Fix, Account)
-│   │   ├── PrayNavigator.tsx        # Stack do módulo Ore
-│   │   └── types.ts                 # Tipos TypeScript para navegação
+│   ├── assets/                       # Imagens e recursos
+│   │
+│   ├── components/                   # Componentes visuais reutilizáveis
+│   │   ├── AppBackground/
+│   │   ├── AppInput/
+│   │   ├── LegalHeader/
+│   │   ├── LegalSection/
+│   │   ├── SettingsItem/
+│   │   ├── DailyMessageCard/
+│   │   ├── AskGuideCard/
+│   │   └── ...
+│   │
+│   ├── configs/                      # Configurações globais
+│   │   ├── theme/                   # Sistema de temas (light.ts, dark.ts, types.ts)
+│   │   └── firebase/                # Configuração do Firebase
+│   │
+│   ├── contexts/                     # Context API providers
+│   │
+│   ├── data/                         # Dados estáticos (JSON, prayers, etc.)
+│   │
+│   ├── hooks/                        # Custom hooks globais
+│   │   ├── useAppTheme.ts           # Hook de tema
+│   │   └── ...
 │   │
 │   ├── pages/                        # Implementação das telas (organizadas por módulo)
 │   │   ├── auth/                    # Módulo de autenticação
@@ -71,39 +87,29 @@ SaberEspirita-Expo/
 │   │   ├── fix/                     # Módulo Fixe
 │   │   └── account/                 # Módulo Conta/Configurações
 │   │
-│   ├── components/                   # Componentes visuais reutilizáveis
-│   │   ├── AppBackground/
-│   │   ├── AppInput/
-│   │   ├── LegalHeader/
-│   │   ├── LegalSection/
-│   │   ├── SettingsItem/
-│   │   ├── DailyMessageCard/
-│   │   ├── AskGuideCard/
-│   │   └── ...
-│   │
-│   ├── configs/                      # Configurações globais
-│   │   ├── theme/                   # Sistema de temas (light.ts, dark.ts, types.ts)
-│   │   └── firebase/                # Configuração do Firebase
-│   │
-│   ├── stores/                       # Stores Zustand
-│   │   ├── authStore.ts             # Estado de autenticação
-│   │   ├── themeStore.ts            # Estado de tema
-│   │   └── ...
-│   │
-│   ├── hooks/                        # Custom hooks globais
-│   │   ├── useAppTheme.ts           # Hook de tema
-│   │   └── ...
+│   ├── routers/                      # Navegadores React Navigation
+│   │   ├── RootNavigator.tsx        # Navegador raiz (Auth vs App)
+│   │   ├── AuthNavigator.tsx        # Stack de autenticação (Login, Register)
+│   │   ├── AppNavigator.tsx         # Stack principal do app
+│   │   ├── TabNavigator.tsx         # Bottom tabs (Study, Pray, Meditate, Fix, Account)
+│   │   ├── PrayNavigator.tsx        # Stack do módulo Ore
+│   │   └── types.ts                 # Tipos TypeScript para navegação
 │   │
 │   ├── services/                     # Serviços e integrações
 │   │   ├── deepseek/                # Integração DeepSeek AI
 │   │   ├── chat/                    # Serviços de chat
 │   │   └── ...
 │   │
-│   ├── contexts/                     # Context API providers
+│   ├── stores/                       # Stores Zustand
+│   │   ├── authStore.ts             # Estado de autenticação
+│   │   ├── themeStore.ts            # Estado de tema
+│   │   └── ...
+│   │
+│   ├── templates/                    # Templates do app (ex: certificados)
+│   │
 │   ├── types/                        # Tipos TypeScript globais
-│   ├── data/                         # Dados estáticos (JSON, prayers, etc.)
-│   ├── utils/                        # Funções utilitárias
-│   └── assets/                       # Imagens e recursos
+│   │
+│   └── utils/                        # Funções utilitárias
 │
 ├── App.tsx                           # Entry point da aplicação
 ├── android/                          # Código nativo Android (gerado via prebuild)
