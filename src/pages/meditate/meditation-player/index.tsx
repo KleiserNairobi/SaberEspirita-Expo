@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -17,6 +17,7 @@ import { ArrowLeft, Pause, Play, SkipBack, SkipForward } from "lucide-react-nati
 
 import { useMeditation } from "@/hooks/queries/useMeditations";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { getCachedAudioUri } from "@/services/audio/audioCacheService";
 import { createStyles } from "./styles";
 
 const { width } = Dimensions.get("window");
@@ -29,19 +30,25 @@ export default function MeditationPlayerScreen() {
   const { id } = route.params;
 
   const { data: meditation, isLoading } = useMeditation(id);
-  const audioSource = meditation?.audioUrl || "";
-
-  const player = useAudioPlayer(audioSource);
-  const status = useAudioPlayerStatus(player);
+  const [localAudioUri, setLocalAudioUri] = useState<string | null>(null);
 
   useEffect(() => {
-    // Efeito para garantir pause e desmonte limpo via hook expo-audio
-    return () => {
-      if (player) {
-        player.pause();
+    async function fetchLocalAudio() {
+      if (meditation?.audioUrl) {
+        try {
+          const uri = await getCachedAudioUri(meditation.audioUrl);
+          setLocalAudioUri(uri);
+        } catch (error) {
+          console.error("Failed to cache audio:", error);
+          setLocalAudioUri(meditation.audioUrl); // Fallback to remote if cache fails
+        }
       }
-    };
-  }, [player]);
+    }
+    fetchLocalAudio();
+  }, [meditation?.audioUrl]);
+
+  const player = useAudioPlayer(localAudioUri || "");
+  const status = useAudioPlayerStatus(player);
 
   function handleGoBack() {
     navigation.goBack();
@@ -59,17 +66,23 @@ export default function MeditationPlayerScreen() {
 
   function handleSeekForward() {
     if (!player) return;
-    player.seekTo(player.currentTime + 15000);
+    // status.currentTime e status.duration costumam ser lidos em SEGUNDOS na API native do expo-audio.
+    // Vamos adicionar 15 segundos ao tempo atual
+    const newTime = player.currentTime + 15;
+    player.seekTo(newTime);
   }
 
   function handleSeekBackward() {
     if (!player) return;
-    player.seekTo(Math.max(0, player.currentTime - 15000));
+    // Voltar 15 segundos
+    const newTime = player.currentTime - 15;
+    player.seekTo(Math.max(0, newTime));
   }
 
-  function formatTime(milliseconds: number) {
-    if (isNaN(milliseconds) || milliseconds < 0) return "0:00";
-    const totalSeconds = Math.floor(milliseconds / 1000);
+  function formatTime(seconds: number) {
+    if (isNaN(seconds) || seconds < 0) return "0:00";
+    // O valor já está em segundos inteiros ou fracionados
+    const totalSeconds = Math.floor(seconds);
     const m = Math.floor(totalSeconds / 60);
     const s = totalSeconds % 60;
     return `${m}:${s < 10 ? "0" : ""}${s}`;
@@ -90,14 +103,12 @@ export default function MeditationPlayerScreen() {
       {/* Background Decorativo */}
       <View style={styles.backgroundGlow} />
 
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={handleGoBack}
-          activeOpacity={0.7}
-        >
-          <ArrowLeft size={24} color={theme.colors.text} />
+      {/* Header Padronizado */}
+      <View style={styles.navHeader}>
+        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+          <ArrowLeft size={20} color={theme.colors.primary} />
         </TouchableOpacity>
+        <Text style={styles.navTitle}>Meditação Guiada</Text>
       </View>
 
       <View style={styles.content}>
@@ -155,16 +166,19 @@ export default function MeditationPlayerScreen() {
             style={styles.playButton}
             onPress={togglePlayPause}
             activeOpacity={0.8}
+            disabled={status.duration === 0}
           >
-            {player.playing ? (
+            {status.duration === 0 ? (
+              <ActivityIndicator size="small" color={theme.colors.background} />
+            ) : player.playing ? (
               <Pause
-                size={32}
+                size={26}
                 color={theme.colors.background}
                 fill={theme.colors.background}
               />
             ) : (
               <Play
-                size={32}
+                size={26}
                 color={theme.colors.background}
                 fill={theme.colors.background}
               />

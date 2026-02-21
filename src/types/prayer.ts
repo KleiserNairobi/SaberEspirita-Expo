@@ -38,6 +38,8 @@ export type ContentFilterType =
   | "BY_AUTHOR"
   | "BY_SOURCE"
   | "BY_TOPIC" // Usado para reflexões
+  | "MINUTES_SHORT" // Usado para meditações (<= 5min)
+  | "MINUTES_LONG" // Usado para meditações (> 5min)
   | "INICIANTE" // Usado para cursos
   | "INTERMEDIARIO" // Usado para cursos
   | "AVANCADO" // Usado para cursos

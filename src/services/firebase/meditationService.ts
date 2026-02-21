@@ -62,3 +62,24 @@ export async function getMeditationById(id: string): Promise<IMeditation | null>
     throw error;
   }
 }
+
+/**
+ * Registra o uso (log) de uma meditação/reflexão.
+ * Opcional, usado para métricas de usuário.
+ */
+export async function logMeditationUsage(
+  meditationId: string,
+  userId: string = "guest"
+): Promise<void> {
+  try {
+    // Registra métricas de uso (como contagem de plays) em uma subcoleção ou outro modelo definido.
+    // Exemplo: Salvar no Firebase que a meditação/reflexão foi lida
+    console.log(
+      `[Analytics Mock] Meditação/Reflexão ${meditationId} acessada por ${userId}`
+    );
+    // Futuro: Implementar addDoc() para coleção 'meditation_logs' ou atualizar contadores.
+  } catch (error) {
+    console.error("Erro ao resgistrar uso da meditação:", error);
+    // Erros de analytics não devem quebrar o fluxo do usuário
+  }
+}

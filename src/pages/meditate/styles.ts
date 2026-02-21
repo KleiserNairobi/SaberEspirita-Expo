@@ -64,9 +64,9 @@ export const createStyles = (theme: ITheme) =>
     // Novas Tabs
     segmentContainer: {
       flexDirection: "row",
-      backgroundColor: theme.colors.card,
+      backgroundColor: theme.colors.card, // Alterado para branco/card
       marginHorizontal: 20,
-      borderRadius: theme.radius.lg,
+      borderRadius: 100, // Formato pílula
       padding: 4,
       marginBottom: 10,
       borderWidth: 1,
@@ -76,22 +76,17 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
       paddingVertical: 10,
       alignItems: "center",
-      borderRadius: theme.radius.md,
+      borderRadius: 100, // Formato pílula
     },
     segmentButtonActive: {
-      backgroundColor: theme.colors.background,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.1,
-      shadowRadius: 2,
-      elevation: 2,
+      backgroundColor: theme.colors.primary,
     },
     segmentText: {
       ...theme.text("sm", "medium"),
       color: theme.colors.textSecondary,
     },
     segmentTextActive: {
-      color: theme.colors.primary,
+      color: theme.colors.background, // Texto branco/invertido
       fontFamily: "Oswald_600SemiBold",
     },
   });

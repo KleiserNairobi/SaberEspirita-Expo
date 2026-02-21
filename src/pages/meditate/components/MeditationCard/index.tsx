@@ -1,4 +1,4 @@
-import { Headphones, Lock, Play } from "lucide-react-native";
+import { Headphones, Lock, Play, Clock } from "lucide-react-native";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
@@ -36,7 +36,8 @@ export function MeditationCard({ meditation, onPress }: MeditationCardProps) {
           {meditation.author}
         </Text>
         <View style={styles.metaRow}>
-          <Text style={styles.metaText}>{meditation.durationMinutes} min</Text>
+          <Clock size={12} color={theme.colors.textSecondary} />
+          <Text style={styles.metaText}>{meditation.durationMinutes}min</Text>
         </View>
       </View>
 

@@ -117,7 +117,7 @@ export default function MeditateScreen() {
                 activeTab === "MEDITATIONS" && styles.segmentTextActive,
               ]}
             >
-              Meditação Guiada
+              Meditações
             </Text>
           </TouchableOpacity>
         </View>
@@ -125,7 +125,7 @@ export default function MeditateScreen() {
         {/* Seção Dinâmica (Reflexões ou Meditações) */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitleInHeader}>
-            {activeTab === "REFLECTIONS" ? "Textos para Reflexão" : "Pausas Guiadas"}
+            {activeTab === "REFLECTIONS" ? "Textos para Reflexão" : "Meditação Guiada"}
           </Text>
           <TouchableOpacity
             onPress={() =>

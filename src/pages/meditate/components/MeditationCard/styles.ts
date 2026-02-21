@@ -9,30 +9,24 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: theme.colors.card,
       borderRadius: theme.radius.md,
       marginBottom: 12,
-      paddingVertical: 14,
-      paddingHorizontal: 16,
+      padding: 20, // Igualado ao AssistantCard (antes era v:14, h:16)
       borderWidth: 1,
       borderColor: theme.colors.border,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.05,
-      shadowRadius: 3,
-      elevation: 2,
+      // Removida as propriedades de sombra para ficar liso como AssistantCard
     },
     premiumBorder: {
       borderColor: theme.colors.accent,
       borderWidth: 1.5,
     },
     iconContainer: {
-      width: 44,
-      height: 44,
-      borderRadius: 22,
-      backgroundColor: theme.colors.background,
+      width: 40, // Igualado ao AssistantCard (antes era 44)
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: `${theme.colors.primary}15`, // Fundo Primary translúcido como AssistantCard
       justifyContent: "center",
       alignItems: "center",
-      marginRight: 14,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
+      marginRight: 16, // Igualado ao AssistantCard
+      // Removida borda para igualar design visual
     },
     content: {
       flex: 1,
@@ -51,21 +45,21 @@ export const createStyles = (theme: ITheme) =>
     metaRow: {
       flexDirection: "row",
       alignItems: "center",
+      gap: 4,
     },
     metaText: {
       ...theme.text("xs", "regular"),
       color: theme.colors.primary,
-      marginLeft: 4,
       fontFamily: "Oswald_400Regular",
-      textTransform: "uppercase",
+      // textTransform: "uppercase",
     },
     actionContainer: {
       marginLeft: 10,
       justifyContent: "center",
       alignItems: "center",
-      width: 36,
-      height: 36,
-      borderRadius: 18,
-      backgroundColor: theme.colors.background,
+      width: 40, // Igualado ao AssistantCard / iconContainer
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: `${theme.colors.primary}15`, // Secundário translúcido seguindo o padrão
     },
   });

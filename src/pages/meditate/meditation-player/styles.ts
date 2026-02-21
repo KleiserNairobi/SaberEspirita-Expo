@@ -19,26 +19,26 @@ export const createStyles = (theme: ITheme) =>
       alignItems: "center",
       justifyContent: "center",
     },
-    header: {
+    navHeader: {
       flexDirection: "row",
       alignItems: "center",
-      paddingHorizontal: 20,
-      paddingTop: 10,
-      paddingBottom: 20,
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+      backgroundColor: theme.colors.background,
       zIndex: 10,
     },
     backButton: {
       width: 40,
       height: 40,
       borderRadius: 20,
-      backgroundColor: theme.colors.background,
       justifyContent: "center",
       alignItems: "center",
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
+      backgroundColor: theme.colors.accent,
+      marginRight: 16,
+    },
+    navTitle: {
+      ...theme.text("lg", "bold"),
+      color: theme.colors.text,
     },
     content: {
       flex: 1,
@@ -46,8 +46,8 @@ export const createStyles = (theme: ITheme) =>
       paddingHorizontal: 30,
     },
     coverArtContainer: {
-      width: width * 0.75,
-      height: width * 0.75,
+      width: width * 0.6,
+      height: width * 0.6,
       borderRadius: theme.radius.xl,
       overflow: "hidden",
       marginBottom: 40,
@@ -78,12 +78,13 @@ export const createStyles = (theme: ITheme) =>
       color: theme.colors.primary,
       textAlign: "center",
       fontFamily: "Oswald_400Regular",
-      textTransform: "uppercase",
+      // textTransform: "uppercase",
       letterSpacing: 1,
     },
     progressContainer: {
       width: "100%",
-      marginBottom: 40,
+      marginTop: 30,
+      marginBottom: 20,
     },
     progressBarBackground: {
       height: 6,
@@ -113,9 +114,9 @@ export const createStyles = (theme: ITheme) =>
       paddingHorizontal: 20,
     },
     playButton: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
+      width: 64, // 20% menor que 80
+      height: 64,
+      borderRadius: 32, // Metade do tamanho
       backgroundColor: theme.colors.primary,
       justifyContent: "center",
       alignItems: "center",
