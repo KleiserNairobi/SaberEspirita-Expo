@@ -130,7 +130,7 @@ export const createStyles = (theme: ITheme) =>
       width: 50,
       height: 50,
       borderRadius: 25,
-      backgroundColor: theme.colors.card,
+      backgroundColor: `${theme.colors.primary}15`,
       justifyContent: "center",
       alignItems: "center",
     },

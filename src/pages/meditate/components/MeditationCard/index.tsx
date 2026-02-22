@@ -37,7 +37,7 @@ export function MeditationCard({ meditation, onPress }: MeditationCardProps) {
         </Text>
         <View style={styles.metaRow}>
           <Clock size={12} color={theme.colors.textSecondary} />
-          <Text style={styles.metaText}>{meditation.durationMinutes}min</Text>
+          <Text style={styles.metaText}>{meditation.durationMinutes} min</Text>
         </View>
       </View>
 

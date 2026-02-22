@@ -416,6 +416,32 @@ export function QuizScreen() {
     }
   }
 
+  // Exibir tela de erro se o carregamento terminou mas o quiz não foi encontrado
+  if (!isLoading && isCourse && !quiz) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <Text
+            style={[
+              styles.loadingText,
+              { color: theme.colors.error || "#FF6B6B", marginBottom: 16 },
+            ]}
+          >
+            Exercício não encontrado.
+          </Text>
+          <Text style={[styles.loadingText, { fontSize: 14, marginBottom: 24 }]}>
+            Não foi possível carregar as questões deste exercício.
+          </Text>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={{ color: theme.colors.primary, fontWeight: "600" }}>
+              ← Voltar
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   if (isLoading || !quiz || !currentQuestion) {
     return (
       <SafeAreaView style={styles.container}>
