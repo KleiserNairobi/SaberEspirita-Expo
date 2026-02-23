@@ -115,14 +115,13 @@ export default function MeditationPlayerScreen() {
         {/* Cover Art / Avatar da Meditação */}
         <View style={styles.coverArtContainer}>
           <Image
-            source={
-              meditation.imageUrl
-                ? { uri: meditation.imageUrl }
-                : require("@/assets/images/placeholder.png")
-            }
+            source={{ uri: meditation.imageUrl }}
             style={styles.coverArt}
             contentFit="cover"
             transition={500}
+            cachePolicy="memory-disk"
+            placeholder={require("@/assets/images/placeholder.png")}
+            placeholderContentFit="cover"
           />
         </View>
 

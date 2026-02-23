@@ -66,7 +66,7 @@
         }
       ],
       [
-        "@react-native-firebase/app",
+        "./node_modules/@react-native-firebase/app/app.plugin.js",
         {
           "android": {
             "googleServicesFile": "./dev/configs/google-services.json"
@@ -79,8 +79,7 @@
       "./dev/scripts/withAndroidForegroundPermissions.js",
       "./dev/plugins/withModularHeaders.js",
       "expo-font",
-      "expo-audio",
-      "expo-web-browser"
+      "expo-audio"
     ]
   }
 }

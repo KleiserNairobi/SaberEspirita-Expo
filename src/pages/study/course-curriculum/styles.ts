@@ -26,7 +26,7 @@ export const createStyles = (theme: ITheme) =>
       marginRight: 16,
     },
     navTitle: {
-      ...theme.text("lg", "bold"),
+      ...theme.text("lg", "semibold"),
       color: theme.colors.text,
     },
 

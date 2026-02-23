@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useRef } from "react";
+import { Image } from "expo-image";
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -90,12 +91,13 @@ export default function AllMeditationsScreen() {
     navigation.navigate("MeditationPlayer", { id: medId });
   }
 
-  function prefetchMeditation(id: string) {
+  function prefetchMeditation(id: string, imageUrl?: string) {
     queryClient.prefetchQuery({
       queryKey: ["meditations", "detail", id],
       queryFn: () => getMeditationById(id),
       staleTime: 1000 * 60 * 60, // 1 hora
     });
+    if (imageUrl) Image.prefetch(imageUrl);
   }
 
   if (isLoading) {
@@ -182,7 +184,7 @@ export default function AllMeditationsScreen() {
             </>
           }
           renderItem={({ item }) => (
-            <View onTouchStart={() => prefetchMeditation(item.id)}>
+            <View onTouchStart={() => prefetchMeditation(item.id, item.imageUrl)}>
               <MeditationCard
                 meditation={item}
                 onPress={() => handleMeditationPress(item.id)}

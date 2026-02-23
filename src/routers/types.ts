@@ -96,6 +96,7 @@ export type FixStackParamList = {
     categoryId: string;
     categoryName: string;
   };
+  Leaderboard: undefined;
   Quiz: {
     subcategoryId?: string;
     categoryId?: string;

@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
@@ -51,12 +52,13 @@ export default function MeditateScreen() {
     });
   }
 
-  function prefetchMeditation(id: string) {
+  function prefetchMeditation(id: string, imageUrl?: string) {
     queryClient.prefetchQuery({
       queryKey: ["meditations", "detail", id],
       queryFn: () => getMeditationById(id),
       staleTime: 1000 * 60 * 60,
     });
+    if (imageUrl) Image.prefetch(imageUrl);
   }
 
   function handleReflectionPress(reflectionId: string) {
@@ -168,7 +170,9 @@ export default function MeditateScreen() {
             {featuredMeditations.slice(0, 3).map((meditation) => (
               <View
                 key={meditation.id}
-                onTouchStart={() => prefetchMeditation(meditation.id)}
+                onTouchStart={() =>
+                  prefetchMeditation(meditation.id, meditation.imageUrl)
+                }
               >
                 <MeditationCard
                   meditation={meditation}
