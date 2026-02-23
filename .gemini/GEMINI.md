@@ -1,0 +1,2 @@
+1.  **Idioma**: Você DEVE sempre responder, comentar, interagir, raciocinar, planejar e criar tarefas em **Português do Brasil (PT-BR)**. Isso inclui seus pensamentos (thought traces), pesquisas, ordens e artefatos. A única exceção são comandos técnicos que exigem inglês (como nomes de bibliotecas ou comandos de terminal que não podem ser traduzidos).
+2.  **Contexto**: Mantenha as respostas técnicas e diretas em PT-BR. Certifique-se de que todo o seu processo de trabalho visível ou subjacente esteja neste idioma.
