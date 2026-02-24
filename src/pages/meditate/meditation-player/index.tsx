@@ -100,9 +100,6 @@ export default function MeditationPlayerScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
-      {/* Background Decorativo */}
-      <View style={styles.backgroundGlow} />
-
       {/* Header Padronizado */}
       <View style={styles.navHeader}>
         <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>

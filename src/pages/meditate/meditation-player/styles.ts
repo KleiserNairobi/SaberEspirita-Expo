@@ -24,7 +24,6 @@ export const createStyles = (theme: ITheme) =>
       alignItems: "center",
       paddingHorizontal: 16,
       paddingVertical: 16,
-      backgroundColor: theme.colors.background,
       zIndex: 10,
     },
     backButton: {
