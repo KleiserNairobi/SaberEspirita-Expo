@@ -18,8 +18,8 @@ export const LightTheme: ITheme = {
     muted: "#A3B09A",
     error: "#C94B4B",
     success: "#5C8A5C",
-    warning: "#F59E0B", // ✅ NOVO - Laranja para avisos
-    reflection: "#546E7A", // ✅ NOVO - Azul Petróleo (Blue Grey) para harmonia
+    warning: "#F59E0B",
+    reflection: "#546E7A",
     onPrimary: "#FFFFFF",
     onSecondary: "#FFFFFF",
 
