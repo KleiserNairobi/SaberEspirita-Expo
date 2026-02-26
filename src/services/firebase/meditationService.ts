@@ -11,6 +11,8 @@ import {
 } from "firebase/firestore";
 import { db } from "../../configs/firebase/firebase";
 
+import { StatsService } from "./statsService";
+
 export const MEDITATIONS_COLLECTION = "meditations";
 
 export async function getMeditations(): Promise<IMeditation[]> {
@@ -69,15 +71,18 @@ export async function getMeditationById(id: string): Promise<IMeditation | null>
  */
 export async function logMeditationUsage(
   meditationId: string,
-  userId: string = "guest"
+  userId: string = "guest",
+  type: "reflection" | "guided" = "guided"
 ): Promise<void> {
   try {
-    // Registra métricas de uso (como contagem de plays) em uma subcoleção ou outro modelo definido.
-    // Exemplo: Salvar no Firebase que a meditação/reflexão foi lida
-    console.log(
-      `[Analytics Mock] Meditação/Reflexão ${meditationId} acessada por ${userId}`
-    );
-    // Futuro: Implementar addDoc() para coleção 'meditation_logs' ou atualizar contadores.
+    // Registra métricas de uso no Firestore
+    await StatsService.incrementMeditationCount(type);
+
+    if (__DEV__) {
+      console.log(
+        `[Analytics] Meditação/Reflexão ${meditationId} (${type}) acessada por ${userId}`
+      );
+    }
   } catch (error) {
     console.error("Erro ao resgistrar uso da meditação:", error);
     // Erros de analytics não devem quebrar o fluxo do usuário

@@ -73,4 +73,79 @@ export const StatsService = {
       console.error("[StatsService] Error incrementing quiz count:", error);
     }
   },
+
+  /**
+   * Incrementa o contador global de meditações/reflexões realizadas
+   * @param type 'reflection' ou 'guided'
+   */
+  async incrementMeditationCount(type: "reflection" | "guided" = "guided") {
+    try {
+      const globalDocId = type === "reflection" ? "meditation" : "guided_meditations";
+      const dailyField =
+        type === "reflection" ? "reflectionSessions" : "guidedMeditationSessions";
+
+      // 1. Atualizar Global Stats
+      const globalStatsRef = doc(db, "global_stats", globalDocId);
+      await setDoc(
+        globalStatsRef,
+        {
+          totalSessions: increment(1),
+        },
+        { merge: true }
+      );
+
+      // 2. Atualizar Daily Stats
+      const today = new Date().toISOString().split("T")[0];
+      const dailyStatsRef = doc(db, "daily_stats", today);
+      await setDoc(
+        dailyStatsRef,
+        {
+          date: today,
+          [dailyField]: increment(1),
+        },
+        { merge: true }
+      );
+
+      if (__DEV__) {
+        console.log(`[StatsService] Meditation count incremented (${type}).`);
+      }
+    } catch (error) {
+      console.error("[StatsService] Error incrementing meditation count:", error);
+    }
+  },
+
+  /**
+   * Incrementa o contador global de plays do player ambiente (Sintonia)
+   */
+  async incrementAmbientPlayCount() {
+    try {
+      // 1. Atualizar Global Stats
+      const globalStatsRef = doc(db, "global_stats", "ambient_player");
+      await setDoc(
+        globalStatsRef,
+        {
+          totalPlays: increment(1),
+        },
+        { merge: true }
+      );
+
+      // 2. Atualizar Daily Stats
+      const today = new Date().toISOString().split("T")[0];
+      const dailyStatsRef = doc(db, "daily_stats", today);
+      await setDoc(
+        dailyStatsRef,
+        {
+          date: today,
+          ambientPlayerPlays: increment(1),
+        },
+        { merge: true }
+      );
+
+      if (__DEV__) {
+        console.log(`[StatsService] Ambient play count incremented.`);
+      }
+    } catch (error) {
+      console.error("[StatsService] Error incrementing ambient play count:", error);
+    }
+  },
 };

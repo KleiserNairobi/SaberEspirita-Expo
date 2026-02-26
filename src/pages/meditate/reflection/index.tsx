@@ -51,7 +51,7 @@ export default function ReflectionScreen() {
   useEffect(() => {
     if (reflection && (user || isGuest) && !hasLogged.current) {
       const userId = user?.uid || "guest";
-      logMeditationUsage(reflection.id, userId);
+      logMeditationUsage(reflection.id, userId, "reflection");
       hasLogged.current = true;
     }
   }, [reflection, user, isGuest]);

@@ -20,6 +20,9 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { getCachedAudioUri } from "@/services/audio/audioCacheService";
 import { createStyles } from "./styles";
 
+import { logMeditationUsage } from "@/services/firebase/meditationService";
+import { useAuth } from "@/stores/authStore";
+
 const { width } = Dimensions.get("window");
 
 export default function MeditationPlayerScreen() {
@@ -28,6 +31,8 @@ export default function MeditationPlayerScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
   const route = useRoute<RouteProp<MeditateStackParamList, "MeditationPlayer">>();
   const { id } = route.params;
+  const { user } = useAuth();
+  const hasLogged = React.useRef(false);
 
   const { data: meditation, isLoading } = useMeditation(id);
   const [localAudioUri, setLocalAudioUri] = useState<string | null>(null);
@@ -49,6 +54,14 @@ export default function MeditationPlayerScreen() {
 
   const player = useAudioPlayer(localAudioUri || "");
   const status = useAudioPlayerStatus(player);
+
+  useEffect(() => {
+    // Log target: only when the audio is actually playing, avoiding multiple logs per session
+    if (player?.playing && meditation && !hasLogged.current) {
+      logMeditationUsage(meditation.id, user?.uid || "guest", "guided");
+      hasLogged.current = true;
+    }
+  }, [player?.playing, meditation, user]);
 
   function handleGoBack() {
     navigation.goBack();
