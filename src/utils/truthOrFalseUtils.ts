@@ -117,7 +117,9 @@ export function calculateLongestStreak(
  * Obtém a data atual no formato string (YYYY-MM-DD)
  */
 export function getTodayString(): string {
-  return new Date().toISOString().split("T")[0];
+  return new Date()
+    .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+    .split(" ")[0];
 }
 
 /**

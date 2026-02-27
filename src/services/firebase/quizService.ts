@@ -389,7 +389,9 @@ export async function getDailyChallengeQuestions(): Promise<IQuiz | null> {
     const shuffledQuestions = allQuestions.sort(() => 0.5 - Math.random()).slice(0, 5);
 
     // 5. Retornar estrutura compatível com IQuiz
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date()
+      .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+      .split(" ")[0];
 
     return {
       id: `DAILY_${today}`,
@@ -421,7 +423,9 @@ export async function getUserStreak(userId: string): Promise<number> {
           data.completedAt instanceof Timestamp
             ? data.completedAt.toDate()
             : new Date(data.completedAt);
-        return date.toISOString().split("T")[0]; // YYYY-MM-DD
+        return date
+          .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+          .split(" ")[0]; // YYYY-MM-DD
       })
       .sort((a, b) => b.localeCompare(a)); // Decrescente
 
@@ -431,8 +435,12 @@ export async function getUserStreak(userId: string): Promise<number> {
 
     // Calcular sequência
     let streak = 0;
-    const today = new Date().toISOString().split("T")[0];
-    const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+    const today = new Date()
+      .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+      .split(" ")[0];
+    const yesterday = new Date(Date.now() - 86400000)
+      .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+      .split(" ")[0];
 
     // Se não fez hoje nem ontem, streak quebrou
     if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday) {
@@ -448,7 +456,9 @@ export async function getUserStreak(userId: string): Promise<number> {
 
     for (let i = 0; i < uniqueDates.length; i++) {
       const dateToCheck = uniqueDates[i];
-      const stringCurrent = currentDate.toISOString().split("T")[0];
+      const stringCurrent = currentDate
+        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+        .split(" ")[0];
 
       if (dateToCheck === stringCurrent) {
         streak++;
@@ -467,7 +477,9 @@ export async function getUserStreak(userId: string): Promise<number> {
 
 export async function getDailyChallengeStatus(userId: string): Promise<boolean> {
   try {
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date()
+      .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+      .split(" ")[0];
     const dailyId = `DAILY_${today}`;
 
     // 1. Verificar documento padrão novo (DAILY_YYYY-MM-DD)

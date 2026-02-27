@@ -9,7 +9,9 @@ export const StatsService = {
    */
   async logDailyVisit(isGuest: boolean) {
     try {
-      const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+      const today = new Date()
+        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+        .split(" ")[0]; // YYYY-MM-DD
       const statsRef = doc(db, "daily_stats", today);
 
       await setDoc(
@@ -52,7 +54,9 @@ export const StatsService = {
       );
 
       // 2. Atualizar Daily Stats (Tendência diária)
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date()
+        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+        .split(" ")[0];
       const dailyStatsRef = doc(db, "daily_stats", today);
       await setDoc(
         dailyStatsRef,
@@ -95,7 +99,9 @@ export const StatsService = {
       );
 
       // 2. Atualizar Daily Stats
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date()
+        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+        .split(" ")[0];
       const dailyStatsRef = doc(db, "daily_stats", today);
       await setDoc(
         dailyStatsRef,
@@ -130,7 +136,9 @@ export const StatsService = {
       );
 
       // 2. Atualizar Daily Stats
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date()
+        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+        .split(" ")[0];
       const dailyStatsRef = doc(db, "daily_stats", today);
       await setDoc(
         dailyStatsRef,

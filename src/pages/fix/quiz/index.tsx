@@ -312,7 +312,9 @@ export function QuizScreen() {
         }
         // --- Lógica para FIXE (Standard/Daily) ---
         else {
-          const today = new Date().toISOString().split("T")[0];
+          const today = new Date()
+            .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+            .split(" ")[0];
           const dailySubcategoryId = `DAILY_${today}`;
 
           const historySubcategoryId = isDaily ? dailySubcategoryId : subcategoryId!;
