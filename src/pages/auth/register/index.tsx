@@ -55,10 +55,12 @@ export function RegisterScreen() {
     let valid = true;
     const newErrors = { fullName: "", email: "", password: "", confirmPassword: "" };
 
+    const emailLikeRegex = /(@|\.com|\.br|\.net|\.org|gmail|hotmail|outlook|yahoo)/i;
+
     if (!fullName.trim() || fullName.trim().length < 3) {
       newErrors.fullName = "Por favor, informe seu nome (mínimo 3 caracteres).";
       valid = false;
-    } else if (fullName.trim().includes("@")) {
+    } else if (emailLikeRegex.test(fullName.trim())) {
       newErrors.fullName = "Por favor, não utilize um e-mail como nome/apelido.";
       valid = false;
     }
