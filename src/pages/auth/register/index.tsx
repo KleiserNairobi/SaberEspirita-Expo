@@ -58,6 +58,9 @@ export function RegisterScreen() {
     if (!fullName.trim() || fullName.trim().length < 3) {
       newErrors.fullName = "Por favor, informe seu nome (mínimo 3 caracteres).";
       valid = false;
+    } else if (fullName.trim().includes("@")) {
+      newErrors.fullName = "Por favor, não utilize um e-mail como nome/apelido.";
+      valid = false;
     }
 
     const emailRegex = /\S+@\S+\.\S+/;
