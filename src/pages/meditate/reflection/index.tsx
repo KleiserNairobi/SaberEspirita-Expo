@@ -14,7 +14,6 @@ import { getReflectionById } from "@/services/firebase/reflectionService";
 import { useAuth } from "@/stores/authStore";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
-import { REFLECTION_TOPICS } from "@/types/reflection";
 import { shareReflection } from "@/utils/sharing";
 import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
 import { createStyles } from "./styles";
@@ -121,7 +120,7 @@ export default function ReflectionScreen() {
     );
   }
 
-  const topicLabel = REFLECTION_TOPICS[reflection.topic]?.label || reflection.topic;
+  const topicLabel = reflection.topic;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["bottom"]}>

@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { ChevronRight, Heart, Tag } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { IReflection, REFLECTION_TOPICS } from "@/types/reflection";
+import { IReflection } from "@/types/reflection";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
 import { createStyles } from "./styles";
 
@@ -56,7 +56,7 @@ export function ReflectionCard({ reflection, onPress, onPressIn }: ReflectionCar
         <View style={styles.topicContainer}>
           <Tag size={14} color={theme.colors.primary} style={styles.topicIcon} />
           <Text style={styles.topicText} numberOfLines={1}>
-            {REFLECTION_TOPICS[reflection.topic]?.label || reflection.topic}
+            {reflection.topic}
           </Text>
         </View>
       </View>

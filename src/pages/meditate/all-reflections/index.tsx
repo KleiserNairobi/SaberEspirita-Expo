@@ -23,7 +23,6 @@ import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
 import { ReflectionCard } from "../components/ReflectionCard";
 import { useReflections } from "../hooks/useReflections";
 import { ContentFilterType } from "@/types/prayer";
-import { REFLECTION_TOPICS } from "@/types/reflection";
 import { createStyles } from "./styles";
 import { useQueryClient } from "@tanstack/react-query";
 import { getReflectionById } from "@/services/firebase/reflectionService";
@@ -77,8 +76,8 @@ export default function AllReflectionsScreen() {
         break;
       case "BY_TOPIC":
         result = result.sort((a, b) => {
-          const topicA = REFLECTION_TOPICS[a.topic]?.label || a.topic;
-          const topicB = REFLECTION_TOPICS[b.topic]?.label || b.topic;
+          const topicA = a.topic;
+          const topicB = b.topic;
           return topicA.localeCompare(topicB);
         });
         break;
