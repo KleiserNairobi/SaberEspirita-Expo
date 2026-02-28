@@ -61,6 +61,11 @@ export const createStyles = (theme: ITheme) =>
       color: theme.colors.text,
       textAlign: "center",
     },
+    momentCount: {
+      ...theme.text("xs", "regular", theme.colors.textSecondary),
+      textAlign: "center",
+      marginTop: -4,
+    },
     ambientContainer: {
       marginHorizontal: 20,
       marginBottom: 10,

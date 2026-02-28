@@ -1,23 +1,23 @@
-import React, { useState, useEffect, useRef } from "react";
-import { ScrollView, Text, View, TouchableOpacity, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery } from "@tanstack/react-query";
-import { Clock, User, BookOpen, Tag } from "lucide-react-native";
+import { BookOpen, Clock, Tag, User } from "lucide-react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Alert, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
+import { ReadingToolbar } from "@/components/ReadingToolbar";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { getReflectionById } from "@/services/firebase/reflectionService";
-import { logMeditationUsage } from "@/services/firebase/meditationService";
-import { REFLECTION_TOPICS } from "@/types/reflection";
 import { MeditateStackParamList } from "@/routers/types";
+import { logMeditationUsage } from "@/services/firebase/meditationService";
+import { getReflectionById } from "@/services/firebase/reflectionService";
+import { useAuth } from "@/stores/authStore";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
-import { useAuth } from "@/stores/authStore";
-import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
+import { REFLECTION_TOPICS } from "@/types/reflection";
 import { shareReflection } from "@/utils/sharing";
+import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
 import { createStyles } from "./styles";
-import { ReadingToolbar } from "@/components/ReadingToolbar";
 
 type ReflectionScreenRouteProp = RouteProp<MeditateStackParamList, "Reflection">;
 
@@ -140,46 +140,40 @@ export default function ReflectionScreen() {
 
         {/* Conteúdo */}
         <View style={styles.content}>
-          {/* Metadados */}
+          {/* Metadados - Envolvidos em uma View para gerenciar margem caso a caso */}
           <View style={styles.metadata}>
-            {/* Primeira linha: Autor e Fonte */}
-            <View style={styles.metadataRow}>
-              {/* Autor */}
-              {reflection.author && (
-                <View style={styles.metadataItem}>
-                  <User size={16} color={theme.colors.muted} />
-                  <Text style={styles.metadataText}>{reflection.author}</Text>
-                </View>
-              )}
+            {/* 1. Referência / Fonte */}
+            {reflection.source && (
+              <View style={styles.metadataItem}>
+                <BookOpen size={16} color={theme.colors.muted} />
+                <Text style={styles.metadataText}>{reflection.source}</Text>
+              </View>
+            )}
 
-              {/* Fonte */}
-              {reflection.source && (
-                <View style={styles.metadataItem}>
-                  <BookOpen size={16} color={theme.colors.muted} />
-                  <Text style={styles.metadataText}>{reflection.source}</Text>
-                </View>
-              )}
+            {/* 2. Autor */}
+            {reflection.author && (
+              <View style={styles.metadataItem}>
+                <User size={16} color={theme.colors.muted} />
+                <Text style={styles.metadataText}>{reflection.author}</Text>
+              </View>
+            )}
+
+            {/* 3. Tempo de leitura */}
+            <View style={styles.metadataItem}>
+              <Clock size={16} color={theme.colors.muted} />
+              <Text style={styles.metadataText}>
+                {reflection.readingTimeMinutes} min de leitura
+              </Text>
             </View>
 
-            {/* Segunda linha: Tempo de leitura e Tópico */}
-            <View style={styles.metadataRow}>
-              {/* Tempo de leitura */}
-              <View style={styles.metadataItem}>
-                <Clock size={16} color={theme.colors.muted} />
-                <Text style={styles.metadataText}>
-                  {reflection.readingTimeMinutes} min de leitura
-                </Text>
-              </View>
-
-              {/* Tópico */}
-              <View style={styles.metadataItem}>
-                <Tag size={16} color={theme.colors.muted} />
-                <Text style={styles.metadataText}>{topicLabel}</Text>
-              </View>
+            {/* 4. Tópico / Categoria */}
+            <View style={styles.metadataItem}>
+              <Tag size={16} color={theme.colors.muted} />
+              <Text style={styles.metadataText}>{topicLabel}</Text>
             </View>
           </View>
 
-          {/* Barra de Ações */}
+          {/* Barra de Ações alinhada espacialmente e sem exceder a margem do texto */}
           <ReadingToolbar
             onBack={handleGoBack}
             onShare={handleShare}

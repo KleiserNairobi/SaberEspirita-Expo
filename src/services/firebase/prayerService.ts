@@ -1,15 +1,15 @@
 import {
   collection,
   doc,
+  documentId,
   getDoc,
   getDocs,
   query,
   where,
-  documentId,
 } from "firebase/firestore";
 
 import { db } from "@/configs/firebase/firebase";
-import { IPrayer, IPrayerCategory, IPrayerCategoryLink } from "@/types/prayer";
+import { IPrayer, IPrayerCategory } from "@/types/prayer";
 
 /**
  * Busca todas as categorias de orações
@@ -93,4 +93,16 @@ export async function getFeaturedPrayers(): Promise<IPrayer[]> {
     id: doc.id,
     ...doc.data(),
   })) as IPrayer[];
+}
+
+/**
+ * Busca a quantidade total de orações de uma categoria
+ * Abordagem clássica por getDocs via linksQuery (fallback por incompatibilidade v9 count em RN nativo)
+ */
+export async function getCategoryPrayerCount(categoryId: string): Promise<number> {
+  const linksRef = collection(db, "prayer_category_links");
+  const linksQuery = query(linksRef, where("categoryId", "==", categoryId));
+  const snapshot = await getDocs(linksQuery);
+
+  return snapshot.docs.length;
 }

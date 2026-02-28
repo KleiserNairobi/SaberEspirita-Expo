@@ -32,27 +32,23 @@ export const createStyles = (theme: ITheme) =>
     },
     metadata: {
       gap: theme.spacing.sm,
-      alignItems: "center",
+      alignItems: "flex-start",
+      alignSelf: "stretch", // Ocupa toda a largura interna e garante que o item da extrema esquerda encoste no limite interno do box do texto
       marginBottom: theme.spacing.md,
     },
     content: {
       // padding removed since scrollContent handles horizontal padding
     },
-
-    metadataRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
     metadataItem: {
       flexDirection: "row",
-      alignItems: "center",
-      gap: 8,
-      flex: 1,
+      alignItems: "flex-start",
+      gap: 12,
     },
     metadataText: {
       ...theme.text("sm", "regular"),
       color: theme.colors.muted,
+      flexShrink: 1, // Permite que a fonte longa de um livro caia para a próxima linha sem furar o tamanho da tela
+      marginTop: -2, // Compensação fina para alinhar com o topo do ícone
     },
     actionsContainer: {
       flexDirection: "row",

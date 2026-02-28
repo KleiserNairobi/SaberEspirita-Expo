@@ -55,6 +55,13 @@ Usar apenas para **autenticação** e **providers globais**, evitando armazenar 
 Todo data fetching remoto (API, Firebase, etc.) **DEVE** ser feito utilizando **TanStack Query (React Query)**.
 **NÃO** use `useEffect` + `useState` para buscar dados manualmente.
 
+### Regra de Arquitetura: Firebase SDKs
+
+No projeto **SaberEspirita-Expo**, temos a seguinte regra ESTRITA para os SDKs do Firebase:
+
+- **Firebase Web SDK (`firebase`)**: OBRIGATÓRIO para **todo o backend, banco de dados e lógica da aplicação** (Firestore, Storage, Auth, Functions). Use sempre as importações modulares da web (`"firebase/firestore"`, etc).
+- **React Native Firebase (`@react-native-firebase/...`)**: Utilizado **EXCLUSIVAMENTE PARA ANALYTICS**. Não utilize seus módulos de firestore ou auth para consultas de dados.
+
 ### Padrão de Custom Hooks
 
 Crie custom hooks para encapsular as queries e mutações:

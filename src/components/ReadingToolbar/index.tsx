@@ -1,17 +1,17 @@
-import React from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
 import {
+  AArrowDown,
+  AArrowUp,
+  ArrowLeft,
   Heart,
   Share2,
   Volume2,
   VolumeX,
-  ArrowLeft,
-  AArrowDown,
-  AArrowUp,
 } from "lucide-react-native";
+import React from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 
-import { useAppTheme } from "@/hooks/useAppTheme";
 import { ITheme } from "@/configs/theme/types";
+import { useAppTheme } from "@/hooks/useAppTheme";
 
 interface ReadingToolbarProps {
   onBack: () => void;
@@ -122,19 +122,15 @@ const createStyles = (theme: ITheme) =>
     container: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "center", // Centraliza o grupo de botões
-      gap: theme.spacing.lg, // Define espaçamento fixo entre eles
-      paddingHorizontal: theme.spacing.lg,
+      justifyContent: "space-around",
       paddingVertical: theme.spacing.md,
       backgroundColor: theme.colors.background,
-      // borderBottomWidth: 1, // Removido para ser mais clean entre header e content
-      // borderBottomColor: `${theme.colors.border}50`,
     },
     actionButton: {
       width: 40,
       height: 40,
       borderRadius: 20,
-      backgroundColor: `${theme.colors.primary}15`, // Fundo sutil
+      backgroundColor: `${theme.colors.primary}15`,
       justifyContent: "center",
       alignItems: "center",
     },

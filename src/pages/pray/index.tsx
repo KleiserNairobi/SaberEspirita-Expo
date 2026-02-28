@@ -1,7 +1,6 @@
 import React from "react";
 import {
   ActivityIndicator,
-  FlatList,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -9,30 +8,31 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { PrayStackParamList } from "@/routers/types";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { PrayStackParamList } from "@/routers/types";
 import {
-  Heart,
-  Sunrise,
-  Moon,
-  HeartPulse,
-  Users,
-  HandHeart,
   BookOpen,
-  Sparkles,
   ChevronRight,
+  HandHeart,
+  Heart,
+  HeartPulse,
+  Moon,
+  Sparkles,
+  Sunrise,
+  Users,
 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { AmbientPlayer } from "@/pages/pray/components/AmbientPlayer";
+import { useFeaturedPrayers } from "@/pages/pray/hooks/useFeaturedPrayers";
+import { usePrayerMomentsCounts } from "@/pages/pray/hooks/usePrayerMomentsCounts";
+import { createStyles } from "@/pages/pray/styles";
+import { getPrayersByCategory } from "@/services/firebase/prayerService";
 import { useAuthStore } from "@/stores/authStore";
 import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
 import { PRAYER_MOMENTS } from "@/types/prayer";
-import { useFeaturedPrayers } from "@/pages/pray/hooks/useFeaturedPrayers";
-import { AmbientPlayer } from "@/pages/pray/components/AmbientPlayer";
-import { createStyles } from "@/pages/pray/styles";
 import { useQueryClient } from "@tanstack/react-query";
-import { getPrayersByCategory } from "@/services/firebase/prayerService";
 
 // Mapeamento de ícones para cada momento
 const MOMENT_ICONS = {
@@ -54,6 +54,7 @@ export default function PrayScreen() {
   const queryClient = useQueryClient();
 
   const { data: featuredPrayers, isLoading: featuredLoading } = useFeaturedPrayers();
+  const { data: momentsCounts } = usePrayerMomentsCounts();
 
   const { isFavorite, toggleFavorite } = usePrayerFavoritesStore();
 
@@ -108,6 +109,11 @@ export default function PrayScreen() {
                   <IconComponent size={20} color={theme.colors.primary} />
                 </View>
                 <Text style={styles.momentLabel}>{label}</Text>
+                {momentsCounts && momentsCounts[key] !== undefined && (
+                  <Text style={styles.momentCount}>
+                    {momentsCounts[key]} {momentsCounts[key] === 1 ? "oração" : "orações"}
+                  </Text>
+                )}
               </TouchableOpacity>
             );
           })}
