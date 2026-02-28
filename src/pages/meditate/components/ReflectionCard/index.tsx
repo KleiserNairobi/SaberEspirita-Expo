@@ -55,7 +55,7 @@ export function ReflectionCard({ reflection, onPress, onPressIn }: ReflectionCar
         {/* Tópico */}
         <View style={styles.topicContainer}>
           <Tag size={14} color={theme.colors.primary} style={styles.topicIcon} />
-          <Text style={styles.topicText} numberOfLines={1}>
+          <Text style={[styles.topicText, { flex: 0 }]} numberOfLines={1}>
             {reflection.topic}
           </Text>
         </View>

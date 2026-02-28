@@ -83,6 +83,9 @@ export default function AllReflectionsScreen() {
         break;
       case "ALL":
       default:
+        result = result.sort((a, b) => {
+          return a.title.localeCompare(b.title);
+        });
         break;
     }
 
