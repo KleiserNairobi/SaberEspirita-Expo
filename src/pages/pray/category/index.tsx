@@ -99,7 +99,8 @@ export function PrayCategoryScreen() {
         break;
       case "ALL":
       default:
-        // Sem filtro
+        // Sem filtro, apenas ordenação alfabética pelo título
+        result = result.sort((a, b) => a.title.localeCompare(b.title));
         break;
     }
 
