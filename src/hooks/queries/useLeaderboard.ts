@@ -7,7 +7,7 @@ export function useLeaderboard(timeFilter: TimeFilter) {
   return useQuery({
     queryKey: ["leaderboard", timeFilter],
     queryFn: () => getLeaderboard(timeFilter),
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 1000 * 30, // 30 segundos de cache para melhorar consistência
   });
 }
 

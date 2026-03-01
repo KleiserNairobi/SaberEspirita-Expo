@@ -11,7 +11,7 @@ export function createStyles(theme: ITheme) {
       flex: 1,
     },
     list: {
-      paddingBottom: theme.spacing.xl,
+      paddingBottom: 120,
     },
 
     // ==================== HEADER ====================
