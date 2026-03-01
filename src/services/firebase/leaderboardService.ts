@@ -33,12 +33,10 @@ export async function getLeaderboard(period: TimeFilter): Promise<ILeaderboardUs
     const snapshot = await getDocs(q);
     const now = new Date();
 
-    // Start of Week (Monday 00:00)
+    // Start of Week (Sunday 00:00)
     const startOfWeek = new Date(now);
     startOfWeek.setHours(0, 0, 0, 0);
-    const day = startOfWeek.getDay(); // 0 (Sun) to 6 (Sat)
-    const distanceToMonday = (day + 6) % 7;
-    startOfWeek.setDate(now.getDate() - distanceToMonday);
+    startOfWeek.setDate(now.getDate() - startOfWeek.getDay());
 
     // Start of Month (1st 00:00)
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
