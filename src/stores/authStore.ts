@@ -197,9 +197,7 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      // ... (sendPasswordResetEmail, sendVerificationEmail implementations)
       sendPasswordResetEmail: async (email: string) => {
-        // ... (keep existing implementation)
         set({ loading: true, error: null });
         try {
           console.log("AuthStore: Enviando email de recuperação de senha...");
@@ -215,7 +213,6 @@ export const useAuthStore = create<AuthState>()(
       },
 
       sendVerificationEmail: async (user: User) => {
-        // ... (keep existing implementation)
         set({ loading: true, error: null });
         try {
           console.log("AuthStore: Enviando email de verificação...");
