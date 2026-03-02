@@ -167,6 +167,29 @@ export const createStyles = (theme: ITheme) =>
       lineHeight: 20,
     },
 
+    // INFO CARD
+    infoCard: {
+      backgroundColor: `${theme.colors.primary}08`,
+      borderRadius: theme.radius.md,
+      borderWidth: 1,
+      borderColor: `${theme.colors.primary}30`,
+      padding: theme.spacing.lg,
+      marginVertical: theme.spacing.md,
+    },
+    infoHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.sm,
+      marginBottom: theme.spacing.sm,
+    },
+    infoTitle: {
+      ...theme.text("md", "semibold", theme.colors.primary),
+    },
+    infoText: {
+      ...theme.text("sm", "regular", theme.colors.textSecondary),
+      lineHeight: 20,
+    },
+
     // REQUIREMENTS CARD
     requirementsCard: {
       backgroundColor: `${theme.colors.warning}08`,

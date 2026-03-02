@@ -156,6 +156,19 @@ export function CourseDetailsScreen() {
             </View>
           )}
 
+          {/* SEQUENTIAL PROGRESS INFO */}
+          <View style={styles.infoCard}>
+            <View style={styles.infoHeader}>
+              <AlertCircle size={20} color={theme.colors.primary} />
+              <Text style={styles.infoTitle}>Como funciona o curso</Text>
+            </View>
+            <Text style={styles.infoText}>
+              Este curso possui progressão sequencial. As próximas aulas e os exercícios
+              de fixação serão liberados automaticamente à medida que você concluir os
+              anteriores.
+            </Text>
+          </View>
+
           {/* STATS LIST (2 COLUNAS) */}
           <View style={styles.statsList}>
             {/* Aulas */}
