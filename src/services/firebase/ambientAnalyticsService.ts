@@ -19,7 +19,8 @@ export async function logAmbientPlay(
     await addDoc(logsRef, logData);
 
     // Atualiza estatísticas globais e diárias
-    await StatsService.incrementAmbientPlayCount();
+    const isGuest = userId === "guest";
+    await StatsService.incrementAmbientPlayCount(isGuest);
     if (__DEV__) {
       console.log(`[Analytics] Ambient Play logged: ${trackTitle}`);
     }

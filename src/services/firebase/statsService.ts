@@ -36,12 +36,20 @@ export const StatsService = {
   /**
    * Incrementa o contador global de quizzes realizados
    * @param type 'general' (Quizzes Gerais) ou 'lesson' (Exercícios de Lições)
+   * @param isGuest Se o usuário é convidado
    */
-  async incrementQuizCount(type: "general" | "lesson" = "general") {
+  async incrementQuizCount(
+    type: "general" | "lesson" = "general",
+    isGuest: boolean = false
+  ) {
     try {
       const globalDocId = type === "general" ? "quizzes" : "lesson_quizzes";
       const dailyField =
         type === "general" ? "generalQuizAttempts" : "lessonQuizAttempts";
+      const dailyGuestField =
+        type === "general" ? "generalQuizAttempts_guest" : "lessonQuizAttempts_guest";
+      const dailyUserField =
+        type === "general" ? "generalQuizAttempts_user" : "lessonQuizAttempts_user";
 
       // 1. Atualizar Global Stats (Total acumulado)
       const globalStatsRef = doc(db, "global_stats", globalDocId);
@@ -63,6 +71,8 @@ export const StatsService = {
         {
           date: today,
           [dailyField]: increment(1),
+          [dailyGuestField]: isGuest ? increment(1) : increment(0),
+          [dailyUserField]: !isGuest ? increment(1) : increment(0),
           // Mantém o total combinado para retrocompatibilidade se necessário, ou removemos?
           // Vou manter quizAttempts como soma por enquanto para evitar quebras imediatas, mas o foco é separar.
           quizAttempts: increment(1),
@@ -81,12 +91,24 @@ export const StatsService = {
   /**
    * Incrementa o contador global de meditações/reflexões realizadas
    * @param type 'reflection' ou 'guided'
+   * @param isGuest Se o usuário é convidado
    */
-  async incrementMeditationCount(type: "reflection" | "guided" = "guided") {
+  async incrementMeditationCount(
+    type: "reflection" | "guided" = "guided",
+    isGuest: boolean = false
+  ) {
     try {
       const globalDocId = type === "reflection" ? "meditation" : "guided_meditations";
       const dailyField =
         type === "reflection" ? "reflectionSessions" : "guidedMeditationSessions";
+      const dailyGuestField =
+        type === "reflection"
+          ? "reflectionSessions_guest"
+          : "guidedMeditationSessions_guest";
+      const dailyUserField =
+        type === "reflection"
+          ? "reflectionSessions_user"
+          : "guidedMeditationSessions_user";
 
       // 1. Atualizar Global Stats
       const globalStatsRef = doc(db, "global_stats", globalDocId);
@@ -108,6 +130,8 @@ export const StatsService = {
         {
           date: today,
           [dailyField]: increment(1),
+          [dailyGuestField]: isGuest ? increment(1) : increment(0),
+          [dailyUserField]: !isGuest ? increment(1) : increment(0),
         },
         { merge: true }
       );
@@ -122,8 +146,9 @@ export const StatsService = {
 
   /**
    * Incrementa o contador global de plays do player ambiente (Sintonia)
+   * @param isGuest Se o usuário é convidado
    */
-  async incrementAmbientPlayCount() {
+  async incrementAmbientPlayCount(isGuest: boolean = false) {
     try {
       // 1. Atualizar Global Stats
       const globalStatsRef = doc(db, "global_stats", "ambient_player");
@@ -145,6 +170,8 @@ export const StatsService = {
         {
           date: today,
           ambientPlayerPlays: increment(1),
+          ambientPlayerPlays_guest: isGuest ? increment(1) : increment(0),
+          ambientPlayerPlays_user: !isGuest ? increment(1) : increment(0),
         },
         { merge: true }
       );

@@ -76,7 +76,8 @@ export async function logMeditationUsage(
 ): Promise<void> {
   try {
     // Registra métricas de uso no Firestore
-    await StatsService.incrementMeditationCount(type);
+    const isGuest = userId === "guest";
+    await StatsService.incrementMeditationCount(type, isGuest);
 
     if (__DEV__) {
       console.log(

@@ -40,6 +40,7 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FixStackParamList, AppStackParamList } from "@/routers/types";
+import { StatsService } from "@/services/firebase/statsService";
 
 // Combine params type to support both stacks if needed, or just use FixStackParamList which we extended
 type QuizRouteProp = RouteProp<FixStackParamList, "Quiz">;
@@ -240,6 +241,9 @@ export function QuizScreen() {
 
     // Verificar se é convidado
     if (useAuthStore.getState().isGuest) {
+      // 🚀 NOVO: Sempre registrar nas estatísticas diárias mesmo que não salve o progresso pessoal
+      StatsService.incrementQuizCount(isCourse ? "lesson" : "general", true);
+
       setMessageConfig({
         type: "info",
         title: "Modo Visitante",

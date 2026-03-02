@@ -213,7 +213,8 @@ export async function addUserHistory(
     console.log("Histórico adicionado com sucesso!");
 
     // Incrementa contador global de quizzes
-    StatsService.incrementQuizCount("general");
+    const isGuest = history.userId === "guest";
+    StatsService.incrementQuizCount("general", isGuest);
   } catch (error) {
     console.log("Erro ao adicionar histórico:", error);
   }

@@ -89,11 +89,7 @@ export class TruthOrFalseService {
   static async saveResponse(
     response: Omit<IUserTruthOrFalseResponse, "date">
   ): Promise<boolean> {
-    const userId = useAuthStore.getState().user?.uid;
-    if (!userId) {
-      console.error("Usuário não autenticado");
-      return false;
-    }
+    const userId = useAuthStore.getState().user?.uid || "guest";
 
     const today = getTodayString();
     const fullResponse: IUserTruthOrFalseResponse = {
