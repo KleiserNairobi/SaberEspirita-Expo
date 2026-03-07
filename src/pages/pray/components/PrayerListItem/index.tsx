@@ -10,6 +10,7 @@ import {
   HandHeart,
   BookOpen,
   Sparkles,
+  Flame,
 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -26,6 +27,7 @@ const MOMENT_ICONS = {
   "POR-CURA": Heart,
   "POR-GRATIDAO": Sparkles,
   "POR-PAZ": HandHeart,
+  REUNIOES: Flame,
 } as const;
 
 interface PrayerListItemProps {

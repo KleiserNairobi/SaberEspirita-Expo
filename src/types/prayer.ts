@@ -29,7 +29,8 @@ export type PrayerMoment =
   | "POR-ALGUEM"
   | "POR-CURA"
   | "POR-GRATIDAO"
-  | "POR-PAZ";
+  | "POR-PAZ"
+  | "REUNIOES";
 
 // Tipo genérico de filtro para conteúdos (Orações e Reflexões)
 export type ContentFilterType =
@@ -65,4 +66,5 @@ export const PRAYER_MOMENTS: Record<PrayerMoment, { label: string }> = {
   "POR-CURA": { label: "Por Cura" },
   "POR-GRATIDAO": { label: "Por Gratidão" },
   "POR-PAZ": { label: "Por Paz" },
+  REUNIOES: { label: "Reuniões" },
 };

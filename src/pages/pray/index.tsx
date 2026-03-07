@@ -14,6 +14,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   BookOpen,
   ChevronRight,
+  Flame,
   HandHeart,
   Heart,
   HeartPulse,
@@ -44,6 +45,7 @@ const MOMENT_ICONS = {
   "POR-CURA": Heart,
   "POR-GRATIDAO": Sparkles,
   "POR-PAZ": HandHeart,
+  REUNIOES: Flame,
 } as const;
 
 export default function PrayScreen() {
