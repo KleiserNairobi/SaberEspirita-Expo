@@ -139,7 +139,7 @@ export function CourseCurriculumScreen() {
     }, 500);
   };
 
-  // ✅ NOVO: Lógica Proativa de Avaliação por Marcos (25%, 50%, 100%)
+  // ✅ NOVO: Lógica Proativa de Avaliação por Marcos (40%, 75%, 100%)
   useEffect(() => {
     // Só avalia se já tiver carregado os dados de progresso e as aulas
     if (loading || totalLessons === 0 || !progress) return;
@@ -149,15 +149,15 @@ export function CourseCurriculumScreen() {
     if (hasGloballySubmitted) return;
 
     // 2. Define os marcos
-    const milestones = [25, 50, 100];
+    const milestones = [40, 75, 100];
 
-    // Descobrir em qual marco o usuário está baseado no progresso dele E evitar o gatilho se for progresso muito baixo (0-24%)
+    // Descobrir em qual marco o usuário está baseado no progresso dele E evitar o gatilho se for progresso muito baixo (0-39%)
     const currentMilestone = milestones
       .slice(0)
       .reverse()
       .find((m) => lessonsProgress >= m);
 
-    // Se não atingiu pelo menos 25% ainda, abortar.
+    // Se não atingiu pelo menos 40% ainda, abortar.
     if (!currentMilestone) return;
 
     // 3. Checa se NÓS já APRESENTAMOS o popup pro milestone atual
