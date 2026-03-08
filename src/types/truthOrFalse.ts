@@ -1,5 +1,3 @@
-import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
-
 /**
  * Interface para uma pergunta de Verdade ou Mentira
  */

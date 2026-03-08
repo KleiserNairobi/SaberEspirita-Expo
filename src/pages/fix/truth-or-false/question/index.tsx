@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowLeft, Check, X, HelpCircle, Tag } from "lucide-react-native";
 
+import { Timestamp } from "firebase/firestore";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
 import { TruthOrFalseService } from "@/services/firebase/truthOrFalseService";
@@ -76,7 +77,7 @@ export function TruthOrFalseQuestionScreen() {
         userAnswer,
         isCorrect,
         timeSpent: 0, // pode implementar timer depois
-        respondedAt: new Date(),
+        respondedAt: Timestamp.now(),
         savedToLibrary: false,
       });
 
