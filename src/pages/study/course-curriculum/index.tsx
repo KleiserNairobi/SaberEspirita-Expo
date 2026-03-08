@@ -23,6 +23,7 @@ import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
 import { useExercises, useCourseExercises } from "@/hooks/queries/useExercises";
 import { useQueryClient } from "@tanstack/react-query";
 import { getLessonById } from "@/services/firebase/lessonService";
+import { saveBoolean, loadBoolean } from "@/utils/Storage";
 import { ILesson } from "@/types/course";
 import { ProgressSummaryCard } from "./components/ProgressSummaryCard";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage"; // ✅ NOVO
@@ -117,6 +118,9 @@ export function CourseCurriculumScreen() {
       comment,
     });
 
+    // Marcar universalmente neste device que o curso FOI AVALIADO (pra não abrir mais nos próximos marcos)
+    saveBoolean(`course_${courseId}_review_submitted`, true);
+
     setMessageConfig({
       type: "success",
       title: "Avaliação Enviada!",
@@ -134,6 +138,42 @@ export function CourseCurriculumScreen() {
       bottomSheetRef.current?.present();
     }, 500);
   };
+
+  // ✅ NOVO: Lógica Proativa de Avaliação por Marcos (25%, 50%, 100%)
+  useEffect(() => {
+    // Só avalia se já tiver carregado os dados de progresso e as aulas
+    if (loading || totalLessons === 0 || !progress) return;
+
+    // 1. Checa se o usuário DEU a nota pro curso localmente (True = nunca mais abre o bottomsheet orgânico)
+    const hasGloballySubmitted = loadBoolean(`course_${courseId}_review_submitted`);
+    if (hasGloballySubmitted) return;
+
+    // 2. Define os marcos
+    const milestones = [25, 50, 100];
+
+    // Descobrir em qual marco o usuário está baseado no progresso dele E evitar o gatilho se for progresso muito baixo (0-24%)
+    const currentMilestone = milestones
+      .slice(0)
+      .reverse()
+      .find((m) => lessonsProgress >= m);
+
+    // Se não atingiu pelo menos 25% ainda, abortar.
+    if (!currentMilestone) return;
+
+    // 3. Checa se NÓS já APRESENTAMOS o popup pro milestone atual
+    const promptedKey = `course_${courseId}_review_prompted_${currentMilestone}`;
+    const hasPromptedThisMilestone = loadBoolean(promptedKey);
+
+    if (!hasPromptedThisMilestone) {
+      // Registrar que cobramos nesse marco específico pra não repetir amanhã se ele logar e continuar nos 25%
+      saveBoolean(promptedKey, true);
+
+      // Apresentar BottomSheet de forma orgânica e sutil dando 1 seg de delay pra UI carregar
+      setTimeout(() => {
+        handleOpenFeedback();
+      }, 1000);
+    }
+  }, [lessonsProgress, loading, totalLessons, progress, courseId]);
 
   // ✅ NOVO: QueryClient para prefetch
   const queryClient = useQueryClient();

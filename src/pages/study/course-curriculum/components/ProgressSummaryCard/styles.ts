@@ -77,13 +77,7 @@ export const createStyles = (theme: ITheme) =>
       color: theme.colors.success,
     },
     rateButtonContainer: {
-      marginTop: theme.spacing.md,
-      paddingTop: theme.spacing.md,
-      borderTopWidth: 1,
-      borderTopColor: theme.colors.border,
-      alignItems: "center",
-    },
-    rateButtonText: {
-      ...theme.text("sm", "medium", theme.colors.primary),
+      marginTop: theme.spacing.lg,
+      width: "100%",
     },
   });

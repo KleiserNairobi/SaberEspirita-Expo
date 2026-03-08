@@ -1,8 +1,9 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { Award } from "lucide-react-native";
+import { Award, Star } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { Button } from "@/components/Button";
 import { createStyles } from "./styles";
 
 interface ProgressSummaryCardProps {
@@ -84,9 +85,12 @@ export function ProgressSummaryCard({
       {/* Botão de Avaliar Curso (Opcional, caso passe a prop) */}
       {onRateCourse && (
         <View style={styles.rateButtonContainer}>
-          <Text style={styles.rateButtonText} onPress={onRateCourse}>
-            Avaliar Curso ⭐
-          </Text>
+          <Button
+            title="Deixar Avaliação"
+            variant="outline"
+            onPress={onRateCourse}
+            fullWidth
+          />
         </View>
       )}
     </View>
