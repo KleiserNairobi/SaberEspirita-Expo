@@ -23,10 +23,11 @@ import { createStyles } from "./styles";
 interface BottomSheetMessageProps {
   config: BottomSheetMessageConfig | null;
   onDismiss?: () => void;
+  children?: React.ReactNode;
 }
 
 export const BottomSheetMessage = forwardRef<BottomSheetModal, BottomSheetMessageProps>(
-  ({ config, onDismiss }, ref) => {
+  ({ config, onDismiss, children }, ref) => {
     const { theme } = useAppTheme();
     const insets = useSafeAreaInsets();
     const styles = createStyles(theme);
@@ -125,8 +126,14 @@ export const BottomSheetMessage = forwardRef<BottomSheetModal, BottomSheetMessag
               {/* Título */}
               <Text style={styles.title}>{config.title}</Text>
 
-              {/* Mensagem */}
-              <Text style={styles.message}>{config.message}</Text>
+              {/* Mensagem e View Condicional (Children) */}
+              {config.message ? (
+                <Text style={styles.message}>{config.message}</Text>
+              ) : null}
+
+              {children && (
+                <View style={{ width: "100%", marginVertical: 8 }}>{children}</View>
+              )}
 
               {/* Botões */}
               <View style={styles.buttonContainer}>

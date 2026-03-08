@@ -29,6 +29,9 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage"; // ✅ NOV
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types"; // ✅ NOVO
 import { BottomSheetModal } from "@gorhom/bottom-sheet"; // ✅ NOVO
 import { Button } from "@/components/Button"; // ✅ NOVO
+import { CourseFeedbackBottomSheet } from "@/components/CourseFeedbackBottomSheet";
+import { saveCourseFeedback } from "@/services/firebase/courseFeedbackService";
+import { useAuthStore } from "@/stores/authStore";
 import { createStyles } from "./styles";
 
 type CourseCurriculumRouteProp = RouteProp<AppStackParamList, "CourseCurriculum">;
@@ -95,6 +98,42 @@ export function CourseCurriculumScreen() {
     null
   );
   const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+  // ✅ NOVO: Ref e Ações para BottomSheet de Avaliação de Curso
+  const feedbackSheetRef = useRef<BottomSheetModal>(null);
+  const { user } = useAuthStore();
+
+  const handleOpenFeedback = () => {
+    feedbackSheetRef.current?.present();
+  };
+
+  const handleSubmitFeedback = async (rating: number, comment: string) => {
+    if (!user?.uid || !courseId) return;
+
+    await saveCourseFeedback({
+      userId: user.uid,
+      courseId,
+      rating,
+      comment,
+    });
+
+    setMessageConfig({
+      type: "success",
+      title: "Avaliação Enviada!",
+      message: "Muito obrigado por compartilhar sua opinião conosco.",
+      primaryButton: {
+        label: "FECHAR",
+        onPress: () => {
+          bottomSheetRef.current?.dismiss();
+        },
+      },
+    });
+
+    // Timeout sútil para dar tempo do feedback modal fechar antes do alerta genérico abrir
+    setTimeout(() => {
+      bottomSheetRef.current?.present();
+    }, 500);
+  };
 
   // ✅ NOVO: QueryClient para prefetch
   const queryClient = useQueryClient();
@@ -455,6 +494,7 @@ export function CourseCurriculumScreen() {
                 completedExercises={completedExercises}
                 certificateEligible={isReadyForCertificate}
                 hasCertificate={certificateEnabled}
+                onRateCourse={handleOpenFeedback}
               />
             }
             renderItem={renderLessonItem}
@@ -487,6 +527,14 @@ export function CourseCurriculumScreen() {
 
       {/* ✅ NOVO: BottomSheet para mensagens */}
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
+
+      {/* ✅ NOVO: BottomSheet de Avaliação */}
+      <CourseFeedbackBottomSheet
+        ref={feedbackSheetRef}
+        courseId={courseId}
+        courseTitle={course?.title || "Curso"}
+        onSubmit={handleSubmitFeedback}
+      />
     </SafeAreaView>
   );
 }

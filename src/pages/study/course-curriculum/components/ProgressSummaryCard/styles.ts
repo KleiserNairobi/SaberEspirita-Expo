@@ -76,4 +76,14 @@ export const createStyles = (theme: ITheme) =>
     messageTextSuccess: {
       color: theme.colors.success,
     },
+    rateButtonContainer: {
+      marginTop: theme.spacing.md,
+      paddingTop: theme.spacing.md,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+      alignItems: "center",
+    },
+    rateButtonText: {
+      ...theme.text("sm", "medium", theme.colors.primary),
+    },
   });

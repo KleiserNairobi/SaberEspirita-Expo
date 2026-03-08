@@ -15,6 +15,7 @@ interface ProgressSummaryCardProps {
   completedExercises: number;
   certificateEligible: boolean;
   hasCertificate?: boolean; // Prop opcional, default true para retrocompatibilidade se necessário
+  onRateCourse?: () => void; // Ação de clique
 }
 
 export function ProgressSummaryCard({
@@ -27,6 +28,7 @@ export function ProgressSummaryCard({
   completedExercises,
   certificateEligible,
   hasCertificate = true,
+  onRateCourse,
 }: ProgressSummaryCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -78,6 +80,15 @@ export function ProgressSummaryCard({
           {completedExercises} de {totalExercises} exercícios completos
         </Text>
       </View>
+
+      {/* Botão de Avaliar Curso (Opcional, caso passe a prop) */}
+      {onRateCourse && (
+        <View style={styles.rateButtonContainer}>
+          <Text style={styles.rateButtonText} onPress={onRateCourse}>
+            Avaliar Curso ⭐
+          </Text>
+        </View>
+      )}
     </View>
   );
 }

@@ -52,11 +52,16 @@ description: Histórico e Tarefas Pendentes do Projeto
 - **Descrição**: Salvar e exibir o histórico de conversas do usuário com os Guias (estilo ChatGPT) no Firestore.
 - **Esforço Estimado**: Médio.
 
+### 6. **Avaliação de Cursos e Aulas**
+
+- **Descrição**: Coletar feedback do usuário em formato de avaliação (estrelas 1-5) mais comentário, salvando ativamente no Firestore e utilizando `BottomSheetMessage` para a captura de input.
+- **Esforço Estimado**: Médio.
+
 ---
 
 ## 🟢 Melhorias Futuras (Baixa Prioridade)
 
-### 6. **Fase 6: Polish - Animações**
+### 7. **Fase 7: Polish - Animações**
 
 - **Descrição**: Adicionar micro-animações nas listas, quizzes e transições de tela.
 - **Esforço Estimado**: Baixo-Médio.
