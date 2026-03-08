@@ -59,8 +59,8 @@ Todo data fetching remoto (API, Firebase, etc.) **DEVE** ser feito utilizando **
 
 No projeto **SaberEspirita-Expo**, temos a seguinte regra ESTRITA para os SDKs do Firebase:
 
-- **Firebase Web SDK (`firebase`)**: OBRIGATÓRIO para **todo o backend, banco de dados e lógica da aplicação** (Firestore, Storage, Auth, Functions). Use sempre as importações modulares da web (`"firebase/firestore"`, etc).
-- **React Native Firebase (`@react-native-firebase/...`)**: Utilizado **EXCLUSIVAMENTE PARA ANALYTICS**. Não utilize seus módulos de firestore ou auth para consultas de dados.
+- **Firebase Web SDK (`firebase`)**: OBRIGATÓRIO para **todo o backend, banco de dados e lógica da aplicação** (Firestore, Storage, Auth, Functions). Use sempre as importações modulares da web (`"firebase/firestore"`, etc). Todos os **Tipos** (como `Timestamp`, `DocumentData`, `QuerySnapshot`) devem vir exclusivamente desta biblioteca.
+- **React Native Firebase (`@react-native-firebase/...`)**: Utilizado **EXCLUSIVAMENTE PARA ANALYTICS**. Não utilize seus módulos de firestore ou auth para consultas de dados, e **NUNCA IMPORT TIPOS OU VARIÁVEIS DELE** (como `FirebaseFirestoreTypes`).
 
 ### Padrão de Custom Hooks
 

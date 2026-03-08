@@ -57,3 +57,4 @@ Este documento define os padrões de uso do TypeScript para o projeto **SaberEsp
 - `any` (usar `unknown` se necessário)
 - Tipagem implícita em funções públicas
 - Enums (preferir union types: `type Theme = "light" | "dark"`)
+- **[EXTREMAMENTE PROIBIDO]**: Tipos do `@react-native-firebase/firestore` (ex: `FirebaseFirestoreTypes`). Use sempre os tipos do SDK Web `firebase/firestore` (ex: `import { Timestamp } from "firebase/firestore"`). O SDK Nativo é voltado APENAS para Analytics neste projeto.
