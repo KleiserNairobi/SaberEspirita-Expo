@@ -110,7 +110,7 @@ export const CourseFeedbackBottomSheet = forwardRef<
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.textInput}
-            placeholder="Opcional: Deixe um comentário sobre o seu aprendizado (crítica geral, sugestões...)"
+            placeholder="Escreva um comentário sobre sua experiência (opcional)..."
             placeholderTextColor={theme.colors.textSecondary}
             multiline
             numberOfLines={4}
