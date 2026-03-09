@@ -43,7 +43,7 @@ export const createStyles = (theme: ITheme) =>
       borderRadius: 20, // Hitbox redonda responsiva (Apple HIG)
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: theme.colors.accent, // Acessibilidade idêntica ao backButton
+      backgroundColor: `${theme.colors.primary}15`, // Padrão dos Action Buttons Rights
     },
 
     listContent: {
