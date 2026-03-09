@@ -316,25 +316,60 @@ export function CourseCurriculumScreen() {
     // 2. Verificar se a AULA PAI foi completada
     const isLessonCompleted = progress?.completedLessons.includes(lessonId);
 
-    // 3. Regra de Negócio: Exercício só libera se a aula foi feita
-    const isLocked = !isLessonCompleted;
+    // 3. Regra Ágil Híbrida: Ao invés de travar o exercício, apenas avisamos o usuário
+    const isAhead = !isLessonCompleted;
+
+    const handleExercisePress = () => {
+      if (isAhead) {
+        setMessageConfig({
+          type: "warning",
+          title: "Avançar para o Exercício?",
+          message:
+            "Recomendamos concluir a aula correspondente antes de fazer este exercício. Deseja prosseguir mesmo assim?",
+          primaryButton: {
+            label: "IR PARA EXERCÍCIO",
+            onPress: () => {
+              bottomSheetRef.current?.dismiss();
+              // Adiciona leve delay para o modal fechar suavemente antes do roteamento
+              setTimeout(() => {
+                navigation.navigate("CourseQuiz", {
+                  courseId,
+                  lessonId: lessonId,
+                  quizId: exercise.quizId,
+                  exerciseId: exercise.id,
+                  mode: "course",
+                  categoryName: "Exercício de Fixação",
+                  subcategoryName: exercise.title || `Exercício ${index + 1}`,
+                });
+              }, 300);
+            },
+          },
+          secondaryButton: {
+            label: "VOLTAR",
+            onPress: () => {
+              bottomSheetRef.current?.dismiss();
+            },
+          },
+        });
+        bottomSheetRef.current?.present();
+      } else {
+        navigation.navigate("CourseQuiz", {
+          courseId,
+          lessonId: lessonId,
+          quizId: exercise.quizId,
+          exerciseId: exercise.id,
+          mode: "course",
+          categoryName: "Exercício de Fixação",
+          subcategoryName: exercise.title || `Exercício ${index + 1}`,
+        });
+      }
+    };
 
     return (
       <TouchableOpacity
         key={exercise.id}
-        style={[styles.exerciseCard, isLocked && { opacity: 0.6 }]}
-        disabled={isLocked}
-        onPress={() => {
-          navigation.navigate("CourseQuiz", {
-            courseId,
-            lessonId: lessonId,
-            quizId: exercise.quizId,
-            exerciseId: exercise.id,
-            mode: "course",
-            categoryName: "Exercício de Fixação",
-            subcategoryName: exercise.title || `Exercício ${index + 1}`,
-          });
-        }}
+        style={styles.exerciseCard}
+        onPress={handleExercisePress}
       >
         <View style={styles.exerciseLeftContent}>
           {/* Linha conectora visual (opcional, pode ser feito com borda esquerda no container) */}
@@ -344,7 +379,6 @@ export function CourseCurriculumScreen() {
             style={[
               styles.exerciseIconContainer,
               isCompleted && styles.exerciseIconCompleted,
-              isLocked && { borderColor: theme.colors.border },
             ]}
           >
             {/* Ícone de Haltere/Cérebro */}
@@ -355,8 +389,6 @@ export function CourseCurriculumScreen() {
                 fill={theme.colors.success}
                 fillOpacity={0.1}
               />
-            ) : isLocked ? (
-              <Lock size={14} color={theme.colors.textSecondary} />
             ) : (
               <View style={styles.exerciseDot} />
             )}
@@ -364,19 +396,14 @@ export function CourseCurriculumScreen() {
 
           <View style={styles.exerciseTextContainer}>
             <Text
-              style={[
-                styles.exerciseTitle,
-                isCompleted && styles.exerciseTitleCompleted,
-                isLocked && { color: theme.colors.textSecondary, opacity: 0.5 },
-              ]}
+              style={[styles.exerciseTitle, isCompleted && styles.exerciseTitleCompleted]}
             >
               {exercise.title || `Exercício ${index + 1}`}
             </Text>
           </View>
         </View>
 
-        {!isLocked && <ChevronRight size={20} color={theme.colors.textSecondary} />}
-        {isLocked && <View style={{ width: 20 }} />}
+        <ChevronRight size={20} color={theme.colors.textSecondary} />
       </TouchableOpacity>
     );
   };
