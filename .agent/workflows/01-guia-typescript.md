@@ -58,3 +58,18 @@ Este documento define os padrões de uso do TypeScript para o projeto **SaberEsp
 - Tipagem implícita em funções públicas
 - Enums (preferir union types: `type Theme = "light" | "dark"`)
 - **[EXTREMAMENTE PROIBIDO]**: Tipos do `@react-native-firebase/firestore` (ex: `FirebaseFirestoreTypes`). Use sempre os tipos do SDK Web `firebase/firestore` (ex: `import { Timestamp } from "firebase/firestore"`). O SDK Nativo é voltado APENAS para Analytics neste projeto.
+
+## Comentários e Documentação
+
+- **Idioma Padrão (PT-BR)**: Todos os comentários inline, docblocks e explicações de decisões arquiteturais devem ser escritos em **Português do Brasil**.
+- O código em si (nomes de variáveis, funções, classes, interfaces e arquivos) deve permanecer em inglês conforme padrão de mercado, mas a documentação auxiliar deve facilitar a leitura da equipe em PT-BR.
+
+  ```typescript
+  // ❌ Incorreto (Inglês)
+  // Check if user is eligible for the certificate
+  const isEligible = checkEligibility(user);
+
+  // ✅ Correto (Português)
+  // Verifica se o usuário é elegível para obter o certificado
+  const isEligible = checkEligibility(user);
+  ```
