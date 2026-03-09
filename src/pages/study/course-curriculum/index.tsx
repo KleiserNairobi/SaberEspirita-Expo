@@ -209,37 +209,20 @@ export function CourseCurriculumScreen() {
   }, [lessons, courseId, queryClient]);
 
   function getLessonStatus(lesson: ILesson, index: number): LessonStatus {
-    // Se não tiver progresso OU se completedLessons estiver vazio
-    if (!progress || progress.completedLessons.length === 0) {
-      // Primeira aula sempre disponível
-      if (index === 0) {
-        return LessonStatus.AVAILABLE;
-      }
-      // Demais aulas bloqueadas (desbloqueio sequencial)
-      return LessonStatus.LOCKED;
-    }
-
     // Verificar se a aula foi concluída
-    if (progress.completedLessons.includes(lesson.id)) {
+    if (progress?.completedLessons.includes(lesson.id)) {
       return LessonStatus.COMPLETED;
     }
 
     // Verificar se é a próxima aula (em andamento)
-    if (progress.lastLessonId === lesson.id) {
+    if (progress?.lastLessonId === lesson.id) {
       return LessonStatus.IN_PROGRESS;
     }
 
-    // Lógica de desbloqueio sequencial: só pode acessar se a anterior foi concluída
-    if (index === 0) {
-      return LessonStatus.AVAILABLE; // Primeira aula sempre disponível
-    }
-
-    const previousLesson = lessons[index - 1];
-    if (previousLesson && progress.completedLessons.includes(previousLesson.id)) {
-      return LessonStatus.AVAILABLE; // Aula anterior concluída, esta está disponível
-    }
-
-    return LessonStatus.LOCKED; // Bloqueada
+    // Lógica ÁGIL (Híbrida):
+    // Todas as outras aulas estão visualmente DISPONÍVEIS ao invés de BLOQUEADAS (cadeado).
+    // O aviso de pulo será dado ao clicar.
+    return LessonStatus.AVAILABLE;
   }
 
   // Loading unificado (curso do BD + progresso salvo)
@@ -282,21 +265,41 @@ export function CourseCurriculumScreen() {
     }
   }
 
-  async function handleLessonPress(lesson: ILesson, status: LessonStatus) {
-    if (status === LessonStatus.LOCKED) {
-      setMessageConfig({
-        type: "info",
-        title: "Aula Bloqueada",
-        message: "Complete as aulas anteriores para desbloquear esta aula.",
-        primaryButton: {
-          label: "ENTENDI",
-          onPress: () => {
-            bottomSheetRef.current?.dismiss();
+  async function handleLessonPress(lesson: ILesson, index: number, status: LessonStatus) {
+    if (status === LessonStatus.AVAILABLE) {
+      // Verifica se o aluno está pulando as lições essenciais
+      const previousLesson = lessons[index - 1];
+      const isJumpingAhead =
+        index > 0 &&
+        previousLesson &&
+        (!progress || !progress.completedLessons.includes(previousLesson.id));
+
+      if (isJumpingAhead) {
+        setMessageConfig({
+          type: "warning", // Ou "info" dependendo do tema visual desejado
+          title: "Avançar Aula?",
+          message:
+            "Recomendamos assistir às aulas anteriores primeiro para uma melhor fixação dos conceitos. Quer ir direto assim mesmo?",
+          primaryButton: {
+            label: "IR PARA A AULA",
+            onPress: () => {
+              bottomSheetRef.current?.dismiss();
+              // Adiciona leve delay para o modal fechar suavemente antes do roteamento
+              setTimeout(() => {
+                navigation.navigate("LessonPlayer", { courseId, lessonId: lesson.id });
+              }, 300);
+            },
           },
-        },
-      });
-      bottomSheetRef.current?.present();
-      return;
+          secondaryButton: {
+            label: "VOLTAR",
+            onPress: () => {
+              bottomSheetRef.current?.dismiss();
+            },
+          },
+        });
+        bottomSheetRef.current?.present();
+        return;
+      }
     }
 
     // Comportamento normal: abre a aula
@@ -402,8 +405,8 @@ export function CourseCurriculumScreen() {
       <View style={styles.lessonWrapper}>
         <TouchableOpacity
           style={containerStyle}
-          onPress={() => handleLessonPress(item, status)}
-          disabled={status === LessonStatus.LOCKED || isComingSoon}
+          onPress={() => handleLessonPress(item, index, status)}
+          disabled={isComingSoon}
           activeOpacity={0.7}
         >
           <View style={styles.cardHeaderRow}>
