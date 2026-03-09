@@ -3,7 +3,7 @@ import { View, Text } from "react-native";
 import {
   BottomSheetModal,
   BottomSheetBackdrop,
-  BottomSheetView,
+  BottomSheetScrollView,
   BottomSheetBackdropProps,
 } from "@gorhom/bottom-sheet";
 import {
@@ -14,6 +14,7 @@ import {
   HelpCircle,
 } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { KeyboardAvoidingView, Platform } from "react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Button } from "@/components/Button";
@@ -115,47 +116,56 @@ export const BottomSheetMessage = forwardRef<BottomSheetModal, BottomSheetMessag
         keyboardBlurBehavior="restore"
         onDismiss={onDismiss}
       >
-        <BottomSheetView
-          style={[styles.container, { paddingBottom: Math.max(insets.bottom, 40) + 10 }]}
+        <BottomSheetScrollView
+          contentContainerStyle={[
+            styles.container,
+            { paddingBottom: Math.max(insets.bottom, 40) + 10 },
+          ]}
+          keyboardShouldPersistTaps="handled"
         >
-          {config && (
-            <>
-              {/* Ícone */}
-              <View style={styles.iconContainer}>{getIconComponent(config.type)}</View>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            style={{ width: "100%", alignItems: "center" }}
+          >
+            {config && (
+              <>
+                {/* Ícone */}
+                <View style={styles.iconContainer}>{getIconComponent(config.type)}</View>
 
-              {/* Título */}
-              <Text style={styles.title}>{config.title}</Text>
+                {/* Título */}
+                <Text style={styles.title}>{config.title}</Text>
 
-              {/* Mensagem e View Condicional (Children) */}
-              {config.message ? (
-                <Text style={styles.message}>{config.message}</Text>
-              ) : null}
+                {/* Mensagem e View Condicional (Children) */}
+                {config.message ? (
+                  <Text style={styles.message}>{config.message}</Text>
+                ) : null}
 
-              {children && (
-                <View style={{ width: "100%", marginVertical: 8 }}>{children}</View>
-              )}
-
-              {/* Botões */}
-              <View style={styles.buttonContainer}>
-                {config.secondaryButton && (
-                  <Button
-                    title={config.secondaryButton.label}
-                    variant="outline"
-                    onPress={handleSecondaryPress}
-                    fullWidth
-                  />
+                {children && (
+                  <View style={{ width: "100%", marginVertical: 8 }}>{children}</View>
                 )}
-                {config.primaryButton && (
-                  <Button
-                    title={config.primaryButton.label}
-                    onPress={handlePrimaryPress}
-                    fullWidth
-                  />
-                )}
-              </View>
-            </>
-          )}
-        </BottomSheetView>
+
+                {/* Botões */}
+                <View style={styles.buttonContainer}>
+                  {config.secondaryButton && (
+                    <Button
+                      title={config.secondaryButton.label}
+                      variant="outline"
+                      onPress={handleSecondaryPress}
+                      fullWidth
+                    />
+                  )}
+                  {config.primaryButton && (
+                    <Button
+                      title={config.primaryButton.label}
+                      onPress={handlePrimaryPress}
+                      fullWidth
+                    />
+                  )}
+                </View>
+              </>
+            )}
+          </KeyboardAvoidingView>
+        </BottomSheetScrollView>
       </BottomSheetModal>
     );
   }

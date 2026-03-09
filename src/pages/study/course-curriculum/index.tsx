@@ -104,6 +104,13 @@ export function CourseCurriculumScreen() {
   const feedbackSheetRef = useRef<BottomSheetModal>(null);
   const { user } = useAuthStore();
 
+  // ✅ NOVO: Estado para esconder botão instantaneamente
+  const [hasGloballySubmittedState, setHasGloballySubmittedState] = useState<boolean>(
+    () => {
+      return !!loadBoolean(`course_${courseId}_review_submitted`);
+    }
+  );
+
   const handleOpenFeedback = () => {
     feedbackSheetRef.current?.present();
   };
@@ -118,8 +125,9 @@ export function CourseCurriculumScreen() {
       comment,
     });
 
-    // Marcar universalmente neste device que o curso FOI AVALIADO (pra não abrir mais nos próximos marcos)
+    // Trigger re-render by updating local state or forcing a refetch if needed
     saveBoolean(`course_${courseId}_review_submitted`, true);
+    setHasGloballySubmittedState(true); // NOVO
 
     setMessageConfig({
       type: "success",
@@ -534,7 +542,7 @@ export function CourseCurriculumScreen() {
                 completedExercises={completedExercises}
                 certificateEligible={isReadyForCertificate}
                 hasCertificate={certificateEnabled}
-                onRateCourse={handleOpenFeedback}
+                onRateCourse={hasGloballySubmittedState ? undefined : handleOpenFeedback}
               />
             }
             renderItem={renderLessonItem}

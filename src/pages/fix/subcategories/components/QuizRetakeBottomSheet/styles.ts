@@ -10,7 +10,6 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: theme.colors.border,
     },
     container: {
-      flex: 1,
       paddingHorizontal: theme.spacing.lg,
       paddingTop: theme.spacing.md,
       paddingBottom: theme.spacing.xl,

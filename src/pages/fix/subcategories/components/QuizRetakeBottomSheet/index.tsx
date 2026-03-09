@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo } from "react";
+import React, { forwardRef } from "react";
 import { View, Text } from "react-native";
 import {
   BottomSheetModal,
@@ -6,6 +6,7 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { HelpCircle } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Button } from "@/components/Button";
@@ -22,7 +23,7 @@ export const QuizRetakeBottomSheet = forwardRef<
 >(({ onConfirm, onCancel }, ref) => {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-  const snapPoints = useMemo(() => ["45%"], []);
+  const insets = useSafeAreaInsets();
 
   const handleConfirm = () => {
     onConfirm();
@@ -48,12 +49,15 @@ export const QuizRetakeBottomSheet = forwardRef<
     <BottomSheetModal
       ref={ref}
       index={0}
-      snapPoints={snapPoints}
+      enableDynamicSizing={true}
+      enablePanDownToClose={true}
       backgroundStyle={styles.bottomSheetBackground}
       handleIndicatorStyle={styles.handleIndicator}
       backdropComponent={renderBackdrop}
     >
-      <BottomSheetView style={styles.container}>
+      <BottomSheetView
+        style={[styles.container, { paddingBottom: Math.max(insets.bottom, 40) + 10 }]}
+      >
         <View style={styles.iconContainer}>
           <HelpCircle size={32} color={theme.colors.primary} />
         </View>

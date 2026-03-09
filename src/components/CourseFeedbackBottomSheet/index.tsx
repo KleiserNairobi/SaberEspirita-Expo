@@ -1,6 +1,6 @@
 import React, { forwardRef, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetModal, BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { Star } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -55,7 +55,7 @@ export const CourseFeedbackBottomSheet = forwardRef<
   const config: BottomSheetMessageConfig = {
     type: "question",
     title: "Avalie o Curso",
-    message: `Como tem sido a sua experiência com o curso "${courseTitle}"?`,
+    message: `Como tem sido a sua experiência com o curso\n"${courseTitle}"?`,
     primaryButton: {
       label: isSubmitting ? "Enviando..." : "Enviar Avaliação",
       onPress: handleSubmit,
@@ -108,7 +108,7 @@ export const CourseFeedbackBottomSheet = forwardRef<
 
         {/* Campo de Comentário */}
         <View style={styles.inputContainer}>
-          <TextInput
+          <BottomSheetTextInput
             style={styles.textInput}
             placeholder="Escreva um comentário sobre sua experiência (opcional)..."
             placeholderTextColor={theme.colors.textSecondary}
