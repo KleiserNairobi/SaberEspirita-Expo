@@ -13,6 +13,8 @@ import {
   BookOpen,
   Tag,
   Clock,
+  MessageCircle,
+  Info, // ✅ NOVO IMPORT
 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -54,13 +56,13 @@ export function CourseCurriculumScreen() {
   const { courseId } = route.params;
 
   // Fetch das aulas reais
-  const { data: lessons = [], isLoading: loading } = useLessons(courseId);
+  const { data: lessons = [], isLoading: isLoadingLessons } = useLessons(courseId);
 
   // ✅ Fetch do curso para exibir título
-  const { data: course } = useCourse(courseId);
+  const { data: course, isLoading: isLoadingCourse } = useCourse(courseId);
 
   // ✅ Fetch do progresso real do usuário
-  const { data: progress } = useCourseProgress(courseId);
+  const { data: progress, isLoading: isLoadingProgress } = useCourseProgress(courseId);
 
   // ✅ Fetch de todos os exercícios do curso para renderização e cálculo
   const { data: allExercises = [] } = useCourseExercises(courseId);
@@ -150,7 +152,7 @@ export function CourseCurriculumScreen() {
   // ✅ NOVO: Lógica Proativa de Avaliação por Marcos (40%, 75%, 100%)
   useEffect(() => {
     // Só avalia se já tiver carregado os dados de progresso e as aulas
-    if (loading || totalLessons === 0 || !progress) return;
+    if (isLoadingLessons || totalLessons === 0 || !progress) return;
 
     // 1. Checa se o usuário DEU a nota pro curso localmente (True = nunca mais abre o bottomsheet orgânico)
     const hasGloballySubmitted = loadBoolean(`course_${courseId}_review_submitted`);
@@ -181,7 +183,7 @@ export function CourseCurriculumScreen() {
         handleOpenFeedback();
       }, 1000);
     }
-  }, [lessonsProgress, loading, totalLessons, progress, courseId]);
+  }, [lessonsProgress, isLoadingLessons, totalLessons, progress, courseId]);
 
   // ✅ NOVO: QueryClient para prefetch
   const queryClient = useQueryClient();
@@ -240,9 +242,17 @@ export function CourseCurriculumScreen() {
     return LessonStatus.LOCKED; // Bloqueada
   }
 
-  function handleGoBack() {
+  // Loading unificado (curso do BD + progresso salvo)
+  const loading = isLoadingCourse || isLoadingProgress || isLoadingLessons;
+
+  // Header Actions
+  const handleGoBack = () => {
     navigation.goBack();
-  }
+  };
+
+  const handleGoToCourseDetails = () => {
+    navigation.navigate("CourseDetails", { courseId });
+  };
 
   // ✅ NOVO: Handler para botão de certificado
   // ✅ NOVO: Handler para botão de certificado
@@ -515,10 +525,23 @@ export function CourseCurriculumScreen() {
       <View style={styles.container}>
         {/* HEADER DE NAVEGAÇÃO */}
         <View style={styles.navHeader}>
-          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-            <ArrowLeft size={20} color={theme.colors.primary} />
+          <View style={styles.navHeaderLeft}>
+            <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+              <ArrowLeft size={20} color={theme.colors.primary} />
+            </TouchableOpacity>
+
+            <Text style={styles.navTitle} numberOfLines={1}>
+              {course?.title || "Aulas do Curso"}
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.infoButton}
+            onPress={handleGoToCourseDetails}
+            activeOpacity={0.7}
+          >
+            <Info size={20} color={theme.colors.primary} />
           </TouchableOpacity>
-          <Text style={styles.navTitle}>Aulas do Curso</Text>
         </View>
 
         {loading ? (

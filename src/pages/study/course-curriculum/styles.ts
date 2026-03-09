@@ -11,10 +11,16 @@ export const createStyles = (theme: ITheme) =>
     navHeader: {
       flexDirection: "row",
       alignItems: "center",
+      justifyContent: "space-between",
       paddingHorizontal: 16,
       paddingVertical: 16,
       backgroundColor: theme.colors.background, // Pode ser transparente com blur se quiser
       zIndex: 10,
+    },
+    navHeaderLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1, // Ocupa o resto do espaço para não espremer o título
     },
     backButton: {
       width: 40,
@@ -28,6 +34,16 @@ export const createStyles = (theme: ITheme) =>
     navTitle: {
       ...theme.text("lg", "semibold"),
       color: theme.colors.text,
+      flexShrink: 1, // Permite que o texto trunque se for muito longo
+      marginRight: 16, // Espaço entre o título e as elipses/ícone direito
+    },
+    infoButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20, // Hitbox redonda responsiva (Apple HIG)
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: theme.colors.accent, // Acessibilidade idêntica ao backButton
     },
 
     listContent: {
