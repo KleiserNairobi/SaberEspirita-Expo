@@ -34,9 +34,11 @@ O escopo atual gira em torno da transição do app para um formato robusto e pre
 
 1. **[Telas/Copywriting]** Rebatizar os "Cursos" para **"Séries Espirituais"** ou **"Trilhas de Estudo"**. No card, em vez da % de progresso, exibir estimativas atraentes como "3 min/lide" ou "Restam 12 min".
 2. **[Telas - AppNavigator/Home]** Implementar o Componente **"Momento Espírita de Hoje"**. Uma pílula de destaque na Home que entrega uma curadoria de 2 minutos contendo uma Mensagem Curta + Oração + Quiz, instigando o cumprimento diário.
-3. **[Componentes - Loop]** Refatorar o componente de "Post-Action" (Tela/Modal de finalização). Quando o usuário concluir:
+3. **[Componentes - Loop & Contexto Oculto]** Refatorar o componente de "Post-Action" (Tela/Modal de finalização) e o conteúdo intrínseco. 
    - Uma Oração $\rightarrow$ Sugerir aprofundar com um Módulo de Estudo (Ex: Mensagem Guia).
    - Uma Aula $\rightarrow$ Sugerir fixação ou meditação (Quiz da Lição ou Reflexão atrelada).
+   - **Glossário na Aula**: Implementar *deep links* ou *bottom sheets* para palavras complexas que aparecem nos slides das Aulas, atrelando diretamente ao item correspondente do Glossário.
+   - **Tira-dúvidas Contextual**: Ao final de uma Aula ou ao ler um termo do Glossário, exibir o atalho rápido: *"Ficou com dúvida? Pergunte ao Sr. Allan Kardec sobre [Tema da Aula]"*, direcionando ao chat já com o prompt preenchido.
 4. **[Gamificação]** Exibição de "Ofensiva" (Streak 🔥) na barra de título principal, baseada no campo `currentStreak` registrado no Firebase e recuperado no Zustand. Requer atualização do contador toda vez que o usuário interage e consome conteúdo.
 
 ---
