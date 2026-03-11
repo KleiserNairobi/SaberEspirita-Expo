@@ -21,6 +21,26 @@ O escopo atual gira em torno da transição do app para um formato robusto e pre
 
 ---
 
+## 🔁 Plano 1.5: Engajamento, Gamificação e Loop Espiritual
+
+**Objetivo:** Transformar as 111 credenciais ativas em usuários diários recorrentes, aproveitando o ecossistema existente, antes de investir em funcionalidades densas (vídeos, paywall). O foco é reter o usuário construindo um hábito espiritual.
+
+**Estratégia Backend (Firestore & Configs):**
+
+- Modificar o modelo do usuário `users/{uid}` para suportar o acompanhamento de consistência diária: `lastActivityDate` (Timestamp) e `currentStreak` (Number).
+- Adicionar ou adequar, no arquivo de constantes, o rastreio de um conteúdo diário unificado.
+
+**Estratégia Frontend (Expo):**
+
+1. **[Telas/Copywriting]** Rebatizar os "Cursos" para **"Séries Espirituais"** ou **"Trilhas de Estudo"**. No card, em vez da % de progresso, exibir estimativas atraentes como "3 min/lide" ou "Restam 12 min".
+2. **[Telas - AppNavigator/Home]** Implementar o Componente **"Momento Espírita de Hoje"**. Uma pílula de destaque na Home que entrega uma curadoria de 2 minutos contendo uma Mensagem Curta + Oração + Quiz, instigando o cumprimento diário.
+3. **[Componentes - Loop]** Refatorar o componente de "Post-Action" (Tela/Modal de finalização). Quando o usuário concluir:
+   - Uma Oração $\rightarrow$ Sugerir aprofundar com um Módulo de Estudo (Ex: Mensagem Guia).
+   - Uma Aula $\rightarrow$ Sugerir fixação ou meditação (Quiz da Lição ou Reflexão atrelada).
+4. **[Gamificação]** Exibição de "Ofensiva" (Streak 🔥) na barra de título principal, baseada no campo `currentStreak` registrado no Firebase e recuperado no Zustand. Requer atualização do contador toda vez que o usuário interage e consome conteúdo.
+
+---
+
 ## 📚 Plano 2: Materiais Complementares (Módulo Estude)
 
 **Objetivo:** Permitir que as Aulas/Cursos tenham referências anexadas (PDFs, Planilhas, Textos de Apoio) visíveis e baixáveis.
