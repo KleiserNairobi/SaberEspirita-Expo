@@ -346,6 +346,10 @@ export const createStyles = (theme: ITheme) =>
       borderColor: theme.colors.success,
       backgroundColor: `${theme.colors.success}10`,
     },
+    exerciseIconFailed: {
+      borderColor: theme.colors.warning,
+      backgroundColor: `${theme.colors.warning}10`,
+    },
     exerciseDot: {
       width: 8,
       height: 8,
@@ -360,6 +364,11 @@ export const createStyles = (theme: ITheme) =>
     },
     exerciseTitleCompleted: {
       color: theme.colors.text,
+      textDecorationLine: "none",
+    },
+    exerciseTitleFailed: {
+      color: theme.colors.warning,
+      ...theme.text("sm", "regular"),
       textDecorationLine: "none",
     },
   });

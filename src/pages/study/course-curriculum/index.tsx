@@ -9,12 +9,11 @@ import {
   PlayCircle,
   Lock,
   ChevronRight,
-  AlertTriangle,
   BookOpen,
   Tag,
   Clock,
-  MessageCircle,
-  Info, // ✅ NOVO IMPORT
+  Info,
+  CircleAlert,
 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -308,10 +307,12 @@ export function CourseCurriculumScreen() {
 
   // ✅ Helper para renderizar item de exercício
   const renderExerciseItem = (exercise: any, lessonId: string, index: number) => {
-    // 1. Verificar se completado
-    const completedIds =
-      progress?.exerciseResults?.filter((r) => r.passed).map((r) => r.exerciseId) || [];
-    const isCompleted = completedIds.includes(exercise.id);
+    // 1. Verificar progresso do exercício
+    const exerciseResult = progress?.exerciseResults?.find(
+      (r) => r.exerciseId === exercise.id
+    );
+    const isCompleted = !!exerciseResult?.passed;
+    const isFailed = !!(exerciseResult && !exerciseResult.passed);
 
     // 2. Verificar se a AULA PAI foi completada
     const isLessonCompleted = progress?.completedLessons.includes(lessonId);
@@ -379,6 +380,7 @@ export function CourseCurriculumScreen() {
             style={[
               styles.exerciseIconContainer,
               isCompleted && styles.exerciseIconCompleted,
+              isFailed && styles.exerciseIconFailed,
             ]}
           >
             {/* Ícone de Haltere/Cérebro */}
@@ -389,6 +391,13 @@ export function CourseCurriculumScreen() {
                 fill={theme.colors.success}
                 fillOpacity={0.1}
               />
+            ) : isFailed ? (
+              <CircleAlert
+                size={20}
+                color={theme.colors.warning}
+                fill={theme.colors.warning}
+                fillOpacity={0.1}
+              />
             ) : (
               <View style={styles.exerciseDot} />
             )}
@@ -396,7 +405,11 @@ export function CourseCurriculumScreen() {
 
           <View style={styles.exerciseTextContainer}>
             <Text
-              style={[styles.exerciseTitle, isCompleted && styles.exerciseTitleCompleted]}
+              style={[
+                styles.exerciseTitle,
+                isCompleted && styles.exerciseTitleCompleted,
+                isFailed && styles.exerciseTitleFailed,
+              ]}
             >
               {exercise.title || `Exercício ${index + 1}`}
             </Text>
