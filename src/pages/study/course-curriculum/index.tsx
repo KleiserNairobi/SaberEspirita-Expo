@@ -47,6 +47,10 @@ enum LessonStatus {
   AVAILABLE = "AVAILABLE",
 }
 
+// Mapa global (nível de módulo) para persistir a posição do scroll entre remounts.
+// Indexado pelo courseId para suportar múltiplos cursos na mesma sessão.
+const scrollOffsetMap: Map<string, number> = new Map();
+
 export function CourseCurriculumScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -184,9 +188,8 @@ export function CourseCurriculumScreen() {
     }
   }, [lessonsProgress, isLoadingLessons, totalLessons, progress, courseId]);
 
-  // Ref da FlatList e offset salvo para restaurar posição do scroll
+  // Ref da FlatList para controle programático do scroll
   const flatListRef = useRef<FlatList>(null);
-  const savedScrollOffset = useRef<number>(0);
 
   // ✅ NOVO: QueryClient para prefetch
   const queryClient = useQueryClient();
@@ -602,12 +605,13 @@ export function CourseCurriculumScreen() {
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContent}
             onScroll={(e) => {
-              savedScrollOffset.current = e.nativeEvent.contentOffset.y;
+              scrollOffsetMap.set(courseId, e.nativeEvent.contentOffset.y);
             }}
             onLayout={() => {
-              if (savedScrollOffset.current > 0) {
+              const offset = scrollOffsetMap.get(courseId) ?? 0;
+              if (offset > 0) {
                 flatListRef.current?.scrollToOffset({
-                  offset: savedScrollOffset.current,
+                  offset,
                   animated: false,
                 });
               }
