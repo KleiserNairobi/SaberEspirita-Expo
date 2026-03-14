@@ -152,7 +152,7 @@ export async function saveExerciseResult(
       attempts: updatedAttempts,
       bestScore,
       passed: passed || existingResult.passed,
-      completedAt: passed ? new Date() : existingResult.completedAt,
+      ...(passed ? { completedAt: new Date() } : existingResult.completedAt ? { completedAt: existingResult.completedAt } : {}),
     };
   } else {
     // Criar novo resultado
