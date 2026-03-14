@@ -184,6 +184,10 @@ export function CourseCurriculumScreen() {
     }
   }, [lessonsProgress, isLoadingLessons, totalLessons, progress, courseId]);
 
+  // Ref da FlatList e offset salvo para restaurar posição do scroll
+  const flatListRef = useRef<FlatList>(null);
+  const savedScrollOffset = useRef<number>(0);
+
   // ✅ NOVO: QueryClient para prefetch
   const queryClient = useQueryClient();
 
@@ -593,9 +597,22 @@ export function CourseCurriculumScreen() {
           </View>
         ) : (
           <FlatList
+            ref={flatListRef}
             data={lessons}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContent}
+            onScroll={(e) => {
+              savedScrollOffset.current = e.nativeEvent.contentOffset.y;
+            }}
+            onLayout={() => {
+              if (savedScrollOffset.current > 0) {
+                flatListRef.current?.scrollToOffset({
+                  offset: savedScrollOffset.current,
+                  animated: false,
+                });
+              }
+            }}
+            scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={
               <ProgressSummaryCard
