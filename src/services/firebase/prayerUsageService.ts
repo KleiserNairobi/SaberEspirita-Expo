@@ -13,6 +13,7 @@ export async function logPrayerUsage(prayerId: string, userId: string): Promise<
       prayerId,
       userId,
       createdAt: serverTimestamp(),
+      timestamp: serverTimestamp(),
     };
 
     await addDoc(logsRef, logData);
