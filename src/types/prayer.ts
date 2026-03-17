@@ -5,6 +5,7 @@ export interface IPrayer {
   source?: string;
   author?: string;
   featured?: boolean;
+  createdAt?: Date;
 }
 
 export interface IPrayerCategory {

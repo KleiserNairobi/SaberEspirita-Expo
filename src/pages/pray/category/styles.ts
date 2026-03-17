@@ -124,36 +124,10 @@ export const createStyles = (theme: ITheme) =>
       paddingHorizontal: theme.spacing.lg,
       paddingBottom: 150,
     },
-    // Card de Oração (SEM ícone)
-    prayerCard: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      backgroundColor: theme.colors.card,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      borderRadius: 10,
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.xs + 4,
-      marginBottom: theme.spacing.sm,
-    },
-    prayerContent: {
-      flex: 1,
-    },
-    prayerTitle: {
-      ...theme.text("md", "medium"),
-    },
-    prayerMetadata: {
-      ...theme.text("sm", "regular", theme.colors.textSecondary),
-      flex: 1,
-    },
     metadataRow: {
       flexDirection: "row",
       alignItems: "center",
       marginTop: 4,
-    },
-    favoriteIconInline: {
-      marginRight: 6,
     },
     favoriteButton: {
       padding: 8,

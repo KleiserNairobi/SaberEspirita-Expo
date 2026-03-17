@@ -74,36 +74,6 @@ export const createStyles = (theme: ITheme) =>
       marginHorizontal: 20,
       gap: 10,
     },
-    prayerCard: {
-      backgroundColor: theme.colors.card,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      borderRadius: 10,
-
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.xs + 4,
-    },
-    prayerInfo: {
-      flex: 1,
-    },
-    prayerTitle: {
-      ...theme.text("md", "medium"),
-    },
-    prayerAuthor: {
-      ...theme.text("sm", "regular", theme.colors.textSecondary),
-      flex: 1,
-    },
-    metadataRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginTop: 4,
-    },
-    favoriteIconInline: {
-      marginRight: 6,
-    },
     favoriteButton: {
       padding: 8,
     },

@@ -27,6 +27,7 @@ import { PRAYER_MOMENTS, PrayerMoment, PrayerFilterType } from "@/types/prayer";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
 import { usePrayersByCategory } from "@/pages/pray/hooks/usePrayersByCategory";
+import { PrayerCard } from "@/pages/pray/components/PrayerCard";
 import { createStyles } from "@/pages/pray/category/styles";
 
 // Mapeamento de ícones para cada momento
@@ -218,49 +219,9 @@ export function PrayCategoryScreen() {
               </View>
             </>
           }
-          renderItem={({ item }) => {
-            const isFav = isFavorite(item.id);
-
-            // Construir texto de metadados (author e/ou source)
-            function getMetadataText() {
-              if (item.author && item.source) {
-                return `${item.author} • ${item.source}`;
-              }
-              if (item.author) {
-                return item.author;
-              }
-              if (item.source) {
-                return item.source;
-              }
-              return null;
-            }
-
-            const metadataText = getMetadataText();
-
-            return (
-              <TouchableOpacity
-                style={styles.prayerCard}
-                onPress={() => handlePrayerPress(item.id)}
-                activeOpacity={0.7}
-              >
-                <View style={styles.prayerContent}>
-                  <Text style={styles.prayerTitle}>{item.title}</Text>
-                  {metadataText && (
-                    <View style={styles.metadataRow}>
-                      <Heart
-                        size={14}
-                        color={theme.colors.primary}
-                        fill={isFav ? theme.colors.primary : "transparent"}
-                        style={styles.favoriteIconInline}
-                      />
-                      <Text style={styles.prayerMetadata}>{metadataText}</Text>
-                    </View>
-                  )}
-                </View>
-                <ChevronRight size={20} color={theme.colors.muted} />
-              </TouchableOpacity>
-            );
-          }}
+          renderItem={({ item }) => (
+            <PrayerCard prayer={item} onPress={() => handlePrayerPress(item.id)} />
+          )}
           style={styles.list}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}

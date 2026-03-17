@@ -12,6 +12,18 @@ import { db } from "@/configs/firebase/firebase";
 import { IPrayer, IPrayerCategory } from "@/types/prayer";
 
 /**
+ * Converte um documento do Firestore para o tipo IPrayer, tratando Timestamps
+ */
+function mapDocToPrayer(doc: any): IPrayer {
+  const data = doc.data();
+  return {
+    id: doc.id,
+    ...data,
+    createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : data.createdAt,
+  } as IPrayer;
+}
+
+/**
  * Busca todas as categorias de orações
  */
 export async function getPrayerCategories(): Promise<IPrayerCategory[]> {
@@ -50,13 +62,7 @@ export async function getPrayersByCategory(categoryId: string): Promise<IPrayer[
   const prayersPromises = chunks.map(async (chunk) => {
     const q = query(prayersRef, where(documentId(), "in", chunk));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(
-      (doc) =>
-        ({
-          id: doc.id,
-          ...doc.data(),
-        }) as IPrayer
-    );
+    return snapshot.docs.map((doc) => mapDocToPrayer(doc));
   });
 
   const results = await Promise.all(prayersPromises);
@@ -75,10 +81,7 @@ export async function getPrayerById(prayerId: string): Promise<IPrayer | null> {
     return null;
   }
 
-  return {
-    id: prayerDoc.id,
-    ...prayerDoc.data(),
-  } as IPrayer;
+  return mapDocToPrayer(prayerDoc);
 }
 
 /**
@@ -89,15 +92,11 @@ export async function getFeaturedPrayers(): Promise<IPrayer[]> {
   const featuredQuery = query(prayersRef, where("featured", "==", true));
   const snapshot = await getDocs(featuredQuery);
 
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as IPrayer[];
+  return snapshot.docs.map((doc) => mapDocToPrayer(doc));
 }
 
 /**
  * Busca a quantidade total de orações de uma categoria
- * Abordagem clássica por getDocs via linksQuery (fallback por incompatibilidade v9 count em RN nativo)
  */
 export async function getCategoryPrayerCount(categoryId: string): Promise<number> {
   const linksRef = collection(db, "prayer_category_links");

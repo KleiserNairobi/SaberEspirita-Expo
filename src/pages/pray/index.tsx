@@ -29,6 +29,7 @@ import { AmbientPlayer } from "@/pages/pray/components/AmbientPlayer";
 import { useFeaturedPrayers } from "@/pages/pray/hooks/useFeaturedPrayers";
 import { usePrayerMomentsCounts } from "@/pages/pray/hooks/usePrayerMomentsCounts";
 import { createStyles } from "@/pages/pray/styles";
+import { PrayerCard } from "@/pages/pray/components/PrayerCard";
 import { getPrayersByCategory } from "@/services/firebase/prayerService";
 import { useAuthStore } from "@/stores/authStore";
 import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
@@ -138,50 +139,13 @@ export default function PrayScreen() {
           <View style={styles.featuredList}>
             {[...featuredPrayers]
               .sort((a, b) => a.title.localeCompare(b.title))
-              .map((prayer) => {
-                const isFav = isFavorite(prayer.id);
-
-                // Construir texto de metadados (author e/ou source)
-                function getMetadataText() {
-                  if (prayer.author && prayer.source) {
-                    return `${prayer.author} • ${prayer.source}`;
-                  }
-                  if (prayer.author) {
-                    return prayer.author;
-                  }
-                  if (prayer.source) {
-                    return prayer.source;
-                  }
-                  return null;
-                }
-
-                const metadataText = getMetadataText();
-
-                return (
-                  <TouchableOpacity
-                    key={prayer.id}
-                    style={styles.prayerCard}
-                    onPress={() => handlePrayerPress(prayer.id)}
-                    activeOpacity={0.7}
-                  >
-                    <View style={styles.prayerInfo}>
-                      <Text style={styles.prayerTitle}>{prayer.title}</Text>
-                      {metadataText && (
-                        <View style={styles.metadataRow}>
-                          <Heart
-                            size={14}
-                            color={theme.colors.primary}
-                            fill={isFav ? theme.colors.primary : "transparent"}
-                            style={styles.favoriteIconInline}
-                          />
-                          <Text style={styles.prayerAuthor}>{metadataText}</Text>
-                        </View>
-                      )}
-                    </View>
-                    <ChevronRight size={20} color={theme.colors.muted} />
-                  </TouchableOpacity>
-                );
-              })}
+              .map((prayer) => (
+                <PrayerCard
+                  key={prayer.id}
+                  prayer={prayer}
+                  onPress={() => handlePrayerPress(prayer.id)}
+                />
+              ))}
           </View>
         ) : (
           <View style={styles.emptyContainer}>
