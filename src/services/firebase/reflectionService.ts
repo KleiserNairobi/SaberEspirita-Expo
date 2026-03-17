@@ -12,13 +12,26 @@ import { db } from "@/configs/firebase/firebase";
 import { IReflection } from "@/types/reflection";
 
 /**
+ * Converte os dados do Firestore para o tipo IReflection,
+ * tratando a conversão de Timestamp para Date se necessário.
+ */
+function mapDocToReflection(doc: any): IReflection {
+  const data = doc.data();
+  return {
+    ...data,
+    id: doc.id,
+    createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : data.createdAt,
+  } as IReflection;
+}
+
+/**
  * Busca todas as reflexões do Firestore
  */
 export async function getAllReflections(): Promise<IReflection[]> {
   try {
     const q = query(collection(db, "reflections"), orderBy("createdAt", "desc"));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as IReflection);
+    return snapshot.docs.map(mapDocToReflection);
   } catch (error) {
     console.error("Erro ao buscar reflexões:", error);
     return [];
@@ -36,7 +49,7 @@ export async function getFeaturedReflections(): Promise<IReflection[]> {
       orderBy("createdAt", "desc")
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as IReflection);
+    return snapshot.docs.map(mapDocToReflection);
   } catch (error) {
     console.error("Erro ao buscar reflexões em destaque:", error);
     return [];
@@ -52,7 +65,7 @@ export async function getReflectionById(id: string): Promise<IReflection | null>
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      return { id: docSnap.id, ...docSnap.data() } as IReflection;
+      return mapDocToReflection(docSnap);
     }
     return null;
   } catch (error) {

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { ChevronRight, Heart, Tag } from "lucide-react-native";
-
+import { differenceInDays } from "date-fns";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { IReflection } from "@/types/reflection";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
@@ -13,12 +13,20 @@ interface ReflectionCardProps {
   onPressIn?: () => void;
 }
 
-export function ReflectionCard({ reflection, onPress, onPressIn }: ReflectionCardProps) {
+export function ReflectionCard({
+  reflection,
+  onPress,
+  onPressIn,
+}: ReflectionCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const isFavorite = useReflectionFavoritesStore((state) =>
     state.isFavorite(reflection.id)
   );
+
+  const isNew =
+    reflection.createdAt &&
+    differenceInDays(new Date(), reflection.createdAt) <= 15;
 
   return (
     <TouchableOpacity
@@ -29,9 +37,17 @@ export function ReflectionCard({ reflection, onPress, onPressIn }: ReflectionCar
     >
       {/* Conteúdo */}
       <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={2}>
-          {reflection.title}
-        </Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.title} numberOfLines={2}>
+            {reflection.title}
+          </Text>
+
+          {isNew && (
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusText}>Novo</Text>
+            </View>
+          )}
+        </View>
         {reflection.subtitle && (
           <Text style={styles.subtitle} numberOfLines={2}>
             {reflection.subtitle}
