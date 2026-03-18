@@ -19,14 +19,21 @@ import {
   SlidersHorizontal,
   ChevronRight,
   Flame,
+  User,
 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
-import { PRAYER_MOMENTS, PrayerMoment, PrayerFilterType } from "@/types/prayer";
+import {
+  PRAYER_MOMENTS,
+  PrayerMoment,
+  PrayerFilterType,
+  ContentFilterType,
+} from "@/types/prayer";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
 import { usePrayersByCategory } from "@/pages/pray/hooks/usePrayersByCategory";
+import { usePrayersByIds } from "@/pages/pray/hooks/usePrayersByIds";
 import { PrayerCard } from "@/pages/pray/components/PrayerCard";
 import { createStyles } from "@/pages/pray/category/styles";
 
@@ -67,8 +74,14 @@ export function PrayCategoryScreen() {
   const [filterType, setFilterType] = useState<PrayerFilterType>("ALL");
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
-  const { data: prayers, isLoading } = usePrayersByCategory(id);
-  const { isFavorite, toggleFavorite } = usePrayerFavoritesStore();
+  const { isFavorite, toggleFavorite, favorites } = usePrayerFavoritesStore();
+  const isFavoritesPage = id === "FAVORITES";
+
+  const categoryQuery = usePrayersByCategory(isFavoritesPage ? "" : id);
+  const favoritesQuery = usePrayersByIds(isFavoritesPage ? favorites : []);
+
+  const prayers = isFavoritesPage ? favoritesQuery.data : categoryQuery.data;
+  const isLoading = isFavoritesPage ? favoritesQuery.isLoading : categoryQuery.isLoading;
 
   // Filtrar orações com base no filtro e busca
   const filteredPrayers = useMemo(() => {
@@ -128,10 +141,17 @@ export function PrayCategoryScreen() {
   }
 
   // Obter dados da categoria
-  const categoryTitle =
-    PRAYER_MOMENTS[id as keyof typeof PRAYER_MOMENTS]?.label || "Orações";
-  const categorySubtitle = MOMENT_SUBTITLES[id as PrayerMoment] || "";
-  const IconComponent = MOMENT_ICONS[id as PrayerMoment] || BookOpen;
+  const categoryTitle = isFavoritesPage
+    ? "Favoritas"
+    : PRAYER_MOMENTS[id as keyof typeof PRAYER_MOMENTS]?.label || "Orações";
+
+  const categorySubtitle = isFavoritesPage
+    ? "Acesso rápido às suas orações preferidas"
+    : MOMENT_SUBTITLES[id as PrayerMoment] || "";
+
+  const IconComponent = isFavoritesPage
+    ? Heart
+    : MOMENT_ICONS[id as PrayerMoment] || BookOpen;
 
   if (isLoading) {
     return (
@@ -230,7 +250,9 @@ export function PrayCategoryScreen() {
               <Text style={styles.emptyText}>
                 {searchQuery
                   ? "Nenhuma oração encontrada"
-                  : "Nenhuma oração disponível nesta categoria"}
+                  : isFavoritesPage
+                    ? "Você ainda não tem orações favoritas.\nExplore as categorias e toque no coração para salvar suas orações preferidas aqui."
+                    : "Nenhuma oração disponível nesta categoria"}
               </Text>
             </View>
           }
@@ -240,6 +262,28 @@ export function PrayCategoryScreen() {
         <FilterBottomSheet
           ref={bottomSheetRef}
           filterType={filterType}
+          title={isFavoritesPage ? "Filtrar Favoritos" : "Filtrar Orações"}
+          filterOptions={
+            isFavoritesPage
+              ? [
+                  {
+                    id: "ALL" as ContentFilterType,
+                    label: "Todos os Favoritos",
+                    icon: Heart,
+                  },
+                  {
+                    id: "BY_AUTHOR" as ContentFilterType,
+                    label: "Por Autor",
+                    icon: User,
+                  },
+                  {
+                    id: "BY_SOURCE" as ContentFilterType,
+                    label: "Por Fonte",
+                    icon: Sparkles,
+                  },
+                ]
+              : undefined
+          }
           onFilterChange={(filter) => {
             if (
               filter === "ALL" ||

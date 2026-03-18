@@ -30,6 +30,7 @@ import { useFeaturedPrayers } from "@/pages/pray/hooks/useFeaturedPrayers";
 import { usePrayerMomentsCounts } from "@/pages/pray/hooks/usePrayerMomentsCounts";
 import { createStyles } from "@/pages/pray/styles";
 import { PrayerCard } from "@/pages/pray/components/PrayerCard";
+import { AssistantCard } from "@/components/AssistantCard";
 import { getPrayersByCategory } from "@/services/firebase/prayerService";
 import { useAuthStore } from "@/stores/authStore";
 import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
@@ -59,7 +60,13 @@ export default function PrayScreen() {
   const { data: featuredPrayers, isLoading: featuredLoading } = useFeaturedPrayers();
   const { data: momentsCounts } = usePrayerMomentsCounts();
 
-  const { isFavorite, toggleFavorite } = usePrayerFavoritesStore();
+  const { isFavorite, toggleFavorite, syncWithFirebase } = usePrayerFavoritesStore();
+
+  React.useEffect(() => {
+    if (user?.uid) {
+      syncWithFirebase(user.uid);
+    }
+  }, [user?.uid, syncWithFirebase]);
 
   function handleMomentPress(categoryId: string) {
     navigation.navigate("PrayCategory", { id: categoryId });
@@ -121,6 +128,17 @@ export default function PrayScreen() {
             );
           })}
         </ScrollView>
+
+        {/* Seção: Favoritos */}
+        <View style={{ marginHorizontal: 20 }}>
+          <AssistantCard
+            title="Favoritas"
+            description="Acesso rápido às suas orações preferidas"
+            buttonText="Ver todas"
+            icon={Heart}
+            onPress={() => navigation.navigate("PrayCategory", { id: "FAVORITES" })}
+          />
+        </View>
 
         {/* Seção: Ambiente de Sintonia */}
         <Text style={styles.sectionTitle}>Ambiente de Sintonia</Text>

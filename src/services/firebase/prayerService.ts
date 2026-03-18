@@ -105,3 +105,29 @@ export async function getCategoryPrayerCount(categoryId: string): Promise<number
 
   return snapshot.docs.length;
 }
+
+/**
+ * Busca orações através de uma lista de IDs (usado para Favoritos)
+ */
+export async function getPrayersByIds(prayerIds: string[]): Promise<IPrayer[]> {
+  if (!prayerIds || prayerIds.length === 0) {
+    return [];
+  }
+
+  const prayersRef = collection(db, "prayers");
+  const chunks: string[][] = [];
+
+  // Firestore "in" limit is 10
+  for (let i = 0; i < prayerIds.length; i += 10) {
+    chunks.push(prayerIds.slice(i, i + 10));
+  }
+
+  const prayersPromises = chunks.map(async (chunk) => {
+    const q = query(prayersRef, where(documentId(), "in", chunk));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => mapDocToPrayer(doc));
+  });
+
+  const results = await Promise.all(prayersPromises);
+  return results.flat();
+}
