@@ -15,16 +15,25 @@ import { StatsService } from "./statsService";
 
 export const MEDITATIONS_COLLECTION = "meditations";
 
+/**
+ * Converte um documento do Firestore para o tipo IMeditation, tratando Timestamps
+ */
+function mapDocToMeditation(doc: any): IMeditation {
+  const data = doc.data();
+  return {
+    ...data,
+    id: doc.id,
+    createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : data.createdAt,
+  } as IMeditation;
+}
+
 export async function getMeditations(): Promise<IMeditation[]> {
   try {
     const meditationsRef = collection(db, MEDITATIONS_COLLECTION);
     const q = query(meditationsRef, orderBy("title", "asc"));
     const snapshot = await getDocs(q);
 
-    return snapshot.docs.map((doc) => ({
-      ...(doc.data() as Omit<IMeditation, "id">),
-      id: doc.id,
-    }));
+    return snapshot.docs.map(mapDocToMeditation);
   } catch (error) {
     console.error("Erro ao buscar meditações:", error);
     throw error;
@@ -37,10 +46,7 @@ export async function getFeaturedMeditations(): Promise<IMeditation[]> {
     const q = query(meditationsRef, where("featured", "==", true), limit(5));
     const snapshot = await getDocs(q);
 
-    return snapshot.docs.map((doc) => ({
-      ...(doc.data() as Omit<IMeditation, "id">),
-      id: doc.id,
-    }));
+    return snapshot.docs.map(mapDocToMeditation);
   } catch (error) {
     console.error("Erro ao buscar meditações em destaque:", error);
     throw error;
@@ -53,10 +59,7 @@ export async function getMeditationById(id: string): Promise<IMeditation | null>
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      return {
-        ...(docSnap.data() as Omit<IMeditation, "id">),
-        id: docSnap.id,
-      };
+      return mapDocToMeditation(docSnap);
     }
     return null;
   } catch (error) {

@@ -1,4 +1,5 @@
 import { Headphones, Lock, Play, Clock } from "lucide-react-native";
+import { differenceInDays } from "date-fns";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
@@ -18,6 +19,10 @@ export function MeditationCard({ meditation, onPress }: MeditationCardProps) {
   // Simulação de check de premium pro futuro
   const isLocked = meditation.isPremium;
 
+  const isNew =
+    meditation.createdAt &&
+    differenceInDays(new Date(), meditation.createdAt) <= 15;
+
   return (
     <TouchableOpacity
       style={[styles.container, isLocked && styles.premiumBorder]}
@@ -29,9 +34,16 @@ export function MeditationCard({ meditation, onPress }: MeditationCardProps) {
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={1}>
-          {meditation.title}
-        </Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.title} numberOfLines={1}>
+            {meditation.title}
+          </Text>
+          {isNew && (
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusText}>Novo</Text>
+            </View>
+          )}
+        </View>
         <Text style={styles.description} numberOfLines={1}>
           {meditation.author}
         </Text>

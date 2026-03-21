@@ -9,6 +9,7 @@ export interface IMeditation {
   categoryId?: string; // Caso o app expanda as meditações por categoria futuro
   isPremium?: boolean; // Sinalização para o futuro Paywall
   featured?: boolean; // Para destaque na UI
+  createdAt?: Date; // Data de criação para badge "Novo"
 }
 
 export interface IMeditationCategory {
