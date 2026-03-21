@@ -3,7 +3,7 @@ import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MeditateStackParamList } from "@/routers/types";
 import {
@@ -26,6 +26,7 @@ import { ContentFilterType } from "@/types/prayer";
 import { createStyles } from "./styles";
 import { useQueryClient } from "@tanstack/react-query";
 import { getReflectionById } from "@/services/firebase/reflectionService";
+import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
 
 // Opções de filtro específicas para reflexões (inclui "Por Tópico")
 const REFLECTION_FILTER_OPTIONS = [
@@ -41,9 +42,15 @@ export default function AllReflectionsScreen() {
   const styles = createStyles(theme);
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
   const queryClient = useQueryClient();
+  const route = useRoute<RouteProp<MeditateStackParamList, "AllReflections">>();
+  const { initialFilter } = route.params || {};
+
+  const { isFavorite } = useReflectionFavoritesStore();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterType, setFilterType] = useState<ContentFilterType>("ALL");
+  const [filterType, setFilterType] = useState<ContentFilterType>(
+    initialFilter || "ALL"
+  );
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   const { data: reflections, isLoading } = useReflections();
@@ -56,6 +63,9 @@ export default function AllReflectionsScreen() {
 
     // Aplicar filtro
     switch (filterType) {
+      case "FAVORITES":
+        result = result.filter((r) => isFavorite(r.id));
+        break;
       case "BY_AUTHOR":
         result = result
           .filter((r) => r.author)
@@ -102,7 +112,7 @@ export default function AllReflectionsScreen() {
     }
 
     return result;
-  }, [reflections, filterType, searchQuery]);
+  }, [reflections, filterType, searchQuery, isFavorite]);
 
   function handleReflectionPress(reflectionId: string) {
     navigation.navigate("Reflection", { id: reflectionId });
@@ -184,9 +194,13 @@ export default function AllReflectionsScreen() {
 
                 {/* Título e Subtítulo */}
                 <View style={styles.headerTextContainer}>
-                  <Text style={styles.title}>Textos para Reflexão</Text>
+                  <Text style={styles.title}>
+                    {filterType === "FAVORITES" ? "Favoritos" : "Textos para Reflexão"}
+                  </Text>
                   <Text style={styles.subtitle}>
-                    Aprofunde seu conhecimento espiritual
+                    {filterType === "FAVORITES"
+                      ? "Todas as suas reflexões favoritas"
+                      : "Aprofunde seu conhecimento espiritual"}
                   </Text>
                 </View>
               </View>
@@ -216,6 +230,8 @@ export default function AllReflectionsScreen() {
               <Text style={styles.emptyText}>
                 {searchQuery
                   ? "Nenhuma reflexão encontrada"
+                  : filterType === "FAVORITES"
+                  ? "Você ainda não tem reflexões favoritas.\nToque no coração para salvar suas reflexões preferidas."
                   : "Nenhuma reflexão disponível no momento"}
               </Text>
             </View>

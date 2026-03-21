@@ -1,3 +1,4 @@
+import { ContentFilterType } from "@/types/prayer";
 // Tipos para navegação type-safe
 export type RootStackParamList = {
   Auth: undefined;
@@ -84,7 +85,7 @@ export type PrayStackParamList = {
 
 export type MeditateStackParamList = {
   MeditateHome: undefined;
-  AllReflections: undefined;
+  AllReflections: { initialFilter?: ContentFilterType };
   Reflection: { id: string };
   AllMeditations: undefined;
   MeditationPlayer: { id: string };

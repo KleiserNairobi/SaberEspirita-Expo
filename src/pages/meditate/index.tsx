@@ -20,7 +20,7 @@ import { getMeditationById } from "@/services/firebase/meditationService";
 import { getReflectionById } from "@/services/firebase/reflectionService";
 import { useAuthStore } from "@/stores/authStore";
 import { useQueryClient } from "@tanstack/react-query";
-import { Compass } from "lucide-react-native";
+import { Compass, Heart } from "lucide-react-native";
 import { MeditationCard } from "./components/MeditationCard";
 import { ReflectionCard } from "./components/ReflectionCard";
 import { useFeaturedReflections } from "./hooks/useFeaturedReflections";
@@ -124,6 +124,23 @@ export default function MeditateScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Seção: Favoritos (Apenas na aba Reflexões) */}
+        {activeTab === "REFLECTIONS" && (
+          <View style={{ marginHorizontal: 20, marginTop: 10 }}>
+            <AssistantCard
+              title="Favoritos"
+              description="Acesso rápido às suas reflexões preferidas"
+              buttonText="Ver todas"
+              icon={Heart}
+              onPress={() =>
+                navigation.navigate("AllReflections", {
+                  initialFilter: "FAVORITES",
+                })
+              }
+            />
+          </View>
+        )}
+
         {/* Seção Dinâmica (Reflexões ou Meditações) */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitleInHeader}>
@@ -132,7 +149,7 @@ export default function MeditateScreen() {
           <TouchableOpacity
             onPress={() =>
               activeTab === "REFLECTIONS"
-                ? navigation.navigate("AllReflections")
+                ? navigation.navigate("AllReflections", {})
                 : navigation.navigate("AllMeditations")
             }
           >
