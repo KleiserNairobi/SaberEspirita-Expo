@@ -136,8 +136,8 @@ export default function MeditateScreen() {
         {activeTab === "REFLECTIONS" && (
           <View style={{ marginHorizontal: 20, marginTop: 10 }}>
             <AssistantCard
-              title="Favoritos"
-              description="Acesso rápido às suas reflexões preferidas"
+              title="Minhas Reflexões"
+              description="Suas reflexões favoritas em um só lugar"
               buttonText="Ver todas"
               icon={Heart}
               onPress={() =>

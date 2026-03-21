@@ -132,8 +132,8 @@ export default function PrayScreen() {
         {/* Seção: Favoritos */}
         <View style={{ marginHorizontal: 20 }}>
           <AssistantCard
-            title="Favoritas"
-            description="Acesso rápido às suas orações preferidas"
+            title="Minhas Orações"
+            description="Suas preces favoritas em um só lugar"
             buttonText="Ver todas"
             icon={Heart}
             onPress={() => navigation.navigate("PrayCategory", { id: "FAVORITES" })}

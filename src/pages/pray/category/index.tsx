@@ -142,11 +142,11 @@ export function PrayCategoryScreen() {
 
   // Obter dados da categoria
   const categoryTitle = isFavoritesPage
-    ? "Favoritas"
+    ? "Minhas Orações"
     : PRAYER_MOMENTS[id as keyof typeof PRAYER_MOMENTS]?.label || "Orações";
 
   const categorySubtitle = isFavoritesPage
-    ? "Acesso rápido às suas orações preferidas"
+    ? "Suas preces favoritas em um só lugar"
     : MOMENT_SUBTITLES[id as PrayerMoment] || "";
 
   const IconComponent = isFavoritesPage

@@ -64,11 +64,12 @@ export const createStyles = (theme: ITheme) =>
     // Novas Tabs
     segmentContainer: {
       flexDirection: "row",
-      backgroundColor: theme.colors.card, // Alterado para branco/card
+      backgroundColor: theme.colors.card,
       marginHorizontal: 20,
-      borderRadius: 100, // Formato pílula
+      borderRadius: 100,
       padding: 4,
-      marginBottom: 10,
+      marginTop: 10,
+      marginBottom: 4,
       borderWidth: 1,
       borderColor: theme.colors.border,
     },

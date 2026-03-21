@@ -59,7 +59,9 @@ export default function AllReflectionsScreen() {
   const favoritesQuery = useReflectionsByIds(isFavoritesPage ? favorites : []);
 
   const reflections = isFavoritesPage ? favoritesQuery.data : reflectionsQuery.data;
-  const isLoading = isFavoritesPage ? favoritesQuery.isLoading : reflectionsQuery.isLoading;
+  const isLoading = isFavoritesPage
+    ? favoritesQuery.isLoading
+    : reflectionsQuery.isLoading;
 
   useEffect(() => {
     if (user?.uid) {
@@ -210,11 +212,11 @@ export default function AllReflectionsScreen() {
                 {/* Título e Subtítulo */}
                 <View style={styles.headerTextContainer}>
                   <Text style={styles.title}>
-                    {isFavoritesPage ? "Favoritos" : "Textos para Reflexão"}
+                    {isFavoritesPage ? "Minhas Reflexões" : "Textos para Reflexão"}
                   </Text>
                   <Text style={styles.subtitle}>
                     {isFavoritesPage
-                      ? "Todas as suas reflexões favoritas"
+                      ? "Suas reflexões favoritas em um só lugar"
                       : "Aprofunde seu conhecimento espiritual"}
                   </Text>
                 </View>
@@ -246,8 +248,8 @@ export default function AllReflectionsScreen() {
                 {searchQuery
                   ? "Nenhuma reflexão encontrada"
                   : isFavoritesPage
-                  ? "Você ainda não tem reflexões favoritas.\nToque no coração para salvar suas reflexões preferidas."
-                  : "Nenhuma reflexão disponível no momento"}
+                    ? "Você ainda não tem reflexões favoritas.\nToque no coração para salvar suas reflexões preferidas."
+                    : "Nenhuma reflexão disponível no momento"}
               </Text>
             </View>
           }
@@ -259,12 +261,28 @@ export default function AllReflectionsScreen() {
           filterType={filterType}
           onFilterChange={setFilterType}
           title={isFavoritesPage ? "Filtrar Favoritos" : "Filtrar Reflexões"}
-          filterOptions={isFavoritesPage ? [
-            { id: "ALL" as ContentFilterType, label: "Todos os Favoritos", icon: Heart },
-            { id: "BY_AUTHOR" as ContentFilterType, label: "Por Autor", icon: User },
-            { id: "BY_SOURCE" as ContentFilterType, label: "Por Fonte", icon: Sparkles },
-            { id: "BY_TOPIC" as ContentFilterType, label: "Por Tópico", icon: Tag },
-          ] : REFLECTION_FILTER_OPTIONS}
+          filterOptions={
+            isFavoritesPage
+              ? [
+                  {
+                    id: "ALL" as ContentFilterType,
+                    label: "Todos os Favoritos",
+                    icon: Heart,
+                  },
+                  {
+                    id: "BY_AUTHOR" as ContentFilterType,
+                    label: "Por Autor",
+                    icon: User,
+                  },
+                  {
+                    id: "BY_SOURCE" as ContentFilterType,
+                    label: "Por Fonte",
+                    icon: Sparkles,
+                  },
+                  { id: "BY_TOPIC" as ContentFilterType, label: "Por Tópico", icon: Tag },
+                ]
+              : REFLECTION_FILTER_OPTIONS
+          }
         />
       </View>
     </SafeAreaView>
