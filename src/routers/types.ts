@@ -85,7 +85,7 @@ export type PrayStackParamList = {
 
 export type MeditateStackParamList = {
   MeditateHome: undefined;
-  AllReflections: { initialFilter?: ContentFilterType };
+  AllReflections: { id?: string };
   Reflection: { id: string };
   AllMeditations: undefined;
   MeditationPlayer: { id: string };

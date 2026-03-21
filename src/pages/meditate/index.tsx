@@ -25,6 +25,7 @@ import { MeditationCard } from "./components/MeditationCard";
 import { ReflectionCard } from "./components/ReflectionCard";
 import { useFeaturedReflections } from "./hooks/useFeaturedReflections";
 import { createStyles } from "./styles";
+import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
 
 type TabType = "REFLECTIONS" | "MEDITATIONS";
 
@@ -33,6 +34,13 @@ export default function MeditateScreen() {
   const styles = createStyles(theme);
   const { user } = useAuthStore();
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
+  const { syncWithFirebase } = useReflectionFavoritesStore();
+
+  React.useEffect(() => {
+    if (user?.uid) {
+      syncWithFirebase(user.uid);
+    }
+  }, [user?.uid, syncWithFirebase]);
 
   const [activeTab, setActiveTab] = React.useState<TabType>("REFLECTIONS");
 
@@ -134,7 +142,7 @@ export default function MeditateScreen() {
               icon={Heart}
               onPress={() =>
                 navigation.navigate("AllReflections", {
-                  initialFilter: "FAVORITES",
+                  id: "FAVORITES",
                 })
               }
             />

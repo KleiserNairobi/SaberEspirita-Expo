@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -22,13 +22,15 @@ import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
 import { ReflectionCard } from "../components/ReflectionCard";
 import { useReflections } from "../hooks/useReflections";
+import { useReflectionsByIds } from "../hooks/useReflectionsByIds";
 import { ContentFilterType } from "@/types/prayer";
 import { createStyles } from "./styles";
 import { useQueryClient } from "@tanstack/react-query";
 import { getReflectionById } from "@/services/firebase/reflectionService";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
+import { useAuthStore } from "@/stores/authStore";
 
-// Opções de filtro específicas para reflexões (inclui "Por Tópico")
+// Opções de filtro específicas para reflexões
 const REFLECTION_FILTER_OPTIONS = [
   { id: "ALL" as ContentFilterType, label: "Todos", icon: BookOpen },
   { id: "FAVORITES" as ContentFilterType, label: "Apenas Favoritos", icon: Heart },
@@ -43,23 +45,33 @@ export default function AllReflectionsScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
   const queryClient = useQueryClient();
   const route = useRoute<RouteProp<MeditateStackParamList, "AllReflections">>();
-  const { initialFilter } = route.params || {};
+  const { id } = route.params || {};
+  const { user } = useAuthStore();
 
-  const { isFavorite } = useReflectionFavoritesStore();
+  const { isFavorite, favorites, syncWithFirebase } = useReflectionFavoritesStore();
+  const isFavoritesPage = id === "FAVORITES";
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterType, setFilterType] = useState<ContentFilterType>(
-    initialFilter || "ALL"
-  );
+  const [filterType, setFilterType] = useState<ContentFilterType>("ALL");
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
-  const { data: reflections, isLoading } = useReflections();
+  const reflectionsQuery = useReflections();
+  const favoritesQuery = useReflectionsByIds(isFavoritesPage ? favorites : []);
+
+  const reflections = isFavoritesPage ? favoritesQuery.data : reflectionsQuery.data;
+  const isLoading = isFavoritesPage ? favoritesQuery.isLoading : reflectionsQuery.isLoading;
+
+  useEffect(() => {
+    if (user?.uid) {
+      syncWithFirebase(user.uid);
+    }
+  }, [user?.uid, syncWithFirebase]);
 
   // Filtrar reflexões com base no filtro e busca
   const filteredReflections = useMemo(() => {
     if (!reflections) return [];
 
-    let result = reflections;
+    let result = [...reflections];
 
     // Aplicar filtro
     switch (filterType) {
@@ -86,8 +98,8 @@ export default function AllReflectionsScreen() {
         break;
       case "BY_TOPIC":
         result = result.sort((a, b) => {
-          const topicA = a.topic;
-          const topicB = b.topic;
+          const topicA = a.topic || "";
+          const topicB = b.topic || "";
           return topicA.localeCompare(topicB);
         });
         break;
@@ -101,13 +113,13 @@ export default function AllReflectionsScreen() {
 
     // Aplicar busca
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+      const queryStr = searchQuery.toLowerCase();
       result = result.filter(
         (reflection) =>
-          reflection.title.toLowerCase().includes(query) ||
-          reflection.subtitle?.toLowerCase().includes(query) ||
-          reflection.author?.toLowerCase().includes(query) ||
-          reflection.source?.toLowerCase().includes(query)
+          reflection.title.toLowerCase().includes(queryStr) ||
+          reflection.subtitle?.toLowerCase().includes(queryStr) ||
+          reflection.author?.toLowerCase().includes(queryStr) ||
+          reflection.source?.toLowerCase().includes(queryStr)
       );
     }
 
@@ -118,10 +130,10 @@ export default function AllReflectionsScreen() {
     navigation.navigate("Reflection", { id: reflectionId });
   }
 
-  function prefetchReflection(id: string) {
+  function prefetchReflection(reflectionId: string) {
     queryClient.prefetchQuery({
-      queryKey: ["reflection", id],
-      queryFn: () => getReflectionById(id),
+      queryKey: ["reflection", reflectionId],
+      queryFn: () => getReflectionById(reflectionId),
       staleTime: 1000 * 60 * 60, // 1 hora
     });
   }
@@ -139,7 +151,6 @@ export default function AllReflectionsScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <View style={styles.container}>
-        {/* Lista de Reflexões - Header e Toolbar agora rolam junto */}
         <FlatList
           data={filteredReflections}
           keyExtractor={(item) => item.id}
@@ -165,7 +176,11 @@ export default function AllReflectionsScreen() {
                     <View style={styles.ringMiddle} />
                     <View style={styles.ringInner} />
                     <View style={styles.iconLargeContainer}>
-                      <BookHeart size={40} color={theme.colors.background} />
+                      {isFavoritesPage ? (
+                        <Heart size={40} color={theme.colors.background} />
+                      ) : (
+                        <BookHeart size={40} color={theme.colors.background} />
+                      )}
                     </View>
                   </View>
 
@@ -195,10 +210,10 @@ export default function AllReflectionsScreen() {
                 {/* Título e Subtítulo */}
                 <View style={styles.headerTextContainer}>
                   <Text style={styles.title}>
-                    {filterType === "FAVORITES" ? "Favoritos" : "Textos para Reflexão"}
+                    {isFavoritesPage ? "Favoritos" : "Textos para Reflexão"}
                   </Text>
                   <Text style={styles.subtitle}>
-                    {filterType === "FAVORITES"
+                    {isFavoritesPage
                       ? "Todas as suas reflexões favoritas"
                       : "Aprofunde seu conhecimento espiritual"}
                   </Text>
@@ -230,7 +245,7 @@ export default function AllReflectionsScreen() {
               <Text style={styles.emptyText}>
                 {searchQuery
                   ? "Nenhuma reflexão encontrada"
-                  : filterType === "FAVORITES"
+                  : isFavoritesPage
                   ? "Você ainda não tem reflexões favoritas.\nToque no coração para salvar suas reflexões preferidas."
                   : "Nenhuma reflexão disponível no momento"}
               </Text>
@@ -243,8 +258,13 @@ export default function AllReflectionsScreen() {
           ref={bottomSheetRef}
           filterType={filterType}
           onFilterChange={setFilterType}
-          title="Filtrar Reflexões"
-          filterOptions={REFLECTION_FILTER_OPTIONS}
+          title={isFavoritesPage ? "Filtrar Favoritos" : "Filtrar Reflexões"}
+          filterOptions={isFavoritesPage ? [
+            { id: "ALL" as ContentFilterType, label: "Todos os Favoritos", icon: Heart },
+            { id: "BY_AUTHOR" as ContentFilterType, label: "Por Autor", icon: User },
+            { id: "BY_SOURCE" as ContentFilterType, label: "Por Fonte", icon: Sparkles },
+            { id: "BY_TOPIC" as ContentFilterType, label: "Por Tópico", icon: Tag },
+          ] : REFLECTION_FILTER_OPTIONS}
         />
       </View>
     </SafeAreaView>

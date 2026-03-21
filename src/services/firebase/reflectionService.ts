@@ -1,11 +1,12 @@
 import {
   collection,
+  documentId,
+  getDoc,
   getDocs,
   query,
   where,
   orderBy,
   doc,
-  getDoc,
 } from "firebase/firestore";
 
 import { db } from "@/configs/firebase/firebase";
@@ -73,3 +74,30 @@ export async function getReflectionById(id: string): Promise<IReflection | null>
     return null;
   }
 }
+
+/**
+ * Busca reflexões através de uma lista de IDs (usado para Favoritos)
+ */
+export async function getReflectionsByIds(reflectionIds: string[]): Promise<IReflection[]> {
+  if (!reflectionIds || reflectionIds.length === 0) {
+    return [];
+  }
+
+  const reflectionsRef = collection(db, "reflections");
+  const chunks: string[][] = [];
+
+  // Firestore "in" limit is 10
+  for (let i = 0; i < reflectionIds.length; i += 10) {
+    chunks.push(reflectionIds.slice(i, i + 10));
+  }
+
+  const reflectionsPromises = chunks.map(async (chunk) => {
+    const q = query(reflectionsRef, where(documentId(), "in", chunk));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(mapDocToReflection);
+  });
+
+  const results = await Promise.all(reflectionsPromises);
+  return results.flat();
+}
+
