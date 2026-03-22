@@ -141,12 +141,29 @@ export const createStyles = (theme: ITheme) =>
     sectionTitle: {
       ...theme.text("lg", "semibold"),
       color: theme.colors.text,
-      marginBottom: theme.spacing.sm,
+      marginBottom: theme.spacing.xs,
     },
     descriptionText: {
       ...theme.text("md", "regular", theme.colors.textSecondary),
       textAlign: "justify",
       lineHeight: 24,
+    },
+    methodologySection: {
+      marginVertical: theme.spacing.md,
+    },
+    methodologyTitle: {
+      ...theme.text("lg", "semibold"),
+      color: theme.colors.text,
+      marginBottom: theme.spacing.xs,
+    },
+    methodologyText: {
+      ...theme.text("md", "regular", theme.colors.textSecondary),
+      textAlign: "justify",
+      lineHeight: 24,
+    },
+    methodologyLink: {
+      ...theme.text("md", "medium", "#6B7A5F"),
+      textDecorationLine: "underline",
     },
 
     // LEARNING OBJECTIVES

@@ -25,6 +25,10 @@ import { AppStackParamList } from "@/routers/types";
 import { useCourse } from "@/hooks/queries/useCourses";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
 import { createStyles } from "./styles";
+import { BottomSheetMessage } from "@/components/BottomSheetMessage";
+import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useRef, useState } from "react";
 
 type CourseDetailsRouteProp = RouteProp<AppStackParamList, "CourseDetails">;
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -40,6 +44,28 @@ export function CourseDetailsScreen() {
   // React Query Fetch
   const { data: course, isLoading: isLoadingCourse } = useCourse(courseId);
   const { data: progress, isLoading: isLoadingProgress } = useCourseProgress(courseId);
+
+  // Modal de Metodologia
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
+    null
+  );
+
+  const handleOpenMethodology = () => {
+    setMessageConfig({
+      type: "info",
+      title: "Entenda nossa pedagogia",
+      message:
+        "Nossos cursos foram desenvolvidos com uma metodologia própria, pensada para transformar o estudo em uma experiencial ativa e envolvente.\n\nAo longo das aulas, você perceberá que alguns textos terminam com reticências (...). Isso é intencional. Esses momentos funcionam como pausas reflexivas, convidando você a pensar, internalizar e conectar o conteúdo com sua própria vida.\n\nAs aulas seguem uma progressão estruturada — da pergunta inicial à aplicação prática — como uma jornada de descoberta. Por isso, recomendamos que você avance slide a slide, respeitando esse ritmo.\n\nAqui, você não apenas lê:\n você reflete, compreende e transforma.",
+      primaryButton: {
+        label: "FECHAR",
+        onPress: () => {
+          bottomSheetRef.current?.dismiss();
+        },
+      },
+    });
+    bottomSheetRef.current?.present();
+  };
 
   // Loading unificado: aguarda tanto curso quanto progresso
   const loading = isLoadingCourse || isLoadingProgress;
@@ -136,6 +162,17 @@ export function CourseDetailsScreen() {
             <Text style={styles.sectionTitle}>Sobre o Curso</Text>
             <Text style={styles.descriptionText}>
               {course.description || "Sem descrição disponível."}
+            </Text>
+          </View>
+
+          {/* METHODOLOGY CALLOUT */}
+          <View style={styles.methodologySection}>
+            <Text style={styles.methodologyTitle}>Como vamos estudar</Text>
+            <Text style={styles.methodologyText}>
+              Este curso utiliza uma metodologia ativa de pausas reflexivas.{" "}
+              <Text style={styles.methodologyLink} onPress={handleOpenMethodology}>
+                Saiba mais
+              </Text>
             </Text>
           </View>
 
@@ -244,6 +281,8 @@ export function CourseDetailsScreen() {
           )}
         </View>
       </View>
+
+      <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
     </SafeAreaView>
   );
 }
