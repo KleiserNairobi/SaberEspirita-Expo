@@ -152,6 +152,22 @@ export function CourseCurriculumScreen() {
     }, 500);
   };
 
+  const handleOpenMethodology = () => {
+    setMessageConfig({
+      type: "info",
+      title: "Entenda nossa pedagogia",
+      message:
+        "Nossos cursos foram desenvolvidos com uma metodologia própria, pensada para transformar o estudo em uma experiência ativa e envolvente.\n\nAo longo das aulas, você perceberá que alguns textos terminam com reticências (...). Isso é intencional. Esses momentos funcionam como pausas reflexivas, convidando você a pensar, internalizar e conectar o conteúdo com sua própria vida.\n\nAs aulas seguem uma progressão estruturada — da pergunta inicial à aplicação prática — como uma jornada de descoberta. Por isso, recomendamos que você avance slide a slide, respeitando esse ritmo.\n\nAqui, você não apenas lê:\n você reflete, compreende e transforma.",
+      primaryButton: {
+        label: "FECHAR",
+        onPress: () => {
+          bottomSheetRef.current?.dismiss();
+        },
+      },
+    });
+    bottomSheetRef.current?.present();
+  };
+
   // ✅ NOVO: Lógica Proativa de Avaliação por Marcos (40%, 75%, 100%)
   useEffect(() => {
     // Só avalia se já tiver carregado os dados de progresso e as aulas
@@ -630,6 +646,7 @@ export function CourseCurriculumScreen() {
                 certificateEligible={isReadyForCertificate}
                 hasCertificate={certificateEnabled}
                 onRateCourse={hasGloballySubmittedState ? undefined : handleOpenFeedback}
+                onOpenMethodology={handleOpenMethodology}
               />
             }
             renderItem={renderLessonItem}

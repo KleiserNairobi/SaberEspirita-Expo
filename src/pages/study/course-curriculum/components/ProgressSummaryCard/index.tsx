@@ -1,6 +1,6 @@
 import React from "react";
-import { View, Text } from "react-native";
-import { Award, Star } from "lucide-react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { Award, BookOpen, Pencil, Lightbulb } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Button } from "@/components/Button";
@@ -17,6 +17,7 @@ interface ProgressSummaryCardProps {
   certificateEligible: boolean;
   hasCertificate?: boolean; // Prop opcional, default true para retrocompatibilidade se necessário
   onRateCourse?: () => void; // Ação de clique
+  onOpenMethodology?: () => void; // Ação para abrir pop-up de metodologia
 }
 
 export function ProgressSummaryCard({
@@ -30,6 +31,7 @@ export function ProgressSummaryCard({
   certificateEligible,
   hasCertificate = true,
   onRateCourse,
+  onOpenMethodology,
 }: ProgressSummaryCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -44,53 +46,76 @@ export function ProgressSummaryCard({
 
       {/* Progresso de Aulas */}
       <View style={styles.progressSection}>
-        <View style={styles.progressHeader}>
-          <Text style={styles.progressLabel}>Progresso de Aulas</Text>
-          <Text style={styles.progressPercent}>{lessonsProgress}%</Text>
+        <View style={styles.progressIconContainer}>
+          <BookOpen size={22} color="#6B7A5F" />
         </View>
-        <View style={styles.progressBarBg}>
-          <View
-            style={[
-              styles.progressBarFill,
-              styles.progressBarLessons,
-              { width: `${lessonsProgress}%` },
-            ]}
-          />
+        <View style={styles.progressContent}>
+          <View style={styles.progressHeader}>
+            <Text style={styles.progressLabel}>Aulas Concluídas</Text>
+            <Text style={styles.progressPercent}>{lessonsProgress}%</Text>
+          </View>
+          <View style={styles.progressBarBg}>
+            <View
+              style={[
+                styles.progressBarFill,
+                styles.progressBarLessons,
+                { width: `${lessonsProgress}%`, backgroundColor: "#6B7A5F" },
+              ]}
+            />
+          </View>
+          <Text style={styles.progressFooter}>
+            {completedLessons} de {totalLessons} aulas concluídas
+          </Text>
         </View>
-        <Text style={styles.progressFooter}>
-          {completedLessons} de {totalLessons} aulas concluídas
-        </Text>
       </View>
 
       {/* Progresso de Exercícios */}
       <View style={styles.progressSection}>
-        <View style={styles.progressHeader}>
-          <Text style={styles.progressLabel}>Progresso de Exercícios</Text>
-          <Text style={styles.progressPercent}>{exercisesProgress}%</Text>
+        <View style={styles.progressIconContainer}>
+          <Pencil size={22} color="#6B7A5F" />
         </View>
-        <View style={styles.progressBarBg}>
-          <View
-            style={[
-              styles.progressBarFill,
-              styles.progressBarExercises,
-              { width: `${exercisesProgress}%` },
-            ]}
-          />
+        <View style={styles.progressContent}>
+          <View style={styles.progressHeader}>
+            <Text style={styles.progressLabel}>Exercícios Completos</Text>
+            <Text style={styles.progressPercent}>{exercisesProgress}%</Text>
+          </View>
+          <View style={styles.progressBarBg}>
+            <View
+              style={[
+                styles.progressBarFill,
+                styles.progressBarExercises,
+                { width: `${exercisesProgress}%`, backgroundColor: "#6B7A5F" },
+              ]}
+            />
+          </View>
+          <Text style={styles.progressFooter}>
+            {completedExercises} de {totalExercises} exercícios completos
+          </Text>
         </View>
-        <Text style={styles.progressFooter}>
-          {completedExercises} de {totalExercises} exercícios completos
-        </Text>
       </View>
 
-      {/* Botão de Avaliar Curso (Opcional, caso passe a prop) */}
-      {onRateCourse && (
+      {/* Botões de Ação */}
+      {(onRateCourse || onOpenMethodology) && (
         <View style={styles.rateButtonContainer}>
-          <Button
-            title="Deixar Avaliação"
-            variant="outline"
-            onPress={onRateCourse}
-            fullWidth
-          />
+          {onOpenMethodology && (
+            <TouchableOpacity
+              style={styles.methodologyButton}
+              onPress={onOpenMethodology}
+              activeOpacity={0.7}
+            >
+              <Lightbulb size={20} color="#7A8C70" />
+              <Text style={styles.methodologyButtonText}>Sobre a Pedagogia</Text>
+            </TouchableOpacity>
+          )}
+          {onRateCourse && (
+            <TouchableOpacity
+              style={styles.rateButton}
+              onPress={onRateCourse}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.rateButtonText}>Deixar Avaliação</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
     </View>

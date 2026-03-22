@@ -7,6 +7,7 @@ interface ButtonProps {
   title: string;
   onPress: () => void;
   variant?: "primary" | "outline";
+  size?: "sm" | "md" | "lg";
   disabled?: boolean;
   loading?: boolean;
   fullWidth?: boolean;
@@ -16,6 +17,7 @@ export function Button({
   title,
   onPress,
   variant = "primary",
+  size = "md",
   disabled = false,
   loading = false,
   fullWidth = false,
@@ -25,6 +27,8 @@ export function Button({
 
   const containerStyle = [
     styles.container,
+    size === "sm" && styles.containerSm,
+    size === "lg" && styles.containerLg,
     variant === "outline" && styles.containerOutline,
     fullWidth && styles.containerFullWidth,
     disabled && styles.containerDisabled,
@@ -32,6 +36,8 @@ export function Button({
 
   const textStyle = [
     styles.text,
+    size === "sm" && styles.textSm,
+    size === "lg" && styles.textLg,
     variant === "outline" && styles.textOutline,
     disabled && styles.textDisabled,
   ];

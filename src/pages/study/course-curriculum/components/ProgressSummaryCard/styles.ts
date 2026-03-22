@@ -23,12 +23,20 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
     },
     progressSection: {
-      marginBottom: theme.spacing.md,
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: theme.spacing.lg,
+    },
+    progressIconContainer: {
+      marginRight: 12,
+    },
+    progressContent: {
+      flex: 1,
     },
     progressHeader: {
       flexDirection: "row",
       justifyContent: "space-between",
-      marginBottom: 8,
+      marginBottom: 5,
     },
     progressLabel: {
       ...theme.text("sm", "regular", theme.colors.textSecondary),
@@ -55,29 +63,37 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: theme.colors.icon,
     },
     progressFooter: {
-      ...theme.text("sm", "regular", theme.colors.textSecondary),
-    },
-    messageContainer: {
-      marginTop: theme.spacing.xs,
-      padding: theme.spacing.sm,
-      backgroundColor: `${theme.colors.warning}15`,
-      borderRadius: theme.radius.sm,
-      borderLeftWidth: 3,
-      borderLeftColor: theme.colors.warning,
-    },
-    messageContainerSuccess: {
-      backgroundColor: `${theme.colors.success}15`,
-      borderLeftColor: theme.colors.success,
-    },
-    messageText: {
-      ...theme.text("sm", "medium", theme.colors.warning),
-      textAlign: "center",
-    },
-    messageTextSuccess: {
-      color: theme.colors.success,
+      ...theme.text("xs", "regular", theme.colors.textSecondary),
+      marginTop: 4,
     },
     rateButtonContainer: {
-      marginTop: theme.spacing.md,
-      width: "100%",
+      marginTop: theme.spacing.xs,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+    methodologyButton: {
+      flex: 1.2,
+      backgroundColor: "#F2F4F1",
+      borderRadius: 100,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 10,
+      gap: 8,
+    },
+    methodologyButtonText: {
+      ...theme.text("sm", "regular", "#7A8C70"),
+    },
+    rateButton: {
+      flex: 1,
+      backgroundColor: "#6B7A5F",
+      borderRadius: 100,
+      paddingVertical: 12,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    rateButtonText: {
+      ...theme.text("sm", "medium", "white"),
     },
   });

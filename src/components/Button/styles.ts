@@ -12,6 +12,15 @@ export function createStyles(theme: ITheme) {
       justifyContent: "center",
       minHeight: 48,
     },
+    containerSm: {
+      minHeight: 36,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+    },
+    containerLg: {
+      minHeight: 56,
+      paddingVertical: theme.spacing.lg,
+    },
     containerOutline: {
       backgroundColor: "transparent",
       borderWidth: 1,
@@ -26,6 +35,12 @@ export function createStyles(theme: ITheme) {
     text: {
       ...theme.text("md", "semibold"),
       color: "white",
+    },
+    textSm: {
+      ...theme.text("sm", "regular"),
+    },
+    textLg: {
+      ...theme.text("lg", "semibold"),
     },
     textOutline: {
       color: theme.colors.text,
