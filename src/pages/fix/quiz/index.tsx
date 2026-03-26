@@ -110,13 +110,9 @@ export function QuizScreen() {
     loadAssets();
   }, [correctAsset, wrongAsset]);
 
-  // Inicializa players apenas com URIs válidas (localUri preferido após download)
-  const correctPlayer = useAudioPlayer(
-    audioReady ? correctAsset.localUri || correctAsset.uri : null
-  );
-  const wrongPlayer = useAudioPlayer(
-    audioReady ? wrongAsset.localUri || wrongAsset.uri : null
-  );
+  // Inicializa players diretamente com os assets (permitindo pré-carregamento nativo estável)
+  const correctPlayer = useAudioPlayer(correctAsset);
+  const wrongPlayer = useAudioPlayer(wrongAsset);
 
   const isDaily = mode === "daily";
   const isCourse = mode === "course";
@@ -148,17 +144,27 @@ export function QuizScreen() {
   const isLastQuestion = currentQuestionIndex === (quiz?.questions.length || 0) - 1;
 
   function playSound(isCorrect: boolean) {
-    if (!soundEffects || !audioReady) return;
+    if (!soundEffects) return;
 
     const player = isCorrect ? correctPlayer : wrongPlayer;
+    
+    // Log para depuração se necessário, apenas em dev
+    if (__DEV__ && !player) {
+      console.info("[Quiz] Tentando tocar som, mas player", isCorrect ? "acerto" : "erro", "ainda não inicializado.");
+    }
+
     if (!player) return;
 
     try {
-      // Pequeno delay ou verificação para garantir que o player está pronto
-      player.seekTo(0);
+      // ✅ No Android, o seekTo(0) antes do primeiro play() pode causar falha se o arquivo for pequeno
+      // ou se o buffer ainda estiver instável. Deixamos ele gerenciar o ponto de partida na primeira vez.
+      if (audioReady) {
+        player.seekTo(0);
+      }
+      
       player.play();
     } catch (error) {
-      console.info("[Quiz] Erro silencioso ao tocar som:", error);
+      console.info("[Quiz] Falha silenciada na reprodução de áudio:", error);
     }
   }
 
@@ -172,15 +178,18 @@ export function QuizScreen() {
     const isCorrect = index === quiz.questions[currentQuestionIndex].correct;
 
     // Executa em um timeout para não competir com o frame de renderização do setSelectedAnswer
+    // No Android, o som de erro pode precisar de um pouco mais de tempo para preparar o buffer nativo
+    const delay = isCorrect ? 50 : 150;
+
     setTimeout(() => {
       try {
-        if (soundEffects && audioReady) {
+        if (soundEffects) {
           playSound(isCorrect);
         }
       } catch (e) {
         console.warn("[Quiz] Falha ao reproduzir áudio:", e);
       }
-    }, 50);
+    }, delay);
   }
 
   function handleConfirm() {
