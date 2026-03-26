@@ -23,16 +23,23 @@ export function QuestionCard({
 
   return (
     <View style={styles.container}>
-      {question.alternatives.map((alternative, index) => (
-        <AnswerOption
-          key={index}
-          text={alternative}
-          checked={showFeedback && selectedIndex === index}
-          isCorrect={question.correct === index}
-          disabled={selectedIndex !== null}
-          onPress={() => onSelectAnswer(index)}
-        />
-      ))}
+      {question.alternatives.map((alternative, index) => {
+        const isCorrect = question.correct === index;
+        const isSelected = selectedIndex === index;
+
+        return (
+          <AnswerOption
+            key={index}
+            text={alternative}
+            // Marcamos a opção como "checked" se for a selecionada pelo usuário
+            // OU se o usuário já respondeu e esta for a opção correta (feedback de gabarito)
+            checked={showFeedback && (isSelected || (isCorrect && selectedIndex !== null))}
+            isCorrect={isCorrect}
+            disabled={selectedIndex !== null}
+            onPress={() => onSelectAnswer(index)}
+          />
+        );
+      })}
     </View>
   );
 }

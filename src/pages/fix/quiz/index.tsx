@@ -112,10 +112,10 @@ export function QuizScreen() {
 
   // Inicializa players apenas com URIs válidas (localUri preferido após download)
   const correctPlayer = useAudioPlayer(
-    audioReady ? correctAsset.localUri || correctAsset.uri : ""
+    audioReady ? correctAsset.localUri || correctAsset.uri : null
   );
   const wrongPlayer = useAudioPlayer(
-    audioReady ? wrongAsset.localUri || wrongAsset.uri : ""
+    audioReady ? wrongAsset.localUri || wrongAsset.uri : null
   );
 
   const isDaily = mode === "daily";
@@ -148,26 +148,30 @@ export function QuizScreen() {
   const isLastQuestion = currentQuestionIndex === (quiz?.questions.length || 0) - 1;
 
   function playSound(isCorrect: boolean) {
-    if (!soundEffects) return;
+    if (!soundEffects || !audioReady) return;
     try {
-      if (isCorrect) {
-        correctPlayer.seekTo(0); // Reinicia o som
-        correctPlayer.play();
-      } else {
-        wrongPlayer.seekTo(0);
-        wrongPlayer.play();
-      }
+      const player = isCorrect ? correctPlayer : wrongPlayer;
+      if (!player) return;
+
+      player.seekTo(0);
+      player.play();
     } catch (error) {
-      console.error("Erro ao tocar som:", error);
+      console.info("[Quiz] Erro ao tocar som (não-crítico):", error);
     }
   }
 
   function handleSelectAnswer(index: number) {
     if (selectedAnswer !== null || !quiz) return; // Prevent changing answer
+    
+    // ✅ Primeiro atualizamos o estado visual para garantir feedback visual imediato.
     setSelectedAnswer(index);
 
+    // ✅ Usamos um setTimeout pequeno para desvincular o processamento do som da renderização visual.
+    // Se o dispositivo estiver lento ou houver erro no driver de áudio, o visual não trava.
     const isCorrect = index === quiz.questions[currentQuestionIndex].correct;
-    playSound(isCorrect);
+    setTimeout(() => {
+      playSound(isCorrect);
+    }, 50);
   }
 
   function handleConfirm() {
