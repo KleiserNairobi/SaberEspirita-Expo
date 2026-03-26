@@ -30,7 +30,13 @@ export function createStyles(theme: ITheme) {
       flex: 1,
     },
     textChecked: {
-      ...theme.text("md", "regular"),
+      fontWeight: "bold",
+    },
+    textSuccess: {
+      color: theme.colors.success,
+    },
+    textError: {
+      color: theme.colors.error,
     },
     iconContainer: {
       marginLeft: theme.spacing.sm,

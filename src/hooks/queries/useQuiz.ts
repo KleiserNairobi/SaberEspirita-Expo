@@ -43,11 +43,11 @@ export function useSubcategories(categoryId: string) {
 /**
  * Hook para buscar um quiz específico
  */
-export function useQuiz(subcategoryId: string) {
+export function useQuiz(subcategoryId: string, enabled = true) {
   return useQuery({
     queryKey: QUIZ_KEYS.quiz(subcategoryId),
     queryFn: () => getQuiz(subcategoryId),
-    enabled: !!subcategoryId,
+    enabled: !!subcategoryId && enabled,
   });
 }
 

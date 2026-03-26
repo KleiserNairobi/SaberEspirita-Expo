@@ -5,12 +5,13 @@ import {
   getUserStreak,
 } from "@/services/firebase/quizService";
 
-export function useDailyChallenge() {
+export function useDailyChallenge(enabled = true) {
   return useQuery({
     queryKey: ["dailyQuiz"],
     queryFn: getDailyChallengeQuestions,
     staleTime: 1000 * 60 * 60 * 24, // Cache for 24h
     gcTime: 1000 * 60 * 60 * 24,
+    enabled,
   });
 }
 

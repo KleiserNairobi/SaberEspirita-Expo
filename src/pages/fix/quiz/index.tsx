@@ -1,46 +1,46 @@
-import React, { useState, useRef, useMemo, useCallback, useEffect } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ArrowLeft } from "lucide-react-native";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Asset } from "expo-asset";
 import { useAudioPlayer } from "expo-audio";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
-
-import { usePreferencesStore } from "@/stores/preferencesStore";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { useQuiz } from "@/hooks/queries/useQuiz";
-import { useDailyChallenge } from "@/hooks/queries/useDailyChallenge";
-import { QuizProgressBar } from "@/components/QuizProgressBar";
-import { QuestionCard } from "@/components/QuestionCard";
-import { Button } from "@/components/Button";
-import { createStyles } from "./styles";
-import { useAuthStore } from "@/stores/authStore";
+import { ArrowLeft } from "lucide-react-native";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  getQuizById,
-  addUserHistory,
-  saveUserCompletedSubcategories,
-  updateUserScore,
-} from "@/services/firebase/quizService";
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { BottomSheetMessage } from "@/components/BottomSheetMessage";
+import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { Button } from "@/components/Button";
+import { QuestionCard } from "@/components/QuestionCard";
+import { QuizProgressBar } from "@/components/QuizProgressBar";
+import { COURSE_PROGRESS_KEYS } from "@/hooks/queries/useCourseProgress";
+import { useDailyChallenge } from "@/hooks/queries/useDailyChallenge";
+import { useQuiz, QUIZ_KEYS } from "@/hooks/queries/useQuiz";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { FixStackParamList } from "@/routers/types";
 import {
   markLessonAsCompleted,
   saveExerciseResult,
 } from "@/services/firebase/progressService";
-import { COURSE_PROGRESS_KEYS } from "@/hooks/queries/useCourseProgress";
-import { IQuizHistory, IQuizAnswer } from "@/types/quiz";
-import { BottomSheetMessage } from "@/components/BottomSheetMessage";
-import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { FixStackParamList, AppStackParamList } from "@/routers/types";
+import {
+  addUserHistory,
+  getQuizById,
+  saveUserCompletedSubcategories,
+  updateUserScore,
+} from "@/services/firebase/quizService";
 import { StatsService } from "@/services/firebase/statsService";
+import { useAuthStore } from "@/stores/authStore";
+import { usePreferencesStore } from "@/stores/preferencesStore";
+import { IQuizAnswer, IQuizHistory } from "@/types/quiz";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { createStyles } from "./styles";
 
 // Combine params type to support both stacks if needed, or just use FixStackParamList which we extended
 type QuizRouteProp = RouteProp<FixStackParamList, "Quiz">;
@@ -121,8 +121,8 @@ export function QuizScreen() {
   const isDaily = mode === "daily";
   const isCourse = mode === "course";
 
-  const standardQuiz = useQuiz(subcategoryId || "");
-  const dailyQuiz = useDailyChallenge();
+  const standardQuiz = useQuiz(subcategoryId || "", !isDaily && !isCourse);
+  const dailyQuiz = useDailyChallenge(isDaily);
 
   const courseQuiz = useQuery({
     queryKey: ["quiz", quizId],
@@ -149,28 +149,37 @@ export function QuizScreen() {
 
   function playSound(isCorrect: boolean) {
     if (!soundEffects || !audioReady) return;
-    try {
-      const player = isCorrect ? correctPlayer : wrongPlayer;
-      if (!player) return;
 
+    const player = isCorrect ? correctPlayer : wrongPlayer;
+    if (!player) return;
+
+    try {
+      // Pequeno delay ou verificação para garantir que o player está pronto
       player.seekTo(0);
       player.play();
     } catch (error) {
-      console.info("[Quiz] Erro ao tocar som (não-crítico):", error);
+      console.info("[Quiz] Erro silencioso ao tocar som:", error);
     }
   }
 
   function handleSelectAnswer(index: number) {
-    if (selectedAnswer !== null || !quiz) return; // Prevent changing answer
-    
-    // ✅ Primeiro atualizamos o estado visual para garantir feedback visual imediato.
+    if (selectedAnswer !== null || !quiz) return;
+
+    // ✅ Feedback visual imediato
     setSelectedAnswer(index);
 
-    // ✅ Usamos um setTimeout pequeno para desvincular o processamento do som da renderização visual.
-    // Se o dispositivo estiver lento ou houver erro no driver de áudio, o visual não trava.
+    // ✅ Som desvinculado da thread principal de renderização
     const isCorrect = index === quiz.questions[currentQuestionIndex].correct;
+
+    // Executa em um timeout para não competir com o frame de renderização do setSelectedAnswer
     setTimeout(() => {
-      playSound(isCorrect);
+      try {
+        if (soundEffects && audioReady) {
+          playSound(isCorrect);
+        }
+      } catch (e) {
+        console.warn("[Quiz] Falha ao reproduzir áudio:", e);
+      }
     }, 50);
   }
 
@@ -309,7 +318,7 @@ export function QuizScreen() {
             );
           } else {
             console.warn(
-              "⚠️ [QuizScreen] exerciseId não fornecido. O progresso do exercício não será salvo detalhadamente."
+              "[QuizScreen] exerciseId não fornecido. O progresso do exercício não será salvo detalhadamente."
             );
           }
 
@@ -360,7 +369,9 @@ export function QuizScreen() {
             queryClient.invalidateQueries({ queryKey: ["dailyQuizStatus", user.uid] });
             queryClient.invalidateQueries({ queryKey: ["userStreak", user.uid] });
           } else {
-            queryClient.invalidateQueries({ queryKey: ["userQuizProgress", user.uid] });
+            queryClient.invalidateQueries({
+              queryKey: QUIZ_KEYS.userProgress(user.uid),
+            });
           }
           queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
           queryClient.invalidateQueries({ queryKey: ["userScore", user.uid] });

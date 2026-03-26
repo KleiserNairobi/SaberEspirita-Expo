@@ -1,7 +1,7 @@
-import React from "react";
-import { TouchableOpacity, Text, View } from "react-native";
-import { CheckCircle2, XCircle } from "lucide-react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { CheckCircle2, XCircle } from "lucide-react-native";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import { createStyles } from "./styles";
 
 interface AnswerOptionProps {
@@ -28,6 +28,13 @@ export function AnswerOption({
     checked && !isCorrect && styles.containerError,
   ];
 
+  // const textStyle = [
+  //   styles.text,
+  //   checked && styles.textChecked,
+  //   checked && isCorrect && styles.textSuccess,
+  //   checked && !isCorrect && styles.textError,
+  // ];
+
   return (
     <TouchableOpacity
       style={containerStyle}
@@ -36,7 +43,7 @@ export function AnswerOption({
       activeOpacity={0.7}
     >
       <View style={styles.content}>
-        <Text style={[styles.text, checked && styles.textChecked]}>{text}</Text>
+        <Text style={styles.text}>{text}</Text>
         <View style={styles.iconContainer}>
           {checked &&
             (isCorrect ? (
