@@ -436,10 +436,13 @@ export async function getUserStreak(userId: string): Promise<number> {
 
     // Calcular sequência
     let streak = 0;
-    const today = new Date()
+    const now = new Date();
+    const today = now
       .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
-      .split(" ")[0];
-    const yesterday = new Date(Date.now() - 86400000)
+      .split(" " )[0];
+    const yesterdayDate = new Date(now);
+    yesterdayDate.setDate(now.getDate() - 1);
+    const yesterday = yesterdayDate
       .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
       .split(" ")[0];
 
@@ -448,24 +451,25 @@ export async function getUserStreak(userId: string): Promise<number> {
       return 0;
     }
 
-    // Contar dias consecutivos
-    let currentDate = new Date(uniqueDates[0]);
+    // Contar dias consecutivos usando as strings
+    // Já temos as datas únicas e ordenadas descrescentemente (uniqueDates)
+    // A primeira data (uniqueDates[0]) é a âncora (hoje ou ontem)
+    
+    streak = 1;
+    let lastDate = new Date(uniqueDates[0] + "T12:00:00"); // Perto do meio-dia para evitar problemas de fuso ao subtrair dias
 
-    // Se o último foi hoje, começamos a verificar de hoje para trás
-    // Se o último foi ontem, começamos de ontem.
-    // O loop verifica se current está na lista, depois subtrai um dia.
-
-    for (let i = 0; i < uniqueDates.length; i++) {
-      const dateToCheck = uniqueDates[i];
-      const stringCurrent = currentDate
+    for (let i = 1; i < uniqueDates.length; i++) {
+      const prevDate = new Date(lastDate);
+      prevDate.setDate(prevDate.getDate() - 1);
+      const expectedDateStr = prevDate
         .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
         .split(" ")[0];
 
-      if (dateToCheck === stringCurrent) {
+      if (uniqueDates[i] === expectedDateStr) {
         streak++;
-        currentDate.setDate(currentDate.getDate() - 1);
+        lastDate = prevDate;
       } else {
-        break; // Quebrou a sequência
+        break;
       }
     }
 
@@ -503,13 +507,11 @@ export async function getDailyChallengeStatus(userId: string): Promise<boolean> 
         ? data.completedAt.toDate()
         : new Date(data.completedAt);
 
-    const todayDate = new Date();
+    const completedAtStr = completedAt
+      .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+      .split(" ")[0];
 
-    return (
-      completedAt.getDate() === todayDate.getDate() &&
-      completedAt.getMonth() === todayDate.getMonth() &&
-      completedAt.getFullYear() === todayDate.getFullYear()
-    );
+    return completedAtStr === today;
   } catch (error) {
     console.error("Erro ao verificar status do desafio diário:", error);
     return false;

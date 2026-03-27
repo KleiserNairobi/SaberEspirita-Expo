@@ -28,13 +28,6 @@ export function AnswerOption({
     checked && !isCorrect && styles.containerError,
   ];
 
-  // const textStyle = [
-  //   styles.text,
-  //   checked && styles.textChecked,
-  //   checked && isCorrect && styles.textSuccess,
-  //   checked && !isCorrect && styles.textError,
-  // ];
-
   return (
     <TouchableOpacity
       style={containerStyle}

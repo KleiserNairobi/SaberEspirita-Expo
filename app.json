@@ -3,14 +3,13 @@
     "name": "Saber Espírita",
     "slug": "saber-espirita",
     "scheme": "saber-espirita",
-    "version": "2.0.9",
+    "version": "2.0.10",
     "orientation": "portrait",
-    "newArchEnabled": true,
     "userInterfaceStyle": "automatic",
     "icon": "./assets/images/icon.png",
 
     "ios": {
-      "buildNumber": "38",
+      "buildNumber": "39",
       "supportsTablet": false,
       "bundleIdentifier": "app.saberespirita",
       "infoPlist": {
@@ -25,8 +24,7 @@
     },
 
     "android": {
-      "versionCode": 38,
-      "edgeToEdgeEnabled": true,
+      "versionCode": 39,
       "predictiveBackGestureEnabled": false,
       "package": "app.saberespirita",
       "softwareKeyboardLayoutMode": "pan",
