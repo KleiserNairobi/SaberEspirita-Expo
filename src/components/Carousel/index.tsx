@@ -1,6 +1,5 @@
 import React from "react";
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Image } from "expo-image";
+import { Text, TouchableOpacity, View } from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -9,14 +8,11 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
-
+import { Image } from "expo-image";
+import { Play, CheckCircle2, Plus, Clock } from "lucide-react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { ICourse, IUserCourseProgress } from "@/types/course";
-
-const { width } = Dimensions.get("window");
-const SPACING = 10;
-const ITEM_SIZE = width * 0.72;
-const SPACER_ITEM_SIZE = (width - ITEM_SIZE) / 2;
+import { createStyles, ITEM_SIZE, SPACER_ITEM_SIZE } from "./styles";
+import type { ICourse, IUserCourseProgress } from "@/types/course";
 
 interface CarouselProps {
   data: ICourse[];
@@ -34,6 +30,7 @@ interface CarouselItemProps {
 
 function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemProps) {
   const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const inputRange = [
     (index - 2) * ITEM_SIZE,
@@ -60,9 +57,6 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
     };
   });
 
-  /* Lógica corrigida para exibir placeholder caso a URL venha vazia ou indefinida */
-  /* Lógica corrigida para exibir placeholder caso a URL venha vazia ou indefinida */
-  // Prioriza URL válida, depois require numérico (se local), e por fim placeholder
   const imageSource =
     typeof item.imageUrl === "string" && item.imageUrl.trim().length > 0
       ? { uri: item.imageUrl }
@@ -70,10 +64,8 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
         ? item.imageUrl
         : require("@/assets/images/placeholder.png");
 
-  // Verificar se o curso está em breve
   const isComingSoon = item.status === "COMING_SOON";
 
-  // Lógica "Smart": Se tem progresso iniciado (>0%), mostra CONTINUAR
   const hasStarted = progress && progress.completedLessons.length > 0;
   const completionPercent =
     item.lessonCount > 0
@@ -88,6 +80,7 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
       : hasStarted
         ? "CONTINUAR"
         : "INICIAR CURSO";
+
   const displayPercent = Math.min(Math.round(completionPercent), 100);
 
   return (
@@ -102,9 +95,7 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
             placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
             priority={index <= 2 ? "high" : "normal"}
           />
-          {/* Overlay escuro */}
           <View style={styles.overlay} />
-          {/* Texto sobreposto */}
           <View style={styles.textOverlayContainer}>
             <Text style={styles.title} numberOfLines={2}>
               {item.title}
@@ -115,7 +106,6 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
               </Text>
             )}
 
-            {/* Barra de Progresso (se iniciado e não for coming soon) */}
             {hasStarted && !isComingSoon && (
               <View style={styles.progressBarContainer}>
                 <View style={[styles.progressBarFill, { width: `${displayPercent}%` }]} />
@@ -124,12 +114,28 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
             )}
 
             <TouchableOpacity
-              style={[styles.button, isComingSoon && styles.buttonDisabled]}
+              style={[
+                styles.button,
+                isComingSoon && styles.buttonComingSoon,
+                isCompleted && styles.buttonCompleted,
+                hasStarted && !isCompleted && styles.buttonContinuing,
+              ]}
               activeOpacity={isComingSoon ? 1 : 0.8}
               onPress={isComingSoon ? undefined : () => onPress(item.id)}
               disabled={isComingSoon}
             >
-              <Text style={styles.buttonText}>{buttonText}</Text>
+              <View style={styles.buttonContent}>
+                {isComingSoon ? (
+                  <Clock size={14} color="#FFF" style={{ marginRight: 6 }} />
+                ) : isCompleted ? (
+                  <CheckCircle2 size={14} color="#FFF" style={{ marginRight: 6 }} />
+                ) : hasStarted ? (
+                  <Play size={12} color="#FFF" fill="#FFF" style={{ marginRight: 6 }} />
+                ) : (
+                  <Plus size={14} color="#FFF" style={{ marginRight: 6 }} />
+                )}
+                <Text style={styles.buttonText}>{buttonText}</Text>
+              </View>
             </TouchableOpacity>
           </View>
         </View>
@@ -139,8 +145,10 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
 }
 
 export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
+  const { theme } = useAppTheme();
+  const styles = createStyles(theme);
   const scrollX = useSharedValue(0);
-  // Adiciona spacers virtuais no array
+
   const DATA_WITH_SPACERS = [{ id: "left-spacer" }, ...data, { id: "right-spacer" }];
 
   const onScrollHandler = useAnimatedScrollHandler({
@@ -186,95 +194,3 @@ export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
     />
   );
 }
-
-const styles = StyleSheet.create({
-  itemContainer: {
-    marginHorizontal: SPACING,
-    borderRadius: 24,
-    overflow: "hidden",
-  },
-  imageContainer: {
-    width: "100%",
-    height: 240,
-    borderRadius: 16,
-    overflow: "hidden",
-    alignSelf: "center",
-  },
-  imageView: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)",
-  },
-  textOverlayContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "flex-end",
-    padding: SPACING * 2,
-  },
-  title: {
-    fontFamily: "Oswald_300Light",
-    fontSize: 20,
-    marginBottom: 5,
-    color: "white",
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-  },
-  description: {
-    fontFamily: "Oswald_300Light",
-    fontSize: 16,
-    color: "rgba(255, 255, 255, 0.9)",
-    marginBottom: 16,
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-  progressBarContainer: {
-    width: "100%",
-    height: 6,
-    backgroundColor: "rgba(255,255,255,0.3)",
-    borderRadius: 3,
-    marginTop: 10,
-    marginBottom: 12, // Espaço antes do botão
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  progressBarFill: {
-    height: "100%",
-    backgroundColor: "#FFF",
-    borderRadius: 3,
-  },
-  percentText: {
-    position: "absolute",
-    right: 0,
-    top: -18,
-    fontFamily: "BarlowCondensed_600SemiBold",
-    fontSize: 12,
-    color: "#FFF",
-    textShadowColor: "rgba(0,0,0,0.8)",
-    textShadowRadius: 2,
-  },
-  button: {
-    alignSelf: "stretch",
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    paddingHorizontal: 20,
-    paddingVertical: 6,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.4)",
-  },
-  buttonDisabled: {
-    opacity: 0.5,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-  },
-  buttonText: {
-    fontFamily: "Oswald_600SemiBold",
-    fontSize: 14,
-    color: "#FFFFFF",
-    letterSpacing: 0.5,
-    textAlign: "center",
-  },
-});
