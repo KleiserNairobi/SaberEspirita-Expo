@@ -10,23 +10,12 @@ export function createStyles(theme: ITheme) {
     container: {
       flex: 1,
     },
-    // Header: Layout de 3 Colunas (Voltar | Ícone | Espaço)
     header: {
-      paddingTop: theme.spacing.xl,
-      paddingBottom: theme.spacing.lg,
-      paddingHorizontal: theme.spacing.lg,
-    },
-    headerRow: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "space-between",
-      marginBottom: theme.spacing.md,
-    },
-    headerSide: {
-      width: 40,
-      height: 40,
-      alignItems: "center",
-      justifyContent: "center",
+      paddingTop: theme.spacing.lg,
+      paddingBottom: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
     },
     backButton: {
       width: 40,
@@ -35,83 +24,59 @@ export function createStyles(theme: ITheme) {
       backgroundColor: theme.colors.accent,
       alignItems: "center",
       justifyContent: "center",
+      marginRight: theme.spacing.md,
     },
-    filterButton: {
+    categoriesScroll: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingBottom: theme.spacing.md,
+      paddingTop: theme.spacing.sm,
+    },
+    categoriesContent: {
+      gap: theme.spacing.sm,
+    },
+    categoryCard: {
+      width: 115,
+      height: 115,
+      backgroundColor: theme.colors.card,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: theme.radius.md,
+      alignItems: "center",
+      justifyContent: "center",
+      padding: theme.spacing.md,
+      gap: 4,
+    },
+    categoryIconContainer: {
       width: 40,
       height: 40,
       borderRadius: 20,
-      backgroundColor: `${theme.colors.primary}15`,
+      backgroundColor: theme.colors.primary + "15",
       alignItems: "center",
       justifyContent: "center",
-      position: "relative",
+      marginBottom: 4,
     },
-    filterButtonActive: {
-      backgroundColor: theme.colors.primary,
+    categoryLabel: {
+      ...theme.text("sm", "regular"),
+      color: theme.colors.text,
+      textAlign: "center",
+      lineHeight: 16,
+      height: 32, // Para acomodar até 2 linhas uniformemente
     },
-    filterDot: {
-      position: "absolute",
-      top: -2,
-      right: -2,
-      width: 12,
-      height: 12,
-      borderRadius: 6,
-      backgroundColor: theme.colors.error,
-      borderWidth: 2,
-      borderColor: theme.colors.background,
-    },
-    iconRingsContainer: {
-      width: 104,
-      height: 104,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    // Anel interno - LARGO para efeito de vibração
-    ringInner: {
-      position: "absolute",
-      width: 88,
-      height: 88,
-      borderRadius: 44,
-      borderWidth: 4,
-      borderColor: theme.colors.primary + "40", // 40% opacidade
-    },
-    // Anel médio - transição do degradê
-    ringMiddle: {
-      position: "absolute",
-      width: 96,
-      height: 96,
-      borderRadius: 48,
-      borderWidth: 2,
-      borderColor: theme.colors.primary + "25", // 25% opacidade
-    },
-    // Anel externo - mais sutil
-    ringOuter: {
-      position: "absolute",
-      width: 104,
-      height: 104,
-      borderRadius: 52,
-      borderWidth: 1,
-      borderColor: theme.colors.primary + "15", // 15% opacidade
-    },
-    iconLargeContainer: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
-      backgroundColor: theme.colors.primary,
-      alignItems: "center",
-      justifyContent: "center",
+    categoryCount: {
+      ...theme.text("xs", "regular", theme.colors.textSecondary),
+      textAlign: "center",
     },
     headerTextContainer: {
-      alignItems: "center",
+      flex: 1,
     },
     title: {
-      ...theme.text("xxxl", "semibold"),
-      textAlign: "center",
-      marginBottom: theme.spacing.xs,
+      ...theme.text("lg", "semibold"),
+      color: theme.colors.text,
     },
     subtitle: {
-      ...theme.text("md", "regular"),
+      ...theme.text("sm", "regular"),
       color: theme.colors.textSecondary,
-      textAlign: "center",
+      marginTop: 2,
     },
     stickyHeader: {
       backgroundColor: theme.colors.background,

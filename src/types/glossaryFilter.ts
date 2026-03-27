@@ -1,12 +1,5 @@
 import { GlossaryCategory } from "./glossary";
 
-export type GlossaryFilterType = "ALL" | "FAVORITES" | "BY_CATEGORY";
+export type GlossaryFilterType = "ALL" | "FAVORITES" | GlossaryCategory;
 
-export const GLOSSARY_FILTER_OPTIONS: Record<
-  GlossaryFilterType,
-  { label: string; value: GlossaryFilterType }
-> = {
-  ALL: { label: "Todos", value: "ALL" },
-  FAVORITES: { label: "Apenas Favoritos", value: "FAVORITES" },
-  BY_CATEGORY: { label: "Por Categoria", value: "BY_CATEGORY" },
-};
+// Removemos GLOSSARY_FILTER_OPTIONS pois vamos gerenciar o carrossel no componente AllTermsScreen

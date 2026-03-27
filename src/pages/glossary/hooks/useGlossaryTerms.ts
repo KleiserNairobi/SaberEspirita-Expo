@@ -35,27 +35,25 @@ export function useFilteredGlossaryTerms(
   const filteredTerms = useMemo(() => {
     let filtered = allTerms || [];
 
-    // Aplicar filtro de favoritos
+    // Aplicar filtro de categoria ou favoritos
     if (filterType === "FAVORITES") {
       filtered = filtered.filter((term) => favoriteIds.includes(term.id));
+    } else if (filterType !== "ALL") {
+      // É uma categoria específica
+      filtered = filtered.filter((term) => term.category === filterType);
     }
 
-    // Filtro de busca
+    // Filtro de busca (Search Query) atua dentro do que sobrou do filtro principal
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
 
-      // Se o filtro for "Por Categoria", busca apenas na categoria
-      if (filterType === "BY_CATEGORY") {
-        filtered = filtered.filter((term) => term.category.toLowerCase().includes(query));
-      } else {
-        // Busca em termo, definição e sinônimos
-        filtered = filtered.filter(
-          (term) =>
-            term.term.toLowerCase().includes(query) ||
-            term.definition.toLowerCase().includes(query) ||
-            term.synonyms?.some((syn) => syn.toLowerCase().includes(query))
-        );
-      }
+      // Busca em termo, definição e sinônimos
+      filtered = filtered.filter(
+        (term) =>
+          term.term.toLowerCase().includes(query) ||
+          term.definition.toLowerCase().includes(query) ||
+          term.synonyms?.some((syn) => syn.toLowerCase().includes(query))
+      );
     }
 
     // Ordenação alfabética
