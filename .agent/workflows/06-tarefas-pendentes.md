@@ -1,11 +1,11 @@
 ---
-description: Histórico e Tarefas Pendentes do Projeto
+description: Histórico e Tarefas Pendentes do Projeto (V2 Consolidada)
 ---
 
 # Roadmap e Tarefas Pendentes - SaberEspirita-Expo (V2)
 
-**Data de Atualização**: 21/02/2026
-**Fase Atual**: App em Produção (MVP 100% Concluído). O roadmap representa as métricas de evolução para a **V2 (Expansão e Monetização)**.
+**Data de Atualização**: 28/03/2026 (Consolidação de Roadmap e Plano V2)
+**Fase Atual**: Expansão e Retenção (Pós-Lançamento MVP).
 
 ---
 
@@ -14,57 +14,67 @@ description: Histórico e Tarefas Pendentes do Projeto
 | Categoria            | Quantidade | Prioridade |
 | -------------------- | ---------- | ---------- |
 | 🔴 Alta Prioridade   | 4          | Alta       |
-| 🟡 Média Prioridade  | 1          | Média      |
+| 🟡 Média Prioridade  | 2          | Média      |
 | 🟢 Melhorias (UI/UX) | 1          | Baixa      |
-| **TOTAL V2**         | **6**      | -          |
+| **TOTAL V2**         | **7**      | -          |
 
 ---
 
-## 🔴 Novas Features e Monetização (Alta Prioridade)
+## 🔴 Features de Alta Prioridade (Core & Retenção)
 
-### 1. **Meditação Guiada (Módulo Medite)** ✅
-
-- **Descrição**: Criação de área para áudios de meditação conduzida. Player em `expo-audio` nativo finalizado com cache de disco dinâmico (`expo-file-system`), padronização estética de UI e painéis de Filtro de Listagem Baseados em Tempo inclusos.
-- **Esforço Estimado**: Baixo (Maior facilidade, arquitetura pronta).
-- **Status**: **CONCLUÍDO (21/02/2026)**
+### 1. **Engajamento, Gamificação e Loop Espiritual** (Antigo Plano 1.5)
+- **Status**: 🔄 EM PROGRESSO
+- **Descrição**: Transformar usuários em frequentadores diários através de hábitos estruturados.
+- **Tarefas**:
+    - **Streak (Ofensiva 🔥)**: Implementar `currentStreak` no Firestore e UI de destaque na Home.
+    - **Momento Espírita de Hoje**: Pílula de destaque na Home contendo curadoria de Mensagem + Prece + Quiz rápido.
+    - **Glossário na Aula**: Implementar *deep links* ou *bottom sheets* para termos complexos em slides de aula.
+    - **Chat Contextual**: Atalho rápido "Ficou com dúvida? Pergunte ao Kardec" ao final de aulas ou termos técnicos.
+    - **Re-branding**: Ajustar copywriting de "Cursos" para **"Séries Espirituais"** ou **"Trilhas de Estudo"**.
 
 ### 2. **Material Complementar (Módulo Estude)**
-
-- **Descrição**: Adicionar a seção de Materiais Complementares (PDFs/Links) dentro da visualização de Lições/Cursos.
-- **Esforço Estimado**: Médio.
+- **Status**: 🔄 PENDENTE
+- **Descrição**: Adicionar seção de PDFs, links e referências externas dentro das aulas.
+- **Tarefas**:
+    - Listagem de anexos (`supplementaryMaterials`) consumindo Storage.
+    - Criar componente `AttachmentCard` (PDF/Doc/Link).
+    - Integração com `expo-file-system` e `expo-sharing` para download e abertura nativa.
 
 ### 3. **Aulas Multimídia (Módulo Estude)**
+- **Status**: 🔄 PENDENTE
+- **Descrição**: Suporte nativo a Vídeo e Áudio nas lições, além do conteúdo literal.
+- **Tarefas**:
+    - Instalar e configurar pacotes nativos (ex: `expo-video`).
+    - Refatorar `LessonPlayer` para identificar dinamicamente `videoUrl` ou `audioUrl`.
+    - Implementar mini-player colapsável para aulas em áudio.
 
-- **Descrição**: Implementar player de Vídeo e Áudio dentro do currículo além das aulas puramente literais.
-- **Esforço Estimado**: Médio-Alto.
-
-### 4. **Paywall e Recursos Pagos (Monetização)**
-
-- **Descrição**: Preparar o aplicativo para lidar com usuários _Freemium_ e assinantes/compradores (recursos Pro). Controlar acesso aos novos materiais (vídeo, material de apoio).
-- **Esforço Estimado**: Alto (Integração RevenueCat ou In-App Purchases).
+### 4. **Paywall e Monetização (Recursos Premium)**
+- **Status**: 🔄 PENDENTE
+- **Descrição**: Preparar o app para modelo Freemium e assinaturas pagas.
+- **Tarefas**:
+    - Integrar SDK de assinaturas (**RevenueCat** - `react-native-purchases`).
+    - Campo `isPremium: true` no banco e bloqueio de UI (ícone de cadeado 🔒).
+    - Implementar tela de Paywall estilizada com planos anuais/mensais.
 
 ---
 
 ## 🟡 Evolução de Sistema (Média Prioridade)
 
 ### 5. **Histórico do Chat com IA**
+- **Status**: 🔄 PENDENTE
+- **Descrição**: Salvar e exibir o histórico de conversas do usuário com os Guias Mentais no Firestore (estilo ChatGPT).
 
-- **Descrição**: Salvar e exibir o histórico de conversas do usuário com os Guias (estilo ChatGPT) no Firestore.
-- **Esforço Estimado**: Médio.
-
-### 6. **Avaliação de Cursos e Aulas**
-
-- **Descrição**: Coletar feedback do usuário em formato de avaliação (estrelas 1-5) mais comentário, salvando ativamente no Firestore e utilizando `BottomSheetMessage` para a captura de input.
-- **Esforço Estimado**: Médio.
+### 6. **Avaliação e Feedback Ativo**
+- **Status**: 🚧 PARCIAL (Hook `useRateApp` pronto)
+- **Descrição**: Coletar avaliação técnica (estrelas 1-5) e comentários individuais após a conclusão de atividades, usando `BottomSheetMessage`.
 
 ---
 
-## 🟢 Melhorias Futuras (Baixa Prioridade)
+## 🟢 Melhorias (Baixa Prioridade)
 
-### 7. **Fase 7: Polish - Animações**
-
-- **Descrição**: Adicionar micro-animações nas listas, quizzes e transições de tela.
-- **Esforço Estimado**: Baixo-Médio.
+### 7. **Fase 7: Polish - Animações e UX**
+- **Status**: 🔄 PENDENTE
+- **Descrição**: Adicionar micro-animações nas listas, quizzes e transições de tela premium (`Lottie`/`Moti`).
 
 ---
 
@@ -72,29 +82,17 @@ description: Histórico e Tarefas Pendentes do Projeto
 
 A ordem lógica recomendada para a implementação (onde a feature anterior ajuda na viabilização da próxima):
 
-1. 🎯 **Módulo Medite**: Meditações Guiadas (Feature isolada e fácil).
-2. 🎯 **Módulo Estude**: Materiais Complementares (PDF/Links na infra atual).
-3. 🎯 **Módulo Estude**: Multimídia (Preparar suporte a vídeo/áudio).
-4. 🎯 **Monetização**: Criar Paywall, unindo lógica dos itens 2 e 3 como "Premium".
-5. 🎯 **Chat**: Implementar arquivamento e Histórico.
+1. 🎯 **Módulo Medite**: Meditações Guiadas (**CONCLUÍDO**).
+2. 🎯 **Engajamento**: Finalizar Streaks e Momento Diário (Retenção).
+3. 🎯 **Módulo Estude**: Materiais Complementares (PDF/Links infra pronta).
+4. 🎯 **Módulo Estude**: Multimídia (Preparar áudio/vídeo).
+5. 🎯 **Monetização**: Criar Paywall unindo tudo o que for "Premium".
 
 ---
 
-## 🎯 Métricas de Progresso (V2 - Monetização e Expansão)
-
-### Novo Ciclo: 6 Tarefas de Expansão
-
-```text
-Concluído:     ████                                      10%
-Pendente:      ██████████████████████████████████        90%
-```
-
-**Total de Tarefas V2**: 5 pendentes (3 Core, 1 Evolução, 1 Perfumaria).
-
----
-
-## ✅ Histórico do MVP (Finalizado)
+## ✅ Histórico de Conclusões (MVP & V2 Init)
 
 - **App Lançado em Produção!** 🎉
 - Infraestrutura 100% concluída (Zustand, React Query, Navegação, Componentização).
+- **Meditação Guiada (Módulo Medite)**: ✅ Player nativo finalizado com cache de disco dinâmico e UI premium (21/02).
 - Documentação Técnica de Arquitetura finalizada.

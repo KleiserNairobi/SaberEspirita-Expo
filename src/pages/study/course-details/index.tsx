@@ -56,7 +56,7 @@ export function CourseDetailsScreen() {
       type: "info",
       title: "Entenda nossa pedagogia",
       message:
-        "Nossos cursos foram desenvolvidos com uma metodologia própria, pensada para transformar o estudo em uma experiencial ativa e envolvente.\n\nAo longo das aulas, você perceberá que alguns textos terminam com reticências (...). Isso é intencional. Esses momentos funcionam como pausas reflexivas, convidando você a pensar, internalizar e conectar o conteúdo com sua própria vida.\n\nAs aulas seguem uma progressão estruturada — da pergunta inicial à aplicação prática — como uma jornada de descoberta. Por isso, recomendamos que você avance slide a slide, respeitando esse ritmo.\n\nAqui, você não apenas lê:\n você reflete, compreende e transforma.",
+        "Nossas séries espirituais foram desenvolvidas com uma metodologia própria, pensada para transformar o estudo em uma experiência ativa e envolvente.\n\nAo longo das aulas, você perceberá que alguns textos terminam com reticências (...). Isso é intencional. Esses momentos funcionam como pausas reflexivas, convidando você a pensar, internalizar e conectar o conteúdo com sua própria vida.\n\nAs aulas seguem uma progressão estruturada — da pergunta inicial à aplicação prática — como uma jornada de descoberta. Por isso, recomendamos que você avance slide a slide, respeitando esse ritmo.\n\nAqui, você não apenas lê:\n você reflete, compreende e transforma.",
       primaryButton: {
         label: "FECHAR",
         onPress: () => {
@@ -116,7 +116,7 @@ export function CourseDetailsScreen() {
       <View
         style={[styles.container, { justifyContent: "center", alignItems: "center" }]}
       >
-        <Text style={{ color: theme.colors.text }}>Curso não encontrado.</Text>
+        <Text style={{ color: theme.colors.text }}>Série espiritual não encontrada.</Text>
         <TouchableOpacity onPress={handleGoBack} style={{ marginTop: 20 }}>
           <Text style={{ color: theme.colors.primary }}>Voltar</Text>
         </TouchableOpacity>
@@ -145,7 +145,7 @@ export function CourseDetailsScreen() {
           {isEnrolled && (
             <View style={styles.progressCard}>
               <View style={styles.progressHeader}>
-                <Text style={styles.progressLabel}>PROGRESSO DO CURSO</Text>
+                <Text style={styles.progressLabel}>PROGRESSO DA SÉRIE</Text>
                 <Text style={styles.progressValue}>{userProgress}%</Text>
               </View>
               <View style={styles.progressBarBg}>
@@ -159,7 +159,7 @@ export function CourseDetailsScreen() {
 
           {/* DESCRIPTION */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Sobre o Curso</Text>
+            <Text style={styles.sectionTitle}>Sobre a Série</Text>
             <Text style={styles.descriptionText}>
               {course.description || "Sem descrição disponível."}
             </Text>
@@ -169,7 +169,7 @@ export function CourseDetailsScreen() {
           <View style={styles.methodologySection}>
             <Text style={styles.methodologyTitle}>Como vamos estudar</Text>
             <Text style={styles.methodologyText}>
-              Este curso utiliza uma metodologia ativa de pausas reflexivas.{" "}
+              Esta série utiliza uma metodologia ativa de pausas reflexivas.{" "}
               <Text style={styles.methodologyLink} onPress={handleOpenMethodology}>
                 Saiba mais
               </Text>
@@ -179,7 +179,7 @@ export function CourseDetailsScreen() {
           {/* LEARNING OBJECTIVES */}
           {course.learningObjectives && course.learningObjectives.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Objetivos do Curso</Text>
+              <Text style={styles.sectionTitle}>Objetivos da Série</Text>
               <View style={styles.objectivesList}>
                 {course.learningObjectives.map((objective, index) => (
                   <View key={index} style={styles.objectiveItem}>
@@ -259,7 +259,7 @@ export function CourseDetailsScreen() {
           {isEnrolled ? (
             <TouchableOpacity style={styles.primaryButton} onPress={handleStartCourse}>
               <Text style={styles.primaryButtonText}>
-                {userProgress === 100 ? "VER CURRÍCULO" : "CONTINUAR CURSO"}
+                {userProgress === 100 ? "VER CURRÍCULO" : "CONTINUAR SÉRIE"}
               </Text>
             </TouchableOpacity>
           ) : (
@@ -268,7 +268,7 @@ export function CourseDetailsScreen() {
                 style={[styles.primaryButton, styles.flexButton]}
                 onPress={handleStartCourse}
               >
-                <Text style={styles.primaryButtonText}>INICIAR CURSO</Text>
+                <Text style={styles.primaryButtonText}>INICIAR SÉRIE</Text>
               </TouchableOpacity>
 
               <TouchableOpacity

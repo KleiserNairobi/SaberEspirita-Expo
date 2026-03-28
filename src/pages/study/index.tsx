@@ -54,7 +54,7 @@ export function StudyScreen() {
 
   function handleLibraryItemPress(itemId: string) {
     switch (itemId) {
-      case "1": // Cursos Espíritas
+      case "1": // Séries Espirituais
         navigation.navigate("CoursesCatalog");
         break;
       case "2": // Glossário Espírita

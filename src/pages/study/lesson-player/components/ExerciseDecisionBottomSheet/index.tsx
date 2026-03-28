@@ -66,7 +66,7 @@ export const ExerciseDecisionBottomSheet = forwardRef<
         {/* Descrição */}
         <Text style={styles.description}>
           Teste seus conhecimentos sobre esta aula para garantir seu certificado ao final
-          do curso!
+          da série!
         </Text>
 
         {/* Aviso Importante */}

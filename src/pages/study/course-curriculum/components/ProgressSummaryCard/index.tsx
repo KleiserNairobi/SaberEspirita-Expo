@@ -38,7 +38,7 @@ export function ProgressSummaryCard({
 
   return (
     <View style={styles.container}>
-      {/* Título do Curso */}
+      {/* Título da Série */}
       <View style={styles.header}>
         <Text style={styles.title}>{courseTitle}</Text>
         {certificateEligible && <Award size={24} color={theme.colors.primary} />}

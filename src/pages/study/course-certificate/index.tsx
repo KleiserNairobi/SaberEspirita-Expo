@@ -206,7 +206,7 @@ export function CourseCertificateScreen() {
   if (!course || !progress) {
     return (
       <View style={styles.container}>
-        <Text style={styles.errorText}>Curso ou progresso não encontrado.</Text>
+        <Text style={styles.errorText}>Série espiritual ou progresso não encontrado.</Text>
         <Button title="Voltar" onPress={() => navigation.goBack()} />
       </View>
     );
@@ -304,7 +304,7 @@ export function CourseCertificateScreen() {
             {isGenerating && (
               <View style={styles.loadingContainer}>
                 <ActivityIndicator size="small" color={theme.colors.primary} />
-                <Text style={styles.loadingText}>Gerando certificado...</Text>
+                <Text style={styles.loadingText}>Gerando certificado da série...</Text>
               </View>
             )}
           </View>

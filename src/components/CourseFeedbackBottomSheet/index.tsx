@@ -54,8 +54,8 @@ export const CourseFeedbackBottomSheet = forwardRef<
 
   const config: BottomSheetMessageConfig = {
     type: "question",
-    title: "Avalie o Curso",
-    message: `Como tem sido a sua experiência com o curso\n"${courseTitle}"?`,
+    title: "Avalie a Série",
+    message: `Como tem sido a sua experiência com a série\n"${courseTitle}"?`,
     primaryButton: {
       label: isSubmitting ? "Enviando..." : "Enviar Avaliação",
       onPress: handleSubmit,

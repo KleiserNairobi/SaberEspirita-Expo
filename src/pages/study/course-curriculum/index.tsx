@@ -157,7 +157,7 @@ export function CourseCurriculumScreen() {
       type: "info",
       title: "Entenda nossa pedagogia",
       message:
-        "Nossos cursos foram desenvolvidos com uma metodologia própria, pensada para transformar o estudo em uma experiência ativa e envolvente.\n\nAo longo das aulas, você perceberá que alguns textos terminam com reticências (...). Isso é intencional. Esses momentos funcionam como pausas reflexivas, convidando você a pensar, internalizar e conectar o conteúdo com sua própria vida.\n\nAs aulas seguem uma progressão estruturada — da pergunta inicial à aplicação prática — como uma jornada de descoberta. Por isso, recomendamos que você avance slide a slide, respeitando esse ritmo.\n\nAqui, você não apenas lê:\n você reflete, compreende e transforma.",
+        "Nossas séries espirituais foram desenvolvidas com uma metodologia própria, pensada para transformar o estudo em uma experiência ativa e envolvente.\n\nAo longo das aulas, você perceberá que alguns textos terminam com reticências (...). Isso é intencional. Esses momentos funcionam como pausas reflexivas, convidando você a pensar, internalizar e conectar o conteúdo com sua própria vida.\n\nAs aulas seguem uma progressão estruturada — da pergunta inicial à aplicação prática — como uma jornada de descoberta. Por isso, recomendamos que você avance slide a slide, respeitando esse ritmo.\n\nAqui, você não apenas lê:\n você reflete, compreende e transforma.",
       primaryButton: {
         label: "FECHAR",
         onPress: () => {
@@ -597,7 +597,7 @@ export function CourseCurriculumScreen() {
             </TouchableOpacity>
 
             <Text style={styles.navTitle} numberOfLines={1}>
-              {course?.title || "Aulas do Curso"}
+              {course?.title || "Aulas da Série"}
             </Text>
           </View>
 
@@ -636,7 +636,7 @@ export function CourseCurriculumScreen() {
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={
               <ProgressSummaryCard
-                courseTitle={course?.title || "Curso"}
+                courseTitle={course?.title || "Série"}
                 lessonsProgress={lessonsProgress}
                 exercisesProgress={exercisesProgress}
                 totalLessons={totalLessons}
@@ -684,7 +684,7 @@ export function CourseCurriculumScreen() {
       <CourseFeedbackBottomSheet
         ref={feedbackSheetRef}
         courseId={courseId}
-        courseTitle={course?.title || "Curso"}
+        courseTitle={course?.title || "Série"}
         onSubmit={handleSubmitFeedback}
       />
     </SafeAreaView>

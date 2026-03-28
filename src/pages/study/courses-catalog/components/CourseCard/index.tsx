@@ -1,12 +1,9 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
-
 import { BookOpen, Clock, BarChart3 } from "lucide-react-native";
-
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { ICourse } from "@/types/course";
-
 import { createStyles } from "./styles";
 
 interface CourseCardProps {

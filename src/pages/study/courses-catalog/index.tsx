@@ -34,8 +34,8 @@ import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
 import { CourseCard } from "./components/CourseCard";
 import { createStyles } from "./styles";
 
-// Opções de filtro para cursos com ícones
-const COURSE_FILTER_OPTIONS = [
+// Opções de filtro para séries com ícones
+const SERIES_FILTER_OPTIONS = [
   { id: "ALL" as ContentFilterType, label: "Todos", icon: BookOpen },
   { id: "INICIANTE" as ContentFilterType, label: "Iniciante", icon: BarChart2 },
   { id: "INTERMEDIARIO" as ContentFilterType, label: "Intermediário", icon: BarChart3 },
@@ -102,7 +102,7 @@ export function CoursesCatalogScreen({ navigation }: any) {
     }, [queryClient])
   );
 
-  // Filtrar cursos baseado na busca e filtro
+  // Filtrar séries baseadas na busca e filtro
   const filteredCourses = React.useMemo(() => {
     let result = courses;
 
@@ -164,8 +164,8 @@ export function CoursesCatalogScreen({ navigation }: any) {
         <BookOpen size={64} color={theme.colors.muted} />
         <Text style={styles.emptyText}>
           {searchQuery || filterType !== "ALL"
-            ? "Nenhum curso encontrado"
-            : "Não há cursos disponíveis no momento"}
+            ? "Nenhuma série espiritual encontrada"
+            : "Não há trilhas de estudo disponíveis no momento"}
         </Text>
       </View>
     );
@@ -175,9 +175,9 @@ export function CoursesCatalogScreen({ navigation }: any) {
     return (
       <View style={styles.errorContainer}>
         <AlertCircle size={64} color={theme.colors.error} />
-        <Text style={styles.errorText}>Erro ao carregar cursos</Text>
+        <Text style={styles.errorText}>Erro ao carregar séries</Text>
         <Text style={styles.errorSubtext}>
-          Não foi possível buscar os cursos. Verifique sua conexão e tente novamente.
+          Não foi possível buscar as séries espirituais. Verifique sua conexão e tente novamente.
         </Text>
         <TouchableOpacity style={styles.retryButton}>
           <Text style={styles.retryButtonText}>Tentar Novamente</Text>
@@ -202,7 +202,7 @@ export function CoursesCatalogScreen({ navigation }: any) {
         <View style={styles.container}>
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={theme.colors.primary} />
-            <Text style={styles.loadingText}>Carregando cursos...</Text>
+            <Text style={styles.loadingText}>Carregando séries...</Text>
           </View>
         </View>
       </SafeAreaView>
@@ -214,7 +214,7 @@ export function CoursesCatalogScreen({ navigation }: any) {
       <StatusBar style={theme.isDark ? "light" : "dark"} />
 
       <View style={styles.container}>
-        {/* Lista de cursos - Header e SearchBar agora rolam junto */}
+        {/* Lista de séries - Header e SearchBar agora rolam junto */}
         <SectionList
           sections={[{ data: filteredCourses }]}
           renderItem={renderCourse}
@@ -272,8 +272,8 @@ export function CoursesCatalogScreen({ navigation }: any) {
 
                 {/* Linha 2: Título e Subtítulo */}
                 <View style={styles.headerTextContainer}>
-                  <Text style={styles.title}>Cursos Espíritas</Text>
-                  <Text style={styles.subtitle}>Aprenda sobre Espiritismo</Text>
+                  <Text style={styles.title}>Séries Espirituais</Text>
+                  <Text style={styles.subtitle}>Sua jornada de conhecimento espírita</Text>
                 </View>
               </View>
             </>
@@ -285,7 +285,7 @@ export function CoursesCatalogScreen({ navigation }: any) {
                 <SearchBar
                   value={searchQuery}
                   onChangeText={setSearchQuery}
-                  placeholder="Buscar curso..."
+                  placeholder="Buscar série..."
                 />
               </View>
             </View>
@@ -300,8 +300,8 @@ export function CoursesCatalogScreen({ navigation }: any) {
           ref={bottomSheetRef}
           filterType={filterType}
           onFilterChange={setFilterType}
-          title="Filtrar Cursos"
-          filterOptions={COURSE_FILTER_OPTIONS}
+          title="Filtrar Séries"
+          filterOptions={SERIES_FILTER_OPTIONS}
         />
       </View>
     </SafeAreaView>
