@@ -56,4 +56,16 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("sm", "regular", theme.colors.textSecondary),
       flex: 1,
     },
+    newBadgeDot: {
+      position: "absolute",
+      top: -2,
+      right: -2,
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+      backgroundColor: theme.colors.success,
+      borderWidth: 2,
+      borderColor: theme.colors.card,
+      zIndex: 10,
+    },
   });

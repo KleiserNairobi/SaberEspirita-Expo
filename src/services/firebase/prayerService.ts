@@ -131,3 +131,17 @@ export async function getPrayersByIds(prayerIds: string[]): Promise<IPrayer[]> {
   const results = await Promise.all(prayersPromises);
   return results.flat();
 }
+
+/**
+ * Busca IDs de orações criadas nos últimos X dias
+ */
+export async function getRecentPrayerIds(days: number): Promise<string[]> {
+  const dateLimit = new Date();
+  dateLimit.setDate(dateLimit.getDate() - days);
+
+  const prayersRef = collection(db, "prayers");
+  const recentQuery = query(prayersRef, where("createdAt", ">=", dateLimit));
+  const snapshot = await getDocs(recentQuery);
+
+  return snapshot.docs.map((doc) => doc.id);
+}

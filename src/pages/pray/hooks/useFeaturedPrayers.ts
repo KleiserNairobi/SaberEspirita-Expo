@@ -7,5 +7,6 @@ export function useFeaturedPrayers() {
     queryKey: ["prayers", "featured"],
     queryFn: getFeaturedPrayers,
     staleTime: 1000 * 60 * 5, // 5 minutos
+    refetchOnWindowFocus: true,
   });
 }

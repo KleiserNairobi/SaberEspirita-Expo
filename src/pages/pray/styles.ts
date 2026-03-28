@@ -93,4 +93,16 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("md", "regular", theme.colors.textSecondary),
       textAlign: "center",
     },
+    newBadgeIndicator: {
+      position: "absolute",
+      top: -2,
+      right: -2,
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      backgroundColor: theme.colors.success,
+      borderWidth: 2,
+      borderColor: theme.colors.card,
+      zIndex: 10,
+    },
   });

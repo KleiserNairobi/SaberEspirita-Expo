@@ -9,7 +9,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { PrayStackParamList } from "@/routers/types";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   BookOpen,
@@ -67,6 +67,14 @@ export default function PrayScreen() {
       syncWithFirebase(user.uid);
     }
   }, [user?.uid, syncWithFirebase]);
+  
+  // Atualiza o cache ao entrar na tela para garantir que dados novos (destaques e contagem) apareçam
+  useFocusEffect(
+    React.useCallback(() => {
+      queryClient.invalidateQueries({ queryKey: ["prayers", "featured"] });
+      queryClient.invalidateQueries({ queryKey: ["prayerMomentsCounts"] });
+    }, [queryClient])
+  );
 
   function handleMomentPress(categoryId: string) {
     navigation.navigate("PrayCategory", { id: categoryId });
@@ -117,11 +125,15 @@ export default function PrayScreen() {
               >
                 <View style={styles.iconContainer}>
                   <IconComponent size={20} color={theme.colors.primary} />
+                  {momentsCounts?.[key]?.hasNew && (
+                    <View style={styles.newBadgeIndicator} />
+                  )}
                 </View>
                 <Text style={styles.momentLabel}>{label}</Text>
                 {momentsCounts && momentsCounts[key] !== undefined && (
                   <Text style={styles.momentCount}>
-                    {momentsCounts[key]} {momentsCounts[key] === 1 ? "oração" : "orações"}
+                    {momentsCounts[key].count}{" "}
+                    {momentsCounts[key].count === 1 ? "oração" : "orações"}
                   </Text>
                 )}
               </TouchableOpacity>
