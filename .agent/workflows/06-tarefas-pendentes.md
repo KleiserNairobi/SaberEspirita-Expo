@@ -23,48 +23,53 @@ description: Histórico e Tarefas Pendentes do Projeto (V2 Consolidada)
 ## 🔴 Features de Alta Prioridade (Core & Retenção)
 
 ### 1. **Engajamento, Gamificação e Loop Espiritual** (Antigo Plano 1.5)
+
 - **Status**: 🔄 EM PROGRESSO
 - **Descrição**: Transformar usuários em frequentadores diários através de hábitos estruturados.
 - **Tarefas**:
-    - **Streak (Ofensiva 🔥)**: Implementar `currentStreak` no Firestore e UI de destaque na Home.
-    - **Momento Espírita de Hoje**: Pílula de destaque na Home contendo curadoria de Mensagem + Prece + Quiz rápido.
-    - **Glossário na Aula**: Implementar *deep links* ou *bottom sheets* para termos complexos em slides de aula.
-    - **Chat Contextual**: Atalho rápido "Ficou com dúvida? Pergunte ao Kardec" ao final de aulas ou termos técnicos.
-    - **Re-branding**: Ajustar copywriting de "Cursos" para **"Séries Espirituais"** ou **"Trilhas de Estudo"**.
+  - **Streak (Ofensiva 🔥)**: Implementar `currentStreak` no Firestore e UI de destaque na Home.
+  - **Momento Espírita de Hoje**: Pílula de destaque na Home contendo curadoria de Mensagem + Prece + Quiz rápido.
+  - **Glossário na Aula**: Implementar _deep links_ ou _bottom sheets_ para termos complexos em slides de aula.
+  - **Chat Contextual**: Atalho rápido "Ficou com dúvida? Pergunte ao Kardec" ao final de aulas ou termos técnicos.
 
 ### 2. **Material Complementar (Módulo Estude)**
+
 - **Status**: 🔄 PENDENTE
 - **Descrição**: Adicionar seção de PDFs, links e referências externas dentro das aulas.
 - **Tarefas**:
-    - Listagem de anexos (`supplementaryMaterials`) consumindo Storage.
-    - Criar componente `AttachmentCard` (PDF/Doc/Link).
-    - Integração com `expo-file-system` e `expo-sharing` para download e abertura nativa.
+  - Listagem de anexos (`supplementaryMaterials`) consumindo Storage.
+  - Criar componente `AttachmentCard` (PDF/Doc/Link).
+  - Integração com `expo-file-system` e `expo-sharing` para download e abertura nativa.
 
 ### 3. **Aulas Multimídia (Módulo Estude)**
+
 - **Status**: 🔄 PENDENTE
 - **Descrição**: Suporte nativo a Vídeo e Áudio nas lições, além do conteúdo literal.
 - **Tarefas**:
-    - Instalar e configurar pacotes nativos (ex: `expo-video`).
-    - Refatorar `LessonPlayer` para identificar dinamicamente `videoUrl` ou `audioUrl`.
-    - Implementar mini-player colapsável para aulas em áudio.
+  - Instalar e configurar pacotes nativos (ex: `expo-video`).
+  - Refatorar `LessonPlayer` para identificar dinamicamente `videoUrl` ou `audioUrl`.
+  - Implementar mini-player colapsável para aulas em áudio.
 
 ### 4. **Paywall e Monetização (Recursos Premium)**
+
 - **Status**: 🔄 PENDENTE
 - **Descrição**: Preparar o app para modelo Freemium e assinaturas pagas.
 - **Tarefas**:
-    - Integrar SDK de assinaturas (**RevenueCat** - `react-native-purchases`).
-    - Campo `isPremium: true` no banco e bloqueio de UI (ícone de cadeado 🔒).
-    - Implementar tela de Paywall estilizada com planos anuais/mensais.
+  - Integrar SDK de assinaturas (**RevenueCat** - `react-native-purchases`).
+  - Campo `isPremium: true` no banco e bloqueio de UI (ícone de cadeado 🔒).
+  - Implementar tela de Paywall estilizada com planos anuais/mensais.
 
 ---
 
 ## 🟡 Evolução de Sistema (Média Prioridade)
 
 ### 5. **Histórico do Chat com IA**
+
 - **Status**: 🔄 PENDENTE
 - **Descrição**: Salvar e exibir o histórico de conversas do usuário com os Guias Mentais no Firestore (estilo ChatGPT).
 
 ### 6. **Avaliação e Feedback Ativo**
+
 - **Status**: 🚧 PARCIAL (Hook `useRateApp` pronto)
 - **Descrição**: Coletar avaliação técnica (estrelas 1-5) e comentários individuais após a conclusão de atividades, usando `BottomSheetMessage`.
 
@@ -73,6 +78,7 @@ description: Histórico e Tarefas Pendentes do Projeto (V2 Consolidada)
 ## 🟢 Melhorias (Baixa Prioridade)
 
 ### 7. **Fase 7: Polish - Animações e UX**
+
 - **Status**: 🔄 PENDENTE
 - **Descrição**: Adicionar micro-animações nas listas, quizzes e transições de tela premium (`Lottie`/`Moti`).
 

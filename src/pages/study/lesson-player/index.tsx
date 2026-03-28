@@ -40,6 +40,9 @@ import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types"
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { createStyles } from "./styles";
 
+import { GlossaryTermBottomSheet } from "./components/GlossaryTermBottomSheet";
+import { IGlossaryTerm } from "@/types/glossary";
+import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
 import { useRateApp } from "@/hooks/useRateApp";
 import { RateAppBottomSheet } from "@/components/RateAppBottomSheet";
 
@@ -57,6 +60,12 @@ export function LessonPlayerScreen() {
   const route = useRoute<LessonPlayerRouteProp>();
   const navigation = useNavigation<NavigationProp>();
   const queryClient = useQueryClient();
+
+  // Glossário Contextual
+  const { data: glossaryTerms } = useGlossaryTerms();
+  const glossarySheetRef = useRef<BottomSheetModal>(null);
+  const [selectedGlossaryTerm, setSelectedGlossaryTerm] = useState<IGlossaryTerm | null>(null);
+  const [matchedGlossaryWord, setMatchedGlossaryWord] = useState<string | undefined>();
 
   // Controle de Fonte
   const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } =
@@ -232,6 +241,30 @@ export function LessonPlayerScreen() {
     navigation.goBack();
   }
 
+  const handleGlossaryTermPress = useCallback(
+    (termId: string, matchedWord?: string) => {
+      // eslint-disable-next-line no-console
+      console.log("RECEBIDO NO PLAYER: ", termId, "MATCH: ", matchedWord);
+      if (glossaryTerms) {
+        const cleanId = termId.trim();
+        const term = glossaryTerms.find((t) => t.id === cleanId);
+        if (term) {
+          // eslint-disable-next-line no-console
+          console.log("TERMO ENCONTRADO! Abrindo Modal:", term.term);
+          setSelectedGlossaryTerm(term);
+          setMatchedGlossaryWord(matchedWord);
+          
+          setTimeout(() => glossarySheetRef.current?.present(), 50);
+        } else {
+          // eslint-disable-next-line no-console
+          console.log("TERMO NAO ENCONTRADO: ", cleanId);
+          Alert.alert("Aviso", `O termo não foi encontrado no dicionário atual (${cleanId}).`);
+        }
+      }
+    },
+    [glossaryTerms]
+  );
+
   // --- Funções da Toolbar ---
   async function handleShare() {
     if (!currentSlide) return;
@@ -334,6 +367,8 @@ export function LessonPlayerScreen() {
             fontSize={getFontSize()}
             isLastSlide={index === lesson.slides.length - 1}
             reflectionQuestions={lesson.reflectionQuestions}
+            glossaryTerms={glossaryTerms}
+            onGlossaryTermPress={handleGlossaryTermPress}
           />
         )}
       />
@@ -401,6 +436,12 @@ export function LessonPlayerScreen() {
           // Pelo plano: "Na ação do BottomSheet ou fechar -> goBack."
           navigation.goBack();
         }}
+      />
+
+      <GlossaryTermBottomSheet
+        ref={glossarySheetRef}
+        term={selectedGlossaryTerm}
+        matchedWord={matchedGlossaryWord}
       />
     </SafeAreaView>
   );

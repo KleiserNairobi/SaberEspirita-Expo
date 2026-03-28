@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import { View, ScrollView, StyleSheet, Dimensions } from "react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { ISlide, IReflectionQuestion } from "@/types/course";
+import { IGlossaryTerm } from "@/types/glossary";
 import { SlideContent } from "./SlideContent";
 import { HighlightCard } from "./HighlightCard";
 import { ReferenceCard } from "./ReferenceCard";
@@ -15,10 +16,19 @@ interface LessonSlideProps {
   fontSize: number;
   isLastSlide: boolean;
   reflectionQuestions?: IReflectionQuestion[];
+  glossaryTerms?: IGlossaryTerm[];
+  onGlossaryTermPress?: (termId: string, matchedWord?: string) => void;
 }
 
 export const LessonSlide = memo(
-  ({ slide, fontSize, isLastSlide, reflectionQuestions }: LessonSlideProps) => {
+  ({
+    slide,
+    fontSize,
+    isLastSlide,
+    reflectionQuestions,
+    glossaryTerms,
+    onGlossaryTermPress,
+  }: LessonSlideProps) => {
     const { theme } = useAppTheme();
     const styles = createStyles(theme);
 
@@ -35,6 +45,8 @@ export const LessonSlide = memo(
             imagePrompt={slide.imagePrompt}
             fontSize={fontSize}
             slideType={slide.slideType}
+            glossaryTerms={glossaryTerms}
+            onGlossaryTermPress={onGlossaryTermPress}
           />
 
           {slide.highlights && slide.highlights.length > 0 && (
