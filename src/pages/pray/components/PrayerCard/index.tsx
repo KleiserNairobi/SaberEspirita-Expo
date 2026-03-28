@@ -24,7 +24,6 @@ export function PrayerCard({ prayer, onPress }: PrayerCardProps) {
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
-      {isNew && <View style={styles.newBadgeDot} />}
       <View style={styles.content}>
         <View style={styles.headerRow}>
           <Text style={styles.title} numberOfLines={2}>
