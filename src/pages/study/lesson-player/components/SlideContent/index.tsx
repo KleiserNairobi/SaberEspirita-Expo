@@ -65,16 +65,11 @@ export function SlideContent({
       fontSize: fontSize,
       color: theme.colors.text,
     },
-    glossaryLink: {
-      color: theme.colors.primary,
+    link: {
+      color: theme.colors.text,
       textDecorationLine: "underline",
       textDecorationStyle: "dotted",
-      ...theme.text("md", "semibold"),
-      fontSize: fontSize,
-    },
-    link: {
-      color: theme.colors.primary,
-      textDecorationLine: "underline",
+      textDecorationColor: theme.colors.error,
       fontSize: fontSize,
     },
     bullet_list: {
@@ -177,7 +172,7 @@ export function SlideContent({
           if (url.startsWith("glossary://")) {
             const raw = url.replace("glossary://", "");
             const [termId, query] = raw.split("?matched=");
-            
+
             if (onGlossaryTermPress) {
               onGlossaryTermPress(termId, query ? decodeURIComponent(query) : undefined);
             }
@@ -203,7 +198,14 @@ export function SlideContent({
               return (
                 <Text
                   key={node.key}
-                  style={styles.glossaryLink}
+                  style={{
+                    color: theme.colors.text,
+                    textDecorationLine: "underline",
+                    textDecorationStyle: "dotted",
+                    textDecorationColor: theme.colors.error,
+                    fontFamily: theme.typography.weights.regular,
+                    fontSize: fontSize,
+                  }}
                   suppressHighlighting={true}
                   onPress={() => onLinkPress?.(href)}
                   onPressIn={() => console.log("Press In Link ios")}

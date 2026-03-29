@@ -102,4 +102,10 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("md", "bold"),
       color: "#FFFFFF",
     },
+    fabContainer: {
+      position: "absolute",
+      right: 0,
+      bottom: 80, // Acima da barra de navegação
+      zIndex: 999,
+    },
   });

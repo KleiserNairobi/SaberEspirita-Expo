@@ -4,7 +4,7 @@ description: Histórico e Tarefas Pendentes do Projeto (V2 Consolidada)
 
 # Roadmap e Tarefas Pendentes - SaberEspirita-Expo (V2)
 
-**Data de Atualização**: 28/03/2026 (Consolidação de Roadmap e Plano V2)
+**Data de Atualização**: 29/03/2026 (Limpeza de itens concluídos e ajuste de UX/UI)
 **Fase Atual**: Expansão e Retenção (Pós-Lançamento MVP).
 
 ---
@@ -14,9 +14,9 @@ description: Histórico e Tarefas Pendentes do Projeto (V2 Consolidada)
 | Categoria            | Quantidade | Prioridade |
 | -------------------- | ---------- | ---------- |
 | 🔴 Alta Prioridade   | 4          | Alta       |
-| 🟡 Média Prioridade  | 2          | Média      |
+| 🟡 Média Prioridade  | 1          | Média      |
 | 🟢 Melhorias (UI/UX) | 1          | Baixa      |
-| **TOTAL V2**         | **7**      | -          |
+| **TOTAL V2**         | **6**      | -          |
 
 ---
 
@@ -29,8 +29,6 @@ description: Histórico e Tarefas Pendentes do Projeto (V2 Consolidada)
 - **Tarefas**:
   - **Streak (Ofensiva 🔥)**: Implementar `currentStreak` no Firestore e UI de destaque na Home.
   - **Momento Espírita de Hoje**: Pílula de destaque na Home contendo curadoria de Mensagem + Prece + Quiz rápido.
-  - **Glossário na Aula**: Implementar _deep links_ ou _bottom sheets_ para termos complexos em slides de aula.
-  - **Chat Contextual**: Atalho rápido "Ficou com dúvida? Pergunte ao Kardec" ao final de aulas ou termos técnicos.
 
 ### 2. **Material Complementar (Módulo Estude)**
 
@@ -68,11 +66,6 @@ description: Histórico e Tarefas Pendentes do Projeto (V2 Consolidada)
 - **Status**: 🔄 PENDENTE
 - **Descrição**: Salvar e exibir o histórico de conversas do usuário com os Guias Mentais no Firestore (estilo ChatGPT).
 
-### 6. **Avaliação e Feedback Ativo**
-
-- **Status**: 🚧 PARCIAL (Hook `useRateApp` pronto)
-- **Descrição**: Coletar avaliação técnica (estrelas 1-5) e comentários individuais após a conclusão de atividades, usando `BottomSheetMessage`.
-
 ---
 
 ## 🟢 Melhorias (Baixa Prioridade)
@@ -88,7 +81,6 @@ description: Histórico e Tarefas Pendentes do Projeto (V2 Consolidada)
 
 A ordem lógica recomendada para a implementação (onde a feature anterior ajuda na viabilização da próxima):
 
-1. 🎯 **Módulo Medite**: Meditações Guiadas (**CONCLUÍDO**).
 2. 🎯 **Engajamento**: Finalizar Streaks e Momento Diário (Retenção).
 3. 🎯 **Módulo Estude**: Materiais Complementares (PDF/Links infra pronta).
 4. 🎯 **Módulo Estude**: Multimídia (Preparar áudio/vídeo).
@@ -96,9 +88,10 @@ A ordem lógica recomendada para a implementação (onde a feature anterior ajud
 
 ---
 
-## ✅ Histórico de Conclusões (MVP & V2 Init)
+## ✅ Histórico de Conclusões (V2)
 
-- **App Lançado em Produção!** 🎉
-- Infraestrutura 100% concluída (Zustand, React Query, Navegação, Componentização).
-- **Meditação Guiada (Módulo Medite)**: ✅ Player nativo finalizado com cache de disco dinâmico e UI premium (21/02).
-- Documentação Técnica de Arquitetura finalizada.
+- **Chat Contextual (Sr. Allan)**: ✅ Integrado ao final de cada aula via `DoubtCard` para sanar dúvidas (29/03).
+- **Glossário Contextual na Aula**: ✅ Implementado com `BottomSheetModal` dinâmico e suporte a sinônimos (29/03).
+- **Padronização UX/UI de BottomSheets**: ✅ Hierarquia visual de botões unificada em todo o módulo de estudo (29/03).
+- **Avaliação e Feedback Ativo**: ✅ Hook `useRateApp` e BottomSheet integrados (28/03).
+- **Consolidação de Player de Áudio**: ✅ Cache dinâmico e TTS estável.

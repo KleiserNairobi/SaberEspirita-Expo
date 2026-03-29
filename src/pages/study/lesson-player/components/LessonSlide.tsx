@@ -50,7 +50,12 @@ export const LessonSlide = memo(
           />
 
           {slide.highlights && slide.highlights.length > 0 && (
-            <HighlightCard highlights={slide.highlights} fontSize={fontSize} />
+            <HighlightCard
+              highlights={slide.highlights}
+              fontSize={fontSize}
+              glossaryTerms={glossaryTerms}
+              onGlossaryTermPress={onGlossaryTermPress}
+            />
           )}
 
           {/* Perguntas Reflexivas - Apenas no último slide (antes das referências) */}

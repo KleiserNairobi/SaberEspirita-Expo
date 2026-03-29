@@ -44,6 +44,7 @@ import { IGlossaryTerm } from "@/types/glossary";
 import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
 import { useRateApp } from "@/hooks/useRateApp";
 import { RateAppBottomSheet } from "@/components/RateAppBottomSheet";
+import { DoubtFAB } from "./components/DoubtFAB";
 
 // ... existing imports
 
@@ -250,6 +251,13 @@ export function LessonPlayerScreen() {
     navigation.goBack();
   }
 
+  const handleAskAI = useCallback(() => {
+    if (!lesson) return;
+    navigation.navigate("ScientificChat", {
+      initialMessage: `Olá, Sr. Allan! Acabei de completar a aula "${lesson.title}" e gostaria de tirar uma dúvida sobre este tema.`,
+    });
+  }, [lesson, navigation]);
+
   const handleGlossaryTermPress = useCallback(
     (termId: string, matchedWord?: string) => {
       if (glossaryTerms) {
@@ -454,6 +462,8 @@ export function LessonPlayerScreen() {
         term={selectedGlossaryTerm}
         matchedWord={matchedGlossaryWord}
       />
+
+      <DoubtFAB visible={isLastSlide} onPress={handleAskAI} />
     </SafeAreaView>
   );
 }
