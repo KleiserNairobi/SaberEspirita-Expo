@@ -22,7 +22,7 @@ export const createStyles = (theme: ITheme) =>
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      marginTop: theme.spacing.xl,
+      marginTop: theme.spacing.md,
       marginHorizontal: theme.spacing.lg,
       marginBottom: theme.spacing.md,
     },

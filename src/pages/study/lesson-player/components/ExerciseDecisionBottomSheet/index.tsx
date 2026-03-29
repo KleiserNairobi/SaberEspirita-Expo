@@ -82,13 +82,13 @@ export const ExerciseDecisionBottomSheet = forwardRef<
 
         {/* Botões */}
         <View style={styles.buttonContainer}>
-          <Button title="FAZER EXERCÍCIO AGORA" onPress={handlePressNow} fullWidth />
           <Button
             title="Fazer Depois"
             variant="outline"
             onPress={handlePressLater}
             fullWidth
           />
+          <Button title="FAZER EXERCÍCIO AGORA" onPress={handlePressNow} fullWidth />
         </View>
       </BottomSheetView>
     </BottomSheetModal>

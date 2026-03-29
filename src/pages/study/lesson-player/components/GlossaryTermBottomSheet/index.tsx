@@ -113,13 +113,14 @@ export const GlossaryTermBottomSheet = forwardRef<
             {/* Ações */}
             <View style={styles.buttonContainer}>
               <Button
-                title="ESTUDAR CONCEITO"
-                onPress={handleOpenDetailed}
+                title="Fechar e retornar à aula"
+                onPress={handleClose}
+                variant="outline"
                 fullWidth
               />
               <Button
-                title="Fechar e retornar à aula"
-                onPress={handleClose}
+                title="ESTUDAR CONCEITO"
+                onPress={handleOpenDetailed}
                 fullWidth
               />
             </View>

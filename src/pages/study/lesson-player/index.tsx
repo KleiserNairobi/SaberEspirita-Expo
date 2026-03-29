@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
   Share,
   FlatList,
   Dimensions,
@@ -64,7 +63,9 @@ export function LessonPlayerScreen() {
   // Glossário Contextual
   const { data: glossaryTerms } = useGlossaryTerms();
   const glossarySheetRef = useRef<BottomSheetModal>(null);
-  const [selectedGlossaryTerm, setSelectedGlossaryTerm] = useState<IGlossaryTerm | null>(null);
+  const [selectedGlossaryTerm, setSelectedGlossaryTerm] = useState<IGlossaryTerm | null>(
+    null
+  );
   const [matchedGlossaryWord, setMatchedGlossaryWord] = useState<string | undefined>();
 
   // Controle de Fonte
@@ -231,9 +232,17 @@ export function LessonPlayerScreen() {
         navigation.goBack();
       }
     } catch (error) {
-      console.error("Erro ao finalizar:", error);
       setIsProcessing(false);
-      Alert.alert("Erro", "Não foi possível salvar o progresso.");
+      setMessageConfig({
+        type: "error",
+        title: "Erro",
+        message: "Não foi possível salvar o progresso.",
+        primaryButton: {
+          label: "OK",
+          onPress: () => bottomSheetRef.current?.dismiss(),
+        },
+      });
+      setTimeout(() => bottomSheetRef.current?.present(), 100);
     }
   }
 
@@ -243,22 +252,24 @@ export function LessonPlayerScreen() {
 
   const handleGlossaryTermPress = useCallback(
     (termId: string, matchedWord?: string) => {
-      // eslint-disable-next-line no-console
-      console.log("RECEBIDO NO PLAYER: ", termId, "MATCH: ", matchedWord);
       if (glossaryTerms) {
         const cleanId = termId.trim();
         const term = glossaryTerms.find((t) => t.id === cleanId);
         if (term) {
-          // eslint-disable-next-line no-console
-          console.log("TERMO ENCONTRADO! Abrindo Modal:", term.term);
           setSelectedGlossaryTerm(term);
           setMatchedGlossaryWord(matchedWord);
-          
           setTimeout(() => glossarySheetRef.current?.present(), 50);
         } else {
-          // eslint-disable-next-line no-console
-          console.log("TERMO NAO ENCONTRADO: ", cleanId);
-          Alert.alert("Aviso", `O termo não foi encontrado no dicionário atual (${cleanId}).`);
+          setMessageConfig({
+            type: "warning",
+            title: "Aviso",
+            message: `O termo não foi encontrado no dicionário atual (${cleanId}).`,
+            primaryButton: {
+              label: "OK",
+              onPress: () => bottomSheetRef.current?.dismiss(),
+            },
+          });
+          setTimeout(() => bottomSheetRef.current?.present(), 100);
         }
       }
     },
