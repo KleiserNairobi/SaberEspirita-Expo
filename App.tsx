@@ -195,7 +195,11 @@ function AppContent() {
             client={queryClient}
             persistOptions={{ persister, buster: "1.0.0" }}
           >
-            <StatusBar style={resolvedThemeType === "dark" ? "light" : "dark"} />
+            <StatusBar 
+              style={resolvedThemeType === "dark" ? "light" : "dark"} 
+              translucent={true}
+              backgroundColor="transparent"
+            />
             <RootNavigator />
           </PersistQueryClientProvider>
         </BottomSheetModalProvider>

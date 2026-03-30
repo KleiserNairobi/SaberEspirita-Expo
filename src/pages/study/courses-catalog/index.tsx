@@ -211,7 +211,11 @@ export function CoursesCatalogScreen({ navigation }: any) {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
-      <StatusBar style={theme.isDark ? "light" : "dark"} />
+      <StatusBar 
+        style={theme.isDark ? "light" : "dark"} 
+        translucent={true}
+        backgroundColor="transparent"
+      />
 
       <View style={styles.container}>
         {/* Lista de séries - Header e SearchBar agora rolam junto */}
