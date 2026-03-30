@@ -1,6 +1,5 @@
 import {
   Database,
-  FileText,
   Mail,
   RefreshCw,
   Scale,
@@ -11,7 +10,7 @@ import {
 
 export const PRIVACY_POLICY = {
   lastUpdate: "01/07/2025",
-  email: "quiz.saberespirita@gmail.com",
+  email: "app.saberespirita@gmail.com",
 
   intro: {
     text: "Esta Política de Privacidade descreve como o aplicativo Saber Espírita coleta, utiliza e protege as informações dos usuários. Ao utilizar o aplicativo, você concorda com os termos desta política. Se você não concordar, por favor, não continue a usar o aplicativo.",
@@ -83,7 +82,7 @@ Não coletamos intencionalmente informações de menores de 13 anos. Se tomarmos
       icon: Mail,
       title: "Contato",
       summary: "Como entrar em contato conosco",
-      content: `Se você tiver alguma dúvida ou preocupação relacionada a esta Política de Privacidade ou ao uso do aplicativo Saber Espírita, por favor, entre em contato conosco pelo seguinte endereço de e-mail: quiz.saberespirita@gmail.com`,
+      content: `Se você tiver alguma dúvida ou preocupação relacionada a esta Política de Privacidade ou ao uso do aplicativo Saber Espírita, por favor, entre em contato conosco pelo seguinte endereço de e-mail: app.saberespirita@gmail.com`,
     },
   ],
 } as const;

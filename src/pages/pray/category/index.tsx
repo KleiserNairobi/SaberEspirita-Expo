@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef } from "react";
-import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, SectionList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -167,86 +167,87 @@ export function PrayCategoryScreen() {
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <View style={styles.container}>
         {/* Lista de Orações - Header e Toolbar agora rolam junto */}
-        <FlatList
-          data={filteredPrayers}
+        <SectionList
+          sections={[{ data: filteredPrayers }]}
           keyExtractor={(item) => item.id}
+          stickySectionHeadersEnabled={true}
           ListHeaderComponent={
-            <>
-              {/* Header: Layout de 3 Colunas (Voltar | Ícone | Espaço) */}
-              <View style={styles.header}>
-                {/* Linha 1: Botão Voltar | Ícone | Espaço */}
-                <View style={styles.headerRow}>
-                  {/* Coluna Esquerda: Botão Voltar */}
-                  <View style={styles.headerSide}>
-                    <TouchableOpacity
-                      style={styles.backButton}
-                      onPress={() => navigation.goBack()}
-                      activeOpacity={0.7}
-                    >
-                      <ArrowLeft size={20} color={theme.colors.primary} />
-                    </TouchableOpacity>
-                  </View>
+            /* Header: Layout de 3 Colunas (Voltar | Ícone | Espaço) */
+            <View style={styles.header}>
+              {/* Linha 1: Botão Voltar | Ícone | Espaço */}
+              <View style={styles.headerRow}>
+                {/* Coluna Esquerda: Botão Voltar */}
+                <View style={styles.headerSide}>
+                  <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => navigation.goBack()}
+                    activeOpacity={0.7}
+                  >
+                    <ArrowLeft size={20} color={theme.colors.primary} />
+                  </TouchableOpacity>
+                </View>
 
-                  {/* Coluna Central: Ícone com Anéis */}
-                  <View style={styles.iconRingsContainer}>
-                    <View style={styles.ringOuter} />
-                    <View style={styles.ringMiddle} />
-                    <View style={styles.ringInner} />
-                    <View style={styles.iconLargeContainer}>
-                      <IconComponent size={40} color={theme.colors.background} />
-                    </View>
-                  </View>
-
-                  {/* Coluna Direita: Botão de Filtro */}
-                  <View style={styles.headerSide}>
-                    <TouchableOpacity
-                      style={[
-                        styles.filterButton,
-                        filterType !== "ALL" && styles.filterButtonActive,
-                      ]}
-                      onPress={() => bottomSheetRef.current?.present()}
-                      activeOpacity={0.7}
-                    >
-                      <SlidersHorizontal
-                        size={20}
-                        color={
-                          filterType !== "ALL"
-                            ? theme.colors.background
-                            : theme.colors.primary
-                        }
-                      />
-                      {filterType !== "ALL" && <View style={styles.filterDot} />}
-                    </TouchableOpacity>
+                {/* Coluna Central: Ícone com Anéis */}
+                <View style={styles.iconRingsContainer}>
+                  <View style={styles.ringOuter} />
+                  <View style={styles.ringMiddle} />
+                  <View style={styles.ringInner} />
+                  <View style={styles.iconLargeContainer}>
+                    <IconComponent size={40} color={theme.colors.background} />
                   </View>
                 </View>
 
-                {/* Linha 2: Título e Subtítulo */}
-                <View style={styles.headerTextContainer}>
-                  <Text style={styles.title}>{categoryTitle}</Text>
-                  {categorySubtitle && (
-                    <Text style={styles.subtitle}>{categorySubtitle}</Text>
-                  )}
+                {/* Coluna Direita: Botão de Filtro */}
+                <View style={styles.headerSide}>
+                  <TouchableOpacity
+                    style={[
+                      styles.filterButton,
+                      filterType !== "ALL" && styles.filterButtonActive,
+                    ]}
+                    onPress={() => bottomSheetRef.current?.present()}
+                    activeOpacity={0.7}
+                  >
+                    <SlidersHorizontal
+                      size={20}
+                      color={
+                        filterType !== "ALL"
+                          ? theme.colors.background
+                          : theme.colors.primary
+                      }
+                    />
+                    {filterType !== "ALL" && <View style={styles.filterDot} />}
+                  </TouchableOpacity>
                 </View>
               </View>
 
-              {/* Toolbar: Apenas SearchBar */}
-              <View style={styles.toolbar}>
-                <SearchBar
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  placeholder="Buscar uma oração..."
-                />
+              {/* Linha 2: Título e Subtítulo */}
+              <View style={styles.headerTextContainer}>
+                <Text style={styles.title}>{categoryTitle}</Text>
+                {categorySubtitle && (
+                  <Text style={styles.subtitle}>{categorySubtitle}</Text>
+                )}
               </View>
-            </>
+            </View>
           }
+          renderSectionHeader={() => (
+            <View style={styles.stickyHeader}>
+              <SearchBar
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder="Buscar uma oração..."
+              />
+            </View>
+          )}
           renderItem={({ item }) => (
-            <PrayerCard prayer={item} onPress={() => handlePrayerPress(item.id)} />
+            <View style={{ paddingHorizontal: theme.spacing.lg }}>
+              <PrayerCard prayer={item} onPress={() => handlePrayerPress(item.id)} />
+            </View>
           )}
           style={styles.list}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <View style={styles.emptyContainer}>
+            <View style={[styles.emptyContainer, { paddingHorizontal: theme.spacing.lg }]}>
               <Text style={styles.emptyText}>
                 {searchQuery
                   ? "Nenhuma oração encontrada"

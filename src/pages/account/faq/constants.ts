@@ -1,15 +1,15 @@
 import {
-  GraduationCap,
   BookOpen,
-  Users,
-  UserPlus,
-  Gamepad2,
   Code,
   DollarSign,
-  Mail,
+  Gamepad2,
+  GraduationCap,
   Lightbulb,
-  Target,
+  Mail,
   Sparkles,
+  Target,
+  UserPlus,
+  Users,
 } from "lucide-react-native";
 
 export const FAQ_DATA = {
@@ -80,7 +80,7 @@ export const FAQ_DATA = {
       title: "Como posso contribuir financeiramente?",
       summary: "Entre em contato por e-mail",
       content:
-        "Para contribuir financeiramente, entre em contato pelo e-mail quiz.saberespirita@gmail.com. Agradecemos imensamente seu apoio!",
+        "Para contribuir financeiramente, entre em contato pelo e-mail app.saberespirita@gmail.com. Agradecemos imensamente seu apoio!",
     },
     {
       id: "contribuir-conteudo",
@@ -88,7 +88,7 @@ export const FAQ_DATA = {
       title: "Posso contribuir com conteúdo?",
       summary: "Sim, questões e sugestões de cursos",
       content:
-        "Sim! Você pode contribuir com novas questões para quizzes ou sugerir temas para novos cursos. Envie suas ideias por e-mail para quiz.saberespirita@gmail.com. Todas as submissões passam por análise e, se aprovadas, serão publicadas em futuras atualizações. Sua colaboração é muito valiosa!",
+        "Sim! Você pode contribuir com novas questões para quizzes ou sugerir temas para novos cursos. Envie suas ideias por e-mail para app.saberespirita@gmail.com. Todas as submissões passam por análise e, se aprovadas, serão publicadas em futuras atualizações. Sua colaboração é muito valiosa!",
     },
     {
       id: "objetivos-futuros",

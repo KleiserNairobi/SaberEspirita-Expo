@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
-import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, SectionList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -153,97 +153,98 @@ export default function AllReflectionsScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <View style={styles.container}>
-        <FlatList
-          data={filteredReflections}
+        <SectionList
+          sections={[{ data: filteredReflections }]}
           keyExtractor={(item) => item.id}
+          stickySectionHeadersEnabled={true}
           ListHeaderComponent={
-            <>
-              {/* Header */}
-              <View style={styles.header}>
-                <View style={styles.headerRow}>
-                  {/* Botão Voltar */}
-                  <View style={styles.headerSide}>
-                    <TouchableOpacity
-                      style={styles.backButton}
-                      onPress={() => navigation.goBack()}
-                      activeOpacity={0.7}
-                    >
-                      <ArrowLeft size={20} color={theme.colors.primary} />
-                    </TouchableOpacity>
-                  </View>
+            /* Header */
+            <View style={styles.header}>
+              <View style={styles.headerRow}>
+                {/* Botão Voltar */}
+                <View style={styles.headerSide}>
+                  <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => navigation.goBack()}
+                    activeOpacity={0.7}
+                  >
+                    <ArrowLeft size={20} color={theme.colors.primary} />
+                  </TouchableOpacity>
+                </View>
 
-                  {/* Ícone Central com Anéis */}
-                  <View style={styles.iconRingsContainer}>
-                    <View style={styles.ringOuter} />
-                    <View style={styles.ringMiddle} />
-                    <View style={styles.ringInner} />
-                    <View style={styles.iconLargeContainer}>
-                      {isFavoritesPage ? (
-                        <Heart size={40} color={theme.colors.background} />
-                      ) : (
-                        <BookHeart size={40} color={theme.colors.background} />
-                      )}
-                    </View>
-                  </View>
-
-                  {/* Botão de Filtro */}
-                  <View style={styles.headerSide}>
-                    <TouchableOpacity
-                      style={[
-                        styles.filterButton,
-                        filterType !== "ALL" && styles.filterButtonActive,
-                      ]}
-                      onPress={() => bottomSheetRef.current?.present()}
-                      activeOpacity={0.7}
-                    >
-                      <SlidersHorizontal
-                        size={20}
-                        color={
-                          filterType !== "ALL"
-                            ? theme.colors.background
-                            : theme.colors.primary
-                        }
-                      />
-                      {filterType !== "ALL" && <View style={styles.filterDot} />}
-                    </TouchableOpacity>
+                {/* Ícone Central com Anéis */}
+                <View style={styles.iconRingsContainer}>
+                  <View style={styles.ringOuter} />
+                  <View style={styles.ringMiddle} />
+                  <View style={styles.ringInner} />
+                  <View style={styles.iconLargeContainer}>
+                    {isFavoritesPage ? (
+                      <Heart size={40} color={theme.colors.background} />
+                    ) : (
+                      <BookHeart size={40} color={theme.colors.background} />
+                    )}
                   </View>
                 </View>
 
-                {/* Título e Subtítulo */}
-                <View style={styles.headerTextContainer}>
-                  <Text style={styles.title}>
-                    {isFavoritesPage ? "Minhas Reflexões" : "Textos para Reflexão"}
-                  </Text>
-                  <Text style={styles.subtitle}>
-                    {isFavoritesPage
-                      ? "Suas reflexões favoritas em um só lugar"
-                      : "Aprofunde seu conhecimento espiritual"}
-                  </Text>
+                {/* Botão de Filtro */}
+                <View style={styles.headerSide}>
+                  <TouchableOpacity
+                    style={[
+                      styles.filterButton,
+                      filterType !== "ALL" && styles.filterButtonActive,
+                    ]}
+                    onPress={() => bottomSheetRef.current?.present()}
+                    activeOpacity={0.7}
+                  >
+                    <SlidersHorizontal
+                      size={20}
+                      color={
+                        filterType !== "ALL"
+                          ? theme.colors.background
+                          : theme.colors.primary
+                      }
+                    />
+                    {filterType !== "ALL" && <View style={styles.filterDot} />}
+                  </TouchableOpacity>
                 </View>
               </View>
 
-              {/* Barra de Busca */}
-              <View style={styles.toolbar}>
-                <SearchBar
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  placeholder="Buscar reflexão..."
-                />
+              {/* Título e Subtítulo */}
+              <View style={styles.headerTextContainer}>
+                <Text style={styles.title}>
+                  {isFavoritesPage ? "Minhas Reflexões" : "Textos para Reflexão"}
+                </Text>
+                <Text style={styles.subtitle}>
+                  {isFavoritesPage
+                    ? "Suas reflexões favoritas em um só lugar"
+                    : "Aprofunde seu conhecimento espiritual"}
+                </Text>
               </View>
-            </>
+            </View>
           }
+          renderSectionHeader={() => (
+            <View style={styles.stickyHeader}>
+              <SearchBar
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder="Buscar reflexão..."
+              />
+            </View>
+          )}
           renderItem={({ item }) => (
-            <ReflectionCard
-              reflection={item}
-              onPress={() => handleReflectionPress(item.id)}
-              onPressIn={() => prefetchReflection(item.id)}
-            />
+            <View style={{ paddingHorizontal: theme.spacing.lg }}>
+              <ReflectionCard
+                reflection={item}
+                onPress={() => handleReflectionPress(item.id)}
+                onPressIn={() => prefetchReflection(item.id)}
+              />
+            </View>
           )}
           style={styles.list}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <View style={styles.emptyContainer}>
+            <View style={[styles.emptyContainer, { paddingHorizontal: theme.spacing.lg }]}>
               <Text style={styles.emptyText}>
                 {searchQuery
                   ? "Nenhuma reflexão encontrada"

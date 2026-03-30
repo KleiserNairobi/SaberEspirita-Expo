@@ -15,6 +15,7 @@ export const createStyles = (theme: ITheme) =>
     header: {
       paddingTop: theme.spacing.xl,
       paddingBottom: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.lg,
     },
     headerRow: {
       flexDirection: "row",
@@ -116,12 +117,18 @@ export const createStyles = (theme: ITheme) =>
     toolbar: {
       paddingBottom: theme.spacing.md,
     },
+    stickyHeader: {
+      backgroundColor: theme.colors.background,
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.xs,
+      paddingBottom: theme.spacing.md,
+      width: "100%",
+    },
     // Lista de Orações
     list: {
       flex: 1,
     },
     listContent: {
-      paddingHorizontal: theme.spacing.lg,
       paddingBottom: 150,
     },
     metadataRow: {

@@ -1,13 +1,13 @@
 import {
-  Smartphone,
-  Copyright,
-  User,
   AlertTriangle,
-  Users,
-  Shield,
+  Copyright,
   Link,
-  RefreshCw,
   Mail,
+  RefreshCw,
+  Shield,
+  Smartphone,
+  User,
+  Users,
 } from "lucide-react-native";
 
 export const TERMS_OF_USE = {
@@ -87,7 +87,7 @@ export const TERMS_OF_USE = {
       icon: Mail,
       title: "Contato",
       summary: "Dúvidas e suporte",
-      content: `Se você tiver alguma dúvida ou preocupação relacionada a estes Termos de Uso ou ao uso do aplicativo "Saber Espírita", por favor, entre em contato conosco pelo e-mail: quiz.saberespirita@gmail.com`,
+      content: `Se você tiver alguma dúvida ou preocupação relacionada a estes Termos de Uso ou ao uso do aplicativo "Saber Espírita", por favor, entre em contato conosco pelo e-mail: app.saberespirita@gmail.com`,
     },
   ],
 };
