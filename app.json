@@ -86,7 +86,9 @@
       "./dev/scripts/withAndroidForegroundPermissions.js",
       "./dev/plugins/withModularHeaders.js",
       "expo-font",
-      "expo-audio"
+      "expo-audio",
+      "@react-native-google-signin/google-signin",
+      "expo-apple-authentication"
     ]
   }
 }

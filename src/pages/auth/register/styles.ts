@@ -18,11 +18,11 @@ export function createStyles(theme: ITheme) {
     },
     header: {
       alignItems: "center",
-      marginBottom: theme.spacing.md,
+      marginBottom: theme.spacing.xs,
     },
     logoText: {
       fontFamily: "Allura_400Regular",
-      fontSize: 60,
+      fontSize: 50,
       textAlign: "center",
       color: theme.colors.text,
       textShadowColor: "rgba(0, 0, 0, 0.15)",
@@ -38,8 +38,37 @@ export function createStyles(theme: ITheme) {
       ...theme.text("md", "regular"),
       textAlign: "left",
       color: theme.colors.textSecondary,
-      marginBottom: theme.spacing.xl,
+      marginBottom: theme.spacing.lg,
       lineHeight: 22,
+    },
+    socialButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      height: 48,
+      borderRadius: theme.radius.md,
+      gap: theme.spacing.sm,
+    },
+    googleButton: {
+      backgroundColor: "#FFFFFF",
+      borderWidth: 1,
+      borderColor: "#E5E5E5",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+      elevation: 1,
+    },
+    googleButtonText: {
+      ...theme.text("lg", "regular"),
+      color: "#000000",
+    },
+    appleButton: {
+      backgroundColor: "#000000",
+    },
+    appleButtonText: {
+      ...theme.text("lg", "regular"),
+      color: "#FFFFFF",
     },
     inputWrapper: {
       marginBottom: theme.spacing.md,

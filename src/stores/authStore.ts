@@ -9,7 +9,12 @@ import {
   sendEmailVerification,
   User,
   UserCredential,
+  GoogleAuthProvider,
+  signInWithCredential,
+  OAuthProvider,
 } from "firebase/auth";
+import * as AppleAuthentication from "expo-apple-authentication";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { OneSignal } from "react-native-onesignal";
 import { auth } from "@/configs/firebase/firebase";
 import * as Storage from "@/utils/Storage";
@@ -50,6 +55,8 @@ interface AuthState {
   clearError: () => void;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<UserCredential>;
+  signInWithGoogle: (idToken: string) => Promise<void>;
+  signInWithApple: () => Promise<void>;
   loginAsGuest: () => Promise<void>; // Nova ação
   signOut: () => Promise<void>;
   sendPasswordResetEmail: (email: string) => Promise<void>;
@@ -160,6 +167,79 @@ export const useAuthStore = create<AuthState>()(
           throw error;
         }
       },
+      signInWithGoogle: async (idToken: string) => {
+        set({ loading: true, error: null });
+        try {
+          console.log("AuthStore: Iniciando login com Google...");
+          const credential = GoogleAuthProvider.credential(idToken);
+          const userCredential = await signInWithCredential(auth, credential);
+          console.log("AuthStore: Login Google bem-sucedido:", userCredential.user.uid);
+          // Ao logar, desativa modo convidado
+          set({ user: userCredential.user, isGuest: false, loading: false });
+          // Sincronizar com OneSignal
+          try {
+            OneSignal.login(userCredential.user.uid);
+            const preferences = usePreferencesStore.getState();
+            OneSignal.User.addTags({
+              app_updates: preferences.appUpdateNotifications.toString(),
+              course_reminders: preferences.courseNotifications.toString(),
+            });
+          } catch (onesignalError) {
+            console.error("Erro ao sincronizar OneSignal no login Google:", onesignalError);
+          }
+        } catch (error: any) {
+          const errorMessage = getErrorMessage(error);
+          console.error("AuthStore: Erro no login Google:", errorMessage);
+          set({ error: errorMessage, loading: false });
+          throw error;
+        }
+      },
+      signInWithApple: async () => {
+        set({ loading: true, error: null });
+        try {
+          console.log("AuthStore: Iniciando login com Apple...");
+
+          const credential = await AppleAuthentication.signInAsync({
+            requestedScopes: [
+              AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+              AppleAuthentication.AppleAuthenticationScope.EMAIL,
+            ],
+          });
+
+          // Converte as credenciais da Apple para credenciais do Firebase
+          const provider = new OAuthProvider("apple.com");
+          const firebaseCredential = provider.credential({
+            idToken: credential.identityToken!,
+          });
+
+          const userCredential = await signInWithCredential(auth, firebaseCredential);
+          console.log("AuthStore: Login Apple bem-sucedido:", userCredential.user.uid);
+          
+          set({ user: userCredential.user, isGuest: false, loading: false });
+
+          // Sincronizar com OneSignal
+          try {
+            OneSignal.login(userCredential.user.uid);
+            const preferences = usePreferencesStore.getState();
+            OneSignal.User.addTags({
+              app_updates: preferences.appUpdateNotifications.toString(),
+              course_reminders: preferences.courseNotifications.toString(),
+            });
+          } catch (onesignalError) {
+            console.error("Erro ao sincronizar OneSignal no login Apple:", onesignalError);
+          }
+        } catch (error: any) {
+          if (error.code === "ERR_REQUEST_CANCELED") {
+             console.log("Login Apple cancelado.");
+             set({ loading: false });
+             return;
+          }
+          const errorMessage = getErrorMessage(error);
+          console.error("AuthStore: Erro no login Apple:", errorMessage);
+          set({ error: errorMessage, loading: false });
+          throw error;
+        }
+      },
 
       loginAsGuest: async () => {
         set({ loading: true, error: null });
@@ -178,9 +258,14 @@ export const useAuthStore = create<AuthState>()(
         try {
           console.log("AuthStore: Fazendo logout...");
           await firebaseSignOut(auth);
-          // Limpa usuário E modo convidado
-          set({ user: null, isGuest: false, loading: false });
-          console.log("AuthStore: Logout concluído");
+          set({ user: null, isGuest: false }); // Limpa o estado explicitamente!
+          // Deslogar do Google (Social)
+          try {
+            await GoogleSignin.signOut();
+            console.log("GoogleSignin: Logout concluído");
+          } catch (googleError) {
+            // Silencioso se não estiver logado com Google
+          }
 
           // Deslogar do OneSignal
           try {

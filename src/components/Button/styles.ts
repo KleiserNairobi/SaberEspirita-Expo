@@ -10,6 +10,8 @@ export function createStyles(theme: ITheme) {
       paddingHorizontal: theme.spacing.lg,
       alignItems: "center",
       justifyContent: "center",
+      flexDirection: "row",
+      gap: theme.spacing.sm,
       minHeight: 48,
     },
     containerSm: {

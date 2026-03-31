@@ -2,6 +2,24 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.1.0] - 2026-03-30
+
+### Adicionado
+
+- **Glossário Contextual**: Links interativos dentro dos slides das lições que abrem definições em `BottomSheetModal`.
+- **Chat com IA**: Integração do "Sr. Allan" ao final das aulas para suporte pedagógico imediato.
+- **UI de Cursos**: Modernização do carrossel de cursos com novos estados de interação ("Iniciar", "Continuar", "Concluído") e efeitos visuais.
+
+### Melhorado
+
+- **Acessibilidade**: Nova estilização de termos técnicos em lições (sublinhado tracejado) para reduzir a poluição visual.
+- **Navegação**: Barra de busca fixa (sticky) na tela de "Textos para Reflexão", seguindo o padrão de usabilidade do Glossário.
+- **Padronização**: Refatoração global de modais (`BottomSheets`) para garantir coerência visual em todo o módulo de estudo.
+
+### Corrigido
+
+- **Quiz**: Resolução de travamento de interface após a conclusão de exercícios e correção na sincronização de progresso.
+
 ## [2.0.9] - 2026-03-22
 
 ### Adicionado
