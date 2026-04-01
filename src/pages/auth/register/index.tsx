@@ -95,9 +95,10 @@ export function RegisterScreen() {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       const userInfo = await GoogleSignin.signIn();
       const token = userInfo.data?.idToken;
+      const name = userInfo.data?.user?.name;
 
       if (token) {
-        await signInWithGoogle(token);
+        await signInWithGoogle(token, name);
 
         // Garantir que o usuário e seu score existam no Firestore
         const currentUser = useAuthStore.getState().user;

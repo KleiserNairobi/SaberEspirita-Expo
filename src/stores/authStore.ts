@@ -12,6 +12,7 @@ import {
   GoogleAuthProvider,
   signInWithCredential,
   OAuthProvider,
+  updateProfile,
 } from "firebase/auth";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
@@ -55,7 +56,7 @@ interface AuthState {
   clearError: () => void;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<UserCredential>;
-  signInWithGoogle: (idToken: string) => Promise<void>;
+  signInWithGoogle: (idToken: string, name?: string | null) => Promise<void>;
   signInWithApple: () => Promise<void>;
   loginAsGuest: () => Promise<void>; // Nova ação
   signOut: () => Promise<void>;
@@ -167,15 +168,21 @@ export const useAuthStore = create<AuthState>()(
           throw error;
         }
       },
-      signInWithGoogle: async (idToken: string) => {
+      signInWithGoogle: async (idToken: string, name?: string | null) => {
         set({ loading: true, error: null });
         try {
           console.log("AuthStore: Iniciando login com Google...");
           const credential = GoogleAuthProvider.credential(idToken);
           const userCredential = await signInWithCredential(auth, credential);
+          
+          if (name && !userCredential.user.displayName) {
+             await updateProfile(userCredential.user, { displayName: name });
+             await userCredential.user.reload();
+          }
+
           console.log("AuthStore: Login Google bem-sucedido:", userCredential.user.uid);
           // Ao logar, desativa modo convidado
-          set({ user: userCredential.user, isGuest: false, loading: false });
+          set({ user: auth.currentUser || userCredential.user, isGuest: false, loading: false });
           // Sincronizar com OneSignal
           try {
             OneSignal.login(userCredential.user.uid);
@@ -213,9 +220,20 @@ export const useAuthStore = create<AuthState>()(
           });
 
           const userCredential = await signInWithCredential(auth, firebaseCredential);
+          
+          let name: string | null = null;
+          if (credential.fullName && (credential.fullName.givenName || credential.fullName.familyName)) {
+            name = `${credential.fullName.givenName || ""} ${credential.fullName.familyName || ""}`.trim();
+          }
+
+          if (name && !userCredential.user.displayName) {
+            await updateProfile(userCredential.user, { displayName: name });
+            await userCredential.user.reload();
+          }
+
           console.log("AuthStore: Login Apple bem-sucedido:", userCredential.user.uid);
           
-          set({ user: userCredential.user, isGuest: false, loading: false });
+          set({ user: auth.currentUser || userCredential.user, isGuest: false, loading: false });
 
           // Sincronizar com OneSignal
           try {
