@@ -276,7 +276,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           console.log("AuthStore: Fazendo logout...");
           await firebaseSignOut(auth);
-          set({ user: null, isGuest: false }); // Limpa o estado explicitamente!
+          set({ user: null, isGuest: false, loading: false }); // Limpa o estado e reseta o loading!
           // Deslogar do Google (Social)
           try {
             await GoogleSignin.signOut();
