@@ -2,7 +2,7 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
-## [2.1.0] - 2026-03-30
+## [2.0.10] - 2026-03-30
 
 ### Adicionado
 

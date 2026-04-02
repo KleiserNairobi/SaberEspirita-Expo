@@ -2,8 +2,6 @@ import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/botto
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Asset } from "expo-asset";
-import { useAudioPlayer } from "expo-audio";
 import { ArrowLeft } from "lucide-react-native";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -24,6 +22,7 @@ import { COURSE_PROGRESS_KEYS } from "@/hooks/queries/useCourseProgress";
 import { useDailyChallenge } from "@/hooks/queries/useDailyChallenge";
 import { useQuiz, QUIZ_KEYS } from "@/hooks/queries/useQuiz";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useQuizAudio } from "@/hooks/useQuizAudio";
 import { FixStackParamList } from "@/routers/types";
 import {
   markLessonAsCompleted,
@@ -37,7 +36,6 @@ import {
 } from "@/services/firebase/quizService";
 import { StatsService } from "@/services/firebase/statsService";
 import { useAuthStore } from "@/stores/authStore";
-import { usePreferencesStore } from "@/stores/preferencesStore";
 import { IQuizAnswer, IQuizHistory } from "@/types/quiz";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { createStyles } from "./styles";
@@ -82,37 +80,7 @@ export function QuizScreen() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { soundEffects } = usePreferencesStore();
-
-  // Audio Assets
-  const [audioReady, setAudioReady] = useState(false);
-
-  // Audio Assets - Memoized to prevent recreation
-  const correctAsset = useMemo(
-    () => Asset.fromModule(require("@/assets/sounds/correct.mp3")),
-    []
-  );
-  const wrongAsset = useMemo(
-    () => Asset.fromModule(require("@/assets/sounds/wrong.mp3")),
-    []
-  );
-
-  // Carregar assets antes de inicializar players
-  useEffect(() => {
-    async function loadAssets() {
-      try {
-        await Promise.all([correctAsset.downloadAsync(), wrongAsset.downloadAsync()]);
-        setAudioReady(true);
-      } catch (error) {
-        console.error("Erro ao carregar sons:", error);
-      }
-    }
-    loadAssets();
-  }, [correctAsset, wrongAsset]);
-
-  // Inicializa players diretamente com os assets (permitindo pré-carregamento nativo estável)
-  const correctPlayer = useAudioPlayer(correctAsset);
-  const wrongPlayer = useAudioPlayer(wrongAsset);
+  const { playFeedback } = useQuizAudio();
 
   const isDaily = mode === "daily";
   const isCourse = mode === "course";
@@ -122,7 +90,7 @@ export function QuizScreen() {
 
   const courseQuiz = useQuery({
     queryKey: ["quiz", quizId],
-    queryFn: () => getQuizById(quizId!, "lesson_quizzes"), // ✅ Busca na coleção correta
+    queryFn: () => getQuizById(quizId!, "lesson_quizzes"),
     enabled: isCourse && !!quizId,
   });
 
@@ -143,53 +111,15 @@ export function QuizScreen() {
   const currentQuestion = quiz?.questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === (quiz?.questions.length || 0) - 1;
 
-  function playSound(isCorrect: boolean) {
-    if (!soundEffects) return;
-
-    const player = isCorrect ? correctPlayer : wrongPlayer;
-    
-    // Log para depuração se necessário, apenas em dev
-    if (__DEV__ && !player) {
-      console.info("[Quiz] Tentando tocar som, mas player", isCorrect ? "acerto" : "erro", "ainda não inicializado.");
-    }
-
-    if (!player) return;
-
-    try {
-      // ✅ No Android, o seekTo(0) antes do primeiro play() pode causar falha se o arquivo for pequeno
-      // ou se o buffer ainda estiver instável. Deixamos ele gerenciar o ponto de partida na primeira vez.
-      if (audioReady) {
-        player.seekTo(0);
-      }
-      
-      player.play();
-    } catch (error) {
-      console.info("[Quiz] Falha silenciada na reprodução de áudio:", error);
-    }
-  }
-
   function handleSelectAnswer(index: number) {
     if (selectedAnswer !== null || !quiz) return;
 
-    // ✅ Feedback visual imediato
+    // Seleção de resposta tem prioridade absoluta
     setSelectedAnswer(index);
 
-    // ✅ Som desvinculado da thread principal de renderização
+    // Áudio é disparado de forma totalmente assíncrona e isolada
     const isCorrect = index === quiz.questions[currentQuestionIndex].correct;
-
-    // Executa em um timeout para não competir com o frame de renderização do setSelectedAnswer
-    // No Android, o som de erro pode precisar de um pouco mais de tempo para preparar o buffer nativo
-    const delay = isCorrect ? 50 : 150;
-
-    setTimeout(() => {
-      try {
-        if (soundEffects) {
-          playSound(isCorrect);
-        }
-      } catch (e) {
-        console.warn("[Quiz] Falha ao reproduzir áudio:", e);
-      }
-    }, delay);
+    setTimeout(() => playFeedback(isCorrect), isCorrect ? 50 : 150);
   }
 
   function handleConfirm() {
