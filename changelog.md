@@ -2,6 +2,24 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.11] - 2026-04-02
+
+### Adicionado
+
+- **Login Social**: Adicionado login social com Google e Apple.
+
+### Corrigido
+
+- Travamento na tela de quiz quandoo feedback auditivo era executado.
+- **Autenticação Google (Android):** Resolvido o erro de login em produção através da sincronização do SHA-1 da "Chave de Assinatura do Google Play" no Firebase Console.
+- **Conflitos de SHA-1:** Identificação e limpeza de IDs de cliente OAuth 2.0 duplicados no Google Cloud Console que impediam o registro de novas chaves.
+- **Configuração de Ambiente:** Atualização dos IDs de cliente (Web, Android e iOS) no arquivo `.env` para refletir as novas credenciais gerenciadas pelo Google Service.
+
+### Alterado
+
+- **Google Sign-in:** Adicionada a flag `offlineAccess: true` na configuração do GoogleSignin para garantir a consistência de tokens em diferentes estados de rede.
+- **Fluxo de Release:** Sincronização dos arquivos `google-services.json` entre a pasta de desenvolvimento (`dev/configs/`) e a pasta nativa do Android para evitar regressões durante o `expo prebuild`.
+
 ## [2.0.10] - 2026-03-30
 
 ### Adicionado
