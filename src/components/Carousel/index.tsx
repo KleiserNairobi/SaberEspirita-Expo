@@ -79,7 +79,7 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
       ? "CONCLUÍDO"
       : hasStarted
         ? "CONTINUAR"
-        : "INICIAR CURSO";
+        : "INICIAR";
 
   const displayPercent = Math.min(Math.round(completionPercent), 100);
 
