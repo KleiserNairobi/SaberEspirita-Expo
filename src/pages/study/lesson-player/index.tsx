@@ -260,28 +260,37 @@ export function LessonPlayerScreen() {
 
   const handleGlossaryTermPress = useCallback(
     (termId: string, matchedWord?: string) => {
-      if (glossaryTerms) {
-        const cleanId = termId.trim();
-        const term = glossaryTerms.find((t) => t.id === cleanId);
-        if (term) {
-          setSelectedGlossaryTerm(term);
-          setMatchedGlossaryWord(matchedWord);
-          setTimeout(() => glossarySheetRef.current?.present(), 50);
-        } else {
-          setMessageConfig({
-            type: "warning",
-            title: "Aviso",
-            message: `O termo não foi encontrado no dicionário atual (${cleanId}).`,
-            primaryButton: {
-              label: "OK",
-              onPress: () => bottomSheetRef.current?.dismiss(),
-            },
-          });
-          setTimeout(() => bottomSheetRef.current?.present(), 100);
-        }
+      const cleanId = termId.trim();
+      let term: IGlossaryTerm | undefined;
+
+      // Prioriza buscar no glossário local da aula atual
+      if (currentSlide?.glossary) {
+        term = currentSlide.glossary.find((t) => t.id === cleanId);
+      }
+
+      // Se não achou na aula, busca no glossário global
+      if (!term && glossaryTerms) {
+        term = glossaryTerms.find((t) => t.id === cleanId);
+      }
+
+      if (term) {
+        setSelectedGlossaryTerm(term);
+        setMatchedGlossaryWord(matchedWord);
+        setTimeout(() => glossarySheetRef.current?.present(), 50);
+      } else {
+        setMessageConfig({
+          type: "warning",
+          title: "Aviso",
+          message: `O termo não foi encontrado no dicionário atual (${cleanId}).`,
+          primaryButton: {
+            label: "OK",
+            onPress: () => bottomSheetRef.current?.dismiss(),
+          },
+        });
+        setTimeout(() => bottomSheetRef.current?.present(), 100);
       }
     },
-    [glossaryTerms]
+    [glossaryTerms, currentSlide?.glossary]
   );
 
   // --- Funções da Toolbar ---

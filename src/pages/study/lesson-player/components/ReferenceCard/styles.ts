@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { ITheme } from "@/configs/theme/types";
 
-export const createStyles = (theme: ITheme) =>
+export const createStyles = (theme: ITheme, fontSize: number = 16) =>
   StyleSheet.create({
     container: {
       marginHorizontal: theme.spacing.md,
@@ -11,6 +11,14 @@ export const createStyles = (theme: ITheme) =>
       borderLeftWidth: 4,
       borderLeftColor: theme.colors.warning,
       borderRadius: theme.radius.sm,
+    },
+    section: {
+      // Container para cada bloco (referências ou glossário)
+    },
+    divider: {
+      height: 1,
+      backgroundColor: `${theme.colors.warning}30`,
+      marginVertical: theme.spacing.sm,
     },
     header: {
       flexDirection: "row",
@@ -25,5 +33,20 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("sm", "regular"),
       lineHeight: 18,
       marginBottom: 4,
+    },
+    pillsContainer: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: theme.spacing.sm,
+    },
+    pill: {
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 6,
+      backgroundColor: `${theme.colors.warning}20`,
+    },
+    pillText: {
+      ...theme.text("xs", "medium", theme.colors.warning),
+      fontSize: fontSize - 2,
     },
   });

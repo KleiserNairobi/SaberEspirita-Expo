@@ -1,3 +1,5 @@
+import { IGlossaryTerm } from "./glossary";
+
 export interface ICourse {
   id: string;
   title: string;
@@ -43,6 +45,7 @@ export interface ILesson {
   audioUrl?: string;
   supplementaryMaterials?: ISupplementaryMaterial[];
   reflectionQuestions?: IReflectionQuestion[];
+  glossary?: IGlossaryTerm[];
 }
 
 export interface ISlide {
@@ -55,6 +58,7 @@ export interface ISlide {
     kardeciana?: string;
     biblica?: string;
   };
+  glossary?: IGlossaryTerm[];
 }
 
 export interface IReflectionQuestion {

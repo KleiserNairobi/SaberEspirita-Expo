@@ -32,6 +32,9 @@ export const LessonSlide = memo(
     const { theme } = useAppTheme();
     const styles = createStyles(theme);
 
+    const hasLocalGlossary = !!slide.glossary && slide.glossary.length > 0;
+    const termsForInjection = hasLocalGlossary ? [] : glossaryTerms;
+
     return (
       <View style={styles.container}>
         <ScrollView
@@ -45,7 +48,7 @@ export const LessonSlide = memo(
             imagePrompt={slide.imagePrompt}
             fontSize={fontSize}
             slideType={slide.slideType}
-            glossaryTerms={glossaryTerms}
+            glossaryTerms={termsForInjection}
             onGlossaryTermPress={onGlossaryTermPress}
           />
 
@@ -53,7 +56,7 @@ export const LessonSlide = memo(
             <HighlightCard
               highlights={slide.highlights}
               fontSize={fontSize}
-              glossaryTerms={glossaryTerms}
+              glossaryTerms={termsForInjection}
               onGlossaryTermPress={onGlossaryTermPress}
             />
           )}
@@ -66,8 +69,14 @@ export const LessonSlide = memo(
             />
           )}
 
-          {slide.references && (
-            <ReferenceCard references={slide.references} fontSize={fontSize} />
+          {/* Referências e/ou Glossário fundidos no mesmo card */}
+          {(slide.references || hasLocalGlossary) && (
+            <ReferenceCard
+              references={slide.references}
+              glossary={slide.glossary}
+              fontSize={fontSize}
+              onGlossaryTermPress={(termId) => onGlossaryTermPress?.(termId)}
+            />
           )}
 
           {/* Espaço extra no final para não ficar colado no botão */}
