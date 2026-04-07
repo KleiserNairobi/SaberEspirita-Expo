@@ -38,15 +38,18 @@ export const createStyles = (theme: ITheme, fontSize: number = 16) =>
       flexDirection: "row",
       flexWrap: "wrap",
       gap: theme.spacing.sm,
+      marginTop: 6,
     },
     pill: {
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 6,
-      backgroundColor: `${theme.colors.warning}20`,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 16,
+      backgroundColor: `${theme.colors.warning}30`, // Tom ameno, mantendo harmonia moncromática mas com bom peso visual
+      borderWidth: 1,
+      borderColor: `${theme.colors.warning}50`, // Borda suave na mesma família de cor
     },
     pillText: {
-      ...theme.text("xs", "medium", theme.colors.warning),
+      ...theme.text("sm", "medium", theme.colors.textSecondary),
       fontSize: fontSize - 2,
     },
   });
