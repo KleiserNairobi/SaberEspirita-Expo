@@ -249,6 +249,12 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1250;
+						DevelopmentTeam = "XRJDMVY267";
+						ProvisioningStyle = Automatic;
+					};
+					74D9278EFA46476797AA0829 = {
+						DevelopmentTeam = "XRJDMVY267";
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -532,9 +538,9 @@
 				CODE_SIGN_ENTITLEMENTS = SaberEsprita/SaberEsprita.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 41;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = "XRJDMVY267";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XRJDMVY267;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -579,9 +585,9 @@
 				CODE_SIGN_ENTITLEMENTS = SaberEsprita/SaberEsprita.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 41;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = "XRJDMVY267";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XRJDMVY267;
 				INFOPLIST_FILE = SaberEsprita/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
@@ -735,9 +741,9 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 41;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = "XRJDMVY267";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XRJDMVY267;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -762,6 +768,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = 1;
+				CODE_SIGN_IDENTITY = "Apple Development";
 			};
 			name = Debug;
 		};
@@ -771,9 +778,9 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 41;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = "XRJDMVY267";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XRJDMVY267;
 				INFOPLIST_FILE = "OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
@@ -794,6 +801,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = 1;
+				CODE_SIGN_IDENTITY = "Apple Development";
 			};
 			name = Release;
 		};

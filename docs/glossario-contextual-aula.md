@@ -1,71 +1,70 @@
 # Implementação do Glossário Contextual Específico por Aula
 
-Este plano visa resolver o problema de termos do glossário sendo sublinhados fora de contexto (ex: "além") ao permitir que cada aula possua seu próprio nó `glossary`. O algoritmo priorizará (ou usará exclusivamente) estes termos quando presentes.
+Este plano documenta a estratégia para implementar o glossário contextual, resolvendo o problema de termos destacados fora de contexto e melhorando a experiência de consulta do aluno.
 
-## User Review Required
+## 1. Objetivos
 
-> [!IMPORTANT]
-> A implementação proposta assume que o nó `glossary` no JSON da aula terá uma estrutura compatível com os termos globais, mas simplificada. 
-> 
-> O algoritmo será alterado para:
-> 1. Se a aula tiver um nó `glossary`, usar **apenas** esses termos para os destaques.
-> 2. Se a aula **não** tiver o nó (aulas antigas), continuará usando o glossário global como fallback (ou podemos desativar, se preferir).
->
-> **Questão para o usuário:** Você deseja que as definições no nó `glossary` da aula sejam completas (com categoria, referências, etc.) ou apenas `term` e `definition`?
+- **Resolução de Contexto**: Eliminar sublinhados em palavras que não deveriam ser termos (ex: "além" como advérbio vs "Além" como plano espiritual).
+- **Leitura Fluida**: O texto principal da aula não terá nenhum tipo de formatação ou marcação visual de links (sem sublinhados ou cores diferentes), permitindo uma leitura limpa.
+- **Consulta Centralizada**: Os termos relevantes de cada slide ficarão agrupados em um componente específico abaixo do conteúdo.
 
-## Proposed Changes
+## 2. Requisitos de Dados (JSON da Aula)
 
----
+O nó `glossary` será incorporado ao JSON de cada slide/aula conforme o exemplo abaixo:
 
-### Shared Types
+```json
+"glossary": [
+  {
+    "id": "perdao",
+    "term": "Perdão",
+    "definition": "Ato de liberar o ressentimento e a dívida moral do ofensor, sem exigir punição. No Espiritismo, é condição essencial para receber o perdão divino e libertar o próprio espírito.",
+    "category": "Moral e Ética",
+    "references": ["O Evangelho Segundo o Espiritismo, cap. X, item 5"],
+    "synonyms": ["Absolvição", "Misericórdia"]
+  }
+]
+```
 
-#### [MODIFY] [course.ts](file:///Users/nairobi/Documents/Desenv/2026/SaberEspirita-Expo/src/types/course.ts)
-- Adicionar o campo opcional `glossary` à interface `ILesson`.
-- Definir uma sub-interface ou reutilizar `IGlossaryTerm` (com campos opcionais).
+- **Aulas Novas**: Conterão o nó `glossary` preenchido pelo modelo de IA.
+- **Aulas Antigas**: Não possuirão este nó. O sistema deve tratar a ausência ocultando o componente de glossário.
 
----
+## 3. Interface e UX
 
-### Core Logic
+### Novo Componente: Card de Glossário
 
-#### [MODIFY] [glossaryParser.ts](file:///Users/nairobi/Documents/Desenv/2026/SaberEspirita-Expo/src/utils/glossaryParser.ts)
-- Ajustar `injectGlossaryLinks` para garantir que ele processe corretamente a lista de termos fornecida, sem depender de uma base global externa se uma lista local for passada.
+- **Posicionamento**: Logo abaixo do card de "Referências" no final do slide.
+- **Título**: "Glossário".
+- **Estilo**: Um card com cor de fundo distinta (sugestão: um tom suave que harmonize com o tema da aula).
+- **Apresentação dos Termos**:
+  - Os termos serão exibidos como "tags" ou "pills" (semelhante às tags de busca, mas sem o caractere `#`).
+  - Layout horizontal com quebra de linha automática (flex wrap).
 
----
+### Interação
 
-### UI Components
+- **Clique no Termo**: Abre o `BottomSheet` de detalhes do termo (que já existe no app).
+- **Ligação com a Base**: O critério de busca/ligação com a base global do Firebase será o ID. Se o termo existir na coleção global, o botão "Estudar Conceito" levará à tela detalhada do glossário.
 
-#### [MODIFY] [index.tsx (LessonPlayer)](file:///Users/nairobi/Documents/Desenv/2026/SaberEspirita-Expo/src/pages/study/lesson-player/index.tsx)
-- Alterar a lógica de obtenção dos termos do glossário.
-- Passar `lesson.glossary || globalGlossary` para os componentes filhos.
+## 4. Plano de Implementação Técnica
 
-#### [MODIFY] [LessonSlide.tsx](file:///Users/nairobi/Documents/Desenv/2026/SaberEspirita-Expo/src/pages/study/lesson-player/components/LessonSlide.tsx)
-- Atualizar as props para aceitar os termos que vêm da aula.
+### Parte 1: Tipagem e Dados
 
-#### [MODIFY] [SlideContent/index.tsx](file:///Users/nairobi/Documents/Desenv/2026/SaberEspirita-Expo/src/pages/study/lesson-player/components/SlideContent/index.tsx)
-- Garantir que a injeção use os termos passados via props.
+- [ ] Atualizar `ILesson` em `src/types/course.ts` para incluir `glossary?: IGlossaryTerm[]`.
+- [ ] Garantir que `IGlossaryTerm` comporte os campos `references` e `synonyms` como arrays.
 
-## Open Questions
+### Parte 2: Lógica de Negócio
 
-> [!IMPORTANT]
-> **Formato do JSON da Aula:** Como o prompt vai gerar o nó `glossary`, precisamos definir o formato exato. Minha sugestão:
-> ```json
-> "glossary": [
->   {
->     "id": "slug-do-termo",
->     "term": "Palavra",
->     "definition": "Definição extendida...",
->     "synonyms": ["sinônimo1", "sinônimo2"]
->   }
-> ]
-> ```
-> O `id` é importante para que o `BottomSheet` de detalhes funcione corretamente.
+- [ ] Desativar a injeção automática de links (sublinhados) no `glossaryParser.ts` quando a aula possuir o nó `glossary`.
+- [ ] Alterar o parser para retornar o texto puro, sem tags HTML/Markdown de link para o glossário.
 
-## Verification Plan
+### Parte 3: UI (LessonPlayer)
 
-### Automated Tests
-- Criar um mock de aula com o nó `glossary` contendo o termo "além" com uma definição específica.
-- Verificar se o termo é sublinhado e se a definição exibida é a do JSON da aula.
+- [ ] Criar o componente `GlossaryCard.tsx`.
+- [ ] Implementar a renderização condicional: `lesson.glossary && lesson.glossary.length > 0`.
+- [ ] Estilizar as "pills" conforme as especificações visuais (sem `#`, fundo sólido suave).
+- [ ] Integrar o clique com o `useGlossaryBottomSheet` existente.
 
-### Manual Verification
-- Testar uma aula antiga (sem o nó) para garantir que o glossário global ainda funciona (se desejado).
-- Testar uma aula nova com o nó e verificar a ausência de termos globais que não estão no nó local.
+## 5. Verificação
+
+- [ ] Validar se o texto da aula está "limpo" (sem sublinhados).
+- [ ] Confirmar se o Card de Glossário aparece apenas em aulas que possuem os dados no JSON.
+- [ ] Verificar se o `BottomSheet` abre com as informações corretas ao clicar na pill.
