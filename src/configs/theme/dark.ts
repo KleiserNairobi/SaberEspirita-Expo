@@ -56,6 +56,29 @@ export const DarkTheme: ITheme = {
       xxxl: 32,
     },
   },
+  shadows: {
+    sm: {
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.3,
+      shadowRadius: 2,
+      elevation: 2,
+    },
+    md: {
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 6,
+      elevation: 4,
+    },
+    lg: {
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 10 },
+      shadowOpacity: 0.3,
+      shadowRadius: 20,
+      elevation: 10,
+    },
+  },
   text: (size, weight, color) => ({
     fontSize: DarkTheme.typography.sizes[size],
     fontFamily: DarkTheme.typography.weights[weight],

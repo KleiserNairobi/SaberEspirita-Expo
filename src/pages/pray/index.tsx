@@ -25,14 +25,16 @@ import {
 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { AmbientPlayer } from "@/pages/pray/components/AmbientPlayer";
+import { AmbientEnvironmentCard } from "@/pages/pray/components/AmbientEnvironmentCard";
+import { MoodSelector } from "@/pages/pray/components/MoodSelector";
+import { WelcomingHero } from "@/pages/pray/components/WelcomingHero";
 import { useFeaturedPrayers } from "@/pages/pray/hooks/useFeaturedPrayers";
 import { usePrayerMomentsCounts } from "@/pages/pray/hooks/usePrayerMomentsCounts";
 import { createStyles } from "@/pages/pray/styles";
 import { PrayerCard } from "@/pages/pray/components/PrayerCard";
 import { AssistantCard } from "@/components/AssistantCard";
 import { getPrayersByCategory } from "@/services/firebase/prayerService";
-import { useAuthStore } from "@/stores/authStore";
+import { useAuth } from "@/stores/authStore";
 import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
 import { PRAYER_MOMENTS } from "@/types/prayer";
 import { useQueryClient } from "@tanstack/react-query";
@@ -54,7 +56,7 @@ export default function PrayScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<NativeStackNavigationProp<PrayStackParamList>>();
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
 
   const { data: featuredPrayers, isLoading: featuredLoading } = useFeaturedPrayers();
@@ -102,11 +104,32 @@ export default function PrayScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.greeting}>Ore</Text>
-          <Text style={styles.subtitle}>Conecte-se com o divino</Text>
+          <Text style={styles.subtitle}>Seu companheiro de caminhada espiritual</Text>
         </View>
 
-        {/* Seção: Momentos */}
-        <Text style={styles.sectionTitle}>Para o Momento</Text>
+        {/* Novo Fluxo de Acolhimento */}
+        <MoodSelector />
+        <WelcomingHero />
+
+        {/* Seção: Ambiente de Sintonia (Refatorado para Imersão) */}
+        <Text style={styles.sectionTitle}>Ambiente de Sintonia</Text>
+        <View style={styles.ambientContainer}>
+          <AmbientEnvironmentCard />
+        </View>
+
+        {/* Seção: Favoritos */}
+        <View style={{ marginHorizontal: 20, marginTop: 10 }}>
+          <AssistantCard
+            title="Minhas Orações"
+            description="Suas preces favoritas em um só lugar"
+            buttonText="Ver todas"
+            icon={Heart}
+            onPress={() => navigation.navigate("PrayCategory", { id: "FAVORITES" })}
+          />
+        </View>
+
+        {/* Seção: Explorar por Momento (Reduzida para acesso direto secundário) */}
+        <Text style={styles.sectionTitle}>Todos os Momentos</Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -118,45 +141,19 @@ export default function PrayScreen() {
             return (
               <TouchableOpacity
                 key={key}
-                style={styles.momentCard}
+                style={[styles.momentCard, { width: 90, height: 90 }]} // Menores para dar foco ao Acolhimento
                 onPress={() => handleMomentPress(key)}
                 onPressIn={() => prefetchCategory(key)}
                 activeOpacity={0.7}
               >
-                <View style={styles.iconContainer}>
-                  <IconComponent size={20} color={theme.colors.primary} />
-                  {momentsCounts?.[key]?.hasNew && (
-                    <View style={styles.newBadgeIndicator} />
-                  )}
+                <View style={[styles.iconContainer, { width: 32, height: 32 }]}>
+                  <IconComponent size={16} color={theme.colors.primary} />
                 </View>
-                <Text style={styles.momentLabel}>{label}</Text>
-                {momentsCounts && momentsCounts[key] !== undefined && (
-                  <Text style={styles.momentCount}>
-                    {momentsCounts[key].count}{" "}
-                    {momentsCounts[key].count === 1 ? "oração" : "orações"}
-                  </Text>
-                )}
+                <Text style={[styles.momentLabel, { fontSize: 12 }]}>{label}</Text>
               </TouchableOpacity>
             );
           })}
         </ScrollView>
-
-        {/* Seção: Favoritos */}
-        <View style={{ marginHorizontal: 20 }}>
-          <AssistantCard
-            title="Minhas Orações"
-            description="Suas preces favoritas em um só lugar"
-            buttonText="Ver todas"
-            icon={Heart}
-            onPress={() => navigation.navigate("PrayCategory", { id: "FAVORITES" })}
-          />
-        </View>
-
-        {/* Seção: Ambiente de Sintonia */}
-        <Text style={styles.sectionTitle}>Ambiente de Sintonia</Text>
-        <View style={styles.ambientContainer}>
-          <AmbientPlayer />
-        </View>
 
         {/* Seção: Orações em Destaque */}
         <Text style={styles.sectionTitle}>Em Destaque</Text>

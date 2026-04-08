@@ -64,6 +64,11 @@ export interface ITheme {
   radius: ThemeRadius;
   typography: ThemeTypography;
   isDark: boolean;
+  shadows: {
+    sm: any;
+    md: any;
+    lg: any;
+  };
 
   // Helper function para criar estilos de texto
   text: (
