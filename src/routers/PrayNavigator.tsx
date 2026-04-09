@@ -3,7 +3,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { PrayStackParamList } from "./types";
 import PrayHomeScreen from "@/pages/pray";
-import { PrayCategoryScreen } from "@/pages/pray/category";
+import { AllPrayersScreen } from "@/pages/pray/all-prayers";
+import { PrayerPrepScreen } from "@/pages/pray/prayer-prep";
 import { PrayerScreen } from "@/pages/pray/prayer";
 
 const Stack = createNativeStackNavigator<PrayStackParamList>();
@@ -16,7 +17,8 @@ export function PrayNavigator() {
       }}
     >
       <Stack.Screen name="PrayHome" component={PrayHomeScreen} />
-      <Stack.Screen name="PrayCategory" component={PrayCategoryScreen} />
+      <Stack.Screen name="AllPrayers" component={AllPrayersScreen} />
+      <Stack.Screen name="PrayerPrep" component={PrayerPrepScreen} />
       <Stack.Screen name="Prayer" component={PrayerScreen} />
     </Stack.Navigator>
   );

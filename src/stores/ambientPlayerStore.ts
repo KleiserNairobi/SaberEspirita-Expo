@@ -4,12 +4,13 @@ import { create } from "zustand";
 interface AmbientPlayerState {
   isPlaying: boolean;
   currentTrack: string | null;
+  currentAudioId: string | null;
   volume: number;
 }
 
 interface AmbientPlayerActions {
   setPlaying: (playing: boolean) => void;
-  setCurrentTrack: (track: string | null) => void;
+  setCurrentTrack: (track: string | null, audioId?: string | null) => void;
   setVolume: (volume: number) => void;
 }
 
@@ -18,11 +19,16 @@ export const useAmbientPlayerStore = create<AmbientPlayerState & AmbientPlayerAc
     // Estado
     isPlaying: false,
     currentTrack: null,
+    currentAudioId: null,
     volume: 0.7,
 
     // Ações
     setPlaying: (isPlaying: boolean) => set({ isPlaying }),
-    setCurrentTrack: (currentTrack: string | null) => set({ currentTrack }),
+    setCurrentTrack: (currentTrack: string | null, currentAudioId: string | null = null) => 
+      set((state) => ({ 
+        currentTrack, 
+        currentAudioId: currentAudioId !== null ? currentAudioId : state.currentAudioId 
+      })),
     setVolume: (volume: number) => set({ volume }),
   })
 );

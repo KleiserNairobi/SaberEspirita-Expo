@@ -36,6 +36,7 @@ import { useAppTheme } from "./src/hooks/useAppTheme";
 import { useVersionControl } from "./src/hooks/useVersionControl";
 import { useUpdateModal } from "./src/hooks/useUpdateModal";
 import { UpdateModal } from "./src/components/UpdateModal";
+import { GlobalAmbientPlayer } from "./src/components/AmbientPlayer/GlobalAmbientPlayer";
 
 // Configurar MMKV storage para cache do React Query
 const mmkvStorage = createMMKV({ id: "react-query-cache" });
@@ -191,17 +192,18 @@ function AppContent() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <BottomSheetModalProvider>
-          <PersistQueryClientProvider
-            client={queryClient}
-            persistOptions={{ persister, buster: "1.0.0" }}
-          >
-            <StatusBar 
-              style={resolvedThemeType === "dark" ? "light" : "dark"} 
-              translucent={true}
-              backgroundColor="transparent"
-            />
-            <RootNavigator />
-          </PersistQueryClientProvider>
+            <PersistQueryClientProvider
+              client={queryClient}
+              persistOptions={{ persister, buster: "1.0.0" }}
+            >
+              <GlobalAmbientPlayer />
+              <StatusBar 
+                style={resolvedThemeType === "dark" ? "light" : "dark"} 
+                translucent={true}
+                backgroundColor="transparent"
+              />
+              <RootNavigator />
+            </PersistQueryClientProvider>
         </BottomSheetModalProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

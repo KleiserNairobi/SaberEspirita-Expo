@@ -12,9 +12,23 @@ export const createStyles = (theme: ITheme) =>
       paddingBottom: 150,
     },
     header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
       marginTop: 20,
       marginBottom: 20,
       marginHorizontal: 20,
+    },
+    headerTextContainer: {
+      flex: 1,
+    },
+    headerAction: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: `${theme.colors.primary}10`,
+      alignItems: "center",
+      justifyContent: "center",
     },
     greeting: {
       ...theme.text("xxxl", "semibold"),
@@ -28,43 +42,20 @@ export const createStyles = (theme: ITheme) =>
       marginHorizontal: 20,
       marginTop: 20,
     },
-    momentsScroll: {
-      marginBottom: 30,
-    },
-    momentsContent: {
-      paddingHorizontal: 20,
-      gap: 10,
-    },
-    momentCard: {
-      width: 110,
-      height: 110,
-      backgroundColor: theme.colors.card,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
-      borderRadius: 10,
+    sectionHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
       alignItems: "center",
-      justifyContent: "center",
-      padding: 12,
-      gap: 8,
+      marginHorizontal: 20,
+      marginTop: 20,
+      marginBottom: 10,
     },
-    iconContainer: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: `${theme.colors.primary}15`,
-      alignItems: "center",
-      justifyContent: "center",
+    viewAllButton: {
+      ...theme.text("md", "medium"),
+      color: theme.colors.primary,
     },
-    momentLabel: {
-      fontFamily: theme.typography.weights.regular,
-      fontSize: theme.typography.sizes.sm,
-      color: theme.colors.text,
-      textAlign: "center",
-    },
-    momentCount: {
-      ...theme.text("xs", "regular", theme.colors.textSecondary),
-      textAlign: "center",
-      marginTop: -4,
+    sectionTitleInHeader: {
+      ...theme.text("xxl", "regular"),
     },
     ambientContainer: {
       marginHorizontal: 20,

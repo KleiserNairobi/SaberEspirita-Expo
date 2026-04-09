@@ -8,6 +8,7 @@ import { IAmbientAudio } from "@/types/ambientAudio";
 
 // Mapeamento de Humor ⮕ Categoria de Oração (Firebase ID)
 const MOOD_TO_CATEGORY: Record<UserMood, PrayerMoment> = {
+  NORMAL: "DIARIO",
   CALMO: "DIARIO",
   TRISTE: "POR-ANIMO",
   ANSIOSO: "POR-PAZ",
@@ -18,9 +19,8 @@ const MOOD_TO_CATEGORY: Record<UserMood, PrayerMoment> = {
 };
 
 // Mapeamento de Humor ⮕ Nome sugerido do Ambiente de Sintonia
-// Nota: Os nomes reais (ex: Paz Lunar) virão do Firebase no futuro.
-// Por enquanto, mapeamos para IDs de áudio existentes.
 const MOOD_TO_AUDIO_ID: Record<UserMood, string> = {
+  NORMAL: "ClairDeLune",
   CALMO: "ClairDeLune",
   TRISTE: "AveMaria",
   ANSIOSO: "Gymnopedie",
@@ -48,14 +48,11 @@ export function useSuggestedContent(mood: UserMood | null) {
   const suggestedContent = useMemo(() => {
     if (!prayers || prayers.length === 0 || !audios) return null;
 
-    // Seleciona uma oração aleatória da categoria
-    const randomPrayer = prayers[Math.floor(Math.random() * prayers.length)];
-    
     // Seleciona o áudio sugerido
     const suggestedAudio = audios.find((a) => a.id === audioId) || audios[0];
 
     return {
-      prayer: randomPrayer,
+      prayers: prayers, // Retorna todas as sugestões para scroll interno
       audio: suggestedAudio,
       mood: currentMood,
     };

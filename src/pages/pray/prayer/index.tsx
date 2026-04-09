@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
@@ -17,6 +17,7 @@ import { sharePrayer } from "@/utils/sharing";
 
 import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
 import { ReadingToolbar } from "@/components/ReadingToolbar";
+import { AmbientPlayerControls } from "@/pages/pray/components/AmbientPlayerControls";
 
 export function PrayerScreen() {
   const { theme } = useAppTheme();
@@ -86,6 +87,12 @@ export function PrayerScreen() {
     navigation.goBack();
   }
 
+  function handleFinishPrayer() {
+    // Pode engatilhar feedback (vibração ou haptics) aqui futuramente.
+    // Volta suavemente para o catálogo/home porque a prepScreen foi substituída na pilha.
+    navigation.goBack();
+  }
+
   if (isLoading) {
     return (
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
@@ -149,6 +156,18 @@ export function PrayerScreen() {
           {prayer.content}
         </Text>
       </ScrollView>
+
+      <View style={styles.fixedFooter}>
+        <TouchableOpacity 
+          style={styles.finishButton}
+          onPress={handleFinishPrayer}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.finishButtonText}>Finalizei minha prece</Text>
+        </TouchableOpacity>
+
+        <AmbientPlayerControls />
+      </View>
     </SafeAreaView>
   );
 }

@@ -11,16 +11,26 @@ description: Histórico e Tarefas Pendentes do Projeto (V2 Consolidada)
 
 ## 📊 Resumo Executivo (V2)
 
-| Categoria            | Quantidade | Prioridade |
-| -------------------- | ---------- | ---------- |
-| 🔴 Alta Prioridade   | 4          | Alta       |
-| 🟡 Média Prioridade  | 1          | Média      |
-| 🟢 Melhorias (UI/UX) | 1          | Baixa      |
-| **TOTAL V2**         | **5**      | -          |
+| Categoria                   | Quantidade | Prioridade |
+| -------------------------- | ---------- | ---------- |
+| 🔴 Alta Prioridade          | 5          | Alta       |
+| 🟡 Média Prioridade         | 1          | Média      |
+| 🟢 Melhorias (UI/UX)        | 2          | Baixa      |
+| **TOTAL V2**                | **8**      | -          |
 
 ---
 
 ## 🔴 Features de Alta Prioridade (Core & Retenção)
+
+### 0. **Transformação Módulo Ore (Acolhimento & Personalização)**
+- **Status**: 🔄 EM PROGRESSO (Buggy)
+- **Descrição**: Implementar jornada fluida de acolhimento emocional com sugestão de prece e ambiente sonoro.
+- **Pendências Identificadas:**
+  - **Lógica de Persistência**: Corrigir `moodStore` para não sobrescrever `lastMood` instantaneamente na mesma sessão (deve refletir o estado do "retorno").
+  - **Automação de Sintonia**: Garantir que o áudio sugerido mude/toque corretamente ao selecionar um humor no `AmbientEnvironmentCard`.
+  - **Atrito de UX**: Adicionar botão de "Pular" ou timeout para que o acolhimento não bloqueie o acesso rápido (conforme Plano V3.1).
+  - **Assets Visuais**: Substituir placeholders de imagem no `AmbientEnvironmentCard` por backgrounds artísticos reais ou dinâmicos.
+  - **Redirecionamento IA**: Validar se o `O Guia` recebe o contexto emocional corretamente e gera a prece prometida.
 
 ### 1. **Engajamento, Gamificação e Loop Espiritual**
 - **Status**: 🔄 EM PROGRESSO

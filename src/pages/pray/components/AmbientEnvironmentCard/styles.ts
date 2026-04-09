@@ -116,4 +116,57 @@ export const createStyles = (theme: ITheme) =>
       color: theme.colors.primary,
       fontFamily: theme.typography.weights.semibold,
     },
+    minimalContainer: {
+      marginTop: 20,
+      width: "100%",
+    },
+    minimalLabel: {
+      ...theme.text("xs", "bold", theme.colors.textSecondary),
+      textTransform: "uppercase",
+      letterSpacing: 1,
+      marginBottom: 12,
+      textAlign: "center",
+    },
+    minimalSelector: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      backgroundColor: theme.colors.card,
+      padding: 16,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      ...theme.shadows.sm,
+    },
+    minimalSelectorContent: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+    minimalIconContainer: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    minimalTrackName: {
+      ...theme.text("md", "semibold", theme.colors.text),
+    },
+    minimalActionLabel: {
+      ...theme.text("xs", "regular", theme.colors.textSecondary),
+    },
+    minimalRightSection: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+    minimalPlayButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: `${theme.colors.primary}10`,
+      alignItems: "center",
+      justifyContent: "center",
+    },
   });

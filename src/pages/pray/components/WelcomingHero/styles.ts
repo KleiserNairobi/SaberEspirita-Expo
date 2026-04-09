@@ -10,70 +10,85 @@ export const createStyles = (theme: ITheme) =>
       borderRadius: 16,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      padding: 20,
-      ...theme.shadows.sm,
+      padding: 16,
     },
     content: {
       gap: 8,
     },
     activeContent: {
-      gap: 16,
+      gap: 12,
+      marginTop: 16,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+      paddingTop: 16,
     },
     headerRow: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 8,
+      gap: 12,
     },
     iconContainer: {
-      width: 32,
-      height: 32,
-      borderRadius: 16,
+      width: 40,
+      height: 40,
+      borderRadius: 20,
       backgroundColor: `${theme.colors.primary}15`,
       alignItems: "center",
       justifyContent: "center",
     },
     suggestionLabel: {
-      ...theme.text("xs", "semibold", theme.colors.primary),
-      letterSpacing: 1,
+      ...theme.text("md", "medium", theme.colors.text),
+    },
+    suggestionHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 2,
+    },
+    allPrayersLink: {
+      ...theme.text("sm", "medium", theme.colors.primary),
+      paddingLeft: 8,
     },
     greeting: {
-      ...theme.text("lg", "semibold"),
-      color: theme.colors.text,
+      ...theme.text("sm", "regular", theme.colors.textSecondary),
     },
     description: {
       ...theme.text("sm", "regular", theme.colors.textSecondary),
       lineHeight: 20,
     },
-    suggestionCard: {
-      backgroundColor: theme.colors.background,
-      borderRadius: 12,
-      padding: 16,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
+    scrollTip: {
+      ...theme.text("xs", "medium", theme.colors.primary),
+      marginBottom: 8,
+      textAlign: "left",
+      // opacity: 0.8,
+    },
+    prayerList: {
+      backgroundColor: "transparent",
+      // marginTop: 4,
+    },
+    prayerItem: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      gap: 12,
+      padding: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    prayerItemLast: {
+      borderBottomWidth: 0,
     },
     prayerInfo: {
       flex: 1,
-      gap: 4,
+      gap: 2,
     },
     prayerTitle: {
-      ...theme.text("md", "semibold"),
+      ...theme.text("md", "regular"),
       color: theme.colors.text,
     },
     prayerCategory: {
       ...theme.text("xs", "regular", theme.colors.textSecondary),
     },
-    actionButton: {
-      backgroundColor: theme.colors.primary,
-      paddingVertical: 8,
-      paddingHorizontal: 12,
-      borderRadius: 8,
-    },
-    actionButtonText: {
-      ...theme.text("xs", "bold", theme.colors.onPrimary),
+    actionText: {
+      ...theme.text("xs", "semibold", theme.colors.primary),
     },
     aiLink: {
       flexDirection: "row",

@@ -1,58 +1,72 @@
-import React from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import React, { useRef } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import {
+  Smile,
+  CloudRain,
+  Activity,
+  Heart,
+  Flame,
+  Moon,
+  Sparkles,
+  Sun,
+  ChevronDown,
+} from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { UserMood, useMoodStore } from "@/stores/moodStore";
+import { MoodSelectionBottomSheet } from "./MoodSelectionBottomSheet";
 import { createStyles } from "./styles";
 
-const MOODS: { id: UserMood; emoji: string; label: string }[] = [
-  { id: "CALMO", emoji: "😊", label: "Calmo" },
-  { id: "TRISTE", emoji: "😢", label: "Triste" },
-  { id: "ANSIOSO", emoji: "😰", label: "Ansioso" },
-  { id: "GRATO", emoji: "🙏", label: "Grato" },
-  { id: "IRRITADO", emoji: "😤", label: "Irritado" },
-  { id: "CANSADO", emoji: "😴", label: "Cansado" },
-  { id: "DESCONHECIDO", emoji: "❓", label: "Pular" },
+export const MOODS: { id: UserMood; icon: any; label: string; noun: string }[] = [
+  { id: "NORMAL", icon: Smile, label: "Equilibrado / Normal", noun: "harmonia" },
+  { id: "CALMO", icon: Sun, label: "Estou Calmo", noun: "calma" },
+  { id: "TRISTE", icon: CloudRain, label: "Sentindo Tristeza", noun: "consolo" },
+  { id: "ANSIOSO", icon: Activity, label: "Com Ansiedade", noun: "paz" },
+  { id: "GRATO", icon: Heart, label: "Sinto Gratidão", noun: "luz" },
+  { id: "IRRITADO", icon: Flame, label: "Estou Irritado", noun: "equilíbrio" },
+  { id: "CANSADO", icon: Moon, label: "Sinto Cansaço", noun: "renovação" },
 ];
 
 export function MoodSelector() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-  const { currentMood, setMood } = useMoodStore();
+  const { currentMood } = useMoodStore();
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
 
-  function handleMoodPress(moodId: UserMood) {
-    if (currentMood === moodId) {
-      setMood(null); // Desmarca se clicar no mesmo
-    } else {
-      setMood(moodId);
-    }
+  const selectedMoodData = MOODS.find((m) => m.id === currentMood);
+  const Icon = selectedMoodData?.icon || Sparkles;
+
+  function handleOpenSelector() {
+    bottomSheetRef.current?.present();
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Como você está se sentindo?</Text>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+    <View>
+      <TouchableOpacity
+        style={styles.container}
+        onPress={handleOpenSelector}
+        activeOpacity={0.8}
       >
-        {MOODS.map((mood) => {
-          const isSelected = currentMood === mood.id;
-          return (
-            <TouchableOpacity
-              key={mood.id}
-              style={[styles.moodChip, isSelected && styles.moodChipSelected]}
-              onPress={() => handleMoodPress(mood.id)}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.emoji}>{mood.emoji}</Text>
-              <Text style={[styles.label, isSelected && styles.labelSelected]}>
-                {mood.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
+        <View style={styles.labelSection}>
+          <View style={styles.iconContainer}>
+            <Icon size={20} color={theme.colors.primary} />
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>Humor de Agora</Text>
+            <Text style={styles.description}>
+              {selectedMoodData?.label || "Como você se sente?"}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.selectorButton}>
+          <Text style={styles.selectorButtonText}>Selecionar</Text>
+          <ChevronDown size={14} color={theme.colors.textSecondary} />
+        </View>
+      </TouchableOpacity>
+
+      <MoodSelectionBottomSheet ref={bottomSheetRef} />
     </View>
   );
 }

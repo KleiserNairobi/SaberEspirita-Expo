@@ -63,10 +63,19 @@ export function TabNavigator() {
       <Tab.Screen
         name="PrayTab"
         component={PrayNavigator}
-        options={{
+        options={({ route }: { route: any }) => ({
           title: "Ore",
-          tabBarIcon: ({ color, size }) => <HeartHandshake size={size} color={color} />,
-        }}
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+            <HeartHandshake size={size} color={color} />
+          ),
+          tabBarStyle: ((route) => {
+            const routeName = getFocusedRouteNameFromRoute(route);
+            if (routeName && routeName !== "PrayHome") {
+              return { display: "none" };
+            }
+            return undefined;
+          })(route),
+        })}
       />
       <Tab.Screen
         name="AccountTab"

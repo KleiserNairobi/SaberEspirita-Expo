@@ -14,6 +14,7 @@ const zustandStorage = {
 };
 
 export type UserMood =
+  | "NORMAL"
   | "CALMO"
   | "TRISTE"
   | "ANSIOSO"

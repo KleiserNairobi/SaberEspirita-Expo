@@ -145,3 +145,31 @@ export async function getRecentPrayerIds(days: number): Promise<string[]> {
 
   return snapshot.docs.map((doc) => doc.id);
 }
+
+/**
+ * Busca todas as orações e as mapeia com seus respectivos categoryIds
+ */
+export async function getAllPrayersWithCategories(): Promise<(IPrayer & { categories: string[] })[]> {
+  const prayersRef = collection(db, "prayers");
+  const prayersSnapshot = await getDocs(prayersRef);
+  
+  const prayers = prayersSnapshot.docs.map((doc) => mapDocToPrayer(doc));
+
+  const linksRef = collection(db, "prayer_category_links");
+  const linksSnapshot = await getDocs(linksRef);
+
+  // Map prayerId -> categoryId[]
+  const categoryMap: Record<string, string[]> = {};
+  linksSnapshot.docs.forEach((doc) => {
+    const data = doc.data();
+    if (!categoryMap[data.prayerId]) {
+      categoryMap[data.prayerId] = [];
+    }
+    categoryMap[data.prayerId].push(data.categoryId);
+  });
+
+  return prayers.map((prayer) => ({
+    ...prayer,
+    categories: categoryMap[prayer.id] || [],
+  }));
+}

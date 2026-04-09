@@ -10,7 +10,7 @@ export const createStyles = (theme: ITheme) =>
     },
     scrollContent: {
       paddingHorizontal: theme.spacing.lg,
-      paddingBottom: 150,
+      paddingBottom: 200,
     },
     header: {
       marginTop: theme.spacing.xl,
@@ -72,5 +72,23 @@ export const createStyles = (theme: ITheme) =>
     errorText: {
       ...theme.text("md", "regular", theme.colors.error),
       textAlign: "center",
+    },
+    finishButton: {
+      backgroundColor: theme.colors.primary,
+      paddingVertical: theme.spacing.md,
+      borderRadius: theme.radius.full,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    finishButtonText: {
+      ...theme.text("md", "semibold", theme.colors.background),
+      textTransform: "uppercase",
+    },
+    fixedFooter: {
+      backgroundColor: theme.colors.background,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+      padding: theme.spacing.lg,
+      gap: theme.spacing.xs,
     },
   });

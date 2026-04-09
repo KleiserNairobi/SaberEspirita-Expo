@@ -1,20 +1,24 @@
-import React, { useState } from "react";
+import React from "react";
 import { 
   ActivityIndicator, 
   Text, 
   TouchableOpacity, 
   View, 
   ImageBackground,
-  Modal
 } from "react-native";
-import { Play, Pause, ChevronDown, Music, Waves, Moon } from "lucide-react-native";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { Play, Pause, ChevronDown, Music, Waves, Moon, VolumeX } from "lucide-react-native";
 import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
+import { Alert } from "react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
+import { downloadAudio } from "@/services/firebase/ambientAudioService";
+import { IAmbientAudio } from "@/types/ambientAudio";
 import { useMoodStore } from "@/stores/moodStore";
 import { useSuggestedContent } from "../../hooks/useSuggestedContent";
+import { AmbientSelectionBottomSheet } from "./AmbientSelectionBottomSheet";
 import { createStyles } from "./styles";
 
 const ICON_MAP = {
@@ -32,7 +36,11 @@ const FRIENDLY_NAMES: Record<string, string> = {
   "Nocturne": "Céu Estrelado",
 };
 
-export function AmbientEnvironmentCard() {
+interface AmbientEnvironmentCardProps {
+  variant?: "full" | "minimal" | "selector";
+}
+
+export function AmbientEnvironmentCard({ variant = "full" }: AmbientEnvironmentCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   
@@ -40,46 +48,76 @@ export function AmbientEnvironmentCard() {
   const { suggestedContent } = useSuggestedContent(currentMood);
   const { data: audios, isLoading } = useAmbientAudios();
   
-  const { isPlaying, currentTrack, setPlaying, setCurrentTrack } = useAmbientPlayerStore();
+  const { isPlaying, currentTrack, currentAudioId, setPlaying, setCurrentTrack } = useAmbientPlayerStore();
   const player = useAudioPlayer(currentTrack || "");
   const status = useAudioPlayerStatus(player);
 
-  const [isPickerVisible, setIsPickerVisible] = useState(false);
+  const bottomSheetRef = React.useRef<BottomSheetModal>(null);
+  
+  const [isDownloading, setIsDownloading] = React.useState(false);
+  const [pendingName, setPendingName] = React.useState<string | null>(null);
 
-  // Áudio ativo ou o sugerido
+  // Áudio ativo baseado no ID estável (evita que a interface se perca com URIs voláteis)
   const activeAudio = React.useMemo(() => {
-    if (!audios) return null;
-    if (currentTrack) {
-      return audios.find(a => a.localUri === currentTrack) || audios[0];
-    }
-    return suggestedContent?.audio || audios[0];
-  }, [audios, currentTrack, suggestedContent]);
+    if (!audios || !currentAudioId) return null;
+    return audios.find(a => a.id === currentAudioId) || null;
+  }, [audios, currentAudioId]);
 
   async function handleTogglePlay() {
-    if (!activeAudio) return;
+    // Se não há trilha no store, mas temos um áudio 'ativo' sugerido, selecionamos ele.
+    if (!currentTrack) {
+      if (activeAudio) {
+        handleSelectTrack(activeAudio);
+      }
+      return;
+    }
 
-    if (currentTrack === activeAudio.localUri && status.playing) {
-      player.pause();
-      setPlaying(false);
-    } else if (currentTrack === activeAudio.localUri && !status.playing) {
-      player.play();
-      setPlaying(true);
-    } else {
-      // Tocar o ativo (que pode ser o sugerido)
-      if (activeAudio.localUri) {
-        setCurrentTrack(activeAudio.localUri);
+    // Lógica direta baseada no estado do player global
+    try {
+      if (status.playing) {
+        player.pause();
+        setPlaying(false);
+      } else {
         player.play();
         setPlaying(true);
+      }
+    } catch (error) {
+      console.error("[AmbientPlayer] Erro ao alternar play/pause:", error);
+    }
+  }
+
+  async function handleSelectTrack(audio: IAmbientAudio | null) {
+    // FECHA IMEDIATAMENTE - Resposta instantânea de UI
+    bottomSheetRef.current?.dismiss();
+
+    if (!audio) {
+      setCurrentTrack(null, null);
+      setPendingName(null);
+      return;
+    }
+
+    if (audio.localUri) {
+      setPendingName(null);
+      setCurrentTrack(audio.localUri, audio.id);
+    } else {
+      try {
+        // Feedback instantâneo no COMBO
+        setIsDownloading(true);
+        setPendingName(FRIENDLY_NAMES[audio.id] || audio.title);
+        
+        // Baixa o áudio em segundo plano
+        const localUri = await downloadAudio(audio.storagePath, audio.fileName);
+        setCurrentTrack(localUri, audio.id);
+      } catch (error) {
+        Alert.alert("Erro", "Não foi possível carregar este áudio ambiente.");
+      } finally {
+        setIsDownloading(false);
+        setPendingName(null);
       }
     }
   }
 
-  function handleSelectTrack(localUri: string) {
-    setCurrentTrack(localUri);
-    setIsPickerVisible(false);
-  }
-
-  if (isLoading || !activeAudio) {
+  if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator color={theme.colors.primary} />
@@ -87,8 +125,72 @@ export function AmbientEnvironmentCard() {
     );
   }
 
-  const friendlyName = FRIENDLY_NAMES[activeAudio.id] || activeAudio.title;
-  const isCurrentPlaying = currentTrack === activeAudio.localUri && status.playing;
+  const friendlyName = pendingName 
+    ? pendingName 
+    : (!currentAudioId 
+        ? "Selecione uma música" 
+        : (activeAudio ? (FRIENDLY_NAMES[activeAudio.id] || activeAudio.title) : "Silêncio"));
+    
+  const isCurrentPlaying = !isDownloading && currentTrack && activeAudio && status.playing;
+
+  if (variant === "minimal" || variant === "selector") {
+    const isSelector = variant === "selector";
+    return (
+      <View style={styles.minimalContainer}>
+        {!isSelector && <Text style={styles.minimalLabel}>Sintonizar Ambiente</Text>}
+        <TouchableOpacity 
+          style={styles.minimalSelector}
+          onPress={() => bottomSheetRef.current?.present()}
+          activeOpacity={0.7}
+        >
+          <View style={styles.minimalSelectorContent}>
+            <View style={[
+              styles.minimalIconContainer, 
+              { backgroundColor: (isCurrentPlaying || isDownloading) ? theme.colors.primary : theme.colors.primary + "15" }
+            ]}>
+              {isDownloading ? (
+                <ActivityIndicator size="small" color={theme.colors.background} />
+              ) : isCurrentPlaying ? (
+                <Waves size={16} color={theme.colors.background} />
+              ) : (
+                <Music size={16} color={theme.colors.primary} />
+              )}
+            </View>
+            <View>
+              <Text style={styles.minimalTrackName}>{friendlyName}</Text>
+              <Text style={styles.minimalActionLabel}>
+                {isDownloading ? "Baixando áudio..." : (!isSelector && !currentAudioId ? "Mergulhe em sintonia" : "Toque para alterar")}
+              </Text>
+            </View>
+          </View>
+          
+          <View style={styles.minimalRightSection}>
+            {isDownloading ? (
+              <ActivityIndicator size="small" color={theme.colors.primary} />
+            ) : (!isSelector && currentTrack) && (
+              <TouchableOpacity 
+                onPress={handleTogglePlay}
+                style={styles.minimalPlayButton}
+              >
+                {isCurrentPlaying ? (
+                  <Pause size={18} color={theme.colors.primary} fill={theme.colors.primary} />
+                ) : (
+                  <Play size={18} color={theme.colors.primary} fill={theme.colors.primary} />
+                )}
+              </TouchableOpacity>
+            )}
+            <ChevronDown size={18} color={theme.colors.textSecondary} />
+          </View>
+        </TouchableOpacity>
+
+        <AmbientSelectionBottomSheet 
+          ref={bottomSheetRef}
+          audios={audios}
+          onSelect={handleSelectTrack}
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -121,7 +223,7 @@ export function AmbientEnvironmentCard() {
 
             <TouchableOpacity 
               style={styles.pickerTrigger} 
-              onPress={() => setIsPickerVisible(true)}
+              onPress={() => bottomSheetRef.current?.present()}
               activeOpacity={0.7}
             >
               <Text style={styles.pickerTriggerText}>Trocar Ambiente</Text>
@@ -131,41 +233,11 @@ export function AmbientEnvironmentCard() {
         </View>
       </ImageBackground>
 
-      {/* Modal Simples de Seleção (Substituindo a playlist vertical) */}
-      <Modal
-        visible={isPickerVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setIsPickerVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Caminhos de Sintonia</Text>
-              <TouchableOpacity onPress={() => setIsPickerVisible(false)}>
-                <Text style={styles.closeButton}>Fechar</Text>
-              </TouchableOpacity>
-            </View>
-            
-            {audios?.map((audio) => {
-              const Icon = ICON_MAP[audio.icon] || Music;
-              const isSelected = audio.localUri === currentTrack;
-              return (
-                <TouchableOpacity
-                  key={audio.id}
-                  style={[styles.audioOption, isSelected && styles.audioOptionSelected]}
-                  onPress={() => audio.localUri && handleSelectTrack(audio.localUri)}
-                >
-                  <Icon size={20} color={isSelected ? theme.colors.primary : theme.colors.text} />
-                  <Text style={[styles.audioOptionText, isSelected && styles.audioOptionTextSelected]}>
-                    {FRIENDLY_NAMES[audio.id] || audio.title}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </View>
-      </Modal>
+      <AmbientSelectionBottomSheet 
+        ref={bottomSheetRef}
+        audios={audios}
+        onSelect={handleSelectTrack}
+      />
     </View>
   );
 }
