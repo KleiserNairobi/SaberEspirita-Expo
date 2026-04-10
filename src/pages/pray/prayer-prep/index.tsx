@@ -3,25 +3,12 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-nati
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ArrowLeft, Play } from "lucide-react-native";
+import { ArrowLeft, Play, Sparkles } from "lucide-react-native";
 import { ActivityIndicator } from "react-native";
-
 import { PrayStackParamList } from "@/routers/types";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AmbientEnvironmentCard } from "@/pages/pray/components/AmbientEnvironmentCard";
 import { usePrayer } from "@/pages/pray/hooks/usePrayer";
-import { useMoodStore, UserMood } from "@/stores/moodStore";
-
-const MOOD_TO_NOUN: Record<UserMood, string> = {
-  NORMAL: "harmonia",
-  CALMO: "calma",
-  TRISTE: "consolo",
-  ANSIOSO: "paz",
-  GRATO: "luz",
-  IRRITADO: "equilíbrio",
-  CANSADO: "renovação",
-  DESCONHECIDO: "luz",
-};
 
 type NavigationProp = NativeStackNavigationProp<PrayStackParamList, "PrayerPrep">;
 type RouteParam = RouteProp<PrayStackParamList, "PrayerPrep">;
@@ -32,12 +19,7 @@ export function PrayerPrepScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteParam>();
   const { id } = route.params;
- 
   const { data: prayer, isLoading } = usePrayer(id);
-  const { currentMood } = useMoodStore();
- 
-  const moodNoun = currentMood ? MOOD_TO_NOUN[currentMood] : "luz";
-  const blessing = `Que sua busca por ${moodNoun} seja abençoada.`;
 
   function handleStartPrayer() {
     navigation.replace("Prayer", { id });
@@ -45,7 +27,10 @@ export function PrayerPrepScreen() {
 
   if (isLoading || !prayer) {
     return (
-      <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]} edges={["top"]}>
+      <SafeAreaView
+        style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
+        edges={["top"]}
+      >
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <ActivityIndicator color={theme.colors.primary} size="large" />
         </View>
@@ -54,27 +39,62 @@ export function PrayerPrepScreen() {
   }
 
   return (
-    <View style={[styles.safeArea, { backgroundColor: theme.colors.background, paddingTop: insets.top }]}>
+    <View
+      style={[
+        styles.safeArea,
+        { backgroundColor: theme.colors.background, paddingTop: insets.top },
+      ]}
+    >
       <View style={styles.header}>
-        <TouchableOpacity
-          style={[styles.backButton, { backgroundColor: theme.colors.accent }]}
-          onPress={() => navigation.goBack()}
-          activeOpacity={0.7}
-        >
-          <ArrowLeft size={20} color={theme.colors.primary} />
-        </TouchableOpacity>
+        <View style={styles.headerRow}>
+          {/* Botão Voltar */}
+          <View style={styles.headerSide}>
+            <TouchableOpacity
+              style={[styles.backButton, { backgroundColor: theme.colors.accent }]}
+              onPress={() => navigation.goBack()}
+              activeOpacity={0.7}
+            >
+              <ArrowLeft size={20} color={theme.colors.primary} />
+            </TouchableOpacity>
+          </View>
+
+          {/* Ícone Central com Anéis */}
+          <View style={styles.iconRingsContainer}>
+            <View
+              style={[styles.ringOuter, { borderColor: theme.colors.primary + "15" }]}
+            />
+            <View
+              style={[styles.ringMiddle, { borderColor: theme.colors.primary + "25" }]}
+            />
+            <View
+              style={[styles.ringInner, { borderColor: theme.colors.primary + "40" }]}
+            />
+            <View
+              style={[
+                styles.iconLargeContainer,
+                { backgroundColor: theme.colors.primary },
+              ]}
+            >
+              <Sparkles size={40} color={theme.colors.background} />
+            </View>
+          </View>
+
+          {/* Espaço para Equilíbrio */}
+          <View style={styles.headerSide} />
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.messageContainer}>
+          <Text style={[styles.title, { color: theme.colors.text }]}>{prayer.title}</Text>
           <Text style={[styles.preTitle, { color: theme.colors.primary }]}>
-            {blessing}
-          </Text>
-          <Text style={[styles.title, { color: theme.colors.text }]}>
-            {prayer.title}
+            Que a luz do amparo envolva o seu caminho
           </Text>
           <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
-            Busque um lugar calmo e feche os olhos por um momento. Se desejar, escolha um som ambiente para conduzir a sua prece.
+            Busque o silêncio interior e respire fundo, deixando as preocupações de lado
+            agora. Sinta a presença dos bons espíritos ao seu redor e, se desejar, escolha
+            uma melodia para elevar sua vibração. Prepare o coração para este diálogo de
+            amor.
           </Text>
         </View>
 
@@ -83,22 +103,28 @@ export function PrayerPrepScreen() {
         </View>
       </ScrollView>
 
-      <View style={[
-        styles.footer, 
-        { 
-          borderTopColor: theme.colors.border, 
-          backgroundColor: theme.colors.background,
-          paddingBottom: Math.max(insets.bottom, 24)
-        }
-      ]}>
+      <View
+        style={[
+          styles.footer,
+          {
+            borderTopColor: theme.colors.border,
+            backgroundColor: theme.colors.background,
+            paddingBottom: Math.max(insets.bottom, 24),
+          },
+        ]}
+      >
         <TouchableOpacity
           style={[styles.startButton, { backgroundColor: theme.colors.primary }]}
           onPress={handleStartPrayer}
           activeOpacity={0.8}
         >
-          <Play size={20} color={theme.colors.background} fill={theme.colors.background} />
+          <Play
+            size={20}
+            color={theme.colors.background}
+            fill={theme.colors.background}
+          />
           <Text style={[styles.startButtonText, { color: theme.colors.background }]}>
-            Entrar em Oração
+            Iniciar Prece
           </Text>
         </TouchableOpacity>
       </View>
@@ -112,13 +138,58 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 10,
+    paddingTop: 10,
+    paddingBottom: 20,
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  headerSide: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconRingsContainer: {
+    width: 104,
+    height: 104,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  ringInner: {
+    position: "absolute",
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    borderWidth: 4,
+  },
+  ringMiddle: {
+    position: "absolute",
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    borderWidth: 2,
+  },
+  ringOuter: {
+    position: "absolute",
+    width: 104,
+    height: 104,
+    borderRadius: 52,
+    borderWidth: 1,
+  },
+  iconLargeContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -128,35 +199,33 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   messageContainer: {
-    marginTop: 40,
+    marginTop: 10,
     marginBottom: 40,
     alignItems: "center",
   },
   preTitle: {
-    fontFamily: "BarlowCondensed_600SemiBold",
-    fontSize: 16,
-    textTransform: "uppercase",
-    letterSpacing: 1,
-    marginBottom: 8,
+    fontFamily: "Oswald_400Regular",
+    fontSize: 18,
+    marginBottom: 24,
   },
   title: {
-    fontFamily: "Oswald_700Bold",
-    fontSize: 32,
+    fontFamily: "BarlowCondensed_400Regular",
+    fontSize: 24,
     textAlign: "center",
-    marginBottom: 16,
+    marginBottom: 10,
   },
   subtitle: {
     fontFamily: "BarlowCondensed_400Regular",
     fontSize: 18,
-    textAlign: "center",
-    lineHeight: 26,
-    paddingHorizontal: 10,
+    textAlign: "justify",
+    lineHeight: 24,
   },
   ambientContainer: {
-    marginTop: 20,
+    marginTop: 0,
   },
   footer: {
-    padding: 24,
+    paddingHorizontal: 20,
+    paddingVertical: 24,
     borderTopWidth: 1,
   },
   startButton: {
@@ -171,5 +240,6 @@ const styles = StyleSheet.create({
     fontFamily: "BarlowCondensed_600SemiBold",
     fontSize: 20,
     textTransform: "uppercase",
+    letterSpacing: 1,
   },
 });

@@ -76,7 +76,7 @@ export const createStyles = (theme: ITheme) =>
     finishButton: {
       backgroundColor: theme.colors.primary,
       paddingVertical: theme.spacing.md,
-      borderRadius: theme.radius.full,
+      borderRadius: theme.radius.md,
       alignItems: "center",
       justifyContent: "center",
     },

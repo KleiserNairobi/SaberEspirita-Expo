@@ -165,9 +165,7 @@ export function AmbientEnvironmentCard({ variant = "full" }: AmbientEnvironmentC
           </View>
           
           <View style={styles.minimalRightSection}>
-            {isDownloading ? (
-              <ActivityIndicator size="small" color={theme.colors.primary} />
-            ) : (!isSelector && currentTrack) && (
+            {(!isDownloading && !isSelector && currentTrack) && (
               <TouchableOpacity 
                 onPress={handleTogglePlay}
                 style={styles.minimalPlayButton}

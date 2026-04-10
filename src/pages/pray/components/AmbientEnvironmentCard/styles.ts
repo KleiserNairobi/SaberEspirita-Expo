@@ -136,7 +136,6 @@ export const createStyles = (theme: ITheme) =>
       borderRadius: 16,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      ...theme.shadows.sm,
     },
     minimalSelectorContent: {
       flexDirection: "row",
