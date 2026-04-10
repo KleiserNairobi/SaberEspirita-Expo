@@ -56,14 +56,12 @@ export const createStyles = (theme: ITheme) =>
       lineHeight: 20,
     },
     scrollTip: {
-      ...theme.text("xs", "medium", theme.colors.primary),
+      ...theme.text("sm", "medium", theme.colors.primary),
       marginBottom: 8,
       textAlign: "left",
-      // opacity: 0.8,
     },
     prayerList: {
       backgroundColor: "transparent",
-      // marginTop: 4,
     },
     prayerItem: {
       flexDirection: "row",

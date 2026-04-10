@@ -61,6 +61,10 @@ export const useMoodStore = create<MoodState>()(
     {
       name: "mood-storage",
       storage: createJSONStorage(() => zustandStorage),
+      partialize: (state) => ({
+        lastMood: state.lastMood,
+        lastMoodDate: state.lastMoodDate,
+      }),
       onRehydrateStorage: () => (state) => {
         if (state?.lastMoodDate) {
           const lastDate = new Date(state.lastMoodDate);

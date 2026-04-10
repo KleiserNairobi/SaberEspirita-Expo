@@ -11,15 +11,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { PrayStackParamList } from "@/routers/types";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import {
-  Heart,
-} from "lucide-react-native";
+import { Heart, BookOpen } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { MoodSelector } from "@/pages/pray/components/MoodSelector";
 import { WelcomingHero } from "@/pages/pray/components/WelcomingHero";
 import { AIChatCard } from "@/pages/pray/components/AIChatCard";
-import { useFeaturedPrayers } from "@/pages/pray/hooks/useFeaturedPrayers";
+import { TrendingPrayers } from "@/pages/pray/components/TrendingPrayers";
 import { createStyles } from "@/pages/pray/styles";
 import { PrayerCard } from "@/pages/pray/components/PrayerCard";
 import { useAuth } from "@/stores/authStore";
@@ -34,10 +32,8 @@ export default function PrayScreen() {
   const styles = createStyles(theme);
   const navigation = useNavigation<NativeStackNavigationProp<PrayStackParamList>>();
   const { user } = useAuth();
-  const { currentMood } = useMoodStore();
+  const { currentMood, clearMood } = useMoodStore();
   const queryClient = useQueryClient();
-
-  const { data: featuredPrayers, isLoading: featuredLoading } = useFeaturedPrayers();
 
   const { syncWithFirebase } = usePrayerFavoritesStore();
 
@@ -46,12 +42,13 @@ export default function PrayScreen() {
       syncWithFirebase(user.uid);
     }
   }, [user?.uid, syncWithFirebase]);
-  
-  // Atualiza o cache ao entrar na tela para garantir que dados novos (destaques) apareçam
+
+  // Atualiza o cache e reseta o humor ao entrar na tela
   useFocusEffect(
     React.useCallback(() => {
-      queryClient.invalidateQueries({ queryKey: ["prayers", "featured"] });
-    }, [queryClient])
+      queryClient.invalidateQueries({ queryKey: ["prayers"] });
+      clearMood();
+    }, [queryClient, clearMood])
   );
 
   function handlePrayerPress(prayerId: string) {
@@ -74,20 +71,32 @@ export default function PrayScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header com Atalho de Favoritos */}
+        {/* Header com Atalhos */}
         <View style={styles.header}>
           <View style={styles.headerTextContainer}>
             <Text style={styles.greeting}>Ore</Text>
-            <Text style={styles.subtitle}>Seu companheiro de caminhada espiritual</Text>
+            <Text style={styles.subtitle}>Você e Deus: em sintonia para o bem.</Text>
           </View>
 
-          <TouchableOpacity
-            style={styles.headerAction}
-            onPress={() => navigation.navigate("AllPrayers", { initialCategory: "FAVORITES" })}
-            activeOpacity={0.7}
-          >
-            <Heart size={24} color={theme.colors.primary} />
-          </TouchableOpacity>
+          <View style={styles.headerActions}>
+            <TouchableOpacity
+              style={styles.headerAction}
+              onPress={() =>
+                navigation.navigate("AllPrayers", { initialCategory: "FAVORITES" })
+              }
+              activeOpacity={0.7}
+            >
+              <Heart size={20} color={theme.colors.primary} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.headerAction}
+              onPress={() => navigation.navigate("AllPrayers", {})}
+              activeOpacity={0.7}
+            >
+              <BookOpen size={20} color={theme.colors.primary} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Fluxo de Acolhimento: Identificação -> Sugestão -> Assistência */}
@@ -95,36 +104,7 @@ export default function PrayScreen() {
         <WelcomingHero />
         <AIChatCard onPress={handleAIChatPress} />
 
-
-
-
-
-
-
-        {/* Seção: Orações em Destaque */}
-        <Text style={styles.sectionTitle}>Em Destaque</Text>
-
-        {featuredLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={theme.colors.primary} />
-          </View>
-        ) : featuredPrayers && featuredPrayers.length > 0 ? (
-          <View style={styles.featuredList}>
-            {[...featuredPrayers]
-              .sort((a, b) => a.title.localeCompare(b.title))
-              .map((prayer) => (
-                <PrayerCard
-                  key={prayer.id}
-                  prayer={prayer}
-                  onPress={() => handlePrayerPress(prayer.id)}
-                />
-              ))}
-          </View>
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Nenhuma oração em destaque no momento</Text>
-          </View>
-        )}
+        <TrendingPrayers />
       </ScrollView>
     </SafeAreaView>
   );

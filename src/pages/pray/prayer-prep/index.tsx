@@ -10,6 +10,18 @@ import { PrayStackParamList } from "@/routers/types";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AmbientEnvironmentCard } from "@/pages/pray/components/AmbientEnvironmentCard";
 import { usePrayer } from "@/pages/pray/hooks/usePrayer";
+import { useMoodStore, UserMood } from "@/stores/moodStore";
+
+const MOOD_TO_NOUN: Record<UserMood, string> = {
+  NORMAL: "harmonia",
+  CALMO: "calma",
+  TRISTE: "consolo",
+  ANSIOSO: "paz",
+  GRATO: "luz",
+  IRRITADO: "equilíbrio",
+  CANSADO: "renovação",
+  DESCONHECIDO: "luz",
+};
 
 type NavigationProp = NativeStackNavigationProp<PrayStackParamList, "PrayerPrep">;
 type RouteParam = RouteProp<PrayStackParamList, "PrayerPrep">;
@@ -20,8 +32,12 @@ export function PrayerPrepScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteParam>();
   const { id } = route.params;
-
+ 
   const { data: prayer, isLoading } = usePrayer(id);
+  const { currentMood } = useMoodStore();
+ 
+  const moodNoun = currentMood ? MOOD_TO_NOUN[currentMood] : "luz";
+  const blessing = `Que sua busca por ${moodNoun} seja abençoada.`;
 
   function handleStartPrayer() {
     navigation.replace("Prayer", { id });
@@ -52,7 +68,7 @@ export function PrayerPrepScreen() {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.messageContainer}>
           <Text style={[styles.preTitle, { color: theme.colors.primary }]}>
-            Preparando seu coração
+            {blessing}
           </Text>
           <Text style={[styles.title, { color: theme.colors.text }]}>
             {prayer.title}

@@ -74,19 +74,19 @@ export function WelcomingHero() {
     outputRange: ["0deg", "180deg"],
   });
 
-  // Lógica de Saudação (Memória Emocional)
+  // Lógica de Saudação (Curadoria e Acolhimento)
   const greeting = React.useMemo(() => {
     if (currentMood) {
-      return `Que sua busca por ${moodNoun} seja abençoada.`;
+      return `O melhor auxílio para o seu momento.`;
     }
 
     if (lastMood && lastMoodDate) {
       const lastMoodNoun = MOOD_TO_NOUN[lastMood] || "luz";
-      return `Ontem você buscou ${lastMoodNoun}. Como seu coração está hoje?`;
+      return `Como seu coração está hoje? Identifique seu sentimento abaixo.`;
     }
 
-    return `Como posso ajudar seu coração hoje?`;
-  }, [currentMood, lastMood, lastMoodDate, moodNoun]);
+    return `Como podemos acompanhar seu coração hoje?`;
+  }, [currentMood, lastMood, lastMoodDate]);
 
   function handlePrayerPress(prayerId: string) {
     navigation.navigate("PrayerPrep", { id: prayerId });
@@ -117,12 +117,6 @@ export function WelcomingHero() {
         <View style={{ flex: 1 }}>
           <View style={styles.suggestionHeader}>
             <Text style={styles.suggestionLabel}>Para o seu Momento</Text>
-            <TouchableOpacity 
-              onPress={() => navigation.navigate("AllPrayers", {})}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Text style={styles.allPrayersLink}>Catálogo de Preces</Text>
-            </TouchableOpacity>
           </View>
           <Text style={styles.greeting} numberOfLines={expanded ? 0 : 1}>
             {greeting}
@@ -146,14 +140,15 @@ export function WelcomingHero() {
         <View style={styles.activeContent}>
           {!hasMood && (
             <Text style={styles.description}>
-              Escolha como você se sente acima para receber sugestões especiais.
+              Identifique seu sentimento para que possamos te acompanhar com o melhor
+              auxílio.
             </Text>
           )}
 
-          {suggestedContent?.prayers && (
+          {suggestedContent?.prayers && hasMood && (
             <View style={{ marginTop: 0 }}>
               <Text style={styles.scrollTip}>Role a lista para ver outras orações</Text>
-              <View style={[styles.prayerList, { maxHeight: 180, paddingHorizontal: 4 }]}>
+              <View style={[styles.prayerList, { maxHeight: 243, paddingHorizontal: 4 }]}>
                 <ScrollView
                   showsVerticalScrollIndicator={true}
                   nestedScrollEnabled={true}
