@@ -45,27 +45,31 @@ export function AmbientPlayer() {
   // Monitorar status do player para detectar quando música termina
   const status = useAudioPlayerStatus(player);
 
-  // Quando a track mudar, tocar automaticamente
+  // Quando a track mudar (se for válida), tocar automaticamente
   useEffect(() => {
     if (currentTrack && currentTrack.length > 0) {
       console.log("[AmbientPlayer] Track mudou para:", currentTrack);
-      // Aguarda um pouco para o player ser recriado com o novo source
       const timer = setTimeout(() => {
         player.play();
         setPlaying(true);
-        setDownloadingId(null); // Limpar estado de download quando começar a tocar
+        setDownloadingId(null);
       }, 300);
 
       return () => clearTimeout(timer);
+    } else {
+      // Se a track limpou globalmente, parar imediatamente
+      player.pause();
     }
   }, [currentTrack]);
 
-  // Sincronizar estado do player com o store usando status
+  // Sincroniza o Store DE FORA PARA DENTRO: obedece aos botões remotos ou Kill-Switch
   useEffect(() => {
-    if (status.playing !== isPlaying) {
-      setPlaying(status.playing);
+    if (!isPlaying && player.playing) {
+      player.pause();
+    } else if (isPlaying && !player.playing && currentTrack) {
+      player.play();
     }
-  }, [status.playing]);
+  }, [isPlaying, currentTrack]);
 
   // Detectar quando música termina e tocar a próxima
   useEffect(() => {
@@ -111,9 +115,12 @@ export function AmbientPlayer() {
           player.play();
           setPlaying(true);
         } else {
-          // Tocar nova
+          // Tocar nova (Em cache)
           console.log("[AmbientPlayer] Selecionando nova track:", audio.localUri);
-          setDownloadingId(audio.id); // Breve feedback antes de currenTrack mudar
+          
+          // Removemos o 'setDownloadingId' estético aqui. Se a música já existe em disco, 
+          // ela não deve simular engasgo visual de reload para não causar desconfiança do cache.
+          setPlaying(true); // Engata o store
           setCurrentTrack(audio.localUri);
 
           // Log Analytics
@@ -124,18 +131,20 @@ export function AmbientPlayer() {
         return;
       }
 
-      // 2. Se NÃO tem URI, iniciar download
+      // 2. Se NÃO tem URI, iniciar download real com Feedback Spinning Completo
       console.log("[AmbientPlayer] Áudio não em cache, baixando:", audio.title);
       setDownloadingId(audio.id);
 
       // Baixa o áudio
       const newLocalUri = await getAudioLocalUri(audio.storagePath);
 
-      // Atualiza o cache do React Query para persistir que agora temos o arquivo
+      // Atualiza o cache do React Query para persistir que agora temos o arquivo localmente
       await queryClient.invalidateQueries({ queryKey: ["ambientAudios"] });
 
       // Toca o áudio baixado imediatamente
       setCurrentTrack(newLocalUri);
+      setPlaying(true);
+      // setDownloadingId(null) será limpo pelo Effect mestre
     } catch (error) {
       console.error("[AmbientPlayer] Erro ao reproduzir/baixar áudio:", error);
       setPlaying(false);

@@ -88,7 +88,8 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: theme.colors.background,
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
-      padding: theme.spacing.lg,
-      gap: theme.spacing.xs,
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.md,
+      gap: theme.spacing.md,
     },
   });

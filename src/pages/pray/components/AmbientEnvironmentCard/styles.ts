@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native";
 import { ITheme } from "@/configs/theme/types";
+import { StyleSheet } from "react-native";
 
 export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
@@ -150,7 +150,7 @@ export const createStyles = (theme: ITheme) =>
       justifyContent: "center",
     },
     minimalTrackName: {
-      ...theme.text("md", "semibold", theme.colors.text),
+      ...theme.text("md", "regular", theme.colors.text),
     },
     minimalActionLabel: {
       ...theme.text("xs", "regular", theme.colors.textSecondary),

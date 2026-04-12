@@ -1,37 +1,112 @@
-import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ArrowLeft, Play, Sparkles } from "lucide-react-native";
-import { ActivityIndicator } from "react-native";
-import { PrayStackParamList } from "@/routers/types";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AmbientEnvironmentCard } from "@/pages/pray/components/AmbientEnvironmentCard";
 import { usePrayer } from "@/pages/pray/hooks/usePrayer";
+import { PrayStackParamList } from "@/routers/types";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ArrowLeft, Play, Sparkles } from "lucide-react-native";
+import React, { useEffect, useRef } from "react";
+import { ActivityIndicator, Animated, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { createStyles } from "./styles";
+import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 
 type NavigationProp = NativeStackNavigationProp<PrayStackParamList, "PrayerPrep">;
 type RouteParam = RouteProp<PrayStackParamList, "PrayerPrep">;
 
 export function PrayerPrepScreen() {
   const { theme } = useAppTheme();
+  const styles = createStyles(theme);
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteParam>();
   const { id } = route.params;
   const { data: prayer, isLoading } = usePrayer(id);
+  const { setPlaying, setCurrentTrack } = useAmbientPlayerStore();
+
+  // Extermina o som caso o usuário desista na Preparação e volte pra Home/Lista
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      if (e.data.action.type === "GO_BACK" || e.data.action.type === "POP") {
+        setPlaying(false);
+        setCurrentTrack(null);
+      }
+    });
+    return unsubscribe;
+  }, [navigation, setPlaying, setCurrentTrack]);
+
+  // ANIMAÇÕES NATIVAS
+  const enterAnim = React.useRef(new Animated.Value(0)).current;
+  const pulseAnim = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    // 1. Entrada suave de baixo para cima
+    Animated.timing(enterAnim, {
+      toValue: 1,
+      duration: 1000,
+      delay: 100,
+      useNativeDriver: true,
+    }).start();
+
+    // 2. Anéis Pulsando Lento (respiração)
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 3500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 0,
+          duration: 3500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [enterAnim, pulseAnim]);
+
+  // Interpolações da Aura
+  const ringOuterStyle = {
+    opacity: pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [0.1, 0.4] }),
+    transform: [
+      { scale: pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.15] }) },
+    ],
+  };
+  const ringMiddleStyle = {
+    opacity: pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [0.2, 0.6] }),
+    transform: [
+      { scale: pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1.1] }) },
+    ],
+  };
+  const ringInnerStyle = {
+    opacity: pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [0.4, 0.9] }),
+    transform: [
+      { scale: pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1.05] }) },
+    ],
+  };
+
+  // Interpolação de entrada (Fade-in e Slide-up)
+  const contentStyle = {
+    opacity: enterAnim,
+    transform: [
+      {
+        translateY: enterAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [30, 0],
+        }),
+      },
+    ],
+  };
 
   function handleStartPrayer() {
-    navigation.replace("Prayer", { id });
+    setPlaying(true); // Auto-Play garantido e forçado se houvesse track 
+    navigation.navigate("Prayer", { id });
   }
 
   if (isLoading || !prayer) {
     return (
-      <SafeAreaView
-        style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
-        edges={["top"]}
-      >
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
+        <View style={styles.loadingContainer}>
           <ActivityIndicator color={theme.colors.primary} size="large" />
         </View>
       </SafeAreaView>
@@ -39,18 +114,13 @@ export function PrayerPrepScreen() {
   }
 
   return (
-    <View
-      style={[
-        styles.safeArea,
-        { backgroundColor: theme.colors.background, paddingTop: insets.top },
-      ]}
-    >
+    <View style={[styles.safeArea, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <View style={styles.headerRow}>
           {/* Botão Voltar */}
           <View style={styles.headerSide}>
             <TouchableOpacity
-              style={[styles.backButton, { backgroundColor: theme.colors.accent }]}
+              style={styles.backButton}
               onPress={() => navigation.goBack()}
               activeOpacity={0.7}
             >
@@ -58,23 +128,12 @@ export function PrayerPrepScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Ícone Central com Anéis */}
+          {/* Ícone Central com Anéis Animados */}
           <View style={styles.iconRingsContainer}>
-            <View
-              style={[styles.ringOuter, { borderColor: theme.colors.primary + "15" }]}
-            />
-            <View
-              style={[styles.ringMiddle, { borderColor: theme.colors.primary + "25" }]}
-            />
-            <View
-              style={[styles.ringInner, { borderColor: theme.colors.primary + "40" }]}
-            />
-            <View
-              style={[
-                styles.iconLargeContainer,
-                { backgroundColor: theme.colors.primary },
-              ]}
-            >
+            <Animated.View style={[styles.ringOuter, ringOuterStyle]} />
+            <Animated.View style={[styles.ringMiddle, ringMiddleStyle]} />
+            <Animated.View style={[styles.ringInner, ringInnerStyle]} />
+            <View style={styles.iconLargeContainer}>
               <Sparkles size={40} color={theme.colors.background} />
             </View>
           </View>
@@ -84,37 +143,33 @@ export function PrayerPrepScreen() {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <Animated.ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        style={contentStyle}
+      >
         <View style={styles.messageContainer}>
-          <Text style={[styles.title, { color: theme.colors.text }]}>{prayer.title}</Text>
-          <Text style={[styles.preTitle, { color: theme.colors.primary }]}>
-            Que a luz do amparo envolva o seu caminho
-          </Text>
-          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
-            Busque o silêncio interior e respire fundo, deixando as preocupações de lado
-            agora. Sinta a presença dos bons espíritos ao seu redor e, se desejar, escolha
-            uma melodia para elevar sua vibração. Prepare o coração para este diálogo de
-            amor.
+          <Text style={styles.title}>{prayer.title}</Text>
+          <Text style={styles.subtitle}>
+            {`Aquiete o coração e respire fundo. Se desejar,\n escolha uma melodia para elevar sua prece.`}
           </Text>
         </View>
 
         <View style={styles.ambientContainer}>
           <AmbientEnvironmentCard variant="selector" />
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
 
       <View
         style={[
-          styles.footer,
+          styles.footerContainer,
           {
-            borderTopColor: theme.colors.border,
-            backgroundColor: theme.colors.background,
-            paddingBottom: Math.max(insets.bottom, 24),
+            paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : 28,
           },
         ]}
       >
         <TouchableOpacity
-          style={[styles.startButton, { backgroundColor: theme.colors.primary }]}
+          style={styles.startButton}
           onPress={handleStartPrayer}
           activeOpacity={0.8}
         >
@@ -123,123 +178,9 @@ export function PrayerPrepScreen() {
             color={theme.colors.background}
             fill={theme.colors.background}
           />
-          <Text style={[styles.startButtonText, { color: theme.colors.background }]}>
-            Iniciar Prece
-          </Text>
+          <Text style={styles.startButtonText}>Iniciar Prece</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 20,
-  },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  headerSide: {
-    width: 40,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  iconRingsContainer: {
-    width: 104,
-    height: 104,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  ringInner: {
-    position: "absolute",
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    borderWidth: 4,
-  },
-  ringMiddle: {
-    position: "absolute",
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    borderWidth: 2,
-  },
-  ringOuter: {
-    position: "absolute",
-    width: 104,
-    height: 104,
-    borderRadius: 52,
-    borderWidth: 1,
-  },
-  iconLargeContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  content: {
-    flexGrow: 1,
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-  },
-  messageContainer: {
-    marginTop: 10,
-    marginBottom: 40,
-    alignItems: "center",
-  },
-  preTitle: {
-    fontFamily: "Oswald_400Regular",
-    fontSize: 18,
-    marginBottom: 24,
-  },
-  title: {
-    fontFamily: "BarlowCondensed_400Regular",
-    fontSize: 24,
-    textAlign: "center",
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontFamily: "BarlowCondensed_400Regular",
-    fontSize: 18,
-    textAlign: "justify",
-    lineHeight: 24,
-  },
-  ambientContainer: {
-    marginTop: 0,
-  },
-  footer: {
-    paddingHorizontal: 20,
-    paddingVertical: 24,
-    borderTopWidth: 1,
-  },
-  startButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 18,
-    borderRadius: 16,
-    gap: 12,
-  },
-  startButtonText: {
-    fontFamily: "BarlowCondensed_600SemiBold",
-    fontSize: 20,
-    textTransform: "uppercase",
-    letterSpacing: 1,
-  },
-});

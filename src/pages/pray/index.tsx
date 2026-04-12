@@ -22,6 +22,7 @@ import { createStyles } from "@/pages/pray/styles";
 import { PrayerCard } from "@/pages/pray/components/PrayerCard";
 import { useAuth } from "@/stores/authStore";
 import { useMoodStore } from "@/stores/moodStore";
+import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -35,6 +36,7 @@ export default function PrayScreen() {
   const { currentMood, clearMood } = useMoodStore();
   const queryClient = useQueryClient();
 
+  const { setPlaying, setCurrentTrack } = useAmbientPlayerStore();
   const { syncWithFirebase } = usePrayerFavoritesStore();
 
   React.useEffect(() => {
@@ -43,12 +45,14 @@ export default function PrayScreen() {
     }
   }, [user?.uid, syncWithFirebase]);
 
-  // Atualiza o cache e reseta o humor ao entrar na tela
+  // Atualiza o cache, reseta o humor e desliga áudio da Oração passada ao retornar
   useFocusEffect(
     React.useCallback(() => {
       queryClient.invalidateQueries({ queryKey: ["prayers"] });
       clearMood();
-    }, [queryClient, clearMood])
+      setPlaying(false);
+      setCurrentTrack(null);
+    }, [queryClient, clearMood, setPlaying, setCurrentTrack])
   );
 
   function handlePrayerPress(prayerId: string) {

@@ -3,39 +3,63 @@ import { Theme } from "@/types/theme";
 
 export const createStyles = (theme: Theme) => StyleSheet.create({
   container: {
-    paddingVertical: 12,
-    backgroundColor: theme.colors.background,
-  },
-  content: {
-    flexDirection: "column",
-    gap: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: `${theme.colors.primary}10`,
+    borderRadius: 28, // Pill shape perfeitamente arredondada para 56px
+    height: 56, // Força a barra a manter a exata mesma altura sempre
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: `${theme.colors.primary}20`,
   },
   infoSection: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 12,
+    flex: 1,
+  },
+  iconCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: theme.colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
   },
   trackName: {
-    fontFamily: "BarlowCondensed_600SemiBold",
-    fontSize: 14,
-    color: theme.colors.primary,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
+    ...theme.text("sm", "medium", theme.colors.text),
+    flex: 1,
   },
-  controlsSection: {
+  actionGroup: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    gap: 20,
+    gap: 8,
+  },
+  volumeToggleBtn: {
+    width: 36,
+    height: 36,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  playButton: {
+    width: 36,
+    height: 36,
+    alignItems: "center",
+    justifyContent: "center",
   },
   volumeGroup: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    justifyContent: "space-between",
+    gap: 8,
   },
   volumeButton: {
-    padding: 4,
+    width: 36,
+    height: 36,
+    alignItems: "center",
+    justifyContent: "center",
   },
   volumeBarBg: {
     flex: 1,
@@ -48,29 +72,11 @@ export const createStyles = (theme: Theme) => StyleSheet.create({
     height: "100%",
     backgroundColor: theme.colors.primary,
   },
-  actionGroup: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  playButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  stopButton: {
+  closeVolumeBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: theme.colors.accent,
     alignItems: "center",
     justifyContent: "center",
+    marginLeft: 4,
   },
 });

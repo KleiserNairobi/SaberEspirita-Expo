@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -16,6 +16,7 @@ import { createStyles } from "@/pages/pray/prayer/styles";
 import { sharePrayer } from "@/utils/sharing";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
 import { ReadingToolbar } from "@/components/ReadingToolbar";
 import { AmbientPlayerControls } from "@/pages/pray/components/AmbientPlayerControls";
@@ -23,6 +24,7 @@ import { AmbientPlayerControls } from "@/pages/pray/components/AmbientPlayerCont
 export function PrayerScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<PrayStackParamList>>();
   const route = useRoute<RouteProp<PrayStackParamList, "Prayer">>();
   const { id } = route.params;
@@ -33,10 +35,20 @@ export function PrayerScreen() {
 
   const { data: prayer, isLoading } = usePrayer(id);
   const { isFavorite, toggleFavorite } = usePrayerFavoritesStore();
-  const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } =
-    usePrayerPreferencesStore();
-
+  const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } = usePrayerPreferencesStore();
   const queryClient = useQueryClient();
+  const { setPlaying, setCurrentTrack } = useAmbientPlayerStore();
+
+  // Extermina som instataneamente se houver regressão na pilha (Back Hardware, Seta ou Cancelamento)
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      if (e.data.action.type === "GO_BACK" || e.data.action.type === "POP") {
+        setPlaying(false);
+        setCurrentTrack(null);
+      }
+    });
+    return unsubscribe;
+  }, [navigation, setPlaying, setCurrentTrack]);
 
   // Registrar uso da oração
   useEffect(() => {
@@ -96,8 +108,12 @@ export function PrayerScreen() {
 
   function handleFinishPrayer() {
     // Pode engatilhar feedback (vibração ou haptics) aqui futuramente.
-    // Volta suavemente para o catálogo/home porque a prepScreen foi substituída na pilha.
-    navigation.goBack();
+    if (navigation.canGoBack()) {
+      // Retorna e mata a Preparação do caminho, parando nas listas (Origens)!
+      navigation.pop(2);
+    } else {
+      navigation.navigate("PrayHome");
+    }
   }
 
   if (isLoading) {
@@ -164,16 +180,19 @@ export function PrayerScreen() {
         </Text>
       </ScrollView>
 
-      <View style={styles.fixedFooter}>
+      <View style={[
+        styles.fixedFooter, 
+        { paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : 32 }
+      ]}>
+        <AmbientPlayerControls />
+
         <TouchableOpacity 
           style={styles.finishButton}
           onPress={handleFinishPrayer}
           activeOpacity={0.8}
         >
-          <Text style={styles.finishButtonText}>Finalizei minha prece</Text>
+          <Text style={styles.finishButtonText}>Finalizei Minha Prece</Text>
         </TouchableOpacity>
-
-        <AmbientPlayerControls />
       </View>
     </SafeAreaView>
   );

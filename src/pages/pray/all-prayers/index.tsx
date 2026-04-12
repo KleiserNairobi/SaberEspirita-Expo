@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { View, SectionList, Text, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp, useFocusEffect } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   ArrowLeft,
@@ -20,6 +20,7 @@ import {
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { PrayStackParamList } from "@/routers/types";
+import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
 import { PRAYER_MOMENTS, PrayerMoment } from "@/types/prayer";
 
@@ -50,10 +51,19 @@ export function AllPrayersScreen() {
 
   const { data: allPrayers, isLoading } = useAllPrayersWithCategories();
   const { isFavorite, favorites } = usePrayerFavoritesStore();
+  const { setPlaying, setCurrentTrack } = useAmbientPlayerStore();
 
   const [searchQuery, setSearchQuery] = useState("");
   const initialCategory = route.params?.initialCategory || "ALL";
   const [filterType, setFilterType] = useState<string>(initialCategory);
+
+  // Desliga o áudio imediatamente se este catálogo receber foco na tela (kill-switch auditivo)
+  useFocusEffect(
+    React.useCallback(() => {
+      setPlaying(false);
+      setCurrentTrack(null);
+    }, [setPlaying, setCurrentTrack])
+  );
 
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {

@@ -54,7 +54,16 @@ export async function downloadAudio(
   fileName: string
 ): Promise<string> {
   try {
-    // Obter URL de download do Firebase Storage
+    // 1. OTIMIZAÇÃO DE CACHE DESTRUTIVO: 
+    // Garante que não pagaremos latência de REDE perguntando ao Firebase
+    // por uma URL expiráveis se o arquivo já existir com o nome exato.
+    const localAlreadyExists = await checkLocalAudioAvailability(fileName);
+    if (localAlreadyExists) {
+        console.log("[AmbientAudio] Abortando Firebase Fetch, servindo cache direto:", fileName);
+        return localAlreadyExists;
+    }
+
+    // 2. Obter URL de download do Firebase Storage (Custa processamento/rede)
     const storageRef = ref(storage, storagePath);
     const downloadUrl = await getDownloadURL(storageRef);
 
