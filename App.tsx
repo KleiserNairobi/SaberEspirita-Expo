@@ -194,7 +194,7 @@ function AppContent() {
         <BottomSheetModalProvider>
             <PersistQueryClientProvider
               client={queryClient}
-              persistOptions={{ persister, buster: "1.0.0" }}
+              persistOptions={{ persister, buster: "1.0.3" }}
             >
               <GlobalAmbientPlayer />
               <StatusBar 

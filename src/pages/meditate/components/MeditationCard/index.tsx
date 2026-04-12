@@ -1,4 +1,4 @@
-import { Headphones, Lock, Play, Clock } from "lucide-react-native";
+import { Headphones, Lock, ChevronRight, Clock, User } from "lucide-react-native";
 import { differenceInDays } from "date-fns";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -44,22 +44,25 @@ export function MeditationCard({ meditation, onPress }: MeditationCardProps) {
             </View>
           )}
         </View>
-        <Text style={styles.description} numberOfLines={1}>
-          {meditation.author}
-        </Text>
+        
         <View style={styles.metaRow}>
-          <Clock size={12} color={theme.colors.textSecondary} />
-          <Text style={styles.metaText}>{meditation.durationMinutes} min</Text>
+          <View style={styles.metaItem}>
+            <User size={12} color={theme.colors.textSecondary} />
+            <Text style={styles.metaTextAuthor} numberOfLines={1}>
+              {meditation.author}
+            </Text>
+          </View>
+
+          <View style={styles.metaDivider} />
+
+          <View style={styles.metaItem}>
+            <Clock size={12} color={theme.colors.textSecondary} />
+            <Text style={styles.metaText}>{meditation.durationMinutes} min</Text>
+          </View>
         </View>
       </View>
 
-      <View style={styles.actionContainer}>
-        {isLocked ? (
-          <Lock size={18} color={theme.colors.accent} />
-        ) : (
-          <Play size={18} color={theme.colors.primary} fill={theme.colors.primary} />
-        )}
-      </View>
+      <ChevronRight size={20} color={theme.colors.muted} />
     </TouchableOpacity>
   );
 }

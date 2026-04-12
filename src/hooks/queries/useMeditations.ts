@@ -6,17 +6,17 @@ import {
 import { useQuery } from "@tanstack/react-query";
 
 export const MEDITATION_KEYS = {
-  all: ["meditations"] as const,
-  featured: ["meditations", "featured"] as const,
-  detail: (id: string) => ["meditations", "detail", id] as const,
+  all: ["meditations", "v2"] as const,
+  featured: ["meditations", "featured", "v2"] as const,
+  detail: (id: string) => ["meditations", "detail", id, "v2"] as const,
 };
 
 export function useMeditations() {
   return useQuery({
     queryKey: MEDITATION_KEYS.all,
     queryFn: getMeditations,
-    staleTime: 1000 * 60 * 60 * 24, // 24 horas - Médio raramente muda
-    gcTime: 1000 * 60 * 60 * 24 * 7, // Mantem cache por 7 dias
+    staleTime: 1000 * 60 * 5, // 5 minutos
+    gcTime: 1000 * 60 * 30, // 30 minutos
     refetchOnMount: "always",
     refetchOnReconnect: true,
   });
@@ -25,11 +25,26 @@ export function useMeditations() {
 export function useFeaturedMeditations() {
   return useQuery({
     queryKey: MEDITATION_KEYS.featured,
-    queryFn: getFeaturedMeditations,
-    staleTime: 1000 * 60 * 60 * 24,
-    gcTime: 1000 * 60 * 60 * 24 * 7,
+    queryFn: async () => {
+      // Força a busca de todas para garantir que pegamos as meditações novas 
+      // que sabemos que existem e estão retornando na listagem completa.
+      const all = await getMeditations();
+      
+      const featured = all
+        .filter((m) => m.featured === true)
+        .sort((a, b) => {
+          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          // As mais novas (Saber Espírita) primeiro
+          return dateB - dateA;
+        });
+
+      console.log(`[useFeaturedMeditations] Encontradas ${featured.length} meditações em destaque.`);
+      return featured;
+    },
+    staleTime: 0, // Força revalidação imediata
+    gcTime: 1000 * 60 * 10,
     refetchOnMount: "always",
-    refetchOnReconnect: true,
   });
 }
 
@@ -38,8 +53,8 @@ export function useMeditation(id: string) {
     queryKey: MEDITATION_KEYS.detail(id),
     queryFn: () => getMeditationById(id),
     enabled: !!id,
-    staleTime: 1000 * 60 * 60 * 24,
-    gcTime: 1000 * 60 * 60 * 24 * 7,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
     refetchOnMount: "always",
     refetchOnReconnect: true,
   });
