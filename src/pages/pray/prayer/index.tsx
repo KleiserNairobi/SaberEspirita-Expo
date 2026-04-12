@@ -14,6 +14,7 @@ import { useAuth } from "@/stores/authStore";
 import { logPrayerUsage } from "@/services/firebase/prayerUsageService";
 import { createStyles } from "@/pages/pray/prayer/styles";
 import { sharePrayer } from "@/utils/sharing";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
 import { ReadingToolbar } from "@/components/ReadingToolbar";
@@ -35,14 +36,20 @@ export function PrayerScreen() {
   const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } =
     usePrayerPreferencesStore();
 
+  const queryClient = useQueryClient();
+
   // Registrar uso da oração
   useEffect(() => {
     if (prayer && (user || isGuest) && !hasLogged.current) {
       const userId = user?.uid || "guest";
       logPrayerUsage(prayer.id, userId);
       hasLogged.current = true;
+
+      // Invalida o cache de tendências para que os números de visualização
+      // sejam atualizados silenciosamente no background ao voltar para a home
+      queryClient.invalidateQueries({ queryKey: ["prayers", "trending"] });
     }
-  }, [prayer, user, isGuest]);
+  }, [prayer, user, isGuest, queryClient]);
 
   async function handleShare() {
     if (!prayer) return;

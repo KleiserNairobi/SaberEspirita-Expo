@@ -123,7 +123,7 @@ export function TrendingPrayers() {
 
             {/* Lista de Ranking */}
             <View style={styles.prayerList}>
-              {(isLoading || isFetching) ? (
+              {isLoading ? (
                 <View style={styles.loadingContainer}>
                   <ActivityIndicator color={theme.colors.primary} />
                 </View>
