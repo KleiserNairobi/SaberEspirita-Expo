@@ -15,7 +15,7 @@ import { MOODS } from "./index";
 import { createStyles } from "./styles";
 
 export const MoodSelectionBottomSheet = forwardRef<BottomSheetModal>(
-  function MoodSelectionBottomSheet(_, ref) {
+  function MoodSelectionBottomSheet(props, ref) {
     const { theme } = useAppTheme();
     const { currentMood, setMood } = useMoodStore();
     const insets = useSafeAreaInsets();

@@ -47,7 +47,7 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("md", "regular"),
     },
     optionLabelSelected: {
-      fontFamily: theme.typography.weights.semibold,
+      ...theme.text("md", "semibold", theme.colors.primary),
     },
     selectedDot: {
       width: 8,

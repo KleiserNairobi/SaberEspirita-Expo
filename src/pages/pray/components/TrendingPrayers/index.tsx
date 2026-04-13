@@ -6,7 +6,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { PrayStackParamList } from "@/routers/types";
-import { useTrendingPrayers, TrendingPeriod } from "../../hooks/useTrendingPrayers";
+import { useTrendingPrayers, TrendingPeriod } from "@/pages/pray/hooks/useTrendingPrayers";
 import { createStyles } from "./styles";
 
 export function TrendingPrayers() {

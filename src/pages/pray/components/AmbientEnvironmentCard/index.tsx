@@ -17,7 +17,7 @@ import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
 import { downloadAudio } from "@/services/firebase/ambientAudioService";
 import { IAmbientAudio } from "@/types/ambientAudio";
 import { useMoodStore } from "@/stores/moodStore";
-import { useSuggestedContent } from "../../hooks/useSuggestedContent";
+import { useSuggestedContent } from "@/pages/pray/hooks/useSuggestedContent";
 import { AmbientSelectionBottomSheet } from "./AmbientSelectionBottomSheet";
 import { createStyles } from "./styles";
 

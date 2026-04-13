@@ -113,8 +113,7 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("md", "regular"),
     },
     audioOptionTextSelected: {
-      color: theme.colors.primary,
-      fontFamily: theme.typography.weights.semibold,
+      ...theme.text("md", "semibold", theme.colors.primary),
     },
     minimalContainer: {
       marginTop: 20,

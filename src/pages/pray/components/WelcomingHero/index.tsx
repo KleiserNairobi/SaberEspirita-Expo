@@ -7,7 +7,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { UserMood, useMoodStore } from "@/stores/moodStore";
 import { useAuthStore } from "@/stores/authStore";
-import { useSuggestedContent } from "../../hooks/useSuggestedContent";
+import { useSuggestedContent } from "@/pages/pray/hooks/useSuggestedContent";
 import { AppStackParamList, PrayStackParamList } from "@/routers/types";
 import { createStyles } from "./styles";
 
