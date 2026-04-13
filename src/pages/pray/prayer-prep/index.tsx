@@ -22,7 +22,7 @@ export function PrayerPrepScreen() {
   const route = useRoute<RouteParam>();
   const { id } = route.params;
   const { data: prayer, isLoading } = usePrayer(id);
-  const { setPlaying, setCurrentTrack } = useAmbientPlayerStore();
+  const { isDownloading, currentTrack, currentAudioId, setPlaying, setCurrentTrack } = useAmbientPlayerStore();
 
   // Extermina o som caso o usuário desista na Preparação e volte pra Home/Lista
   useEffect(() => {
