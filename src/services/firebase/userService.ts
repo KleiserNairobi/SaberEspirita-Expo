@@ -69,4 +69,30 @@ export const userService = {
       throw error;
     }
   },
+
+  /**
+   * Atualiza o nome de exibição do usuário no Auth e no Firestore.
+   */
+  async updateUserName(currentUser: User, newName: string) {
+    if (!currentUser) return;
+    try {
+      // 1. Atualizar no Auth
+      await updateProfile(currentUser, { displayName: newName });
+      
+      // 2. Atualizar no Firestore (Users e Scores)
+      const updatedAt = new Date();
+      await setDoc(doc(db, "users", currentUser.uid), { userName: newName, updatedAt }, { merge: true });
+      await setDoc(doc(db, "users_scores", currentUser.uid), { userName: newName, updatedAt }, { merge: true });
+      
+      // 3. Forçar recarregamento do usuário e atualizar Store global
+      await currentUser.reload();
+      useAuthStore.getState().setUser(auth.currentUser || currentUser);
+      
+      console.log("UserService: Nome atualizado com sucesso para:", newName);
+    } catch (error) {
+      console.error("UserService: Erro ao atualizar nome do usuário:", error);
+      throw error;
+    }
+  },
 };
+
