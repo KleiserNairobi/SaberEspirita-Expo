@@ -99,6 +99,12 @@ export function PrayerPrepScreen() {
   };
 
   function handleStartPrayer() {
+    // Se tem um áudio selecionado (ID presente), mas ainda não tem trilha local (URL ausente)
+    // e está baixando, não permitimos avançar para não quebrar a imersão na próxima tela.
+    if (currentAudioId && !currentTrack && isDownloading) {
+      return;
+    }
+
     setPlaying(true); // Auto-Play garantido e forçado se houvesse track 
     navigation.navigate("Prayer", { id });
   }
@@ -169,16 +175,27 @@ export function PrayerPrepScreen() {
         ]}
       >
         <TouchableOpacity
-          style={styles.startButton}
+          style={[styles.startButton, (isDownloading && currentAudioId) && { opacity: 0.6 }]}
           onPress={handleStartPrayer}
           activeOpacity={0.8}
+          disabled={isDownloading && !!currentAudioId}
         >
-          <Play
-            size={20}
-            color={theme.colors.background}
-            fill={theme.colors.background}
-          />
-          <Text style={styles.startButtonText}>Iniciar Prece</Text>
+          {isDownloading && currentAudioId ? (
+            <ActivityIndicator 
+              color={theme.colors.background} 
+              size="small" 
+              style={{ marginRight: 10 }} 
+            />
+          ) : (
+            <Play
+              size={20}
+              color={theme.colors.background}
+              fill={theme.colors.background}
+            />
+          )}
+          <Text style={styles.startButtonText}>
+            {isDownloading && currentAudioId ? "Preparando Melodia..." : "Iniciar Prece"}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

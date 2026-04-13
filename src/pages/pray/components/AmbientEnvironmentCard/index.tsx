@@ -48,13 +48,12 @@ export function AmbientEnvironmentCard({ variant = "full" }: AmbientEnvironmentC
   const { suggestedContent } = useSuggestedContent(currentMood);
   const { data: audios, isLoading } = useAmbientAudios();
   
-  const { isPlaying, currentTrack, currentAudioId, setPlaying, setCurrentTrack } = useAmbientPlayerStore();
+  const { isPlaying, currentTrack, currentAudioId, isDownloading, setPlaying, setCurrentTrack, setDownloading } = useAmbientPlayerStore();
   const player = useAudioPlayer(currentTrack || "");
   const status = useAudioPlayerStatus(player);
 
   const bottomSheetRef = React.useRef<BottomSheetModal>(null);
   
-  const [isDownloading, setIsDownloading] = React.useState(false);
   const [pendingName, setPendingName] = React.useState<string | null>(null);
 
   // Áudio ativo baseado no ID estável (evita que a interface se perca com URIs voláteis)
@@ -102,7 +101,7 @@ export function AmbientEnvironmentCard({ variant = "full" }: AmbientEnvironmentC
     } else {
       try {
         // Feedback instantâneo no COMBO
-        setIsDownloading(true);
+        setDownloading(true);
         setPendingName(FRIENDLY_NAMES[audio.id] || audio.title);
         
         // Baixa o áudio em segundo plano
@@ -111,7 +110,7 @@ export function AmbientEnvironmentCard({ variant = "full" }: AmbientEnvironmentC
       } catch (error) {
         Alert.alert("Erro", "Não foi possível carregar este áudio ambiente.");
       } finally {
-        setIsDownloading(false);
+        setDownloading(false);
         setPendingName(null);
       }
     }
