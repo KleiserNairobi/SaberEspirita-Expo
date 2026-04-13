@@ -22,7 +22,8 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { PrayStackParamList } from "@/routers/types";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
-import { PRAYER_MOMENTS, PrayerMoment } from "@/types/prayer";
+import { differenceInDays } from "date-fns";
+import { PRAYER_MOMENTS, PrayerMoment, IPrayer } from "@/types/prayer";
 
 import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { PrayerCard } from "@/pages/pray/components/PrayerCard";
@@ -83,10 +84,28 @@ export function AllPrayersScreen() {
     return counts;
   }, [allPrayers, favorites]);
 
+  const categoryHasNew = useMemo(() => {
+    const hasNew: Record<string, boolean> = {
+      ALL: false,
+    };
+    if (allPrayers) {
+      allPrayers.forEach((prayer) => {
+        const isNew = prayer.createdAt && differenceInDays(new Date(), prayer.createdAt) <= 15;
+        if (isNew) {
+          hasNew.ALL = true;
+          prayer.categories.forEach((cat) => {
+            hasNew[cat] = true;
+          });
+        }
+      });
+    }
+    return hasNew;
+  }, [allPrayers]);
+
   const CATEGORIES = useMemo(() => {
     const baseCats = [
-      { type: "ALL", label: "Todas", icon: LayoutGrid, count: categoryCounts.ALL },
-      { type: "FAVORITES", label: "Favoritas", icon: Heart, count: categoryCounts.FAVORITES },
+      { type: "ALL", label: "Todas", icon: LayoutGrid, count: categoryCounts.ALL, hasNew: categoryHasNew.ALL },
+      { type: "FAVORITES", label: "Favoritas", icon: Heart, count: categoryCounts.FAVORITES, hasNew: false },
     ];
     
     const momentCats = Object.entries(PRAYER_MOMENTS).map(([key, { label }]) => ({
@@ -94,10 +113,11 @@ export function AllPrayersScreen() {
       label,
       icon: MOMENT_ICONS[key as PrayerMoment] || BookOpen,
       count: categoryCounts[key] || 0,
+      hasNew: categoryHasNew[key] || false,
     }));
 
     return [...baseCats, ...momentCats];
-  }, [categoryCounts]);
+  }, [categoryCounts, categoryHasNew]);
 
   const filteredPrayers = useMemo(() => {
     if (!allPrayers) return [];
@@ -198,6 +218,7 @@ export function AllPrayersScreen() {
                       >
                         <View style={styles.categoryIconContainer}>
                           <cat.icon size={20} color={theme.colors.primary} />
+                          {cat.hasNew && <View style={styles.badge} />}
                         </View>
                         <Text style={styles.categoryLabel}>{cat.label}</Text>
                         <Text style={styles.categoryCount}>

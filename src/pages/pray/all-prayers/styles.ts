@@ -66,6 +66,17 @@ export function createStyles(theme: ITheme) {
       ...theme.text("xs", "regular", theme.colors.textSecondary),
       textAlign: "center",
     },
+    badge: {
+      position: "absolute",
+      top: -2,
+      right: -2,
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      backgroundColor: theme.colors.success,
+      borderWidth: 2,
+      borderColor: theme.colors.card,
+    },
     headerTextContainer: {
       flex: 1,
     },
