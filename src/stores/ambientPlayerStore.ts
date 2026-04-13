@@ -27,10 +27,10 @@ export const useAmbientPlayerStore = create<AmbientPlayerState & AmbientPlayerAc
 
     // Ações
     setPlaying: (isPlaying: boolean) => set({ isPlaying }),
-    setCurrentTrack: (currentTrack: string | null, currentAudioId: string | null = null) => 
+    setCurrentTrack: (currentTrack: string | null, currentAudioId?: string | null) => 
       set((state) => ({ 
         currentTrack, 
-        currentAudioId: currentAudioId !== null ? currentAudioId : state.currentAudioId 
+        currentAudioId: currentAudioId !== undefined ? currentAudioId : state.currentAudioId 
       })),
     setVolume: (volume: number) => set({ volume }),
     setDownloading: (isDownloading: boolean) => set({ isDownloading }),
