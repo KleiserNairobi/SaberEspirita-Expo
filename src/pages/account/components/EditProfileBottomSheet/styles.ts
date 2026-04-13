@@ -1,17 +1,18 @@
-import { StyleSheet } from "react-native";
 import { ITheme } from "@/configs/theme/types";
+import { StyleSheet } from "react-native";
 
 export function createStyles(theme: ITheme) {
   return StyleSheet.create({
     container: {
-      padding: 24,
+      paddingHorizontal: 24,
+      paddingTop: 8,
       gap: 24,
     },
     title: {
-      ...theme.text("xl", "bold"),
+      ...theme.text("xl", "semibold"),
       color: theme.colors.text,
       textAlign: "center",
-      marginBottom: 8,
+      marginBottom: 6,
     },
     description: {
       ...theme.text("md", "regular", theme.colors.textSecondary),
@@ -26,9 +27,9 @@ export function createStyles(theme: ITheme) {
       marginLeft: 4,
     },
     input: {
-      height: 56,
+      height: 48,
       backgroundColor: theme.colors.card,
-      borderRadius: 16,
+      borderRadius: 12,
       paddingHorizontal: 16,
       borderWidth: 1,
       borderColor: theme.colors.border,

@@ -33,7 +33,7 @@ export function Button({
     size === "lg" && styles.containerLg,
     variant === "outline" && styles.containerOutline,
     fullWidth && styles.containerFullWidth,
-    disabled && styles.containerDisabled,
+    disabled && (variant === "outline" ? styles.containerOutlineDisabled : styles.containerDisabled),
   ];
 
   const textStyle = [
@@ -41,7 +41,7 @@ export function Button({
     size === "sm" && styles.textSm,
     size === "lg" && styles.textLg,
     variant === "outline" && styles.textOutline,
-    disabled && styles.textDisabled,
+    disabled && (variant === "outline" ? styles.textOutlineDisabled : styles.textDisabled),
   ];
 
   return (

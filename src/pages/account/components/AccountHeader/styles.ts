@@ -30,10 +30,10 @@ export const createStyles = (theme: ITheme) =>
       position: "absolute",
       right: 0,
       bottom: 0,
-      backgroundColor: theme.colors.text,
-      width: 26,
-      height: 26,
-      borderRadius: 13,
+      backgroundColor: theme.colors.primary,
+      width: 30,
+      height: 30,
+      borderRadius: 15,
       borderWidth: 2,
       borderColor: theme.colors.background,
       alignItems: "center",
@@ -45,4 +45,3 @@ export const createStyles = (theme: ITheme) =>
       gap: 8,
     },
   });
-

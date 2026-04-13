@@ -32,6 +32,12 @@ export function createStyles(theme: ITheme) {
       width: "100%",
     },
     containerDisabled: {
+      backgroundColor: `${theme.colors.primary}15`,
+      borderColor: "transparent",
+    },
+    containerOutlineDisabled: {
+      backgroundColor: "transparent",
+      borderColor: theme.colors.border,
       opacity: 0.5,
     },
     text: {
@@ -48,6 +54,9 @@ export function createStyles(theme: ITheme) {
       color: theme.colors.text,
     },
     textDisabled: {
+      color: theme.colors.primary,
+    },
+    textOutlineDisabled: {
       color: theme.colors.muted,
     },
   });

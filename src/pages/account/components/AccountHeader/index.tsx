@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import { Edit2 } from "lucide-react-native";
+import { Pencil } from "lucide-react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { createStyles } from "./styles";
@@ -16,18 +16,18 @@ export function AccountHeader({ displayName, email, onEditPress }: AccountHeader
 
   return (
     <View style={styles.header}>
-      <TouchableOpacity 
-        style={styles.avatarSection} 
+      <TouchableOpacity
+        style={styles.avatarSection}
         onPress={onEditPress}
         activeOpacity={0.7}
       >
         <View style={[styles.avatar, { backgroundColor: theme.colors.primary }]}>
           <Text style={styles.avatarText}>{displayName.charAt(0).toUpperCase()}</Text>
           <View style={styles.editBadge}>
-            <Edit2 size={12} color={theme.colors.onPrimary} />
+            <Pencil size={14} color={theme.colors.onPrimary} />
           </View>
         </View>
-        
+
         <View style={styles.nameRow}>
           <Text style={theme.text("xxl", "semibold")}>{displayName}</Text>
         </View>
