@@ -143,16 +143,13 @@ export function AmbientEnvironmentCard({ variant = "full" }: AmbientEnvironmentC
           activeOpacity={0.7}
         >
           <View style={styles.minimalSelectorContent}>
-            <View style={[
-              styles.minimalIconContainer, 
-              { backgroundColor: (isCurrentPlaying || isDownloading) ? theme.colors.primary : theme.colors.primary + "15" }
-            ]}>
+            <View style={styles.minimalIconContainer}>
               {isDownloading ? (
                 <ActivityIndicator size="small" color={theme.colors.background} />
               ) : isCurrentPlaying ? (
-                <Waves size={16} color={theme.colors.background} />
+                <Waves size={14} color={theme.colors.background} />
               ) : (
-                <Music size={16} color={theme.colors.primary} />
+                <Music size={14} color={theme.colors.background} />
               )}
             </View>
             <View>
