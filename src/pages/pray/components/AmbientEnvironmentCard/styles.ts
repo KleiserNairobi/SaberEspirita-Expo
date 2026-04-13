@@ -103,12 +103,6 @@ export const createStyles = (theme: ITheme) =>
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.border,
     },
-    audioOptionSelected: {
-      backgroundColor: `${theme.colors.primary}10`,
-      borderRadius: 12,
-      paddingHorizontal: 12,
-      marginHorizontal: -12,
-    },
     audioOptionText: {
       ...theme.text("md", "regular"),
     },

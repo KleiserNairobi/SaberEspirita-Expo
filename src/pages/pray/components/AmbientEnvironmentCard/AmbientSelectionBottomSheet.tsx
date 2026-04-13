@@ -1,23 +1,17 @@
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
+import { Music, VolumeX } from "lucide-react-native";
 import React, { forwardRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import {
-  BottomSheetModal,
-  BottomSheetBackdrop,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
-import { Music, Waves, Moon, VolumeX } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { IAmbientAudio } from "@/types/ambientAudio";
 import { createStyles } from "./styles";
-
-const ICON_MAP = {
-  music: Music,
-  waves: Waves,
-  moon: Moon,
-} as const;
 
 const FRIENDLY_NAMES: Record<string, string> = {
   AveMaria: "Consolo da Alma",
@@ -68,15 +62,12 @@ export const AmbientSelectionBottomSheet = forwardRef<
         }}
       >
         <View style={styles.modalHeader}>
-          <Text style={styles.modalTitle}>Sons de Sintonia</Text>
+          <Text style={styles.modalTitle}>Melodias de Sintonia</Text>
         </View>
 
         {/* Opção Silêncio */}
         <TouchableOpacity
-          style={[
-            styles.audioOption,
-            !currentAudioId && styles.audioOptionSelected,
-          ]}
+          style={styles.audioOption}
           onPress={() => onSelect(null)}
           activeOpacity={0.7}
         >
@@ -100,29 +91,33 @@ export const AmbientSelectionBottomSheet = forwardRef<
           <Text
             style={[
               styles.audioOptionText,
+              { flex: 1 },
               !currentAudioId && styles.audioOptionTextSelected,
             ]}
           >
-            Sem música (Silêncio)
+            Sem melodia (Silêncio)
           </Text>
-          {!currentAudioId && <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: theme.colors.primary }} />}
+          {!currentAudioId && (
+            <View
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: theme.colors.primary,
+              }}
+            />
+          )}
         </TouchableOpacity>
 
         {/* Lista de Áudios */}
         {audios?.map((audio, index) => {
-          const Icon = ICON_MAP[audio.icon as keyof typeof ICON_MAP] || Music;
-          // COMPARANDO POR ID ESTÁVEL - Correção definitiva para o destaque
           const isSelected = audio.id === currentAudioId;
           const isLast = index === audios.length - 1;
 
           return (
             <TouchableOpacity
               key={audio.id}
-              style={[
-                styles.audioOption,
-                isSelected && styles.audioOptionSelected,
-                isLast && { borderBottomWidth: 0 },
-              ]}
+              style={[styles.audioOption, isLast && { borderBottomWidth: 0 }]}
               onPress={() => onSelect(audio)}
               activeOpacity={0.7}
             >
@@ -138,7 +133,7 @@ export const AmbientSelectionBottomSheet = forwardRef<
                   justifyContent: "center",
                 }}
               >
-                <Icon
+                <Music
                   size={20}
                   color={isSelected ? theme.colors.background : theme.colors.primary}
                 />
@@ -146,12 +141,22 @@ export const AmbientSelectionBottomSheet = forwardRef<
               <Text
                 style={[
                   styles.audioOptionText,
+                  { flex: 1 },
                   isSelected && styles.audioOptionTextSelected,
                 ]}
               >
                 {FRIENDLY_NAMES[audio.id] || audio.title}
               </Text>
-              {isSelected && <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: theme.colors.primary }} />}
+              {isSelected && (
+                <View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: theme.colors.primary,
+                  }}
+                />
+              )}
             </TouchableOpacity>
           );
         })}
