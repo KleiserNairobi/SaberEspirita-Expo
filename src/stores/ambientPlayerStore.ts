@@ -22,7 +22,7 @@ export const useAmbientPlayerStore = create<AmbientPlayerState & AmbientPlayerAc
     isPlaying: false,
     currentTrack: null,
     currentAudioId: null,
-    volume: 0.7,
+    volume: 0.4,
     isDownloading: false,
 
     // Ações

@@ -36,47 +36,10 @@ export const createStyles = (theme: Theme) => StyleSheet.create({
     alignItems: "center",
     gap: 8,
   },
-  volumeToggleBtn: {
-    width: 36,
-    height: 36,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   playButton: {
     width: 36,
     height: 36,
     alignItems: "center",
     justifyContent: "center",
-  },
-  volumeGroup: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  volumeButton: {
-    width: 36,
-    height: 36,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  volumeBarBg: {
-    flex: 1,
-    height: 4,
-    backgroundColor: theme.colors.border,
-    borderRadius: 2,
-    overflow: "hidden",
-  },
-  volumeBarFill: {
-    height: "100%",
-    backgroundColor: theme.colors.primary,
-  },
-  closeVolumeBtn: {
-    width: 36,
-    height: 36,
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: 4,
   },
 });
