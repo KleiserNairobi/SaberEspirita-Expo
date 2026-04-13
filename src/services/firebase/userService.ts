@@ -73,8 +73,11 @@ export const userService = {
   /**
    * Atualiza o nome de exibição do usuário no Auth e no Firestore.
    */
-  async updateUserName(currentUser: User, newName: string) {
-    if (!currentUser) return;
+  async updateUserName(_: User, newName: string) {
+    // IMPORTANTE: Buscamos a instância real do SDK para evitar erros de serialização da Store
+    const currentUser = auth.currentUser;
+    if (!currentUser) throw new Error("Usuário não autenticado no Firebase");
+    
     try {
       // 1. Atualizar no Auth
       await updateProfile(currentUser, { displayName: newName });
@@ -86,7 +89,7 @@ export const userService = {
       
       // 3. Forçar recarregamento do usuário e atualizar Store global
       await currentUser.reload();
-      useAuthStore.getState().setUser(auth.currentUser || currentUser);
+      useAuthStore.getState().setUser(auth.currentUser);
       
       console.log("UserService: Nome atualizado com sucesso para:", newName);
     } catch (error) {
