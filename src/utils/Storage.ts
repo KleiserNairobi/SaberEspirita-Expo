@@ -86,3 +86,19 @@ export const AUTH_KEYS = {
   TOKEN: "@auth_token",
   LAST_LOGIN: "@last_login",
 } as const;
+
+/**
+ * Adapter do MMKV para compatibilidade com o Firebase Auth Persistence.
+ * O Firebase SDK para React Native espera uma interface similar ao AsyncStorage.
+ */
+export const mmkvFirebaseStorage = {
+  getItem: async (key: string): Promise<string | null> => {
+    return storage.getString(key) ?? null;
+  },
+  setItem: async (key: string, value: string): Promise<void> => {
+    storage.set(key, value);
+  },
+  removeItem: async (key: string): Promise<void> => {
+    storage.remove(key);
+  },
+};

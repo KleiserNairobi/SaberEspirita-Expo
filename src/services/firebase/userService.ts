@@ -72,28 +72,42 @@ export const userService = {
 
   /**
    * Atualiza o nome de exibição do usuário no Auth e no Firestore.
+   * Esta versão é resiliente a falhas de inicialização do SDK do Firebase.
    */
-  async updateUserName(_: User, newName: string) {
-    // IMPORTANTE: Buscamos a instância real do SDK para evitar erros de serialização da Store
-    const currentUser = auth.currentUser;
-    if (!currentUser) throw new Error("Usuário não autenticado no Firebase");
+  async updateUserName(user: User, newName: string) {
+    const uid = user?.uid;
     
+    if (!uid) {
+      throw new Error("Sessão não identificada. Por favor, faça login novamente.");
+    }
+
     try {
-      // 1. Atualizar no Auth
-      await updateProfile(currentUser, { displayName: newName });
-      
-      // 2. Atualizar no Firestore (Users e Scores)
+      // 1. Atualizar no Firestore (Users e Scores) - FUNDAMENTAL
+      // Isso utiliza apenas o UID, que já temos disponível no MMKV da Store.
+      // Funciona mesmo que o Firebase SDK ainda esteja em processo de boot.
       const updatedAt = new Date();
-      await setDoc(doc(db, "users", currentUser.uid), { userName: newName, updatedAt }, { merge: true });
-      await setDoc(doc(db, "users_scores", currentUser.uid), { userName: newName, updatedAt }, { merge: true });
+      await setDoc(doc(db, "users", uid), { userName: newName, updatedAt }, { merge: true });
+      await setDoc(doc(db, "users_scores", uid), { userName: newName, updatedAt }, { merge: true });
       
-      // 3. Forçar recarregamento do usuário e atualizar Store global
-      await currentUser.reload();
-      useAuthStore.getState().setUser(auth.currentUser);
+      // 2. Tentar atualizar no Firebase Auth (Opcional/Bônus)
+      // O updateProfile exige uma instância real ('class UserImpl') do SDK.
+      // Se não tivermos agora, o Firestore já garantiu o dado.
+      if (auth.currentUser) {
+        try {
+          await updateProfile(auth.currentUser, { displayName: newName });
+          await auth.currentUser.reload();
+        } catch (authError) {
+          console.warn("UserService: Não foi possível atualizar o Auth Profile agora, mas o Firestore foi atualizado.");
+        }
+      }
+
+      // 3. Atualizar a Store global para refletir a mudança na UI imediatamente
+      // Usamos o objeto user existente mesclado com o novo nome
+      useAuthStore.getState().setUser({ ...user, displayName: newName } as User);
       
-      console.log("UserService: Nome atualizado com sucesso para:", newName);
+      console.log("UserService: Perfil atualizado com sucesso no Firestore.");
     } catch (error) {
-      console.error("UserService: Erro ao atualizar nome do usuário:", error);
+      console.error("UserService: Erro crítico ao atualizar perfil:", error);
       throw error;
     }
   },

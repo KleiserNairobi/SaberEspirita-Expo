@@ -27,14 +27,39 @@ export const EditProfileBottomSheet = forwardRef<
 
   const [name, setName] = useState(initialName);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const emailLikeRegex = /(@|\.com|\.br|\.net|\.org|gmail|hotmail|outlook|yahoo)/i;
 
   // Sincroniza o estado local se o initialName mudar externamente
   useEffect(() => {
     setName(initialName);
+    setError("");
   }, [initialName]);
 
+  function validateName(value: string): boolean {
+    if (!value.trim()) {
+      setError("Por favor, informe seu nome/apelido.");
+      return false;
+    }
+
+    if (value.trim().length < 3) {
+      setError("O nome/apelido deve ter no mínimo 3 caracteres.");
+      return false;
+    }
+
+    if (emailLikeRegex.test(value.trim())) {
+      setError("Por favor, não utilize um e-mail como nome/apelido.");
+      return false;
+    }
+
+    setError("");
+    return true;
+  }
+
   async function handleSave() {
-    if (!name.trim() || name.trim() === initialName) return;
+    if (name.trim() === initialName) return;
+    if (!validateName(name)) return;
 
     setIsLoading(true);
     try {
@@ -50,6 +75,7 @@ export const EditProfileBottomSheet = forwardRef<
 
   function handleCancel() {
     setName(initialName);
+    setError("");
     // @ts-ignore
     ref.current?.dismiss();
   }
@@ -64,6 +90,9 @@ export const EditProfileBottomSheet = forwardRef<
       />
     );
   }
+
+  const isSaveDisabled =
+    isLoading || !name.trim() || name.trim() === initialName || !!error;
 
   return (
     <BottomSheetModal
@@ -88,9 +117,13 @@ export const EditProfileBottomSheet = forwardRef<
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Nome ou Apelido</Text>
           <BottomSheetTextInput
-            style={styles.input}
+            style={[styles.input, !!error && styles.inputError]}
             value={name}
-            onChangeText={setName}
+            onChangeText={(text) => {
+              setName(text);
+              if (error) setError("");
+            }}
+            onBlur={() => validateName(name)} // Valida ao sair do campo também
             placeholder="Digite seu nome ou apelido"
             placeholderTextColor={theme.colors.muted}
             autoFocus
@@ -98,6 +131,7 @@ export const EditProfileBottomSheet = forwardRef<
             returnKeyType="done"
             onSubmitEditing={handleSave}
           />
+          {!!error && <Text style={styles.errorText}>{error}</Text>}
         </View>
 
         <View style={styles.actions}>
@@ -113,7 +147,7 @@ export const EditProfileBottomSheet = forwardRef<
             title="Salvar Alterações"
             onPress={handleSave}
             loading={isLoading}
-            disabled={!name.trim() || name.trim() === initialName}
+            disabled={isSaveDisabled}
             fullWidth
           />
         </View>

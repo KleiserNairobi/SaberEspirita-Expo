@@ -35,6 +35,14 @@ export function createStyles(theme: ITheme) {
       borderColor: theme.colors.border,
       ...theme.text("md", "regular", theme.colors.text),
     },
+    inputError: {
+      borderColor: theme.colors.error,
+    },
+    errorText: {
+      ...theme.text("xs", "regular", theme.colors.error),
+      marginLeft: 4,
+      marginTop: -4,
+    },
     actions: {
       gap: 12,
       marginTop: 8,
