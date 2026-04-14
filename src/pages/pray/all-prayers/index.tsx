@@ -148,8 +148,16 @@ export function AllPrayersScreen() {
     navigation.navigate("PrayerPrep", { id: prayerId });
   }
 
+  function renderLoading() {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+
   function renderEmpty() {
-    if (isLoading) return null;
+    if (isLoading) return renderLoading();
     return (
       <View style={[styles.emptyContainer, { paddingHorizontal: theme.spacing.lg }]}>
         <Text style={styles.emptyText}>
@@ -168,89 +176,83 @@ export function AllPrayersScreen() {
       <StatusBar style={theme.isDark ? "light" : "dark"} />
 
       <View style={styles.container}>
-        {isLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={theme.colors.primary} />
-          </View>
-        ) : (
-          <SectionList
-            sections={[{ data: filteredPrayers }]}
-            keyExtractor={(item) => item.id}
-            stickySectionHeadersEnabled={true}
-            ListHeaderComponent={
-              <>
-                <View style={styles.header}>
-                  <TouchableOpacity
-                    style={styles.backButton}
-                    onPress={() => navigation.goBack()}
-                    activeOpacity={0.7}
-                  >
-                    <ArrowLeft size={20} color={theme.colors.primary} />
-                  </TouchableOpacity>
-
-                  <View style={styles.headerTextContainer}>
-                    <Text style={styles.title}>Preces</Text>
-                    <Text style={styles.subtitle}>Orações para todos os momentos</Text>
-                  </View>
-                </View>
-
-                {/* Carrossel de Categorias */}
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  style={styles.categoriesScroll}
-                  contentContainerStyle={styles.categoriesContent}
+        <SectionList
+          sections={isLoading ? [] : [{ data: filteredPrayers }]}
+          keyExtractor={(item) => item.id}
+          stickySectionHeadersEnabled={true}
+          ListHeaderComponent={
+            <>
+              <View style={styles.header}>
+                <TouchableOpacity
+                  style={styles.backButton}
+                  onPress={() => navigation.goBack()}
+                  activeOpacity={0.7}
                 >
-                  {CATEGORIES.map((cat) => {
-                    const isSelected = filterType === cat.type;
-                    const cardBg = isSelected ? theme.colors.primary + "10" : theme.colors.card;
-                    const cardBorder = isSelected ? theme.colors.primary : theme.colors.border;
+                  <ArrowLeft size={20} color={theme.colors.primary} />
+                </TouchableOpacity>
 
-                    return (
-                      <TouchableOpacity
-                        key={cat.type}
-                        style={[
-                          styles.categoryCard,
-                          { backgroundColor: cardBg, borderColor: cardBorder },
-                        ]}
-                        onPress={() => setFilterType(cat.type)}
-                        activeOpacity={0.7}
-                      >
-                        <View style={styles.categoryIconContainer}>
-                          <cat.icon size={20} color={theme.colors.primary} />
-                          {cat.hasNew && <View style={styles.badge} />}
-                        </View>
-                        <Text style={styles.categoryLabel}>{cat.label}</Text>
-                        <Text style={styles.categoryCount}>
-                          {cat.count} {cat.count === 1 ? "oração" : "orações"}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </ScrollView>
-              </>
-            }
-            renderSectionHeader={() => (
-              <View style={styles.stickyHeader}>
-                <View style={styles.searchContainer}>
-                  <SearchBar
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                    placeholder="Buscar oração..."
-                  />
+                <View style={styles.headerTextContainer}>
+                  <Text style={styles.title}>Preces</Text>
+                  <Text style={styles.subtitle}>Orações para todos os momentos</Text>
                 </View>
               </View>
-            )}
-            renderItem={({ item }) => (
-              <View style={styles.itemWrapper}>
-                <PrayerCard prayer={item} onPress={() => handlePrayerPress(item.id)} />
+
+              {/* Carrossel de Categorias */}
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.categoriesScroll}
+                contentContainerStyle={styles.categoriesContent}
+              >
+                {CATEGORIES.map((cat) => {
+                  const isSelected = filterType === cat.type;
+                  const cardBg = isSelected ? theme.colors.primary + "10" : theme.colors.card;
+                  const cardBorder = isSelected ? theme.colors.primary : theme.colors.border;
+
+                  return (
+                    <TouchableOpacity
+                      key={cat.type}
+                      style={[
+                        styles.categoryCard,
+                        { backgroundColor: cardBg, borderColor: cardBorder },
+                      ]}
+                      onPress={() => setFilterType(cat.type)}
+                      activeOpacity={0.7}
+                    >
+                      <View style={styles.categoryIconContainer}>
+                        <cat.icon size={20} color={theme.colors.primary} />
+                        {cat.hasNew && <View style={styles.badge} />}
+                      </View>
+                      <Text style={styles.categoryLabel}>{cat.label}</Text>
+                      <Text style={styles.categoryCount}>
+                        {cat.count} {cat.count === 1 ? "oração" : "orações"}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </>
+          }
+          renderSectionHeader={() => (
+            <View style={styles.stickyHeader}>
+              <View style={styles.searchContainer}>
+                <SearchBar
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  placeholder="Buscar oração..."
+                />
               </View>
-            )}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={renderEmpty}
-          />
-        )}
+            </View>
+          )}
+          renderItem={({ item }) => (
+            <View style={styles.itemWrapper}>
+              <PrayerCard prayer={item} onPress={() => handlePrayerPress(item.id)} />
+            </View>
+          )}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={renderEmpty}
+        />
       </View>
     </SafeAreaView>
   );

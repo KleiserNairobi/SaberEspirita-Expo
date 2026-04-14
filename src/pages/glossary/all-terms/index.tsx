@@ -118,8 +118,16 @@ export function AllTermsScreen() {
     );
   }
 
+  function renderLoading() {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+
   function renderEmpty() {
-    if (isLoading) return null;
+    if (isLoading) return renderLoading();
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>
@@ -129,29 +137,7 @@ export function AllTermsScreen() {
     );
   }
 
-  function renderLoading() {
-    return (
-      <View style={{ gap: theme.spacing.md, paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.md }}>
-        {[1, 2, 3, 4, 5].map((i) => (
-          <View
-            key={i}
-            style={{
-              backgroundColor: theme.colors.card,
-              height: 120,
-              borderRadius: 16,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              opacity: 0.6,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <ActivityIndicator color={theme.colors.primary} size="small" />
-          </View>
-        ))}
-      </View>
-    );
-  }
+
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
@@ -167,7 +153,6 @@ export function AllTermsScreen() {
           windowSize={5}
           maxToRenderPerBatch={5}
           updateCellsBatchingPeriod={30}
-          removeClippedSubviews={Platform.OS === "android"}
           ListHeaderComponent={
             <>
               {/* Header: Layout Compacto (Voltar | Textos) */}
@@ -236,7 +221,7 @@ export function AllTermsScreen() {
             </View>
           )}
           contentContainerStyle={styles.list}
-          ListEmptyComponent={isLoading ? renderLoading : renderEmpty}
+          ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}
         />
       </View>

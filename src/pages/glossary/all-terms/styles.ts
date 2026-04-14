@@ -113,5 +113,10 @@ export function createStyles(theme: ITheme) {
       ...theme.text("md", "regular"),
       color: theme.colors.textSecondary,
     },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
   });
 }
