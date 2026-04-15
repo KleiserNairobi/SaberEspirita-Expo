@@ -1,36 +1,93 @@
-import React, { useEffect } from "react";
-import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
+import React, { useEffect, useRef } from "react";
+import TrackPlayer, { State, usePlaybackState, RepeatMode } from "react-native-track-player";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 
 /**
  * Componente Invisível que gerencia o ciclo de vida do áudio ambiente
  * de forma global no App, garantindo persistência entre trocas de tela.
+ * 
+ * Agora orquestra a biblioteca react-native-track-player, que roda imune 
+ * a recargas da Screen e não conflita com efeitos sonoros do Quiz.
  */
 export function GlobalAmbientPlayer() {
   const { currentTrack, isPlaying, volume, setPlaying } = useAmbientPlayerStore();
-  
-  // O Player é recriado sempre que a trilha muda
-  const player = useAudioPlayer(currentTrack || "");
-  const status = useAudioPlayerStatus(player);
+  const playbackState = usePlaybackState();
+  const previousTrackRef = useRef<string | null>(null);
 
-  // Sincronizar volume
+  // 1. Sincronizar o volume
   useEffect(() => {
-    player.volume = volume;
-  }, [volume, player]);
+    TrackPlayer.setVolume(volume);
+  }, [volume]);
 
-  // Sincronizar Play/Pause baseado no Store
+  // 2. Sincronizar a Trilha (Track)
   useEffect(() => {
-    if (isPlaying && !status.playing && currentTrack) {
-      player.play();
-    } else if (!isPlaying && status.playing) {
-      player.pause();
+    async function syncTrack() {
+      if (currentTrack && currentTrack !== previousTrackRef.current) {
+        previousTrackRef.current = currentTrack;
+        
+        await TrackPlayer.reset();
+        await TrackPlayer.add({
+          id: 'ambient_track',
+          url: currentTrack,
+          title: 'Som Ambiente',
+          artist: 'Oração',
+          // O TrackPlayer exige esses metadados para não quebrar na tela de bloqueio
+        });
+        
+        // Desativando modo Loop (o som encerra ao final da trilha)
+        await TrackPlayer.setRepeatMode(RepeatMode.Off);
+        
+        if (isPlaying) {
+          await TrackPlayer.play();
+        }
+      } else if (!currentTrack && previousTrackRef.current) {
+        // Se a faixa for nula (ex: usuário cancelou Oração), desliga de vez
+        await TrackPlayer.reset();
+        previousTrackRef.current = null;
+      }
     }
-  }, [isPlaying, status.playing, currentTrack, player]);
+    syncTrack();
+  }, [currentTrack]);
 
-  // Loop infinito para sons de ambiente
+  // 3. Sincronizar Play/Pause direcional (Zustand -> TrackPlayer)
   useEffect(() => {
-    player.loop = true;
-  }, [player]);
+    async function syncPlayback() {
+      // Impede re-execução ao final da música (corrida superada)
+      if (isPlaying && playbackState.state === State.Ended) {
+        return; 
+      }
+
+      // Evita chamadas cegas. Só toca/pausa se houver dessincronia.
+      if (isPlaying && playbackState.state !== State.Playing && playbackState.state !== State.Buffering) {
+        await TrackPlayer.play();
+      } else if (!isPlaying && (playbackState.state === State.Playing || playbackState.state === State.Buffering || playbackState.state === State.Ready)) {
+        await TrackPlayer.pause();
+      }
+    }
+    syncPlayback();
+  }, [isPlaying, playbackState.state]);
+
+  // 4. Sincronizar eventos de hardware e fim de trilha (Hardware -> Zustand)
+  useEffect(() => {
+    const syncHardwareState = async () => {
+      // Se o áudio foi pausado externamente (ou acabou e mudou o estado)
+      if (playbackState.state === State.Paused && isPlaying) {
+        setPlaying(false);
+      } else if (playbackState.state === State.Playing && !isPlaying) {
+        setPlaying(true);
+      }
+      
+      // DETECTAR FIM DA MÚSICA: Para no final, sem rebobinar e sem loop.
+      if (playbackState.state === State.Ended && isPlaying) {
+          console.log("[GlobalAmbientPlayer] Áudio finalizado naturalmente.");
+          setPlaying(false);
+          await TrackPlayer.pause();
+      }
+    };
+
+    syncHardwareState();
+  }, [playbackState.state]);
+
 
   return null; // Componente puramente lógico
 }

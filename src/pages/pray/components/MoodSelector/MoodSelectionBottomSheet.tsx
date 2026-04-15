@@ -11,7 +11,7 @@ import { RotateCcw, Sparkles } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useMoodStore } from "@/stores/moodStore";
-import { MOODS } from "./index";
+import { MOODS } from "./constants";
 import { createStyles } from "./styles";
 
 export const MoodSelectionBottomSheet = forwardRef<BottomSheetModal>(

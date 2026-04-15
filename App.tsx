@@ -37,6 +37,8 @@ import { useVersionControl } from "./src/hooks/useVersionControl";
 import { useUpdateModal } from "./src/hooks/useUpdateModal";
 import { UpdateModal } from "./src/components/UpdateModal";
 import { GlobalAmbientPlayer } from "./src/components/AmbientPlayer/GlobalAmbientPlayer";
+import TrackPlayer from "react-native-track-player";
+import { playbackService, setupTrackPlayer } from "./src/services/audio/trackPlayerService";
 
 // Configurar MMKV storage para cache do React Query
 const mmkvStorage = createMMKV({ id: "react-query-cache" });
@@ -119,6 +121,7 @@ export default function App() {
   useEffect(() => {
     async function prepare() {
       try {
+        await setupTrackPlayer();
         if (fontsLoaded) {
           await new Promise((resolve) => setTimeout(resolve, 500));
           setAppIsReady(true);
@@ -213,6 +216,9 @@ function AppContent() {
 if (__DEV__) {
   require("./ReactotronConfig");
 }
+
+// Registra o serviço de áudio background na Thread Nativa do App
+TrackPlayer.registerPlaybackService(() => playbackService);
 
 // Registra o componente raiz com Expo
 registerRootComponent(App);

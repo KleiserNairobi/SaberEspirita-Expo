@@ -55,13 +55,12 @@
     </dict>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Permita sua localização em uso para receber notificações personalizadas sobre o Saber Espírita.</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your microphone</string>
     <key>RCTNewArchEnabled</key>
     <true/>
     <key>UIBackgroundModes</key>
     <array>
       <string>remote-notification</string>
+      <string>audio</string>
     </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>

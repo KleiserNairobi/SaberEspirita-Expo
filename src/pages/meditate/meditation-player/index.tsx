@@ -12,11 +12,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MeditateStackParamList } from "@/routers/types";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
+import TrackPlayer, { State, usePlaybackState, useProgress, RepeatMode } from "react-native-track-player";
 import { ArrowLeft, Pause, Play, SkipBack, SkipForward } from "lucide-react-native";
 
 import { useMeditation } from "@/hooks/queries/useMeditations";
 import { useAppTheme } from "@/hooks/useAppTheme";
+// Removemos useAmbientPlayerStore para evitar colisão com a oração
 import { getCachedAudioUri } from "@/services/audio/audioCacheService";
 import { createStyles } from "./styles";
 
@@ -52,44 +53,99 @@ export default function MeditationPlayerScreen() {
     fetchLocalAudio();
   }, [meditation?.audioUrl]);
 
-  const player = useAudioPlayer(localAudioUri || "");
-  const status = useAudioPlayerStatus(player);
+  // --- TRACK PLAYER STATE LOCAL (DESACOLPADO DA ORAÇAO) ---
+  const { position, duration } = useProgress(200);
+  const [isPlaying, setPlaying] = useState(false);
+  
+  // O isReady agora é simples: se temos duração ou se o player diz que está tocando
+  const isReady = duration > 0 || isPlaying;
+
+  const playbackState = usePlaybackState();
+
+  useEffect(() => {
+    if (playbackState.state === State.Playing && !isPlaying) setPlaying(true);
+    else if (playbackState.state === State.Paused && isPlaying) setPlaying(false);
+    else if (playbackState.state === State.Ended && isPlaying) {
+      setPlaying(false);
+      TrackPlayer.pause();
+    }
+  }, [playbackState.state]);
+
+  const isLoaded = React.useRef(false);
+
+  // Carrega e Sobe o Áudio para o Serviço de Background Nativo
+  useEffect(() => {
+    async function setupAndLoad() {
+      if (localAudioUri && meditation && !isLoaded.current) {
+        try {
+            // Apenas informamos ao Estado Global que estamos tocando, 
+            // mas NÃO setamos a Track ali para não haver dupla inserção na fila na engine Nativa.
+            setPlaying(true);
+
+            await TrackPlayer.reset();
+            await new Promise(resolve => setTimeout(resolve, 200));
+
+            await TrackPlayer.add({
+              id: meditation.id,
+              url: localAudioUri,
+              title: meditation.title,
+              artist: meditation.author,
+              artwork: meditation.imageUrl,
+            });
+            
+            // Garantir que a meditação pare no final sem rebobinar/repetir 
+            // (previne bugs de engines nativas)
+            await TrackPlayer.setRepeatMode(RepeatMode.Off);
+
+            await TrackPlayer.play();
+            isLoaded.current = true;
+        } catch (err) {
+            console.error("[MeditationPlayer] Erro crítico:", err);
+        }
+      }
+    }
+    setupAndLoad();
+    
+    return () => {
+      // KILL-SWITCH LOCAL: Apenas encerramos esta reprodução específica.
+      setPlaying(false);
+      TrackPlayer.reset();
+      isLoaded.current = false;
+    };
+  }, [localAudioUri, meditation?.id]);
 
   useEffect(() => {
     // Log target: only when the audio is actually playing, avoiding multiple logs per session
-    if (player?.playing && meditation && !hasLogged.current) {
+    if (isPlaying && meditation && !hasLogged.current) {
       logMeditationUsage(meditation.id, user?.uid || "guest", "guided");
       hasLogged.current = true;
     }
-  }, [player?.playing, meditation, user]);
+  }, [isPlaying, meditation, user]);
 
   function handleGoBack() {
     navigation.goBack();
   }
 
-  function togglePlayPause() {
-    if (!player) return;
-
-    if (player.playing) {
-      player.pause();
+  const togglePlayPause = async () => {
+    if (isPlaying) {
+      await TrackPlayer.pause();
+      setPlaying(false);
     } else {
-      player.play();
+      await TrackPlayer.play();
+      setPlaying(true);
     }
+  };
+
+  async function handleSeekForward() {
+    if (!isReady) return;
+    const newTime = position + 15;
+    await TrackPlayer.seekTo(Math.min(newTime, duration));
   }
 
-  function handleSeekForward() {
-    if (!player) return;
-    // status.currentTime e status.duration costumam ser lidos em SEGUNDOS na API native do expo-audio.
-    // Vamos adicionar 15 segundos ao tempo atual
-    const newTime = player.currentTime + 15;
-    player.seekTo(newTime);
-  }
-
-  function handleSeekBackward() {
-    if (!player) return;
-    // Voltar 15 segundos
-    const newTime = player.currentTime - 15;
-    player.seekTo(Math.max(0, newTime));
+  async function handleSeekBackward() {
+    if (!isReady) return;
+    const newTime = position - 15;
+    await TrackPlayer.seekTo(Math.max(0, newTime));
   }
 
   function formatTime(seconds: number) {
@@ -143,21 +199,21 @@ export default function MeditationPlayerScreen() {
           <Text style={styles.author}>{meditation.author}</Text>
         </View>
 
-        {/* Barra de Progresso Real (expo-audio) */}
+        {/* Barra de Progresso Real (Track Player) */}
         <View style={styles.progressContainer}>
           <View style={styles.progressBarBackground}>
             <View
               style={[
                 styles.progressBarFill,
                 {
-                  width: `${status.duration > 0 ? (status.currentTime / status.duration) * 100 : 0}%`,
+                  width: `${duration > 0 ? (position / duration) * 100 : 0}%`,
                 },
               ]}
             />
           </View>
           <View style={styles.timeRow}>
-            <Text style={styles.timeText}>{formatTime(status.currentTime)}</Text>
-            <Text style={styles.timeText}>{formatTime(status.duration)}</Text>
+            <Text style={styles.timeText}>{formatTime(position)}</Text>
+            <Text style={styles.timeText}>{formatTime(duration)}</Text>
           </View>
         </View>
 
@@ -175,16 +231,16 @@ export default function MeditationPlayerScreen() {
             style={styles.playButton}
             onPress={togglePlayPause}
             activeOpacity={0.8}
-            disabled={status.duration === 0}
+            disabled={isLoading}
           >
-            {status.duration === 0 ? (
-              <ActivityIndicator size="small" color={theme.colors.background} />
-            ) : player.playing ? (
+            {isPlaying ? (
               <Pause
                 size={26}
                 color={theme.colors.background}
                 fill={theme.colors.background}
               />
+            ) : !isReady ? (
+              <ActivityIndicator size="small" color={theme.colors.background} />
             ) : (
               <Play
                 size={26}

@@ -1,5 +1,5 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
+import TrackPlayer, { State, usePlaybackState } from "react-native-track-player";
 import { ChevronDown, Moon, Music, Pause, Play, Waves } from "lucide-react-native";
 import React from "react";
 import {
@@ -59,8 +59,8 @@ export function AmbientEnvironmentCard({
     setCurrentTrack,
     setDownloading,
   } = useAmbientPlayerStore();
-  const player = useAudioPlayer(currentTrack || "");
-  const status = useAudioPlayerStatus(player);
+  const playbackState = usePlaybackState();
+  const isActuallyPlaying = playbackState.state === State.Playing;
 
   const bottomSheetRef = React.useRef<BottomSheetModal>(null);
 
@@ -81,13 +81,11 @@ export function AmbientEnvironmentCard({
       return;
     }
 
-    // Lógica direta baseada no estado do player global
+    // Lógica direta baseada no estado do store e player global
     try {
-      if (status.playing) {
-        player.pause();
+      if (isPlaying) {
         setPlaying(false);
       } else {
-        player.play();
         setPlaying(true);
       }
     } catch (error) {
@@ -110,8 +108,9 @@ export function AmbientEnvironmentCard({
       setCurrentTrack(audio.localUri, audio.id);
     } else {
       try {
-        // Feedback instantâneo no COMBO
+        // Feedback instantâneo no COMBO e no estado Global
         setDownloading(true);
+        setCurrentTrack(null, audio.id); // Registra a intenção Imediatamente!
         setPendingName(FRIENDLY_NAMES[audio.id] || audio.title);
 
         // Baixa o áudio em segundo plano
@@ -143,7 +142,7 @@ export function AmbientEnvironmentCard({
         : "Silêncio";
 
   const isCurrentPlaying =
-    !isDownloading && currentTrack && activeAudio && status.playing;
+    !isDownloading && currentTrack && activeAudio && isActuallyPlaying;
 
   if (variant === "minimal" || variant === "selector") {
     const isSelector = variant === "selector";

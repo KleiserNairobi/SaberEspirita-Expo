@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Text, TouchableOpacity, View, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+} from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -154,7 +160,7 @@ export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
   const flatListRef = useRef<Animated.FlatList<any>>(null);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Referência para rastrear o índice atual e garantir previsibilidade no autoscroll
   const initialIndex = Math.floor(MULTIPLIER / 2) * data.length;
   const currentIndexRef = useRef(initialIndex);
@@ -181,10 +187,15 @@ export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
   useEffect(() => {
     if (isAutoPlaying && data.length > 1) {
       timerRef.current = setInterval(() => {
-        currentIndexRef.current += 1;
+        const nextIndex = currentIndexRef.current + 1;
+        
+        // Se chegarmos ao fim da lista expandida, voltamos para o meio para manter o loop infinito visual
+        if (nextIndex >= expandedData.length) {
+            currentIndexRef.current = initialIndex;
+        } else {
+            currentIndexRef.current = nextIndex;
+        }
 
-        // Se por algum motivo o índice estourar o limite (embora difícil com MULTIPLIER 50), 
-        // a FlatList lidaria, mas mantemos o controle aqui.
         flatListRef.current?.scrollToIndex({
           index: currentIndexRef.current,
           animated: true,
@@ -208,7 +219,7 @@ export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
     const offset = event.nativeEvent.contentOffset.x;
     const newIndex = Math.round(offset / ITEM_SIZE);
     currentIndexRef.current = newIndex;
-    
+
     // Retomar o auto-play após 2 segundos de inatividade após o scroll manual
     setTimeout(() => {
       setIsAutoPlaying(true);
@@ -229,7 +240,7 @@ export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
       snapToInterval={ITEM_SIZE}
       snapToAlignment="center"
       contentContainerStyle={{
-        paddingHorizontal: SPACER_ITEM_SIZE
+        paddingHorizontal: SPACER_ITEM_SIZE,
       }}
       bounces={false}
       decelerationRate={"fast"}
