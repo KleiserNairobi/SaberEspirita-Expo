@@ -1,5 +1,5 @@
-import { Headphones, Lock, ChevronRight, Clock, User } from "lucide-react-native";
 import { differenceInDays } from "date-fns";
+import { ChevronRight, Clock, Headphones, User } from "lucide-react-native";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
@@ -12,16 +12,17 @@ interface MeditationCardProps {
   onPress: () => void;
 }
 
-export function MeditationCard({ meditation, onPress }: MeditationCardProps) {
+export const MeditationCard = React.memo(function MeditationCard({
+  meditation,
+  onPress,
+}: MeditationCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-
   // Simulação de check de premium pro futuro
   const isLocked = meditation.isPremium;
 
   const isNew =
-    meditation.createdAt &&
-    differenceInDays(new Date(), meditation.createdAt) <= 15;
+    meditation.createdAt && differenceInDays(new Date(), meditation.createdAt) <= 15;
 
   return (
     <TouchableOpacity
@@ -44,7 +45,7 @@ export function MeditationCard({ meditation, onPress }: MeditationCardProps) {
             </View>
           )}
         </View>
-        
+
         <View style={styles.metaRow}>
           <View style={styles.metaItem}>
             <User size={12} color={theme.colors.textSecondary} />
@@ -65,4 +66,4 @@ export function MeditationCard({ meditation, onPress }: MeditationCardProps) {
       <ChevronRight size={20} color={theme.colors.muted} />
     </TouchableOpacity>
   );
-}
+});

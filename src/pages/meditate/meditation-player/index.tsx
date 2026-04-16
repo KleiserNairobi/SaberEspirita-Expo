@@ -12,8 +12,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MeditateStackParamList } from "@/routers/types";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import TrackPlayer, { State, usePlaybackState, useProgress, RepeatMode } from "react-native-track-player";
 import { ArrowLeft, Pause, Play, SkipBack, SkipForward } from "lucide-react-native";
+import TrackPlayer, {
+  RepeatMode,
+  State,
+  usePlaybackState,
+  useProgress,
+} from "react-native-track-player";
 
 import { useMeditation } from "@/hooks/queries/useMeditations";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -56,7 +61,7 @@ export default function MeditationPlayerScreen() {
   // --- TRACK PLAYER STATE LOCAL (DESACOLPADO DA ORAÇAO) ---
   const { position, duration } = useProgress(200);
   const [isPlaying, setPlaying] = useState(false);
-  
+
   // O isReady agora é simples: se temos duração ou se o player diz que está tocando
   const isReady = duration > 0 || isPlaying;
 
@@ -71,46 +76,78 @@ export default function MeditationPlayerScreen() {
     }
   }, [playbackState.state]);
 
-  const isLoaded = React.useRef(false);
-
+  // Track local reference para lock de Race Condition espelhando a solidez do GlobalAmbientPlayer
   // Carrega e Sobe o Áudio para o Serviço de Background Nativo
   useEffect(() => {
+    let isActive = true;
+
     async function setupAndLoad() {
-      if (localAudioUri && meditation && !isLoaded.current) {
+      if (localAudioUri && meditation) {
         try {
-            // Apenas informamos ao Estado Global que estamos tocando, 
-            // mas NÃO setamos a Track ali para não haver dupla inserção na fila na engine Nativa.
+          // Em vez de lutar com variáveis do React (que se confundem nos Unmounts e Fast Refreshes),
+          // Perguntamos DIRETAMENTE para a Engine Nativa do iOS o que ela está tocando!
+          const currentNativeTrackIndex = await TrackPlayer.getActiveTrackIndex();
+          let currentNativeTrack = null;
+          if (currentNativeTrackIndex !== undefined && currentNativeTrackIndex !== null) {
+            currentNativeTrack = await TrackPlayer.getTrack(currentNativeTrackIndex);
+          }
+
+          // Se a música atual da Engine C++ JÁ É A MEDITAÇÃO... não injetamos uma nova Track na Fila.
+          // SÓ TOCAMOS! Isso fulmina o erro de duplicar/picotar.
+          if (currentNativeTrack?.id === meditation.id) {
+            const currentState = await TrackPlayer.getPlaybackState();
+            if (currentState.state !== State.Playing) {
+              await TrackPlayer.play();
+            }
             setPlaying(true);
+            return;
+          }
 
-            await TrackPlayer.reset();
-            await new Promise(resolve => setTimeout(resolve, 200));
+          // Se for outra música (ou fila vazia), limpamos a fila nativa e começamos 100% fresco do Zero
+          await TrackPlayer.reset();
 
-            await TrackPlayer.add({
-              id: meditation.id,
-              url: localAudioUri,
-              title: meditation.title,
-              artist: meditation.author,
-              artwork: meditation.imageUrl,
-            });
-            
-            // Garantir que a meditação pare no final sem rebobinar/repetir 
-            // (previne bugs de engines nativas)
-            await TrackPlayer.setRepeatMode(RepeatMode.Off);
+          if (!isActive) return;
+          await new Promise((resolve) => setTimeout(resolve, 300)); // Aumentado para 300ms para maior estabilidade no iOS
+          if (!isActive) return;
 
-            await TrackPlayer.play();
-            isLoaded.current = true;
+          await TrackPlayer.add({
+            id: meditation.id,
+            url: localAudioUri,
+            title: meditation.title,
+            artist: meditation.author,
+            artwork: meditation.imageUrl,
+          });
+
+          if (!isActive) return;
+          // Garantir volume máximo para meditações guiadas
+          await TrackPlayer.setVolume(1.0);
+          if (!isActive) return;
+          await TrackPlayer.setRepeatMode(RepeatMode.Off);
+          if (!isActive) return;
+
+          await TrackPlayer.play();
+          setPlaying(true);
         } catch (err) {
-            console.error("[MeditationPlayer] Erro crítico:", err);
+          console.error(
+            "[MeditationPlayer] Erro crítico ao carregar/iniciar o player:",
+            err
+          );
+          // Ignorar silencias do setup para impedir trava
         }
       }
     }
     setupAndLoad();
-    
+
     return () => {
-      // KILL-SWITCH LOCAL: Apenas encerramos esta reprodução específica.
+      // KILL-SWITCH LOCAL
+      isActive = false;
       setPlaying(false);
-      TrackPlayer.reset();
-      isLoaded.current = false;
+
+      TrackPlayer.pause()
+        .catch(() => {})
+        .finally(() => {
+          // Removemos o reset do finally pois uma das origens de "picote" são resets concorrentes desengatando no IOS Background Audio e forçando crash de "Removed Instance" no meio do Playback da próxima mount
+        });
     };
   }, [localAudioUri, meditation?.id]);
 

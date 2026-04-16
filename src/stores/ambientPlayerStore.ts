@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { create } from "zustand";
 
 // Store simples apenas para gerenciar estado
@@ -22,7 +23,9 @@ export const useAmbientPlayerStore = create<AmbientPlayerState & AmbientPlayerAc
     isPlaying: false,
     currentTrack: null,
     currentAudioId: null,
-    volume: 0.7,
+    // No Android o volume tende a ser mais baixo, então iniciamos mais alto (1.0)
+    // enquanto no iOS 0.7 já é bem audível.
+    volume: Platform.OS === "android" ? 1.0 : 0.7,
     isDownloading: false,
 
     // Ações

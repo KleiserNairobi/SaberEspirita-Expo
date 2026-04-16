@@ -1,10 +1,15 @@
+import { useAppTheme } from "@/hooks/useAppTheme";
+import type { ICourse, IUserCourseProgress } from "@/types/course";
+import { useIsFocused } from "@react-navigation/native";
+import { Image } from "expo-image";
+import { CheckCircle2, Clock, Play, Plus } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   Text,
   TouchableOpacity,
   View,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
 } from "react-native";
 import Animated, {
   Extrapolation,
@@ -14,14 +19,12 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
-import { Image } from "expo-image";
-import { Play, CheckCircle2, Plus, Clock } from "lucide-react-native";
-import { useAppTheme } from "@/hooks/useAppTheme";
 import { createStyles, ITEM_SIZE, SPACER_ITEM_SIZE } from "./styles";
-import type { ICourse, IUserCourseProgress } from "@/types/course";
 
 // Fator de multiplicação para simular loop infinito
-const MULTIPLIER = 50;
+// Reduzido para 10 para evitar avisos de VirtualizedList e economizar memória.
+// Com a nova técnica de "Seamless Jump", 10 é mais do que o suficiente para 6 itens.
+const MULTIPLIER = 10;
 
 interface CarouselProps {
   data: ICourse[];
@@ -37,10 +40,15 @@ interface CarouselItemProps {
   onPress: (courseId: string) => void;
 }
 
-function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemProps) {
+const CarouselItem = React.memo(function CarouselItem({
+  index,
+  item,
+  progress,
+  scrollX,
+  onPress,
+}: CarouselItemProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-
   const inputRange = [
     (index - 1) * ITEM_SIZE,
     index * ITEM_SIZE,
@@ -151,10 +159,11 @@ function CarouselItem({ index, item, progress, scrollX, onPress }: CarouselItemP
       </Animated.View>
     </View>
   );
-}
+});
 
 export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
   const { theme } = useAppTheme();
+  const isFocused = useIsFocused();
   const styles = createStyles(theme);
   const scrollX = useSharedValue(0);
   const flatListRef = useRef<Animated.FlatList<any>>(null);
@@ -185,15 +194,25 @@ export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
 
   // Gerenciamento de Auto-play
   useEffect(() => {
-    if (isAutoPlaying && data.length > 1) {
+    if (isFocused && isAutoPlaying && data.length > 1) {
       timerRef.current = setInterval(() => {
         const nextIndex = currentIndexRef.current + 1;
-        
-        // Se chegarmos ao fim da lista expandida, voltamos para o meio para manter o loop infinito visual
+
+        // TÉCNICA SEAMLESS JUMP NO AUTOPLAY:
+        // Se chegarmos ao fim da lista expandida, saltamos instantaneamente para o início do bloco do meio
+        // antes de prosseguir com a animação.
         if (nextIndex >= expandedData.length) {
-            currentIndexRef.current = initialIndex;
+          const relativeIndex = currentIndexRef.current % data.length;
+          const middleIndex = Math.floor(MULTIPLIER / 2) * data.length + relativeIndex;
+
+          flatListRef.current?.scrollToIndex({
+            index: middleIndex,
+            animated: false,
+          });
+
+          currentIndexRef.current = middleIndex + 1;
         } else {
-            currentIndexRef.current = nextIndex;
+          currentIndexRef.current = nextIndex;
         }
 
         flatListRef.current?.scrollToIndex({
@@ -208,7 +227,7 @@ export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isAutoPlaying, data.length]);
+  }, [isFocused, isAutoPlaying, data.length, expandedData.length]);
 
   const handleScrollBeginDrag = () => {
     setIsAutoPlaying(false);
@@ -217,8 +236,31 @@ export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
   const handleMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     // Sincroniza a referência do índice com a posição atual após scroll manual
     const offset = event.nativeEvent.contentOffset.x;
-    const newIndex = Math.round(offset / ITEM_SIZE);
-    currentIndexRef.current = newIndex;
+    const index = Math.round(offset / ITEM_SIZE);
+
+    // TÉCNICA SEAMLESS JUMP:
+    // Se o usuário chegar perto das bordas (primeiro ou último conjunto),
+    // saltamos silenciosamente para o conjunto do meio.
+    const dataLength = data.length;
+    const totalItems = expandedData.length;
+
+    let targetIndex = index;
+
+    // Se estiver no primeiro conjunto (primeiros dataLength itens) ou no último
+    if (index < dataLength || index >= totalItems - dataLength) {
+      // Calcula a posição relativa dentro do ciclo de 6 itens
+      const relativeIndex = index % dataLength;
+      // Salta para o "meio" da lista expandida
+      targetIndex = Math.floor(MULTIPLIER / 2) * dataLength + relativeIndex;
+
+      // O salto é instantâneo (animated: false), tornando-o invisível
+      flatListRef.current?.scrollToIndex({
+        index: targetIndex,
+        animated: false,
+      });
+    }
+
+    currentIndexRef.current = targetIndex;
 
     // Retomar o auto-play após 2 segundos de inatividade após o scroll manual
     setTimeout(() => {
@@ -248,6 +290,11 @@ export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
       onScroll={onScrollHandler}
       onScrollBeginDrag={handleScrollBeginDrag}
       onMomentumScrollEnd={handleMomentumScrollEnd}
+      // Otimizações de performance para listas grandes
+      initialNumToRender={5}
+      maxToRenderPerBatch={5}
+      windowSize={5}
+      removeClippedSubviews={true}
       // Começar no meio da lista para permitir rolagem infinita inicial para ambos os lados
       initialScrollIndex={initialIndex}
       getItemLayout={(_, index) => ({

@@ -1,25 +1,39 @@
-import TrackPlayer, { 
-  Event, 
-  Capability, 
+import TrackPlayer, {
   AppKilledPlaybackBehavior,
-  RatingType
-} from 'react-native-track-player';
+  Capability,
+  Event,
+  IOSCategory,
+  RatingType,
+} from "react-native-track-player";
 
 // Inicialização do Player com capacidades essenciais de Background e Lock Screen
 export async function setupTrackPlayer() {
   let isSetup = false;
   try {
-    // Evita inicialização dupla em ambientes de desenvolvimento (Fast Refresh)
-    await TrackPlayer.getActiveTrackIndex();
+    await TrackPlayer.setupPlayer({
+      iosCategory: IOSCategory.Playback,
+    });
     isSetup = true;
-  } catch {
-    await TrackPlayer.setupPlayer();
-    
+  } catch (error: any) {
+    if (error.code === "player_already_initialized") {
+      isSetup = true;
+    } else {
+      console.error("[TrackPlayerService] Erro ao configurar player:", error);
+      return false;
+    }
+  }
+
+  try {
     await TrackPlayer.updateOptions({
       android: {
         // Se o usuário assassinar o app na aba de apps recentes, pare o áudio
-        appKilledPlaybackBehavior: AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+        appKilledPlaybackBehavior:
+          AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
       },
+      // Configurações específicas para iOS para garantir estabilidade e background audio
+      // Nota: Algumas propriedades podem não estar disponíveis dependendo da versão,
+      // mas o updateOptions é flexível.
+
       // Capacidades visíveis na tela de bloqueio e central de controle
       capabilities: [
         Capability.Play,
@@ -31,10 +45,12 @@ export async function setupTrackPlayer() {
       // Menos controles na notificação compacta do Android/iOS
       compactCapabilities: [Capability.Play, Capability.Pause],
       progressUpdateEventInterval: 1, // Feedback de 1 segundo para barras de progresso lisas
-      ratingType: RatingType.Heart
+      ratingType: RatingType.Heart,
     });
-    isSetup = true;
+  } catch (error) {
+    console.error("[TrackPlayerService] Erro ao atualizar opções:", error);
   }
+
   return isSetup;
 }
 
