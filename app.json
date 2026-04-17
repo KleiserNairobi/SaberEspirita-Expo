@@ -3,14 +3,14 @@
     "name": "Saber Espírita",
     "slug": "saber-espirita",
     "scheme": "saber-espirita",
-    "version": "2.0.11",
+    "version": "2.0.12",
     "orientation": "portrait",
     "newArchEnabled": true,
     "userInterfaceStyle": "automatic",
     "icon": "./assets/images/icon.png",
 
-      "ios": {
-      "buildNumber": "41",
+    "ios": {
+      "buildNumber": "42",
       "supportsTablet": false,
       "bundleIdentifier": "app.saberespirita",
       "infoPlist": {
@@ -25,7 +25,7 @@
     },
 
     "android": {
-      "versionCode": 41,
+      "versionCode": 42,
       "edgeToEdgeEnabled": true,
       "statusBar": {
         "translucent": true,
@@ -37,7 +37,12 @@
       "predictiveBackGestureEnabled": false,
       "package": "app.saberespirita",
       "softwareKeyboardLayoutMode": "pan",
-      "permissions": ["com.google.android.gms.permission.AD_ID", "WAKE_LOCK", "FOREGROUND_SERVICE", "FOREGROUND_SERVICE_MEDIA_PLAYBACK"],
+      "permissions": [
+        "com.google.android.gms.permission.AD_ID",
+        "WAKE_LOCK",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+      ],
       "googleServicesFile": "./dev/configs/google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
