@@ -1,4 +1,4 @@
-import { Alert, Linking, Share, Platform } from "react-native";
+import { Linking, Share } from "react-native";
 
 import { Sun, Moon, Smartphone, type LucideIcon } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -9,14 +9,10 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 import {
-  ALERTS,
   CONTACT_EMAIL,
   INSTAGRAM_URL,
   SHARE_MESSAGE,
-  APP_STORE_URL,
-  PLAY_STORE_URL,
 } from "../constants";
-
 import { useRateApp } from "@/hooks/useRateApp";
 import { userService } from "@/services/firebase/userService";
 

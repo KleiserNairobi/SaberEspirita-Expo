@@ -1,16 +1,13 @@
 import { Alert, Linking, Platform } from "react-native";
 import { useCallback } from "react";
 import { usePreferencesStore } from "@/stores/preferencesStore";
-import { APP_STORE_URL, PLAY_STORE_URL } from "@/pages/account/constants";
+import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
 
 export function useRateApp() {
   const {
     incrementLessonsCompletedCount,
-    lessonsCompletedCount,
-    rateAppStatus,
     setRateAppStatus,
     updateLastRateInteractionDate,
-    lastRateInteractionDate,
   } = usePreferencesStore();
 
   const checkIfShouldAsk = useCallback(() => {

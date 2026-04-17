@@ -1,8 +1,7 @@
 import { Share } from "react-native";
-import { Paths } from "expo-file-system";
-
 import { IPrayer } from "@/types/prayer";
 import { IReflection } from "@/types/reflection";
+import { SHARE_FOOTER } from "./constants";
 
 /**
  * Compartilha uma oração usando Share nativo do React Native
@@ -11,7 +10,7 @@ export async function sharePrayer(prayer: IPrayer): Promise<void> {
   try {
     const message = `${prayer.title}\n\n${prayer.content}\n\n${
       prayer.author ? `- ${prayer.author}` : ""
-    }${prayer.source ? `\nFonte: ${prayer.source}` : ""}\n\nCompartilhado via App Saber Espírita`;
+    }${prayer.source ? `\nFonte: ${prayer.source}` : ""}${SHARE_FOOTER}`;
 
     await Share.share({
       message,
@@ -19,35 +18,6 @@ export async function sharePrayer(prayer: IPrayer): Promise<void> {
     });
   } catch (error) {
     console.error("Erro ao compartilhar oração:", error);
-    throw error;
-  }
-}
-
-/**
- * Compartilha uma oração criando um arquivo temporário
- * (Alternativa usando expo-file-system se necessário no futuro)
- */
-export async function sharePrayerAsFile(prayer: IPrayer): Promise<void> {
-  try {
-    const message = `${prayer.title}\n\n${prayer.content}\n\n${
-      prayer.author ? `- ${prayer.author}` : ""
-    }${prayer.source ? `\nFonte: ${prayer.source}` : ""}\n\nCompartilhado via App Saber Espírita`;
-
-    // Criar arquivo no cache directory
-    const file = await Paths.cache.createFile(`prayer_${prayer.id}.txt`, "text/plain");
-
-    await file.write(message);
-
-    // Compartilhar o arquivo
-    await Share.share({
-      url: file.uri,
-      title: prayer.title,
-    });
-
-    // Limpar arquivo temporário após compartilhar
-    await file.delete();
-  } catch (error) {
-    console.error("Erro ao compartilhar oração como arquivo:", error);
     throw error;
   }
 }
@@ -63,7 +33,7 @@ export async function shareReflection(reflection: IReflection): Promise<void> {
       `\n\n${reflection.content}`,
       reflection.author ? `\n\n- ${reflection.author}` : "",
       reflection.source ? `\nFonte: ${reflection.source}` : "",
-      "\n\nCompartilhado via App Saber Espírita",
+      SHARE_FOOTER,
     ];
 
     const message = parts.filter(Boolean).join("");

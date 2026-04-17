@@ -1,12 +1,11 @@
 import Constants from "expo-constants";
+import { PLAY_STORE_URL, APP_STORE_URL } from "@/utils/constants";
 
 export const APP_VERSION = Constants.expoConfig?.version ?? "1.0.0";
 export const CONTACT_EMAIL = "app.saberespirita@gmail.com";
 export const INSTAGRAM_URL = "https://instagram.com/comunidade.saberespirita";
-export const PLAY_STORE_URL =
-  "https://play.google.com/store/apps/details?id=app.saberespirita";
-export const APP_STORE_URL =
-  "https://apps.apple.com/br/app/saber-esp%C3%ADrita/id6751443526";
+
+export { PLAY_STORE_URL, APP_STORE_URL };
 
 export const SHARE_MESSAGE = `📚✨ Descubra o Saber Espírita!
 

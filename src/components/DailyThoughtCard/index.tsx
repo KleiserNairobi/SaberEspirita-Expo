@@ -5,6 +5,7 @@ import { Share2 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getDailyThought } from "@/utils/dailyThought";
+import { SHARE_FOOTER } from "@/utils/constants";
 import { createStyles } from "./styles";
 
 export function DailyThoughtCard() {
@@ -16,7 +17,7 @@ export function DailyThoughtCard() {
   async function handleShare() {
     try {
       await Share.share({
-        message: `"${quote}"\n— ${author}\n\nCompartilhado via App Saber Espírita`,
+        message: `"${quote}"\n— ${author}${SHARE_FOOTER}`,
       });
     } catch (error) {
       console.error("Erro ao compartilhar:", error);
