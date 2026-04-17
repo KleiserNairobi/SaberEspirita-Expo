@@ -2,6 +2,29 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.12] - 2026-04-17
+
+### Adicionado
+
+- **UX/Privacidade**: Nova funcionalidade de edição de nome/apelido integrada diretamente ao Placar, permitindo que o usuário personalize sua exibição pública para evitar constrangimentos.
+- **Dicas Contextuais**: Sistema de banners informativos e removíveis (via MMKV) para educar o usuário sobre funcionalidades de personalização no momento em que são necessárias.
+
+### Alterado
+
+- **Módulo Ore (Refatoração)**: Reformulação completa da experiência de oração:
+  - Novo seletor de humor ("Humor de Agora") com ícones dinâmicos.
+  - Seção "Para o seu Momento" com curadoria de orações.
+  - Integração aprimorada com "Ajuda para Orar" (Chat IA).
+  - Listagem de "Orações em Alta" (Top 5 mais lidas pela comunidade).
+  - Nova interface para listagem geral de orações.
+- **Home Estude**: Implementação de animações fluidas no carrossel de cursos para uma navegação mais moderna e agradável.
+- **Compartilhamento**: Padronização global das mensagens compartilhadas, incluindo agora links diretos para download na Play Store e App Store, além de títulos contextualizados para cada tipo de chat (Apoio Emocional vs. Esclarecimento Doutrinário).
+
+### Corrigido
+
+- **Player de Música**: Novo motor de áudio para orações e meditações, corrigindo bugs de interrupção e melhorando a estabilidade da reprodução.
+- **Navegação**: Correção de bug que exibia a barra de abas inferior indevidamente durante conversas no chat emocional.
+
 ## [2.0.11] - 2026-04-02
 
 ### Adicionado
