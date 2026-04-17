@@ -18,10 +18,30 @@ export function createStyles(theme: ITheme) {
       flex: 1,
       marginRight: 8,
     },
+    headerRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 4,
+    },
     title: {
       ...theme.text("md", "semibold"),
       color: theme.colors.text,
-      marginBottom: 4,
+      flex: 1,
+      marginRight: 8,
+    },
+    statusBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 2,
+      paddingHorizontal: 8,
+      borderRadius: theme.radius.sm,
+      backgroundColor: theme.colors.success + "20",
+    },
+    statusText: {
+      ...theme.text("xs", "semibold"),
+      color: theme.colors.success,
+      textTransform: "capitalize",
     },
     subtitle: {
       ...theme.text("sm", "regular"),

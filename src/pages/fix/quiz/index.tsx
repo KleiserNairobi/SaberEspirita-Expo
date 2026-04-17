@@ -119,7 +119,7 @@ export function QuizScreen() {
 
     // Áudio é disparado de forma totalmente assíncrona e isolada
     const isCorrect = index === quiz.questions[currentQuestionIndex].correct;
-    setTimeout(() => playFeedback(isCorrect), isCorrect ? 50 : 150);
+    setTimeout(() => playFeedback(isCorrect), isCorrect ? 20 : 50);
   }
 
   function handleConfirm() {

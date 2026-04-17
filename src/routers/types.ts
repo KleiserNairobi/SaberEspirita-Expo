@@ -79,7 +79,8 @@ export type TabParamList = {
 
 export type PrayStackParamList = {
   PrayHome: undefined;
-  PrayCategory: { id: string };
+  AllPrayers: { initialCategory?: string };
+  PrayerPrep: { id: string };
   Prayer: { id: string };
 };
 

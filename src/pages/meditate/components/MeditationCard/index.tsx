@@ -1,5 +1,5 @@
-import { Headphones, Lock, Play, Clock } from "lucide-react-native";
 import { differenceInDays } from "date-fns";
+import { ChevronRight, Clock, Headphones, User } from "lucide-react-native";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
@@ -12,16 +12,17 @@ interface MeditationCardProps {
   onPress: () => void;
 }
 
-export function MeditationCard({ meditation, onPress }: MeditationCardProps) {
+export const MeditationCard = React.memo(function MeditationCard({
+  meditation,
+  onPress,
+}: MeditationCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-
   // Simulação de check de premium pro futuro
   const isLocked = meditation.isPremium;
 
   const isNew =
-    meditation.createdAt &&
-    differenceInDays(new Date(), meditation.createdAt) <= 15;
+    meditation.createdAt && differenceInDays(new Date(), meditation.createdAt) <= 15;
 
   return (
     <TouchableOpacity
@@ -44,22 +45,25 @@ export function MeditationCard({ meditation, onPress }: MeditationCardProps) {
             </View>
           )}
         </View>
-        <Text style={styles.description} numberOfLines={1}>
-          {meditation.author}
-        </Text>
+
         <View style={styles.metaRow}>
-          <Clock size={12} color={theme.colors.textSecondary} />
-          <Text style={styles.metaText}>{meditation.durationMinutes} min</Text>
+          <View style={styles.metaItem}>
+            <User size={12} color={theme.colors.textSecondary} />
+            <Text style={styles.metaTextAuthor} numberOfLines={1}>
+              {meditation.author}
+            </Text>
+          </View>
+
+          <View style={styles.metaDivider} />
+
+          <View style={styles.metaItem}>
+            <Clock size={12} color={theme.colors.textSecondary} />
+            <Text style={styles.metaText}>{meditation.durationMinutes} min</Text>
+          </View>
         </View>
       </View>
 
-      <View style={styles.actionContainer}>
-        {isLocked ? (
-          <Lock size={18} color={theme.colors.accent} />
-        ) : (
-          <Play size={18} color={theme.colors.primary} fill={theme.colors.primary} />
-        )}
-      </View>
+      <ChevronRight size={20} color={theme.colors.muted} />
     </TouchableOpacity>
   );
-}
+});

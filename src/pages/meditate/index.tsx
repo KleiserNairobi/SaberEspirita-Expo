@@ -34,7 +34,7 @@ export default function MeditateScreen() {
   const styles = createStyles(theme);
   const { user } = useAuthStore();
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
-  const { syncWithFirebase } = useReflectionFavoritesStore();
+  const syncWithFirebase = useReflectionFavoritesStore((state) => state.syncWithFirebase);
 
   React.useEffect(() => {
     if (user?.uid) {

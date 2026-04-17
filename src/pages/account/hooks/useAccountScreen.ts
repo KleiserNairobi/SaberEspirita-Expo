@@ -18,6 +18,7 @@ import {
 } from "../constants";
 
 import { useRateApp } from "@/hooks/useRateApp";
+import { userService } from "@/services/firebase/userService";
 
 export function useAccountScreen() {
   const { theme, themeType, setThemeType } = useAppTheme();
@@ -98,6 +99,16 @@ export function useAccountScreen() {
     }
   }
 
+  async function handleUpdateName(newName: string) {
+    if (!user) return;
+    try {
+      await userService.updateUserName(user, newName);
+    } catch (error) {
+      console.error("Erro ao atualizar nome no hook:", error);
+      throw error;
+    }
+  }
+
   return {
     // Data
     theme,
@@ -117,6 +128,8 @@ export function useAccountScreen() {
     handleRateApp,
     handleInstagram,
     handleShareApp,
+    handleUpdateName,
     signOut,
+    user,
   };
 }

@@ -11,85 +11,61 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { PrayStackParamList } from "@/routers/types";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import {
-  BookOpen,
-  ChevronRight,
-  Flame,
-  HandHeart,
-  Heart,
-  HeartPulse,
-  Moon,
-  Sparkles,
-  Sunrise,
-  Users,
-} from "lucide-react-native";
+import { Heart, BookOpen } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { AmbientPlayer } from "@/pages/pray/components/AmbientPlayer";
-import { useFeaturedPrayers } from "@/pages/pray/hooks/useFeaturedPrayers";
-import { usePrayerMomentsCounts } from "@/pages/pray/hooks/usePrayerMomentsCounts";
+import { MoodSelector } from "@/pages/pray/components/MoodSelector";
+import { WelcomingHero } from "@/pages/pray/components/WelcomingHero";
+import { AIChatCard } from "@/pages/pray/components/AIChatCard";
+import { TrendingPrayers } from "@/pages/pray/components/TrendingPrayers";
 import { createStyles } from "@/pages/pray/styles";
 import { PrayerCard } from "@/pages/pray/components/PrayerCard";
-import { AssistantCard } from "@/components/AssistantCard";
-import { getPrayersByCategory } from "@/services/firebase/prayerService";
-import { useAuthStore } from "@/stores/authStore";
+import { useAuth } from "@/stores/authStore";
+import { useMoodStore } from "@/stores/moodStore";
+import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
-import { PRAYER_MOMENTS } from "@/types/prayer";
 import { useQueryClient } from "@tanstack/react-query";
 
-// Mapeamento de ícones para cada momento
-const MOMENT_ICONS = {
-  "AO-ACORDAR": Sunrise,
-  "AO-DORMIR": Moon,
-  DIARIO: BookOpen,
-  "POR-ANIMO": HeartPulse,
-  "POR-ALGUEM": Users,
-  "POR-CURA": Heart,
-  "POR-GRATIDAO": Sparkles,
-  "POR-PAZ": HandHeart,
-  REUNIOES: Flame,
-} as const;
+// Removed MOMENT_ICONS mapping
 
 export default function PrayScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<NativeStackNavigationProp<PrayStackParamList>>();
-  const { user } = useAuthStore();
+  const { user } = useAuth();
+  const { currentMood, clearMood } = useMoodStore();
   const queryClient = useQueryClient();
 
-  const { data: featuredPrayers, isLoading: featuredLoading } = useFeaturedPrayers();
-  const { data: momentsCounts } = usePrayerMomentsCounts();
-
-  const { isFavorite, toggleFavorite, syncWithFirebase } = usePrayerFavoritesStore();
+  const { setPlaying, setCurrentTrack } = useAmbientPlayerStore();
+  const { syncWithFirebase } = usePrayerFavoritesStore();
 
   React.useEffect(() => {
     if (user?.uid) {
       syncWithFirebase(user.uid);
     }
   }, [user?.uid, syncWithFirebase]);
-  
-  // Atualiza o cache ao entrar na tela para garantir que dados novos (destaques e contagem) apareçam
+
+  // Atualiza o cache, reseta o humor e desliga áudio da Oração passada ao retornar
   useFocusEffect(
     React.useCallback(() => {
-      queryClient.invalidateQueries({ queryKey: ["prayers", "featured"] });
-      queryClient.invalidateQueries({ queryKey: ["prayerMomentsCounts"] });
-    }, [queryClient])
+      queryClient.invalidateQueries({ queryKey: ["prayers"] });
+      clearMood();
+      setPlaying(false);
+      setCurrentTrack(null);
+    }, [queryClient, clearMood, setPlaying, setCurrentTrack])
   );
 
-  function handleMomentPress(categoryId: string) {
-    navigation.navigate("PrayCategory", { id: categoryId });
-  }
-
-  function prefetchCategory(categoryId: string) {
-    queryClient.prefetchQuery({
-      queryKey: ["prayers", "category", categoryId],
-      queryFn: () => getPrayersByCategory(categoryId),
-      staleTime: 1000 * 60 * 60, // 1 hora
-    });
-  }
-
   function handlePrayerPress(prayerId: string) {
-    navigation.navigate("Prayer", { id: prayerId });
+    navigation.navigate("PrayerPrep", { id: prayerId });
+  }
+
+  function handleAIChatPress() {
+    const moodContext = currentMood
+      ? `Estou me sentindo ${currentMood.toLowerCase()}.`
+      : "";
+    navigation.navigate("EmotionalChat", {
+      initialMessage: `Olá. ${moodContext} Poderia me ajudar com uma oração personalizada para o meu momento?`,
+    } as any);
   }
 
   return (
@@ -99,89 +75,40 @@ export default function PrayScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
+        {/* Header com Atalhos */}
         <View style={styles.header}>
-          <Text style={styles.greeting}>Ore</Text>
-          <Text style={styles.subtitle}>Conecte-se com o divino</Text>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.greeting}>Ore</Text>
+            <Text style={styles.subtitle}>Você e Deus: em sintonia para o bem.</Text>
+          </View>
+
+          <View style={styles.headerActions}>
+            <TouchableOpacity
+              style={styles.headerAction}
+              onPress={() =>
+                navigation.navigate("AllPrayers", { initialCategory: "FAVORITES" })
+              }
+              activeOpacity={0.7}
+            >
+              <Heart size={20} color={theme.colors.primary} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.headerAction}
+              onPress={() => navigation.navigate("AllPrayers", {})}
+              activeOpacity={0.7}
+            >
+              <BookOpen size={20} color={theme.colors.primary} />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        {/* Seção: Momentos */}
-        <Text style={styles.sectionTitle}>Para o Momento</Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.momentsScroll}
-          contentContainerStyle={styles.momentsContent}
-        >
-          {Object.entries(PRAYER_MOMENTS).map(([key, { label }]) => {
-            const IconComponent = MOMENT_ICONS[key as keyof typeof MOMENT_ICONS];
-            return (
-              <TouchableOpacity
-                key={key}
-                style={styles.momentCard}
-                onPress={() => handleMomentPress(key)}
-                onPressIn={() => prefetchCategory(key)}
-                activeOpacity={0.7}
-              >
-                <View style={styles.iconContainer}>
-                  <IconComponent size={20} color={theme.colors.primary} />
-                  {momentsCounts?.[key]?.hasNew && (
-                    <View style={styles.newBadgeIndicator} />
-                  )}
-                </View>
-                <Text style={styles.momentLabel}>{label}</Text>
-                {momentsCounts && momentsCounts[key] !== undefined && (
-                  <Text style={styles.momentCount}>
-                    {momentsCounts[key].count}{" "}
-                    {momentsCounts[key].count === 1 ? "oração" : "orações"}
-                  </Text>
-                )}
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
+        {/* Fluxo de Acolhimento: Identificação -> Sugestão -> Assistência */}
+        <MoodSelector />
+        <WelcomingHero />
+        <AIChatCard onPress={handleAIChatPress} />
 
-        {/* Seção: Favoritos */}
-        <View style={{ marginHorizontal: 20 }}>
-          <AssistantCard
-            title="Minhas Orações"
-            description="Suas preces favoritas em um só lugar"
-            buttonText="Ver todas"
-            icon={Heart}
-            onPress={() => navigation.navigate("PrayCategory", { id: "FAVORITES" })}
-          />
-        </View>
-
-        {/* Seção: Ambiente de Sintonia */}
-        <Text style={styles.sectionTitle}>Ambiente de Sintonia</Text>
-        <View style={styles.ambientContainer}>
-          <AmbientPlayer />
-        </View>
-
-        {/* Seção: Orações em Destaque */}
-        <Text style={styles.sectionTitle}>Em Destaque</Text>
-
-        {featuredLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={theme.colors.primary} />
-          </View>
-        ) : featuredPrayers && featuredPrayers.length > 0 ? (
-          <View style={styles.featuredList}>
-            {[...featuredPrayers]
-              .sort((a, b) => a.title.localeCompare(b.title))
-              .map((prayer) => (
-                <PrayerCard
-                  key={prayer.id}
-                  prayer={prayer}
-                  onPress={() => handlePrayerPress(prayer.id)}
-                />
-              ))}
-          </View>
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Nenhuma oração em destaque no momento</Text>
-          </View>
-        )}
+        <TrendingPrayers />
       </ScrollView>
     </SafeAreaView>
   );

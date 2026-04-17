@@ -27,11 +27,11 @@ export function createStyles(theme: ITheme) {
       marginRight: theme.spacing.md,
     },
     categoriesScroll: {
-      paddingHorizontal: theme.spacing.lg,
       paddingBottom: theme.spacing.md,
       paddingTop: theme.spacing.sm,
     },
     categoriesContent: {
+      paddingHorizontal: theme.spacing.lg,
       gap: theme.spacing.sm,
     },
     categoryCard: {
@@ -65,6 +65,17 @@ export function createStyles(theme: ITheme) {
     categoryCount: {
       ...theme.text("xs", "regular", theme.colors.textSecondary),
       textAlign: "center",
+    },
+    badge: {
+      position: "absolute",
+      top: -2,
+      right: -2,
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      backgroundColor: theme.colors.success,
+      borderWidth: 2,
+      borderColor: theme.colors.card,
     },
     headerTextContainer: {
       flex: 1,
@@ -101,6 +112,11 @@ export function createStyles(theme: ITheme) {
     emptyText: {
       ...theme.text("md", "regular"),
       color: theme.colors.textSecondary,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
     },
   });
 }

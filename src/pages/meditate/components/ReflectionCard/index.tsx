@@ -13,7 +13,7 @@ interface ReflectionCardProps {
   onPressIn?: () => void;
 }
 
-export function ReflectionCard({
+export const ReflectionCard = React.memo(function ReflectionCard({
   reflection,
   onPress,
   onPressIn,
@@ -81,4 +81,4 @@ export function ReflectionCard({
       <ChevronRight size={20} color={theme.colors.muted} />
     </TouchableOpacity>
   );
-}
+});

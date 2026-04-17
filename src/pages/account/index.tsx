@@ -28,6 +28,7 @@ import { createStyles } from "@/pages/account/styles";
 import { useAccountScreen } from "@/pages/account/hooks/useAccountScreen";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { EditProfileBottomSheet } from "@/pages/account/components/EditProfileBottomSheet";
 
 export default function AccountScreen() {
   const {
@@ -45,14 +46,16 @@ export default function AccountScreen() {
     handleRateApp,
     handleInstagram,
     handleShareApp,
+    handleUpdateName,
     signOut,
     isGuest,
   } = useAccountScreen();
 
   const styles = createStyles(theme);
 
-  // BottomSheet Logic for Logout and Delete Account
+  // BottomSheet Logic
   const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const editProfileSheetRef = useRef<BottomSheetModal>(null);
   const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
     null
   );
@@ -108,7 +111,6 @@ export default function AccountScreen() {
         },
       },
     });
-    // Pequeno delay para garantir que a config foi setada antes de abrir
     setTimeout(() => {
       bottomSheetRef.current?.present();
     }, 100);
@@ -139,6 +141,14 @@ export default function AccountScreen() {
     }, 100);
   }
 
+  function handleEditProfilePress() {
+    if (isGuest) {
+      handleLogoutPress();
+      return;
+    }
+    editProfileSheetRef.current?.present();
+  }
+
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
@@ -149,7 +159,11 @@ export default function AccountScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <AccountHeader displayName={displayName} email={email} />
+          <AccountHeader 
+            displayName={displayName} 
+            email={email} 
+            onEditPress={handleEditProfilePress}
+          />
 
           {/* Grupo 1: Preferências */}
           <SettingsSection title="Preferências">
@@ -267,8 +281,8 @@ export default function AccountScreen() {
                 title="Excluir Conta"
                 subtitle="Solicitar exclusão de conta e dados"
                 onPress={handleDeleteAccountPress}
-                showDivider={false} // Removing divider since it's the only item
-                titleStyle={{ color: theme.colors.error }} // Optional: make it red
+                showDivider={false}
+                titleStyle={{ color: theme.colors.error }}
                 isFirst
                 isLast
               />
@@ -299,6 +313,12 @@ export default function AccountScreen() {
       </AppBackground>
 
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
+      
+      <EditProfileBottomSheet 
+        ref={editProfileSheetRef}
+        initialName={displayName}
+        onSave={handleUpdateName}
+      />
     </SafeAreaView>
   );
 }

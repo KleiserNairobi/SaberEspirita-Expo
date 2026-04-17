@@ -6,6 +6,9 @@ export interface IPrayer {
   author?: string;
   featured?: boolean;
   createdAt?: Date;
+  viewsDay?: number;
+  viewsWeek?: number;
+  viewsTotal?: number;
 }
 
 export interface IPrayerCategory {

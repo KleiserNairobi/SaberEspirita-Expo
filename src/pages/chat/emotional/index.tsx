@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { View, FlatList, Text, Platform, KeyboardAvoidingView } from "react-native";
+import { useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Compass } from "lucide-react-native";
@@ -33,6 +34,16 @@ export function EmotionalChatScreen() {
   const { messages, isLoading, error, sendMessage, clearChat } = useDeepSeekChat(
     ChatType.EMOTIONAL
   );
+
+  const route = useRoute<any>();
+  const initialMessage = route.params?.initialMessage;
+
+  // Enviar mensagem inicial se fornecida
+  useEffect(() => {
+    if (initialMessage && messages.length === 0 && !isLoading) {
+      handleSendMessage(initialMessage);
+    }
+  }, [initialMessage, messages.length, isLoading]);
 
   // Auto-scroll para última mensagem
   useEffect(() => {

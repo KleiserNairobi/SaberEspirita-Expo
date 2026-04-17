@@ -1,6 +1,7 @@
-import React from "react";
+import React, { memo } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { ChevronRight } from "lucide-react-native";
+import { differenceInDays } from "date-fns";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { IGlossaryTerm, GLOSSARY_CATEGORIES } from "@/types/glossary";
@@ -12,19 +13,31 @@ interface GlossaryCardProps {
   onPress: () => void;
 }
 
-export function GlossaryCard({ term, onPress }: GlossaryCardProps) {
+function GlossaryCardComponent({ term, onPress }: GlossaryCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
+  // @ts-ignore - isFavorite está presente na store mas pode ter erro de tipo se a store for complexa
   const isFavorite = useGlossaryFavoritesStore((s) => s.isFavorite(term.id));
   const CategoryIcon = GLOSSARY_CATEGORIES[term.category].icon;
+
+  // Lógica para detectar se o termo é novo (menos de 15 dias)
+  const isNew = term.createdAt && differenceInDays(new Date(), term.createdAt) <= 15;
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
       {/* Conteúdo */}
       <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={2}>
-          {term.term}
-        </Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.title} numberOfLines={1}>
+            {term.term}
+          </Text>
+          {isNew && (
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusText}>Novo</Text>
+            </View>
+          )}
+        </View>
+
         <Text style={styles.subtitle} numberOfLines={2}>
           {term.definition}
         </Text>
@@ -41,3 +54,5 @@ export function GlossaryCard({ term, onPress }: GlossaryCardProps) {
     </TouchableOpacity>
   );
 }
+
+export const GlossaryCard = memo(GlossaryCardComponent);

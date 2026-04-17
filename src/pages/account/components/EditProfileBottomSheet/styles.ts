@@ -1,0 +1,51 @@
+import { ITheme } from "@/configs/theme/types";
+import { StyleSheet } from "react-native";
+
+export function createStyles(theme: ITheme) {
+  return StyleSheet.create({
+    container: {
+      paddingHorizontal: 24,
+      paddingTop: 8,
+      gap: 24,
+    },
+    title: {
+      ...theme.text("xl", "semibold"),
+      color: theme.colors.text,
+      textAlign: "center",
+      marginBottom: 6,
+    },
+    description: {
+      ...theme.text("md", "regular", theme.colors.textSecondary),
+      textAlign: "center",
+      marginBottom: 16,
+    },
+    inputContainer: {
+      gap: 8,
+    },
+    label: {
+      ...theme.text("sm", "semibold", theme.colors.textSecondary),
+      marginLeft: 4,
+    },
+    input: {
+      height: 48,
+      backgroundColor: theme.colors.card,
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      ...theme.text("md", "regular", theme.colors.text),
+    },
+    inputError: {
+      borderColor: theme.colors.error,
+    },
+    errorText: {
+      ...theme.text("xs", "regular", theme.colors.error),
+      marginLeft: 4,
+      marginTop: -4,
+    },
+    actions: {
+      gap: 12,
+      marginTop: 8,
+    },
+  });
+}

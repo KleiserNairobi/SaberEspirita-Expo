@@ -9,6 +9,11 @@ export const createStyles = (theme: ITheme) =>
       marginTop: theme.spacing.lg,
       marginBottom: theme.spacing.xl,
     },
+    avatarSection: {
+      alignItems: "center",
+      gap: theme.spacing.sm,
+      marginBottom: theme.spacing.xs,
+    },
     avatar: {
       width: 80,
       height: 80,
@@ -16,9 +21,27 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: theme.colors.primary,
       alignItems: "center",
       justifyContent: "center",
-      marginBottom: theme.spacing.sm,
+      position: "relative",
     },
     avatarText: {
-      ...theme.text("xxxl", "bold", theme.colors.background),
+      ...theme.text("xxxl", "bold", theme.colors.onPrimary),
+    },
+    editBadge: {
+      position: "absolute",
+      right: 0,
+      bottom: 0,
+      backgroundColor: theme.colors.primary,
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      borderWidth: 2,
+      borderColor: theme.colors.background,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    nameRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
     },
   });

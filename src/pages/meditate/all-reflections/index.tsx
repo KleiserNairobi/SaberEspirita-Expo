@@ -48,7 +48,9 @@ export default function AllReflectionsScreen() {
   const { id } = route.params || {};
   const { user } = useAuthStore();
 
-  const { isFavorite, favorites, syncWithFirebase } = useReflectionFavoritesStore();
+  const isFavorite = useReflectionFavoritesStore((state) => state.isFavorite);
+  const favorites = useReflectionFavoritesStore((state) => state.favorites);
+  const syncWithFirebase = useReflectionFavoritesStore((state) => state.syncWithFirebase);
   const isFavoritesPage = id === "FAVORITES";
 
   const [searchQuery, setSearchQuery] = useState("");
