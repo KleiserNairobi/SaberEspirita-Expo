@@ -1,5 +1,4 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import TrackPlayer, { State, usePlaybackState } from "react-native-track-player";
 import { ChevronDown, Moon, Music, Pause, Play, Waves } from "lucide-react-native";
 import React from "react";
 import {
@@ -10,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { State, usePlaybackState } from "react-native-track-player";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
@@ -34,6 +34,13 @@ const FRIENDLY_NAMES: Record<string, string> = {
   ClairDeLune: "Paz Lunar",
   Gymnopedie: "Serenidade",
   Nocturne: "Céu Estrelado",
+};
+
+const COMPOSERS: Record<string, string> = {
+  AveMaria: "Franz Schubert",
+  ClairDeLune: "Claude Debussy",
+  Gymnopedie: "Erik Satie",
+  Nocturne: "Frédéric Chopin",
 };
 
 interface AmbientEnvironmentCardProps {
@@ -133,13 +140,18 @@ export function AmbientEnvironmentCard({
     );
   }
 
-  const friendlyName = pendingName
+  const activeAudioName = pendingName
     ? pendingName
     : !currentAudioId
       ? "Selecione uma melodia"
       : activeAudio
-        ? FRIENDLY_NAMES[activeAudio.id] || activeAudio.title
+        ? `${activeAudio.title}${COMPOSERS[activeAudio.id] ? ` (${COMPOSERS[activeAudio.id]})` : ""}`
         : "Silêncio";
+
+  const activeAudioSubtitle =
+    !pendingName && activeAudio && FRIENDLY_NAMES[activeAudio.id]
+      ? FRIENDLY_NAMES[activeAudio.id]
+      : null;
 
   const isCurrentPlaying =
     !isDownloading && currentTrack && activeAudio && isActuallyPlaying;
@@ -165,13 +177,15 @@ export function AmbientEnvironmentCard({
               )}
             </View>
             <View>
-              <Text style={styles.minimalTrackName}>{friendlyName}</Text>
+              <Text style={styles.minimalTrackName}>{activeAudioName}</Text>
               <Text style={styles.minimalActionLabel}>
                 {isDownloading
                   ? "Baixando áudio..."
-                  : !isSelector && !currentAudioId
-                    ? "Mergulhe em sintonia"
-                    : "Toque para alterar"}
+                  : activeAudioSubtitle
+                    ? activeAudioSubtitle
+                    : !isSelector && !currentAudioId
+                      ? "Mergulhe em sintonia"
+                      : "Toque para alterar"}
               </Text>
             </View>
           </View>
@@ -219,8 +233,10 @@ export function AmbientEnvironmentCard({
       >
         <View style={styles.overlay}>
           <View style={styles.infoSection}>
-            <Text style={styles.environmentLabel}>AMBIENTE ATUAL</Text>
-            <Text style={styles.environmentName}>{friendlyName}</Text>
+            <Text style={styles.environmentLabel}>
+              {activeAudioSubtitle ? activeAudioSubtitle.toUpperCase() : "AMBIENTE ATUAL"}
+            </Text>
+            <Text style={styles.environmentName}>{activeAudioName}</Text>
           </View>
 
           <View style={styles.controlsSection}>

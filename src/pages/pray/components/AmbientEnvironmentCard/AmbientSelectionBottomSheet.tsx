@@ -20,6 +20,13 @@ const FRIENDLY_NAMES: Record<string, string> = {
   Nocturne: "Céu Estrelado",
 };
 
+const COMPOSERS: Record<string, string> = {
+  AveMaria: "Franz Schubert",
+  ClairDeLune: "Claude Debussy",
+  Gymnopedie: "Erik Satie",
+  Nocturne: "Frédéric Chopin",
+};
+
 interface AmbientSelectionBottomSheetProps {
   audios: IAmbientAudio[] | undefined;
   onSelect: (audio: IAmbientAudio | null) => void;
@@ -52,7 +59,11 @@ export const AmbientSelectionBottomSheet = forwardRef<
       enableDynamicSizing={true}
       enablePanDownToClose={true}
       backdropComponent={renderBackdrop}
-      backgroundStyle={{ backgroundColor: theme.colors.background }}
+      backgroundStyle={{
+        backgroundColor: theme.colors.card,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+      }}
       handleIndicatorStyle={{ backgroundColor: theme.colors.border }}
     >
       <BottomSheetView
@@ -138,15 +149,27 @@ export const AmbientSelectionBottomSheet = forwardRef<
                   color={isSelected ? theme.colors.background : theme.colors.primary}
                 />
               </View>
-              <Text
-                style={[
-                  styles.audioOptionText,
-                  { flex: 1 },
-                  isSelected && styles.audioOptionTextSelected,
-                ]}
-              >
-                {FRIENDLY_NAMES[audio.id] || audio.title}
-              </Text>
+              <View style={{ flex: 1 }}>
+                <Text
+                  style={[
+                    styles.audioOptionText,
+                    isSelected && styles.audioOptionTextSelected,
+                  ]}
+                >
+                  {audio.title}
+                  {COMPOSERS[audio.id] && (
+                    <Text style={{ fontWeight: "normal", fontSize: 13, opacity: 0.7 }}>
+                      {" "}
+                      ({COMPOSERS[audio.id]})
+                    </Text>
+                  )}
+                </Text>
+                {FRIENDLY_NAMES[audio.id] && (
+                  <Text style={styles.audioOptionSubtitle}>
+                    {FRIENDLY_NAMES[audio.id]}
+                  </Text>
+                )}
+              </View>
               {isSelected && (
                 <View
                   style={{

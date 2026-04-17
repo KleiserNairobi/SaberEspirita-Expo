@@ -5,7 +5,9 @@ import { ITheme } from "@/configs/theme/types";
 export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     bottomSheetBackground: {
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.card,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
     },
     handleIndicator: {
       backgroundColor: theme.colors.border,

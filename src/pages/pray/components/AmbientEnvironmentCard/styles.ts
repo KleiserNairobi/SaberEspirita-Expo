@@ -104,10 +104,16 @@ export const createStyles = (theme: ITheme) =>
       borderBottomColor: theme.colors.border,
     },
     audioOptionText: {
-      ...theme.text("md", "regular"),
+      ...theme.text("md", "medium"),
+      color: theme.colors.text,
+    },
+    audioOptionSubtitle: {
+      ...theme.text("xs", "regular"),
+      color: theme.colors.textSecondary,
     },
     audioOptionTextSelected: {
-      ...theme.text("md", "semibold", theme.colors.primary),
+      color: theme.colors.primary,
+      fontFamily: "Oswald_600SemiBold",
     },
     minimalContainer: {
       marginTop: 20,

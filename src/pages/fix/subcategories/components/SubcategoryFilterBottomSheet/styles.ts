@@ -1,10 +1,12 @@
-import { StyleSheet } from "react-native";
 import { ITheme } from "@/configs/theme/types";
+import { StyleSheet } from "react-native";
 
 export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     bottomSheetBackground: {
       backgroundColor: theme.colors.card,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
     },
     handleIndicator: {
       backgroundColor: theme.colors.border,
