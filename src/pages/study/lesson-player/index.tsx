@@ -38,6 +38,7 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { createStyles } from "./styles";
+import { SHARE_FOOTER } from "@/utils/constants";
 
 import { GlossaryTermBottomSheet } from "./components/GlossaryTermBottomSheet";
 import { IGlossaryTerm } from "@/types/glossary";
@@ -303,6 +304,7 @@ export function LessonPlayerScreen() {
           "\n\n💡 Destaques:\n" +
           currentSlide.highlights.map((h) => `• ${h.title}: ${h.content}`).join("\n");
       }
+      shareMessage += SHARE_FOOTER;
       await Share.share({ message: shareMessage });
     } catch (error) {
       console.error(error);

@@ -55,10 +55,17 @@ export function TabNavigator() {
       <Tab.Screen
         name="MeditateTab"
         component={MeditateNavigator}
-        options={{
+        options={({ route }: { route: any }) => ({
           title: "Medite",
           tabBarIcon: ({ color, size }) => <BellRing size={size} color={color} />,
-        }}
+          tabBarStyle: ((route) => {
+            const routeName = getFocusedRouteNameFromRoute(route);
+            if (routeName && routeName !== "MeditateHome") {
+              return { display: "none" };
+            }
+            return undefined;
+          })(route),
+        })}
       />
       <Tab.Screen
         name="PrayTab"

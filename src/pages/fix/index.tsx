@@ -21,8 +21,6 @@ type FixHomeNavigationProp = NativeStackNavigationProp<FixStackParamList, "FixHo
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-// ... imports
-
 export default function FixHomeScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -142,6 +140,7 @@ export default function FixHomeScreen() {
             onPress={() => handleCategoryPress(item.id, item.name)}
           />
         )}
+        ListFooterComponent={<View style={{ height: paddingBottom }} />}
       />
     </SafeAreaView>
   );

@@ -12,7 +12,7 @@ export const createStyles = (theme: ITheme) =>
       alignItems: "center",
       paddingHorizontal: theme.spacing.md,
       paddingTop: theme.spacing.md,
-      paddingBottom: theme.spacing.sm,
+      paddingBottom: theme.spacing.md,
     },
     backButton: {
       width: 40,
@@ -63,7 +63,35 @@ export const createStyles = (theme: ITheme) =>
       textAlign: "center",
       lineHeight: 22,
     },
-    // Styles for podium and list will be in their respective component files or here if shared
+    // Hint Banner
+    hintContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: `${theme.colors.primary}10`,
+      marginHorizontal: theme.spacing.md,
+      padding: theme.spacing.sm,
+      borderRadius: theme.radius.md,
+      gap: 12,
+    },
+    hintIconContainer: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: `${theme.colors.primary}15`,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    hintText: {
+      flex: 1,
+      ...theme.text("sm", "regular", theme.colors.text),
+      lineHeight: 18,
+    },
+    hintAction: {
+      ...theme.text("sm", "semibold", theme.colors.primary),
+    },
+    closeButtonHint: {
+      padding: 4,
+    },
     // Podium Styles
     podiumContainer: {
       flexDirection: "row",

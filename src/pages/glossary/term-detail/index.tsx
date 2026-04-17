@@ -23,6 +23,7 @@ import { GLOSSARY_CATEGORIES } from "@/types/glossary";
 import { createStyles } from "./styles";
 import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
 import { ReadingToolbar } from "@/components/ReadingToolbar";
+import { SHARE_FOOTER } from "@/utils/constants";
 
 export function TermDetailScreen() {
   const { theme } = useAppTheme();
@@ -44,7 +45,7 @@ export function TermDetailScreen() {
 
     try {
       await Share.share({
-        message: `${term.term}\n\n${term.definition}\n\nReferências:\n${term.references.join("\n")}`,
+        message: `${term.term}\n\n${term.definition}\n\nReferências:\n${term.references.join("\n")}${SHARE_FOOTER}`,
       });
     } catch (error) {
       Alert.alert("Erro", "Não foi possível compartilhar o termo");

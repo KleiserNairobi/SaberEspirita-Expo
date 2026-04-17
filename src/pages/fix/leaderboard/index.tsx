@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -10,21 +10,57 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { createStyles } from "./styles";
-import { ArrowLeft } from "lucide-react-native";
+import { ArrowLeft, User, X } from "lucide-react-native";
 import { LeaderboardFilter } from "./components/LeaderboardFilter";
 import { LeaderboardPodium } from "./components/Podium";
 import { RankingList } from "./components/RankingList";
 import { TimeFilter, TimeFilterEnum } from "@/types/leaderboard";
 import { useLeaderboard } from "@/hooks/queries/useLeaderboard";
 import { useAuthStore } from "@/stores/authStore";
+import { EditProfileBottomSheet } from "@/pages/account/components/EditProfileBottomSheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { loadBoolean, saveBoolean } from "@/utils/Storage";
+import { userService } from "@/services/firebase/userService";
+
+const HIDE_HINT_KEY = "@hide_leaderboard_hint";
 
 export function LeaderboardScreen() {
   const navigation = useNavigation();
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const [selectedFilter, setSelectedFilter] = useState<TimeFilter>(TimeFilterEnum.WEEK);
+  const [showHint, setShowHint] = useState(false);
 
-  const { isGuest } = useAuthStore();
+  const { user, isGuest } = useAuthStore();
+  const editProfileRef = useRef<BottomSheetModal>(null);
+
+  useEffect(() => {
+    const isHintHidden = loadBoolean(HIDE_HINT_KEY);
+    if (!isHintHidden && !isGuest) {
+      setShowHint(true);
+    }
+  }, [isGuest]);
+
+  function handleCloseHint() {
+    setShowHint(false);
+    saveBoolean(HIDE_HINT_KEY, true);
+  }
+
+  function handleEditName() {
+    editProfileRef.current?.present();
+  }
+
+  async function handleUpdateName(newName: string) {
+    if (!user) return;
+    try {
+      await userService.updateUserName(user, newName);
+      // Opcional: fechar o hint após mudar o nome pela primeira vez
+      handleCloseHint();
+    } catch (error) {
+      console.error("Erro ao atualizar nome no placar:", error);
+      throw error;
+    }
+  }
 
   if (isGuest) {
     return (
@@ -93,6 +129,24 @@ export function LeaderboardScreen() {
         <Text style={styles.headerTitle}>Placar</Text>
       </View>
 
+      {/* Hint Banner */}
+      {showHint && (
+        <View style={styles.hintContainer}>
+          <View style={styles.hintIconContainer}>
+            <User size={18} color={theme.colors.primary} />
+          </View>
+          <Text style={styles.hintText}>
+            Prefere usar um apelido no placar?{" "}
+            <Text style={styles.hintAction} onPress={handleEditName}>
+              Personalizar
+            </Text>
+          </Text>
+          <TouchableOpacity style={styles.closeButtonHint} onPress={handleCloseHint}>
+            <X size={16} color={theme.colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* Filter */}
       <LeaderboardFilter
         selectedFilter={selectedFilter}
@@ -132,6 +186,12 @@ export function LeaderboardScreen() {
           </ScrollView>
         )}
       </View>
+
+      <EditProfileBottomSheet
+        ref={editProfileRef}
+        initialName={user?.displayName || ""}
+        onSave={handleUpdateName}
+      />
     </SafeAreaView>
   );
 }
