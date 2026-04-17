@@ -55,7 +55,7 @@ export function EmotionalChatScreen() {
   }, [messages]);
 
   function renderMessage({ item }: { item: Message }) {
-    return <MessageBubble message={item} />;
+    return <MessageBubble message={item} shareTitle="Apoio Emocional" />;
   }
 
   function renderEmpty() {

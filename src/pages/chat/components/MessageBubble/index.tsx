@@ -10,9 +10,10 @@ import { createStyles } from "./styles";
 
 interface MessageBubbleProps {
   message: Message;
+  shareTitle?: string;
 }
 
-export function MessageBubble({ message }: MessageBubbleProps) {
+export function MessageBubble({ message, shareTitle }: MessageBubbleProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
@@ -29,8 +30,9 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
   async function handleShare() {
     try {
+      const title = shareTitle || "Resposta do Sr. Allan";
       await Share.share({
-        message: `📚 Resposta do Sr. Allan:\n\n${message.text}\n\n---${SHARE_FOOTER}`,
+        message: `📚 ${title}:\n\n${message.text}\n\n---${SHARE_FOOTER}`,
       });
     } catch (error) {
       Alert.alert("Erro", "Não foi possível compartilhar a mensagem");

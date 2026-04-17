@@ -97,7 +97,7 @@ export function ScientificChatScreen() {
   }, [messages]);
 
   function renderMessage({ item }: { item: Message }) {
-    return <MessageBubble message={item} />;
+    return <MessageBubble message={item} shareTitle="Esclarecimento Doutrinário" />;
   }
 
   function renderEmpty() {
