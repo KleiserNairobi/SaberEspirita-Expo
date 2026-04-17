@@ -6,6 +6,7 @@ import PrayHomeScreen from "@/pages/pray";
 import { AllPrayersScreen } from "@/pages/pray/all-prayers";
 import { PrayerPrepScreen } from "@/pages/pray/prayer-prep";
 import { PrayerScreen } from "@/pages/pray/prayer";
+import { EmotionalChatScreen } from "@/pages/chat/emotional";
 
 const Stack = createNativeStackNavigator<PrayStackParamList>();
 
@@ -20,6 +21,7 @@ export function PrayNavigator() {
       <Stack.Screen name="AllPrayers" component={AllPrayersScreen} />
       <Stack.Screen name="PrayerPrep" component={PrayerPrepScreen} />
       <Stack.Screen name="Prayer" component={PrayerScreen} />
+      <Stack.Screen name="EmotionalChat" component={EmotionalChatScreen} />
     </Stack.Navigator>
   );
 }

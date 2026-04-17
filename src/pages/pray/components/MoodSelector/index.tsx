@@ -28,7 +28,7 @@ export function MoodSelector() {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   const selectedMoodData = MOODS.find((m) => m.id === currentMood);
-  const Icon = selectedMoodData?.icon || Sparkles;
+  const Icon = selectedMoodData?.icon || Smile;
 
   function handleOpenSelector() {
     bottomSheetRef.current?.present();

@@ -16,10 +16,8 @@ export type AppStackParamList = {
   FAQ: undefined;
   Privacy: undefined;
   Terms: undefined;
-  EmotionalChat: undefined;
-  ScientificChat: {
-    initialMessage?: string;
-  };
+  EmotionalChat: { initialMessage?: string } | undefined;
+  ScientificChat: { initialMessage?: string } | undefined;
   Glossary: undefined;
   CoursesCatalog: undefined;
   CourseDetails: { courseId: string };
@@ -82,6 +80,7 @@ export type PrayStackParamList = {
   AllPrayers: { initialCategory?: string };
   PrayerPrep: { id: string };
   Prayer: { id: string };
+  EmotionalChat: { initialMessage?: string } | undefined;
 };
 
 export type MeditateStackParamList = {
@@ -90,6 +89,7 @@ export type MeditateStackParamList = {
   Reflection: { id: string };
   AllMeditations: undefined;
   MeditationPlayer: { id: string };
+  EmotionalChat: { initialMessage?: string } | undefined;
 };
 
 export type FixStackParamList = {

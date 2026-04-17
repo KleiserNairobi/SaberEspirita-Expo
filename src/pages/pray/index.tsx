@@ -65,7 +65,7 @@ export default function PrayScreen() {
       : "";
     navigation.navigate("EmotionalChat", {
       initialMessage: `Olá. ${moodContext} Poderia me ajudar com uma oração personalizada para o meu momento?`,
-    } as any);
+    });
   }
 
   return (

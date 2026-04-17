@@ -220,7 +220,7 @@ export default function MeditateScreen() {
             description="Converse com nosso assistente espiritual baseado nos ensinamentos de Kardec."
             buttonText="Conversar"
             icon={Compass}
-            onPress={() => navigation.navigate("EmotionalChat" as never)}
+            onPress={() => navigation.navigate("EmotionalChat")}
           />
         </View>
       </ScrollView>

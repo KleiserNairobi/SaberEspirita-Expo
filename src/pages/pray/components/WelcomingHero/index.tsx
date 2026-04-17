@@ -98,7 +98,7 @@ export function WelcomingHero() {
       : "";
     navigation.navigate("EmotionalChat", {
       initialMessage: `Olá. ${moodContext} Poderia me ajudar com uma oração personalizada para o meu momento?`,
-    } as any);
+    });
   }
 
   // Card Retrátil: Se não houve escolha, mostramos apenas o acolhimento inicial
@@ -112,7 +112,7 @@ export function WelcomingHero() {
         activeOpacity={0.7}
       >
         <View style={styles.iconContainer}>
-          <Sparkles size={20} color={theme.colors.primary} />
+          <Compass size={20} color={theme.colors.primary} />
         </View>
         <View style={{ flex: 1 }}>
           <View style={styles.suggestionHeader}>

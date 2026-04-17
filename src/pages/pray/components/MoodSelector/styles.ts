@@ -29,8 +29,6 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: `${theme.colors.primary}10`,
       alignItems: "center",
       justifyContent: "center",
-      // borderWidth: 1,
-      // borderColor: theme.colors.border,
     },
     textContainer: {
       flex: 1,
@@ -46,12 +44,12 @@ export const createStyles = (theme: ITheme) =>
       flexDirection: "row",
       alignItems: "center",
       gap: 4,
-      backgroundColor: `${theme.colors.primary}15`,
+      backgroundColor: `${theme.colors.primary}10`,
       paddingVertical: 6,
       paddingHorizontal: 10,
       borderRadius: 10,
       borderWidth: 1,
-      borderColor: theme.colors.border,
+      borderColor: `${theme.colors.primary}20`,
     },
     selectorButtonText: {
       ...theme.text("xs", "semibold", theme.colors.textSecondary),

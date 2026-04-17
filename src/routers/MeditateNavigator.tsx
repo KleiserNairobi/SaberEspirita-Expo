@@ -6,6 +6,7 @@ import AllMeditationsScreen from "@/pages/meditate/all-meditations";
 import AllReflectionsScreen from "@/pages/meditate/all-reflections";
 import ReflectionScreen from "@/pages/meditate/reflection";
 import MeditationPlayerScreen from "@/pages/meditate/meditation-player";
+import { EmotionalChatScreen } from "@/pages/chat/emotional";
 import { MeditateStackParamList } from "./types";
 
 const Stack = createNativeStackNavigator<MeditateStackParamList>();
@@ -22,6 +23,7 @@ export function MeditateNavigator() {
       <Stack.Screen name="Reflection" component={ReflectionScreen} />
       <Stack.Screen name="AllMeditations" component={AllMeditationsScreen} />
       <Stack.Screen name="MeditationPlayer" component={MeditationPlayerScreen} />
+      <Stack.Screen name="EmotionalChat" component={EmotionalChatScreen} />
     </Stack.Navigator>
   );
 }
