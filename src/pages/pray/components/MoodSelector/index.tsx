@@ -12,21 +12,14 @@ import {
   Sun,
   ChevronDown,
 } from "lucide-react-native";
+import { MOODS } from "./constants";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { UserMood, useMoodStore } from "@/stores/moodStore";
 import { MoodSelectionBottomSheet } from "./MoodSelectionBottomSheet";
 import { createStyles } from "./styles";
 
-export const MOODS: { id: UserMood; icon: any; label: string; noun: string }[] = [
-  { id: "NORMAL", icon: Smile, label: "Equilibrado / Normal", noun: "harmonia" },
-  { id: "CALMO", icon: Sun, label: "Estou Calmo", noun: "calma" },
-  { id: "TRISTE", icon: CloudRain, label: "Sentindo Tristeza", noun: "consolo" },
-  { id: "ANSIOSO", icon: Activity, label: "Com Ansiedade", noun: "paz" },
-  { id: "GRATO", icon: Heart, label: "Sinto Gratidão", noun: "luz" },
-  { id: "IRRITADO", icon: Flame, label: "Estou Irritado", noun: "equilíbrio" },
-  { id: "CANSADO", icon: Moon, label: "Sinto Cansaço", noun: "renovação" },
-];
+
 
 export function MoodSelector() {
   const { theme } = useAppTheme();

@@ -43,8 +43,10 @@ export function PrayerScreen() {
   useEffect(() => {
     const unsubscribe = navigation.addListener("beforeRemove", (e) => {
       if (e.data.action.type === "GO_BACK" || e.data.action.type === "POP") {
+        // Para a música e reseta a seleção visual, exigindo nova seleção se quiser.
+        // Isso é a lógica à prova de falhas demandada.
         setPlaying(false);
-        setCurrentTrack(null);
+        setCurrentTrack(null, null);
       }
     });
     return unsubscribe;
@@ -107,7 +109,10 @@ export function PrayerScreen() {
   }
 
   function handleFinishPrayer() {
-    // Pode engatilhar feedback (vibração ou haptics) aqui futuramente.
+    // Quando finalizamos e saímos, garantimos a destruição da trilha
+    setPlaying(false);
+    setCurrentTrack(null, null);
+
     if (navigation.canGoBack()) {
       // Retorna e mata a Preparação do caminho, parando nas listas (Origens)!
       navigation.pop(2);

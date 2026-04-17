@@ -29,7 +29,7 @@ export function PrayerPrepScreen() {
     const unsubscribe = navigation.addListener("beforeRemove", (e) => {
       if (e.data.action.type === "GO_BACK" || e.data.action.type === "POP") {
         setPlaying(false);
-        setCurrentTrack(null);
+        setCurrentTrack(null, null); // Limpa trilha e ID de seleção
       }
     });
     return unsubscribe;
