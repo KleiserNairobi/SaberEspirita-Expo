@@ -88,61 +88,7 @@ export const StatsService = {
     }
   },
 
-  /**
-   * Incrementa o contador global de meditações/reflexões realizadas
-   * @param type 'reflection' ou 'guided'
-   * @param isGuest Se o usuário é convidado
-   */
-  async incrementMeditationCount(
-    type: "reflection" | "guided" = "guided",
-    isGuest: boolean = false
-  ) {
-    try {
-      const globalDocId = type === "reflection" ? "meditation" : "guided_meditations";
-      const dailyField =
-        type === "reflection" ? "reflectionSessions" : "guidedMeditationSessions";
-      const dailyGuestField =
-        type === "reflection"
-          ? "reflectionSessions_guest"
-          : "guidedMeditationSessions_guest";
-      const dailyUserField =
-        type === "reflection"
-          ? "reflectionSessions_user"
-          : "guidedMeditationSessions_user";
 
-      // 1. Atualizar Global Stats
-      const globalStatsRef = doc(db, "global_stats", globalDocId);
-      await setDoc(
-        globalStatsRef,
-        {
-          totalSessions: increment(1),
-        },
-        { merge: true }
-      );
-
-      // 2. Atualizar Daily Stats
-      const today = new Date()
-        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
-        .split(" ")[0];
-      const dailyStatsRef = doc(db, "daily_stats", today);
-      await setDoc(
-        dailyStatsRef,
-        {
-          date: today,
-          [dailyField]: increment(1),
-          [dailyGuestField]: isGuest ? increment(1) : increment(0),
-          [dailyUserField]: !isGuest ? increment(1) : increment(0),
-        },
-        { merge: true }
-      );
-
-      if (__DEV__) {
-        console.log(`[StatsService] Meditation count incremented (${type}).`);
-      }
-    } catch (error) {
-      console.error("[StatsService] Error incrementing meditation count:", error);
-    }
-  },
 
   /**
    * Incrementa o contador global de plays do player ambiente (Sintonia)

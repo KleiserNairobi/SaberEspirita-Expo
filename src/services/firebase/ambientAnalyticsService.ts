@@ -1,7 +1,5 @@
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/configs/firebase/firebase";
-import { StatsService } from "./statsService";
-
 export async function logAmbientPlay(
   userId: string,
   trackTitle: string,
@@ -18,9 +16,6 @@ export async function logAmbientPlay(
     };
     await addDoc(logsRef, logData);
 
-    // Atualiza estatísticas globais e diárias
-    const isGuest = userId === "guest";
-    await StatsService.incrementAmbientPlayCount(isGuest);
     if (__DEV__) {
       console.log(`[Analytics] Ambient Play logged: ${trackTitle}`);
     }

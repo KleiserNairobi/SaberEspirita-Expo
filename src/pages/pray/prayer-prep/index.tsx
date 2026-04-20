@@ -10,6 +10,9 @@ import { ActivityIndicator, Animated, Text, TouchableOpacity, View } from "react
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { createStyles } from "./styles";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
+import { useAuth } from "@/stores/authStore";
+import { logAmbientPlay } from "@/services/firebase/ambientAnalyticsService";
+import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
 
 type NavigationProp = NativeStackNavigationProp<PrayStackParamList, "PrayerPrep">;
 type RouteParam = RouteProp<PrayStackParamList, "PrayerPrep">;
@@ -23,6 +26,8 @@ export function PrayerPrepScreen() {
   const { id } = route.params;
   const { data: prayer, isLoading } = usePrayer(id);
   const { isDownloading, currentTrack, currentAudioId, setPlaying, setCurrentTrack } = useAmbientPlayerStore();
+  const { user } = useAuth();
+  const { data: audios } = useAmbientAudios();
 
   // Extermina o som caso o usuário desista na Preparação e volte pra Home/Lista
   useEffect(() => {
@@ -106,6 +111,15 @@ export function PrayerPrepScreen() {
     }
 
     setPlaying(true); // Auto-Play garantido e forçado se houvesse track 
+
+    if (currentAudioId && currentTrack) {
+      const activeAudio = audios?.find(a => a.id === currentAudioId);
+      if (activeAudio) {
+        const userId = user?.uid || "guest";
+        void logAmbientPlay(userId, activeAudio.title, activeAudio.id);
+      }
+    }
+
     navigation.navigate("Prayer", { id });
   }
 

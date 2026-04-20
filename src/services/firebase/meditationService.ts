@@ -1,5 +1,6 @@
 import { IMeditation } from "@/types/meditate";
 import {
+  addDoc,
   collection,
   doc,
   getDoc,
@@ -7,11 +8,10 @@ import {
   limit,
   orderBy,
   query,
+  serverTimestamp,
   where,
 } from "firebase/firestore";
 import { db } from "../../configs/firebase/firebase";
-
-import { StatsService } from "./statsService";
 
 export const MEDITATIONS_COLLECTION = "meditations";
 
@@ -78,9 +78,15 @@ export async function logMeditationUsage(
   type: "reflection" | "guided" = "guided"
 ): Promise<void> {
   try {
-    // Registra métricas de uso no Firestore
-    const isGuest = userId === "guest";
-    await StatsService.incrementMeditationCount(type, isGuest);
+    // Registra métricas de uso no Firestore via trigger (meditation_logs)
+    const logsRef = collection(db, "meditation_logs");
+    await addDoc(logsRef, {
+      itemId: meditationId,
+      userId,
+      type,
+      createdAt: serverTimestamp(),
+      timestamp: serverTimestamp(),
+    });
 
     if (__DEV__) {
       console.log(
@@ -88,7 +94,7 @@ export async function logMeditationUsage(
       );
     }
   } catch (error) {
-    console.error("Erro ao resgistrar uso da meditação:", error);
+    console.error("Erro ao registrar uso da meditação:", error);
     // Erros de analytics não devem quebrar o fluxo do usuário
   }
 }

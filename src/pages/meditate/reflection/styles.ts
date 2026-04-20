@@ -1,5 +1,4 @@
 import { StyleSheet } from "react-native";
-
 import { ITheme } from "@/configs/theme/types";
 
 export const createStyles = (theme: ITheme) =>
@@ -102,5 +101,24 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("md", "regular"),
       color: theme.colors.muted,
       textAlign: "center",
+    },
+    finishButton: {
+      backgroundColor: theme.colors.primary,
+      paddingVertical: theme.spacing.md,
+      borderRadius: theme.radius.md,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    finishButtonText: {
+      ...theme.text("md", "semibold", theme.colors.background),
+      textTransform: "uppercase",
+    },
+    fixedFooter: {
+      backgroundColor: theme.colors.background,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.md,
+      gap: theme.spacing.md,
     },
   });

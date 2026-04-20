@@ -52,18 +52,7 @@ export function PrayerScreen() {
     return unsubscribe;
   }, [navigation, setPlaying, setCurrentTrack]);
 
-  // Registrar uso da oração
-  useEffect(() => {
-    if (prayer && (user || isGuest) && !hasLogged.current) {
-      const userId = user?.uid || "guest";
-      logPrayerUsage(prayer.id, userId);
-      hasLogged.current = true;
-
-      // Invalida o cache de tendências para que os números de visualização
-      // sejam atualizados silenciosamente no background ao voltar para a home
-      queryClient.invalidateQueries({ queryKey: ["prayers", "trending"] });
-    }
-  }, [prayer, user, isGuest, queryClient]);
+  // Removemos o log precipitado. O uso agora é garantido apenas perante o encerramento da prece.
 
   async function handleShare() {
     if (!prayer) return;
@@ -109,7 +98,15 @@ export function PrayerScreen() {
   }
 
   function handleFinishPrayer() {
-    // Quando finalizamos e saímos, garantimos a destruição da trilha
+    // 1. Registra com fidelidade que o usuário concluiu esta prece
+    if (prayer && !hasLogged.current) {
+      const userId = user?.uid || "guest";
+      logPrayerUsage(prayer.id, userId);
+      hasLogged.current = true;
+      queryClient.invalidateQueries({ queryKey: ["prayers", "trending"] });
+    }
+
+    // 2. Quando finalizamos e saímos, garantimos a destruição da trilha
     setPlaying(false);
     setCurrentTrack(null, null);
 

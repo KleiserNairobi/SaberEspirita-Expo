@@ -9,7 +9,6 @@ import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
 import { createStyles } from "./styles";
 import { IAmbientAudio } from "@/types/ambientAudio";
 import { getAudioLocalUri } from "@/services/firebase/ambientAudioService";
-import { logAmbientPlay } from "@/services/firebase/ambientAnalyticsService";
 import { useAuth } from "@/stores/authStore";
 
 // Mapeamento de ícones
@@ -54,11 +53,6 @@ export function AmbientPlayer() {
           // ela não deve simular engasgo visual de reload para não causar desconfiança do cache.
           setPlaying(true); // Engata o store
           setCurrentTrack(audio.localUri);
-
-          // Log Analytics
-          if (user?.uid) {
-            void logAmbientPlay(user.uid, audio.title, audio.id);
-          }
         }
         return;
       }

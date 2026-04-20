@@ -3,8 +3,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery } from "@tanstack/react-query";
 import { BookOpen, Clock, Tag, User } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Alert, ScrollView, Text, View, TouchableOpacity } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ReadingToolbar } from "@/components/ReadingToolbar";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -26,6 +26,7 @@ export default function ReflectionScreen() {
   const route = useRoute<ReflectionScreenRouteProp>();
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
   const { user, isGuest } = useAuth();
+  const insets = useSafeAreaInsets();
 
   const [isNarrating, setIsNarrating] = useState(false);
   const hasLogged = useRef(false);
@@ -47,13 +48,16 @@ export default function ReflectionScreen() {
   });
 
   // Registrar leitura da reflexão
-  useEffect(() => {
-    if (reflection && (user || isGuest) && !hasLogged.current) {
+  function handleFinishReading() {
+    if (reflection && !hasLogged.current) {
       const userId = user?.uid || "guest";
       logMeditationUsage(reflection.id, userId, "reflection");
       hasLogged.current = true;
     }
-  }, [reflection, user, isGuest]);
+
+    // Navega diretamente para a home principal do módulo Medite
+    navigation.navigate("MeditateHome");
+  }
 
   async function handleShare() {
     if (!reflection) return;
@@ -207,6 +211,22 @@ export default function ReflectionScreen() {
           )}
         </View>
       </ScrollView>
+
+      {/* Rodapé Fixo com Botão Finalizar */}
+      <View
+        style={[
+          styles.fixedFooter,
+          { paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : 32 },
+        ]}
+      >
+        <TouchableOpacity
+          style={styles.finishButton}
+          onPress={handleFinishReading}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.finishButtonText}>Finalizei a Leitura</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
