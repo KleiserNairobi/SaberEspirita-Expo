@@ -21,6 +21,7 @@ import { useMeditations } from "@/hooks/queries/useMeditations";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { getMeditationById } from "@/services/firebase/meditationService";
+import { useMeditationPlayerStore } from "@/stores/meditationPlayerStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { MeditationCard } from "../components/MeditationCard";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
@@ -46,6 +47,7 @@ export default function AllMeditationsScreen() {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   const { data: meditations, isLoading } = useMeditations();
+  const setCurrentMeditation = useMeditationPlayerStore((s) => s.setCurrentMeditation);
 
   // Filtrar meditações por texto e seleção do sheet
   const filteredMeditations = useMemo(() => {
@@ -88,6 +90,9 @@ export default function AllMeditationsScreen() {
   }, [meditations, searchQuery, filterType]);
 
   function handleMeditationPress(medId: string) {
+    // Alimenta a store com o objeto completo para evitar fetch do Firestore no player
+    const found = meditations?.find((m) => m.id === medId);
+    if (found) setCurrentMeditation(found);
     navigation.navigate("MeditationPlayer", { id: medId });
   }
 

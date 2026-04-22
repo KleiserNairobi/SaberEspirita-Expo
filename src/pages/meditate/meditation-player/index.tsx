@@ -14,20 +14,21 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowLeft, Pause, Play, SkipBack, SkipForward } from "lucide-react-native";
 import TrackPlayer, {
+  Event,
   RepeatMode,
   State,
   usePlaybackState,
   useProgress,
+  useTrackPlayerEvents,
 } from "react-native-track-player";
 
 import { useMeditation } from "@/hooks/queries/useMeditations";
 import { useAppTheme } from "@/hooks/useAppTheme";
-// Removemos useAmbientPlayerStore para evitar colisão com a oração
 import { getCachedAudioUri } from "@/services/audio/audioCacheService";
-import { createStyles } from "./styles";
-
 import { logMeditationUsage } from "@/services/firebase/meditationService";
 import { useAuth } from "@/stores/authStore";
+import { useMeditationPlayerStore } from "@/stores/meditationPlayerStore";
+import { createStyles } from "./styles";
 
 const { width } = Dimensions.get("window");
 
@@ -40,7 +41,18 @@ export default function MeditationPlayerScreen() {
   const { user } = useAuth();
   const hasLogged = React.useRef(false);
 
-  const { data: meditation, isLoading } = useMeditation(id);
+  // --- ESTADO GLOBAL: meditação em memória (vinda da listagem) ---
+  // Evita re-fetch do Firestore quando os dados já estão disponíveis.
+  const cachedMeditation = useMeditationPlayerStore((s) => s.currentMeditation);
+
+  // Só aciona o fetch se não temos o objeto em memória OU se o id não bate
+  const shouldFetch = !cachedMeditation || cachedMeditation.id !== id;
+  const { data: fetchedMeditation, isLoading } = useMeditation(shouldFetch ? id : "");
+
+  // Resolve a fonte da meditação: store (instantâneo) > fetch (fallback)
+  const meditation = shouldFetch ? fetchedMeditation : cachedMeditation;
+
+  // --- CACHE LOCAL DE ÁUDIO (FileSystem) ---
   const [localAudioUri, setLocalAudioUri] = useState<string | null>(null);
 
   useEffect(() => {
@@ -50,50 +62,91 @@ export default function MeditationPlayerScreen() {
           const uri = await getCachedAudioUri(meditation.audioUrl);
           setLocalAudioUri(uri);
         } catch (error) {
-          console.error("Failed to cache audio:", error);
-          setLocalAudioUri(meditation.audioUrl); // Fallback to remote if cache fails
+          console.error("[MeditationPlayer] Falha ao obter URI de áudio em cache:", error);
+          setLocalAudioUri(meditation.audioUrl); // fallback para URL remota
         }
       }
     }
     fetchLocalAudio();
   }, [meditation?.audioUrl]);
 
-  // --- TRACK PLAYER STATE LOCAL (DESACOLPADO DA ORAÇAO) ---
-  const { position, duration } = useProgress(200);
+  // --- ESTADO DO TRACK PLAYER (desacoplado do Ore) ---
+  const { position, duration } = useProgress(500);
   const [isPlaying, setPlaying] = useState(false);
 
-  // O isReady agora é simples: se temos duração ou se o player diz que está tocando
-  const isReady = duration > 0 || isPlaying;
+  // Preserva a última duração conhecida para evitar loading após fim do áudio.
+  const lastKnownDuration = React.useRef<number>(0);
+  React.useEffect(() => {
+    if (duration > 0) lastKnownDuration.current = duration;
+  }, [duration]);
+
+  // isReady: true quando temos duração (atual ou cacheada) ou o player já toca
+  const isReady = duration > 0 || lastKnownDuration.current > 0 || isPlaying;
 
   const playbackState = usePlaybackState();
 
+  // Ref para evitar loop: resetar apenas uma vez por reprodução
+  const hasResetOnEnd = React.useRef(false);
+
+  // --- DETECÇÃO DE FIM VIA useProgress (cross-platform garantido) ---
+  // É a única fonte verdadeiramente confiável em iOS e Android.
+  // State.Ended e PlaybackQueueEnded são inconsistentes no Android (ExoPlayer).
+  // position e duration são atualizados pelo timer nativo a cada 500ms.
   useEffect(() => {
-    if (playbackState.state === State.Playing && !isPlaying) setPlaying(true);
-    else if (playbackState.state === State.Paused && isPlaying) setPlaying(false);
-    else if (playbackState.state === State.Ended && isPlaying) {
+    const effectiveDuration = duration > 0 ? duration : lastKnownDuration.current;
+    if (
+      effectiveDuration > 0 &&
+      position > 0 &&
+      position >= effectiveDuration - 0.8 && // margem de 800ms antes do fim exato
+      !hasResetOnEnd.current
+    ) {
+      hasResetOnEnd.current = true;
       setPlaying(false);
-      TrackPlayer.pause();
+      // 1. pause(): seta playWhenReady=false no ExoPlayer/AVPlayer.
+      //    OBRIGATÓRIO antes do seekTo(0) — sem isso, o player reinicia
+      //    automaticamente após o seek pois playWhenReady ainda é true.
+      // 2. seekTo(0): reseta posição para o início sem zerar duration nem limpar fila.
+      TrackPlayer.pause()
+        .catch(() => {})
+        .finally(() => {
+          TrackPlayer.seekTo(0).catch(() => {});
+        });
+    } else if (position > 0 && position < effectiveDuration - 1) {
+      // Reprodução em curso: libera o lock para permitir nova detecção
+      hasResetOnEnd.current = false;
+    }
+  }, [position, duration]);
+
+  // Sincroniza Play/Pause e estados externos (hardware, notificação)
+  useEffect(() => {
+    if (playbackState.state === State.Playing && !isPlaying && !hasResetOnEnd.current) {
+      setPlaying(true);
+    } else if (
+      (playbackState.state === State.Paused ||
+        playbackState.state === State.Stopped) &&
+      isPlaying
+    ) {
+      setPlaying(false);
     }
   }, [playbackState.state]);
 
-  // Track local reference para lock de Race Condition espelhando a solidez do GlobalAmbientPlayer
-  // Carrega e Sobe o Áudio para o Serviço de Background Nativo
+
+  // --- SETUP E CARREGAMENTO DO ÁUDIO ---
+  // Lógica de lock para evitar race conditions em Fast Refresh / remounts
   useEffect(() => {
     let isActive = true;
 
     async function setupAndLoad() {
       if (localAudioUri && meditation) {
         try {
-          // Em vez de lutar com variáveis do React (que se confundem nos Unmounts e Fast Refreshes),
-          // Perguntamos DIRETAMENTE para a Engine Nativa do iOS o que ela está tocando!
+          // Pergunta diretamente ao engine nativo o que está tocando
           const currentNativeTrackIndex = await TrackPlayer.getActiveTrackIndex();
           let currentNativeTrack = null;
           if (currentNativeTrackIndex !== undefined && currentNativeTrackIndex !== null) {
             currentNativeTrack = await TrackPlayer.getTrack(currentNativeTrackIndex);
           }
 
-          // Se a música atual da Engine C++ JÁ É A MEDITAÇÃO... não injetamos uma nova Track na Fila.
-          // SÓ TOCAMOS! Isso fulmina o erro de duplicar/picotar.
+          // Se a meditação já está carregada na engine nativa, apenas dá play (sem re-injeção)
           if (currentNativeTrack?.id === meditation.id) {
             const currentState = await TrackPlayer.getPlaybackState();
             if (currentState.state !== State.Playing) {
@@ -103,11 +156,12 @@ export default function MeditationPlayerScreen() {
             return;
           }
 
-          // Se for outra música (ou fila vazia), limpamos a fila nativa e começamos 100% fresco do Zero
+          // Fila diferente ou vazia: reset completo e carregamento fresco
           await TrackPlayer.reset();
 
           if (!isActive) return;
-          await new Promise((resolve) => setTimeout(resolve, 300)); // Aumentado para 300ms para maior estabilidade no iOS
+          // Aguarda 300ms para maior estabilidade no iOS (evita "Removed Instance")
+          await new Promise((resolve) => setTimeout(resolve, 300));
           if (!isActive) return;
 
           await TrackPlayer.add({
@@ -119,7 +173,6 @@ export default function MeditationPlayerScreen() {
           });
 
           if (!isActive) return;
-          // Garantir volume máximo para meditações guiadas
           await TrackPlayer.setVolume(1.0);
           if (!isActive) return;
           await TrackPlayer.setRepeatMode(RepeatMode.Off);
@@ -128,42 +181,40 @@ export default function MeditationPlayerScreen() {
           await TrackPlayer.play();
           setPlaying(true);
         } catch (err) {
-          console.error(
-            "[MeditationPlayer] Erro crítico ao carregar/iniciar o player:",
-            err
-          );
-          // Ignorar silencias do setup para impedir trava
+          console.error("[MeditationPlayer] Erro crítico ao carregar/iniciar o player:", err);
         }
       }
     }
+
     setupAndLoad();
 
     return () => {
-      // KILL-SWITCH LOCAL
+      // KILL-SWITCH LOCAL: cancela operações assíncronas pendentes
       isActive = false;
       setPlaying(false);
 
-      TrackPlayer.pause()
-        .catch(() => {})
-        .finally(() => {
-          // Removemos o reset do finally pois uma das origens de "picote" são resets concorrentes desengatando no IOS Background Audio e forçando crash de "Removed Instance" no meio do Playback da próxima mount
-        });
+      // stop() para o áudio e reseta posição para 0, mantendo a fila inteira.
+      // É mais seguro que reset() no cleanup do iOS (evita "Removed Instance").
+      TrackPlayer.stop().catch(() => {});
     };
   }, [localAudioUri, meditation?.id]);
 
+  // --- LOG DE USO (analytics) ---
   useEffect(() => {
-    // Log target: only when the audio is actually playing, avoiding multiple logs per session
     if (isPlaying && meditation && !hasLogged.current) {
       logMeditationUsage(meditation.id, user?.uid || "guest", "guided");
       hasLogged.current = true;
     }
   }, [isPlaying, meditation, user]);
 
+  // --- HANDLERS ---
   function handleGoBack() {
     navigation.goBack();
   }
 
   const togglePlayPause = async () => {
+    // stop() reseta posição para 0 e mantém fila — um play() após stop()
+    // sempre reinicia do começo, sem necessidade de tratamento especial.
     if (isPlaying) {
       await TrackPlayer.pause();
       setPlaying(false);
@@ -175,8 +226,12 @@ export default function MeditationPlayerScreen() {
 
   async function handleSeekForward() {
     if (!isReady) return;
+    // Usa lastKnownDuration como fallback: após pause()+seekTo(0), duration pode ser
+    // momentaneamente 0 no useProgress, causando Math.min(newTime, 0) = 0 (bug de seek).
+    const effectiveDuration = duration > 0 ? duration : lastKnownDuration.current;
     const newTime = position + 15;
-    await TrackPlayer.seekTo(Math.min(newTime, duration));
+    // Limita a 1.5s antes do fim para não disparar o detector de fim acidentalmente
+    await TrackPlayer.seekTo(Math.min(newTime, Math.max(0, effectiveDuration - 1.5)));
   }
 
   async function handleSeekBackward() {
@@ -187,14 +242,14 @@ export default function MeditationPlayerScreen() {
 
   function formatTime(seconds: number) {
     if (isNaN(seconds) || seconds < 0) return "0:00";
-    // O valor já está em segundos inteiros ou fracionados
     const totalSeconds = Math.floor(seconds);
     const m = Math.floor(totalSeconds / 60);
     const s = totalSeconds % 60;
     return `${m}:${s < 10 ? "0" : ""}${s}`;
   }
 
-  if (isLoading || !meditation) {
+  // --- ESTADOS DE CARREGAMENTO ---
+  if ((isLoading && shouldFetch) || !meditation) {
     return (
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
         <View style={styles.loadingContainer}>

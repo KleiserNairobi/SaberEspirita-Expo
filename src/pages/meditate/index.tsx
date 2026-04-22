@@ -19,6 +19,7 @@ import { MeditateStackParamList } from "@/routers/types";
 import { getMeditationById } from "@/services/firebase/meditationService";
 import { getReflectionById } from "@/services/firebase/reflectionService";
 import { useAuthStore } from "@/stores/authStore";
+import { useMeditationPlayerStore } from "@/stores/meditationPlayerStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { Compass, Heart } from "lucide-react-native";
 import { MeditationCard } from "./components/MeditationCard";
@@ -35,6 +36,7 @@ export default function MeditateScreen() {
   const { user } = useAuthStore();
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
   const syncWithFirebase = useReflectionFavoritesStore((state) => state.syncWithFirebase);
+  const setCurrentMeditation = useMeditationPlayerStore((s) => s.setCurrentMeditation);
 
   React.useEffect(() => {
     if (user?.uid) {
@@ -74,6 +76,9 @@ export default function MeditateScreen() {
   }
 
   function handleMeditationPress(meditationId: string) {
+    // Alimenta a store com o objeto completo para evitar fetch do Firestore no player
+    const found = featuredMeditations?.find((m) => m.id === meditationId);
+    if (found) setCurrentMeditation(found);
     navigation.navigate("MeditationPlayer", { id: meditationId });
   }
 
