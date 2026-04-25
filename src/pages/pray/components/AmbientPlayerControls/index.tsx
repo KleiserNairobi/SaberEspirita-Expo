@@ -38,6 +38,10 @@ export function AmbientPlayerControls() {
   const lastKnownDuration = useRef<number>(0);
   const hasResetOnEnd = useRef(false);
 
+  const activeAudio = audios?.find(a => a.id === currentAudioId);
+  const trackTitle = activeAudio ? activeAudio.title : "Melodia Ambiente";
+  const composer = currentAudioId ? COMPOSERS[currentAudioId] : null;
+
   useEffect(() => {
     if (duration > 0) lastKnownDuration.current = duration;
   }, [duration]);
@@ -63,50 +67,24 @@ export function AmbientPlayerControls() {
     }
   }, [position, duration, setPlaying]);
 
-  // --- SINCRONIZAÇÃO DE PLAY/PAUSE (Zustand -> Hardware) ---
+  // Sincroniza Play/Pause e estados externos (hardware, notificação)
   useEffect(() => {
-    async function syncPlayback() {
-      const activeTrack = await TrackPlayer.getActiveTrack();
-      if (activeTrack && activeTrack.id !== "ambient_track") {
-        return;
-      }
-
-      if (isPlaying) {
-        if (playbackState.state !== State.Playing && playbackState.state !== State.Buffering) {
-          await TrackPlayer.play();
-        }
-      } else {
-        if (playbackState.state === State.Playing || playbackState.state === State.Buffering || playbackState.state === State.Ready) {
-          await TrackPlayer.pause();
-        }
-      }
+    if (playbackState.state === State.Playing && !isPlaying && !hasResetOnEnd.current) {
+      setPlaying(true);
+    } else if (
+      (playbackState.state === State.Paused || playbackState.state === State.Stopped) &&
+      isPlaying
+    ) {
+      setPlaying(false);
     }
-    syncPlayback();
-  }, [isPlaying, playbackState.state]);
-
-  // --- SINCRONIZAÇÃO DE ESTADO DE HARDWARE (Hardware -> Zustand) ---
-  useEffect(() => {
-    const syncHardwareState = async () => {
-      const activeTrack = await TrackPlayer.getActiveTrack();
-      if (activeTrack && activeTrack.id !== "ambient_track") {
-        return;
-      }
-
-      if (playbackState.state === State.Paused && isPlaying) {
-        setPlaying(false);
-      } else if (playbackState.state === State.Playing && !isPlaying && !hasResetOnEnd.current) {
-        setPlaying(true);
-      }
-    };
-    syncHardwareState();
-  }, [playbackState.state, isPlaying, setPlaying]);
+  }, [playbackState.state]);
 
   // --- SETUP E CARREGAMENTO DO ÁUDIO ---
   useEffect(() => {
     let isActive = true;
 
     async function setupAndLoad() {
-      if (currentTrack) {
+      if (currentTrack && currentAudioId) {
         try {
           const currentNativeTrackIndex = await TrackPlayer.getActiveTrackIndex();
           let currentNativeTrack = null;
@@ -114,27 +92,26 @@ export function AmbientPlayerControls() {
             currentNativeTrack = await TrackPlayer.getTrack(currentNativeTrackIndex);
           }
 
-          if (currentNativeTrack?.id === "ambient_track" && currentNativeTrack?.url === currentTrack) {
-            if (isPlaying) {
-              const currentState = await TrackPlayer.getPlaybackState();
-              if (currentState.state !== State.Playing) {
-                await TrackPlayer.play();
-              }
+          if (currentNativeTrack?.id === currentAudioId) {
+            const currentState = await TrackPlayer.getPlaybackState();
+            if (currentState.state !== State.Playing) {
+              await TrackPlayer.play();
             }
+            setPlaying(true);
             return;
           }
 
           await TrackPlayer.reset();
+
           if (!isActive) return;
-          
           await new Promise((resolve) => setTimeout(resolve, 300));
           if (!isActive) return;
 
           await TrackPlayer.add({
-            id: "ambient_track",
+            id: currentAudioId,
             url: currentTrack,
-            title: "Melodia Ambiente",
-            artist: "Oração",
+            title: trackTitle,
+            artist: composer || "Oração",
           });
 
           if (!isActive) return;
@@ -143,14 +120,11 @@ export function AmbientPlayerControls() {
           await TrackPlayer.setRepeatMode(RepeatMode.Off);
           if (!isActive) return;
 
-          if (isPlaying) {
-            await TrackPlayer.play();
-          }
+          await TrackPlayer.play();
+          setPlaying(true);
         } catch (err) {
           console.error("[AmbientPlayerControls] Erro crítico ao carregar/iniciar o player:", err);
         }
-      } else {
-        await TrackPlayer.reset();
       }
     }
 
@@ -158,14 +132,12 @@ export function AmbientPlayerControls() {
 
     return () => {
       isActive = false;
+      setPlaying(false);
+      TrackPlayer.stop().catch(() => {});
     };
-  }, [currentTrack]);
+  }, [currentTrack, currentAudioId]);
 
   if (!currentAudioId) return null;
-
-  const activeAudio = audios?.find(a => a.id === currentAudioId);
-  const trackTitle = activeAudio ? activeAudio.title : "Melodia Ambiente";
-  const composer = currentAudioId ? COMPOSERS[currentAudioId] : null;
 
   async function handleTogglePlay() {
     if (isPlaying) {
