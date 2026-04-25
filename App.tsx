@@ -36,7 +36,6 @@ import { useAppTheme } from "./src/hooks/useAppTheme";
 import { useVersionControl } from "./src/hooks/useVersionControl";
 import { useUpdateModal } from "./src/hooks/useUpdateModal";
 import { UpdateModal } from "./src/components/UpdateModal";
-import { GlobalAmbientPlayer } from "./src/components/AmbientPlayer/GlobalAmbientPlayer";
 import TrackPlayer from "react-native-track-player";
 import { playbackService, setupTrackPlayer } from "./src/services/audio/trackPlayerService";
 
@@ -199,7 +198,6 @@ function AppContent() {
               client={queryClient}
               persistOptions={{ persister, buster: "1.0.3" }}
             >
-              <GlobalAmbientPlayer />
               <StatusBar 
                 style={resolvedThemeType === "dark" ? "light" : "dark"} 
                 translucent={true}

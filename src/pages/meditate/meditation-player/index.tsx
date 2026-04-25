@@ -1,12 +1,6 @@
 import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Dimensions,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { MeditateStackParamList } from "@/routers/types";
@@ -14,12 +8,10 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowLeft, Pause, Play, SkipBack, SkipForward } from "lucide-react-native";
 import TrackPlayer, {
-  Event,
   RepeatMode,
   State,
   usePlaybackState,
   useProgress,
-  useTrackPlayerEvents,
 } from "react-native-track-player";
 
 import { useMeditation } from "@/hooks/queries/useMeditations";
@@ -29,8 +21,6 @@ import { logMeditationUsage } from "@/services/firebase/meditationService";
 import { useAuth } from "@/stores/authStore";
 import { useMeditationPlayerStore } from "@/stores/meditationPlayerStore";
 import { createStyles } from "./styles";
-
-const { width } = Dimensions.get("window");
 
 export default function MeditationPlayerScreen() {
   const { theme } = useAppTheme();
@@ -62,7 +52,10 @@ export default function MeditationPlayerScreen() {
           const uri = await getCachedAudioUri(meditation.audioUrl);
           setLocalAudioUri(uri);
         } catch (error) {
-          console.error("[MeditationPlayer] Falha ao obter URI de áudio em cache:", error);
+          console.error(
+            "[MeditationPlayer] Falha ao obter URI de áudio em cache:",
+            error
+          );
           setLocalAudioUri(meditation.audioUrl); // fallback para URL remota
         }
       }
@@ -122,14 +115,12 @@ export default function MeditationPlayerScreen() {
     if (playbackState.state === State.Playing && !isPlaying && !hasResetOnEnd.current) {
       setPlaying(true);
     } else if (
-      (playbackState.state === State.Paused ||
-        playbackState.state === State.Stopped) &&
+      (playbackState.state === State.Paused || playbackState.state === State.Stopped) &&
       isPlaying
     ) {
       setPlaying(false);
     }
   }, [playbackState.state]);
-
 
   // --- SETUP E CARREGAMENTO DO ÁUDIO ---
   // Lógica de lock para evitar race conditions em Fast Refresh / remounts
@@ -181,7 +172,10 @@ export default function MeditationPlayerScreen() {
           await TrackPlayer.play();
           setPlaying(true);
         } catch (err) {
-          console.error("[MeditationPlayer] Erro crítico ao carregar/iniciar o player:", err);
+          console.error(
+            "[MeditationPlayer] Erro crítico ao carregar/iniciar o player:",
+            err
+          );
         }
       }
     }
