@@ -103,7 +103,7 @@ export function SubcategoriesScreen() {
       });
 
       // 4. Navegar
-      navigation.navigate("Quiz", {
+      navigation.navigate("StandardQuiz", {
         subcategoryId: subId,
         categoryId,
         categoryName,
@@ -130,7 +130,7 @@ export function SubcategoriesScreen() {
         retakeBottomSheetRef.current?.present();
       }, 100);
     } else {
-      navigation.navigate("Quiz", {
+      navigation.navigate("StandardQuiz", {
         subcategoryId,
         categoryId,
         categoryName,

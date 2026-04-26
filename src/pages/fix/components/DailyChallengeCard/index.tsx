@@ -24,13 +24,7 @@ export function DailyChallengeCard() {
   function handleStartDaily() {
     if (isCompleted) return;
 
-    navigation.navigate("Quiz", {
-      categoryId: "DAILY",
-      subcategoryId: "DAILY_CHALLENGE",
-      categoryName: "Desafio Diário",
-      subcategoryName: "Perguntas Aleatórias",
-      mode: "daily",
-    });
+    navigation.navigate("DailyQuiz");
   }
 
   const containerBg = theme.colors.primary + "10";

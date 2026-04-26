@@ -361,7 +361,6 @@ export function CourseCurriculumScreen() {
                   lessonId: lessonId,
                   quizId: exercise.quizId,
                   exerciseId: exercise.id,
-                  mode: "course",
                   categoryName: "Exercício de Fixação",
                   subcategoryName: exercise.title || `Exercício ${index + 1}`,
                 });
@@ -382,7 +381,6 @@ export function CourseCurriculumScreen() {
           lessonId: lessonId,
           quizId: exercise.quizId,
           exerciseId: exercise.id,
-          mode: "course",
           categoryName: "Exercício de Fixação",
           subcategoryName: exercise.title || `Exercício ${index + 1}`,
         });

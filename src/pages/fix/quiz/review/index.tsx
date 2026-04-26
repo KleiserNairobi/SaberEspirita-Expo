@@ -57,34 +57,17 @@ export function QuizReviewScreen() {
 
   function handleContinue() {
     if (courseId) {
-      navigation.reset({
-        index: 1,
-        routes: [
-          { name: "Tabs" },
-          {
-            name: "CourseCurriculum",
-            params: { courseId },
-          },
-        ],
-      });
+      // Volta 3 telas (QuizReview + QuizResult + CourseQuiz) para CourseCurriculum já existente na pilha
+      (navigation as any).pop(3);
     } else if (categoryId === "DAILY") {
       navigation.reset({
         index: 0,
         routes: [{ name: "FixHome" }],
       });
     } else {
-      navigation.reset({
-        index: 1,
-        routes: [
-          { name: "FixHome" },
-          {
-            name: "Subcategories",
-            params: {
-              categoryId,
-              categoryName,
-            },
-          },
-        ],
+      navigation.navigate("Subcategories", {
+        categoryId,
+        categoryName,
       });
     }
   }

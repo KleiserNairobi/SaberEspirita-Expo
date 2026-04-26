@@ -25,12 +25,10 @@ export type AppStackParamList = {
   LessonPlayer: { courseId: string; lessonId: string };
   CourseCertificate: { courseId: string };
   CourseQuiz: {
-    subcategoryId?: string;
     categoryId?: string;
     categoryName?: string;
     subcategoryName?: string;
     subtitle?: string;
-    mode?: "standard" | "daily" | "course";
     courseId: string;
     lessonId: string;
     quizId: string;
@@ -48,6 +46,7 @@ export type AppStackParamList = {
     userAnswers: any[];
     courseId?: string;
     lessonId?: string;
+    exerciseId?: string;
   };
   QuizReview: {
     categoryId: string;
@@ -99,17 +98,23 @@ export type FixStackParamList = {
     categoryName: string;
   };
   Leaderboard: undefined;
-  Quiz: {
-    subcategoryId?: string;
+  CourseQuiz: {
     categoryId?: string;
     categoryName?: string;
     subcategoryName?: string;
     subtitle?: string;
-    mode?: "standard" | "daily" | "course";
-    courseId?: string;
-    lessonId?: string;
-    quizId?: string;
+    courseId: string;
+    lessonId: string;
+    quizId: string;
     exerciseId?: string;
+  };
+  DailyQuiz: undefined;
+  StandardQuiz: {
+    subcategoryId: string;
+    categoryId: string;
+    categoryName: string;
+    subcategoryName: string;
+    subtitle?: string;
   };
   QuizResult: {
     categoryId?: string;
@@ -123,6 +128,7 @@ export type FixStackParamList = {
     userAnswers: any[];
     courseId?: string;
     lessonId?: string;
+    exerciseId?: string;
   };
   QuizReview: {
     categoryId: string;

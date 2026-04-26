@@ -4,7 +4,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { FixStackParamList } from "./types";
 import FixPlaceholder from "@/pages/fix";
 import { SubcategoriesScreen } from "@/pages/fix/subcategories";
-import { QuizScreen } from "@/pages/fix/quiz";
+import { CourseQuizScreen } from "@/pages/fix/quiz/CourseQuizScreen";
+import { DailyQuizScreen } from "@/pages/fix/quiz/DailyQuizScreen";
+import { StandardQuizScreen } from "@/pages/fix/quiz/StandardQuizScreen";
 import { QuizResultScreen } from "@/pages/fix/quiz/result";
 import { QuizReviewScreen } from "@/pages/fix/quiz/review";
 import { LeaderboardScreen } from "@/pages/fix/leaderboard";
@@ -24,7 +26,9 @@ export function FixNavigator() {
     >
       <Stack.Screen name="FixHome" component={FixPlaceholder} />
       <Stack.Screen name="Subcategories" component={SubcategoriesScreen} />
-      <Stack.Screen name="Quiz" component={QuizScreen} />
+      <Stack.Screen name="CourseQuiz" component={CourseQuizScreen} />
+      <Stack.Screen name="DailyQuiz" component={DailyQuizScreen} />
+      <Stack.Screen name="StandardQuiz" component={StandardQuizScreen} />
       <Stack.Screen name="QuizResult" component={QuizResultScreen} />
       <Stack.Screen name="QuizReview" component={QuizReviewScreen} />
       <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
