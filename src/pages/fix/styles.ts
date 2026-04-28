@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native";
 import { ITheme } from "@/configs/theme/types";
+import { StyleSheet } from "react-native";
 
 export function createStyles(theme: ITheme) {
   return StyleSheet.create({
@@ -13,7 +13,7 @@ export function createStyles(theme: ITheme) {
     header: {
       paddingHorizontal: theme.spacing.lg,
       paddingTop: theme.spacing.lg,
-      paddingBottom: theme.spacing.md,
+      paddingBottom: theme.spacing.lg,
     },
     title: {
       ...theme.text("xxxl", "semibold"),
@@ -23,7 +23,7 @@ export function createStyles(theme: ITheme) {
     },
     section: {
       paddingHorizontal: theme.spacing.lg,
-      marginTop: theme.spacing.lg,
+      marginTop: theme.spacing.xs,
     },
     sectionTitle: {
       ...theme.text("xxl", "regular"),

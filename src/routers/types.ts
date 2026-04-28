@@ -108,6 +108,7 @@ export type FixStackParamList = {
     quizId: string;
     exerciseId?: string;
   };
+  DailyQuizHome: undefined;
   DailyQuiz: undefined;
   StandardQuiz: {
     subcategoryId: string;

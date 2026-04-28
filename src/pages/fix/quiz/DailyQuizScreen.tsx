@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -17,11 +17,9 @@ import { addUserHistory, updateUserScore } from "@/services/firebase/quizService
 import { useDailyChallenge } from "@/hooks/queries/useDailyChallenge";
 import { IQuizAnswer, IQuizHistory } from "@/types/quiz";
 
-type DailyQuizRouteProp = RouteProp<FixStackParamList, "DailyQuiz">;
 type DailyQuizNavigationProp = NativeStackNavigationProp<FixStackParamList, "DailyQuiz">;
 
 export function DailyQuizScreen() {
-  const route = useRoute<DailyQuizRouteProp>();
   const navigation = useNavigation<DailyQuizNavigationProp>();
   const queryClient = useQueryClient();
   const { theme } = useAppTheme();
@@ -99,14 +97,25 @@ export function DailyQuizScreen() {
 
         queryClient.invalidateQueries({ queryKey: ["dailyQuizStatus", user.uid] });
         queryClient.invalidateQueries({ queryKey: ["userStreak", user.uid] });
+        queryClient.invalidateQueries({ queryKey: ["dailyChallengeStats", user.uid] });
         queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
         queryClient.invalidateQueries({ queryKey: ["userScore", user.uid] });
       }
 
-      navigation.navigate("QuizResult", {
+      // ✅ Usa replace para remover DailyQuiz da pilha — impede voltar ao quiz após conclusão
+      navigation.replace("QuizResult", {
         categoryId: "DAILY",
         categoryName: "Desafio Diário",
-        subcategoryName: "Geral",
+        subcategoryName: new Date().toLocaleDateString("pt-BR", {
+          weekday: "long",
+          day: "2-digit",
+          month: "long",
+        }),
+        subtitle: new Date().toLocaleDateString("pt-BR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }),
         correctAnswers,
         totalQuestions,
         percentage,
@@ -115,10 +124,11 @@ export function DailyQuizScreen() {
       });
     } catch (error) {
       console.error("Erro ao salvar progresso:", error);
-      navigation.navigate("QuizResult", {
+      // ✅ Usa replace também no catch para manter consistência
+      navigation.replace("QuizResult", {
         categoryId: "DAILY",
-        categoryName: "Erro",
-        subcategoryName: "Erro",
+        categoryName: "Desafio Diário",
+        subcategoryName: "Erro ao salvar",
         correctAnswers: 0,
         totalQuestions: quiz.questions.length,
         percentage: 0,

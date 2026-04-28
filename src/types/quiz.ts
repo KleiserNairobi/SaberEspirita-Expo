@@ -8,13 +8,21 @@ export interface IQuiz {
   questions: IQuestion[];
 }
 
+export interface IDailyChallengeStats {
+  currentStreak: number;   // sequência atual de dias consecutivos
+  longestStreak: number;   // maior sequência já alcançada
+  totalChallenges: number; // total de desafios concluídos
+  bestAccuracy: number;    // maior % de acerto em um único desafio (0-100)
+}
+
 export interface IQuestion {
   title: string; // Texto da pergunta
   alternatives: string[]; // Array de alternativas
   correct: number; // Índice da alternativa correta (0-based)
   explanation?: string; // Explicação doutrinária opcional
   originCategory?: string; // Para desafios diários: Categoria de origem
-  originSubcategory?: string; // Para desafios diários: Subcategoria de origem
+  originSubcategory?: string; // Para desafios diários: Nome da subcategoria de origem
+  originSubcategorySubtitle?: string; // Para desafios diários: Subtítulo/descrição da subcategoria de origem
 }
 
 // Resposta do usuário (baseado em IUserAnswer do CLI)

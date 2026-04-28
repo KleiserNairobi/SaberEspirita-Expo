@@ -1,19 +1,19 @@
-import React, { useMemo } from "react";
-import { View, Text, FlatList } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useCategories, useUserQuizProgress } from "@/hooks/queries/useQuiz";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { FixStackParamList } from "@/routers/types";
+import { useAuthStore } from "@/stores/authStore";
+import { ICategory } from "@/types/quiz";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { useCategories, useUserQuizProgress } from "@/hooks/queries/useQuiz";
-import { useAuthStore } from "@/stores/authStore";
+import React, { useMemo } from "react";
+import { FlatList, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { CategoryCard } from "./components/CategoryCard";
-import { createStyles } from "./styles";
-import { FixStackParamList } from "@/routers/types";
-import { ICategory } from "@/types/quiz";
-import { DailyChallengeCard } from "./components/DailyChallengeCard";
+import { DailyChallengeBanner } from "./components/DailyChallengeBanner";
 import { ProgressSummary } from "./components/ProgressSummary";
 import { TruthOrFalseBanner } from "./components/TruthOrFalseBanner";
 import { CATEGORY_IMAGES } from "./constants/categoryImages";
+import { createStyles } from "./styles";
 
 type ICategoryWithProgress = ICategory & { progress: number };
 type FixHomeNavigationProp = NativeStackNavigationProp<FixStackParamList, "FixHome">;
@@ -92,14 +92,18 @@ export default function FixHomeScreen() {
           <Text style={styles.subtitle}>Explore e teste seus conhecimentos</Text>
         </View>
 
-        {/* Desafio Diário Card */}
-        <DailyChallengeCard />
+        {/* Desafio Diário Banner */}
+        <View style={{ marginBottom: theme.spacing.md }}>
+          <DailyChallengeBanner />
+        </View>
+
+        {/* Banner Verdade ou Mentira */}
+        <View style={{ marginBottom: theme.spacing.lg }}>
+          <TruthOrFalseBanner />
+        </View>
 
         {/* Meu Progresso Section */}
         <ProgressSummary totalCorrect={totalCompletedStats.totalCompleted} />
-
-        {/* Banner Verdade ou Mentira */}
-        <TruthOrFalseBanner />
 
         {/* Título da Seção */}
         <View style={styles.section}>
@@ -140,7 +144,7 @@ export default function FixHomeScreen() {
             onPress={() => handleCategoryPress(item.id, item.name)}
           />
         )}
-        ListFooterComponent={<View style={{ height: paddingBottom }} />}
+        // ListFooterComponent={<View style={{ height: paddingBottom }} />}
       />
     </SafeAreaView>
   );

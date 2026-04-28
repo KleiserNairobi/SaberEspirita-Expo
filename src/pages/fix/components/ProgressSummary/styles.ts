@@ -1,17 +1,17 @@
-import { StyleSheet } from "react-native";
 import { ITheme } from "@/configs/theme/types";
+import { StyleSheet } from "react-native";
 
 export function createStyles(theme: ITheme) {
   return StyleSheet.create({
     container: {
-      marginBottom: theme.spacing.xl,
+      marginBottom: theme.spacing.lg,
       paddingHorizontal: theme.spacing.lg,
     },
     header: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      marginBottom: theme.spacing.md,
+      marginBottom: theme.spacing.sm,
     },
     title: {
       ...theme.text("xxl", "regular"),

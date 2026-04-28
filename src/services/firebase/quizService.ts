@@ -12,7 +12,7 @@ import {
   deleteDoc,
   Timestamp,
 } from "firebase/firestore";
-import { ICategory, ISubcategory, IQuiz, IQuizHistory } from "@/types/quiz";
+import { ICategory, ISubcategory, IQuiz, IQuizHistory, IDailyChallengeStats } from "@/types/quiz";
 import { StatsService } from "@/services/firebase/statsService";
 
 // Mapeamento de ícones (mesmo do CLI, adaptado para Lucide)
@@ -376,8 +376,9 @@ export async function getDailyChallengeQuestions(): Promise<IQuiz | null> {
         if (quiz && quiz.questions.length > 0) {
           const questionsWithMeta = quiz.questions.map((q) => ({
             ...q,
-            originSubcategory: randomSub.name,
             originCategory: category.name,
+            originSubcategory: randomSub.name,
+            originSubcategorySubtitle: randomSub.description || undefined,
           }));
           allQuestions.push(...questionsWithMeta);
         }
@@ -515,5 +516,75 @@ export async function getDailyChallengeStatus(userId: string): Promise<boolean> 
   } catch (error) {
     console.error("Erro ao verificar status do desafio diário:", error);
     return false;
+  }
+}
+
+
+export async function getDailyChallengeStats(userId: string): Promise<IDailyChallengeStats> {
+  const defaultStats: IDailyChallengeStats = {
+    currentStreak: 0,
+    longestStreak: 0,
+    totalChallenges: 0,
+    bestAccuracy: 0,
+  };
+
+  try {
+    // 1. Buscar todos os registros DAILY_* do usuário
+    const historyRef = collection(db, "users_history", userId, "history");
+    const q = query(historyRef, where("categoryId", "==", "DAILY"));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) return defaultStats;
+
+    const dailyHistories = snapshot.docs.map((doc) => doc.data() as IQuizHistory);
+
+    // 2. Total de desafios concluidos
+    const totalChallenges = dailyHistories.length;
+
+    // 3. Melhor resultado (maior percentual atingido)
+    const bestAccuracy = Math.max(...dailyHistories.map((h) => h.percentage || 0));
+
+    // 4. Extrair datas no formato YYYY-MM-DD e ordenar decrescente
+    const completedDates = dailyHistories
+      .map((h) => {
+        const date =
+          h.completedAt instanceof Timestamp
+            ? h.completedAt.toDate()
+            : new Date(h.completedAt);
+        return date
+          .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+          .split(" ")[0];
+      })
+      .sort((a, b) => b.localeCompare(a)); // decrescente
+
+    const uniqueDates = Array.from(new Set(completedDates));
+
+    // 5. Streak atual (reutiliza logica existente)
+    const currentStreak = await getUserStreak(userId);
+
+    // 6. Maior sequencia historica
+    let longestStreak = 0;
+    let currentCount = 1;
+
+    for (let i = 0; i < uniqueDates.length - 1; i++) {
+      const current = new Date(uniqueDates[i] + "T12:00:00");
+      const next = new Date(uniqueDates[i + 1] + "T12:00:00");
+      const diffDays = Math.round(
+        (current.getTime() - next.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      if (diffDays === 1) {
+        currentCount++;
+      } else {
+        longestStreak = Math.max(longestStreak, currentCount);
+        currentCount = 1;
+      }
+    }
+    longestStreak = Math.max(longestStreak, currentCount);
+
+    return { currentStreak, longestStreak, totalChallenges, bestAccuracy };
+  } catch (error) {
+    console.error("Erro ao calcular estatísticas do desafio diário:", error);
+    return defaultStats;
   }
 }

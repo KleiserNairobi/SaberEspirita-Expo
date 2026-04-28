@@ -106,11 +106,11 @@ export function QuizResultScreen() {
       return;
     }
 
-    // Se for desafio diário: reset para FixHome garantindo pilha limpa e estado atualizado
+    // Se for desafio diário: reset para FixHome + DailyQuizHome garantindo pilha limpa e estado atualizado
     if (categoryId === "DAILY") {
       navigation.reset({
-        index: 0,
-        routes: [{ name: "FixHome" }],
+        index: 1,
+        routes: [{ name: "FixHome" }, { name: "DailyQuizHome" }],
       });
       return;
     }

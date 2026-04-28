@@ -6,6 +6,7 @@ import FixPlaceholder from "@/pages/fix";
 import { SubcategoriesScreen } from "@/pages/fix/subcategories";
 import { CourseQuizScreen } from "@/pages/fix/quiz/CourseQuizScreen";
 import { DailyQuizScreen } from "@/pages/fix/quiz/DailyQuizScreen";
+import { DailyQuizHomeScreen } from "@/pages/fix/daily-challenge/home";
 import { StandardQuizScreen } from "@/pages/fix/quiz/StandardQuizScreen";
 import { QuizResultScreen } from "@/pages/fix/quiz/result";
 import { QuizReviewScreen } from "@/pages/fix/quiz/review";
@@ -27,6 +28,7 @@ export function FixNavigator() {
       <Stack.Screen name="FixHome" component={FixPlaceholder} />
       <Stack.Screen name="Subcategories" component={SubcategoriesScreen} />
       <Stack.Screen name="CourseQuiz" component={CourseQuizScreen} />
+      <Stack.Screen name="DailyQuizHome" component={DailyQuizHomeScreen} />
       <Stack.Screen name="DailyQuiz" component={DailyQuizScreen} />
       <Stack.Screen name="StandardQuiz" component={StandardQuizScreen} />
       <Stack.Screen name="QuizResult" component={QuizResultScreen} />

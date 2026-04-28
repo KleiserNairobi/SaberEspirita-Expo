@@ -61,8 +61,8 @@ export function QuizReviewScreen() {
       (navigation as any).pop(3);
     } else if (categoryId === "DAILY") {
       navigation.reset({
-        index: 0,
-        routes: [{ name: "FixHome" }],
+        index: 1,
+        routes: [{ name: "FixHome" }, { name: "DailyQuizHome" }],
       });
     } else {
       navigation.navigate("Subcategories", {

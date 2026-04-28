@@ -181,7 +181,11 @@ export function QuizUI({
             ? currentQuestion.originSubcategory
             : barTitle || "Perguntas Aleatórias"
         }
-        subtitle={subtitle}
+        subtitle={
+          dynamicTitles
+            ? currentQuestion.originSubcategorySubtitle
+            : subtitle
+        }
       />
 
       {/* Conteúdo */}

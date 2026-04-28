@@ -1,18 +1,22 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Flame, Trophy, ArrowRight, CheckCircle } from "lucide-react-native";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { FixStackParamList } from "@/routers/types";
-import { createStyles } from "./styles";
-import { useAuthStore } from "@/stores/authStore";
 import {
   useDailyChallengeStatus,
   useUserStreak,
 } from "@/hooks/queries/useDailyChallenge";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { FixStackParamList } from "@/routers/types";
+import { useAuthStore } from "@/stores/authStore";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ArrowRight, CheckCircle, Trophy } from "lucide-react-native";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { createStyles } from "./styles";
 
-export function DailyChallengeCard() {
+interface DailyChallengeCardProps {
+  onPress?: () => void;
+}
+
+export function DailyChallengeCard({ onPress }: DailyChallengeCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<NativeStackNavigationProp<FixStackParamList>>();
@@ -21,10 +25,12 @@ export function DailyChallengeCard() {
   const { data: isCompleted } = useDailyChallengeStatus(user?.uid);
   const { data: streak } = useUserStreak(user?.uid);
 
-  function handleStartDaily() {
-    if (isCompleted) return;
-
-    navigation.navigate("DailyQuiz");
+  function handlePress() {
+    if (onPress) {
+      onPress();
+    } else {
+      navigation.navigate("DailyQuizHome");
+    }
   }
 
   const containerBg = theme.colors.primary + "10";
@@ -40,9 +46,8 @@ export function DailyChallengeCard() {
           borderColor: containerBorder,
         },
       ]}
-      onPress={handleStartDaily}
+      onPress={handlePress}
       activeOpacity={0.9}
-      disabled={isCompleted}
     >
       {/* Header Row: Icon + Texts */}
       <View style={styles.header}>
@@ -59,14 +64,14 @@ export function DailyChallengeCard() {
       </View>
 
       {/* Body Row: Streak Badge (substituting Tags) */}
-      <View style={styles.body}>
+      {/* <View style={styles.body}>
         <View style={styles.metadataItem}>
           <Flame size={16} color={theme.colors.primary} fill={theme.colors.primary} />
           <Text style={[styles.metadataText, { color: theme.colors.primary }]}>
             Sequência: {streak || 0} dias
           </Text>
         </View>
-      </View>
+      </View> */}
 
       {/* Footer Row: Action */}
       {isCompleted ? (
