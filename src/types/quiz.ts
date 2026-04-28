@@ -15,6 +15,28 @@ export interface IDailyChallengeStats {
   bestAccuracy: number;    // maior % de acerto em um único desafio (0-100)
 }
 
+/**
+ * Interface que representa o progresso do usuário em uma categoria específica
+ */
+export interface ICategoryProgress {
+  categoryId: string;
+  categoryName: string;
+  totalQuestionsAnswered: number;
+  completionPercentage: number; // Porcentagem de subcategorias concluídas (0-100)
+  icon: string; // Nome do ícone da Lucide
+}
+
+/**
+ * Interface que consolida todas as estatísticas de desempenho do usuário
+ */
+export interface IUserDetailedStats {
+  totalQuestions: number;
+  accuracyRate: number; // Porcentagem geral de acertos (0-100)
+  activeDays: number; // Quantidade de dias únicos com atividade
+  bestScore: number; // Melhor pontuação obtida em um quiz
+  categoriesProgress: ICategoryProgress[];
+}
+
 export interface IQuestion {
   title: string; // Texto da pergunta
   alternatives: string[]; // Array de alternativas

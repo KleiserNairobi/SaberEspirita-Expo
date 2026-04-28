@@ -4,6 +4,7 @@ import {
   getCategories,
   getSubcategories,
   getUserProgress,
+  getUserDetailedStats,
 } from "@/services/firebase/quizService";
 
 // ==================== QUERY KEYS ====================
@@ -15,6 +16,7 @@ export const QUIZ_KEYS = {
     [...QUIZ_KEYS.all, "subcategories", categoryId] as const,
   quiz: (subcategoryId: string) => [...QUIZ_KEYS.all, "quiz", subcategoryId] as const,
   userProgress: (userId: string) => [...QUIZ_KEYS.all, "progress", userId] as const,
+  detailedStats: (userId: string) => [...QUIZ_KEYS.all, "detailed-stats", userId] as const,
 };
 
 // ==================== HOOKS ====================
@@ -59,5 +61,16 @@ export function useUserQuizProgress(userId: string) {
     queryKey: QUIZ_KEYS.userProgress(userId),
     queryFn: () => getUserProgress(userId),
     enabled: !!userId,
+  });
+}
+
+/**
+ * Hook para buscar estatísticas detalhadas do usuário
+ */
+export function useUserDetailedStats(userId: string) {
+  return useQuery({
+    queryKey: QUIZ_KEYS.detailedStats(userId),
+    queryFn: () => getUserDetailedStats(userId),
+    enabled: !!userId && userId !== "guest",
   });
 }

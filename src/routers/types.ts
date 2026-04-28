@@ -59,6 +59,7 @@ export type AppStackParamList = {
     userAnswers: any[];
     courseId?: string; // Opcional: usado quando é exercício de curso
   };
+  Performance: undefined;
 };
 
 export type GlossaryStackParamList = {
@@ -98,6 +99,7 @@ export type FixStackParamList = {
     categoryName: string;
   };
   Leaderboard: undefined;
+  Performance: undefined;
   CourseQuiz: {
     categoryId?: string;
     categoryName?: string;

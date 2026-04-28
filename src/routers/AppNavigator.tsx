@@ -2,25 +2,31 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
-import { AppStackParamList } from "./types";
-import { TabNavigator } from "./TabNavigator";
 import { FAQScreen } from "@/pages/account/faq";
 import { PrivacyScreen } from "@/pages/account/privacy";
 import { TermsScreen } from "@/pages/account/terms";
 import { EmotionalChatScreen } from "@/pages/chat/emotional";
 import { ScientificChatScreen } from "@/pages/chat/scientific";
-import { GlossaryNavigator } from "./GlossaryNavigator";
-import { CoursesCatalogScreen } from "@/pages/study/courses-catalog";
-import { CourseDetailsScreen } from "@/pages/study/course-details";
-import { CourseCurriculumScreen } from "@/pages/study/course-curriculum";
-import { LessonPlayerScreen } from "@/pages/study/lesson-player";
+import { PerformanceScreen } from "@/pages/fix/performance";
 import { CourseQuizScreen } from "@/pages/fix/quiz/CourseQuizScreen";
 import { QuizResultScreen } from "@/pages/fix/quiz/result";
 import { QuizReviewScreen } from "@/pages/fix/quiz/review";
 import { CourseCertificateScreen } from "@/pages/study/course-certificate";
+import { CourseCurriculumScreen } from "@/pages/study/course-curriculum";
+import { CourseDetailsScreen } from "@/pages/study/course-details";
+import { CoursesCatalogScreen } from "@/pages/study/courses-catalog";
+import { LessonPlayerScreen } from "@/pages/study/lesson-player";
+import { GlossaryNavigator } from "./GlossaryNavigator";
+import { TabNavigator } from "./TabNavigator";
+
+import type { AppStackParamList } from "./types";
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
+/**
+ * Navegador Principal da Aplicação.
+ * Define todas as rotas de alto nível e modais globais.
+ */
 export function AppNavigator() {
   return (
     <BottomSheetModalProvider>
@@ -44,6 +50,7 @@ export function AppNavigator() {
         <Stack.Screen name="QuizResult" component={QuizResultScreen} />
         <Stack.Screen name="QuizReview" component={QuizReviewScreen} />
         <Stack.Screen name="CourseCertificate" component={CourseCertificateScreen} />
+        <Stack.Screen name="Performance" component={PerformanceScreen} />
       </Stack.Navigator>
     </BottomSheetModalProvider>
   );

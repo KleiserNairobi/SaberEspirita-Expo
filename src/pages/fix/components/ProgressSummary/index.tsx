@@ -1,11 +1,11 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { Crown, Calendar, TrendingUp, LucideIcon } from "lucide-react-native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { FixStackParamList } from "@/routers/types";
 import { useCurrentUserScore } from "@/hooks/queries/useLeaderboard";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { FixStackParamList } from "@/routers/types";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Calendar, Crown, LucideIcon, TrendingUp } from "lucide-react-native";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import { createStyles } from "./styles";
 
 interface ProgressSummaryProps {
@@ -44,9 +44,9 @@ export function ProgressSummary({ totalCorrect }: ProgressSummaryProps) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Meu Progresso</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Leaderboard")}>
-          <Text style={styles.viewAllButton}>Ver Placar Completo</Text>
+        <Text style={styles.title}>Meus pontos</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Performance")}>
+          <Text style={styles.viewAllButton}>Ver estatísticas</Text>
         </TouchableOpacity>
       </View>
 

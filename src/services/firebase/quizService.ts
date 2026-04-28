@@ -12,7 +12,15 @@ import {
   deleteDoc,
   Timestamp,
 } from "firebase/firestore";
-import { ICategory, ISubcategory, IQuiz, IQuizHistory, IDailyChallengeStats } from "@/types/quiz";
+import { 
+  ICategory, 
+  ISubcategory, 
+  IQuiz, 
+  IQuizHistory, 
+  IDailyChallengeStats, 
+  IUserDetailedStats, 
+  ICategoryProgress 
+} from "@/types/quiz";
 import { StatsService } from "@/services/firebase/statsService";
 
 // Mapeamento de ícones (mesmo do CLI, adaptado para Lucide)
@@ -217,6 +225,21 @@ export async function addUserHistory(
     StatsService.incrementQuizCount("general", isGuest);
   } catch (error) {
     console.log("Erro ao adicionar histórico:", error);
+  }
+}
+/**
+ * Busca o histórico de quizzes de um usuário específico
+ * @param userId ID do usuário
+ * @returns Lista de histórico de quizzes
+ */
+export async function getUserHistory(userId: string): Promise<IQuizHistory[]> {
+  try {
+    const historyRef = collection(db, "users_history", userId, "history");
+    const historySnapshot = await getDocs(historyRef);
+    return historySnapshot.docs.map((doc) => doc.data() as IQuizHistory);
+  } catch (error) {
+    console.error("[quizService] Erro ao buscar histórico:", error);
+    return [];
   }
 }
 
@@ -585,6 +608,104 @@ export async function getDailyChallengeStats(userId: string): Promise<IDailyChal
     return { currentStreak, longestStreak, totalChallenges, bestAccuracy };
   } catch (error) {
     console.error("Erro ao calcular estatísticas do desafio diário:", error);
+    return defaultStats;
+  }
+}
+
+// ==================== ESTATÍSTICAS DETALHADAS ====================
+
+/**
+ * Busca e consolida estatísticas detalhadas de desempenho do usuário.
+ * Agrega dados do histórico de quizzes, progresso de subcategorias e categorias.
+ * 
+ * @param userId ID do usuário no Firebase
+ * @returns Objeto com estatísticas consolidadas
+ */
+export async function getUserDetailedStats(userId: string): Promise<IUserDetailedStats> {
+  const defaultStats: IUserDetailedStats = {
+    totalQuestions: 0,
+    accuracyRate: 0,
+    activeDays: 0,
+    bestScore: 0,
+    categoriesProgress: [],
+  };
+
+  if (!userId || userId === "guest") return defaultStats;
+
+  try {
+    // Busca dados em paralelo para melhor performance
+    const [history, progress, categories] = await Promise.all([
+      getUserHistory(userId),
+      getUserProgress(userId),
+      getCategories(),
+    ]);
+
+    if (history.length === 0) {
+      // Se não há histórico, mas há categorias, retorna progresso zerado por categoria
+      return {
+        ...defaultStats,
+        categoriesProgress: categories.map((cat) => ({
+          categoryId: cat.id,
+          categoryName: cat.name,
+          totalQuestionsAnswered: 0,
+          completionPercentage: 0,
+          icon: iconMapping[cat.id] || "HelpCircle",
+        })),
+      };
+    }
+
+    let totalQuestions = 0;
+    let totalCorrect = 0;
+    let maxPercentage = 0;
+    const uniqueDates = new Set<string>();
+
+    // 1. Processar Histórico Bruto
+    history.forEach((h) => {
+      totalQuestions += h.totalQuestions || 0;
+      totalCorrect += h.correctAnswers || 0;
+      maxPercentage = Math.max(maxPercentage, h.percentage || 0);
+
+      if (h.completedAt) {
+        const date = h.completedAt instanceof Timestamp ? h.completedAt.toDate() : new Date(h.completedAt);
+        // Usar formato ISO local para garantir contagem correta por dia sem problemas de fuso
+        const dateStr = date.toLocaleDateString("sv-SE"); // YYYY-MM-DD
+        uniqueDates.add(dateStr);
+      }
+    });
+
+    const accuracyRate = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+
+    // 2. Calcular Progresso por Categoria
+    // O progresso é baseado na quantidade de subcategorias concluídas vs total da categoria
+    const categoriesProgress: ICategoryProgress[] = categories.map((cat) => {
+      const completedCount = progress[cat.id]?.length || 0;
+      const totalSubcats = cat.subcategoryCount || 0;
+      const completionPercentage =
+        totalSubcats > 0 ? Math.min(100, Math.round((completedCount / totalSubcats) * 100)) : 0;
+
+      // Filtra questões respondidas especificamente para esta categoria
+      const catQuestions = history
+        .filter((h) => h.categoryId === cat.id)
+        .reduce((acc, curr) => acc + (curr.totalQuestions || 0), 0);
+
+      return {
+        categoryId: cat.id,
+        categoryName: cat.name,
+        totalQuestionsAnswered: catQuestions,
+        completionPercentage,
+        icon: iconMapping[cat.id] || "HelpCircle",
+      };
+    });
+
+    return {
+      totalQuestions,
+      accuracyRate,
+      activeDays: uniqueDates.size,
+      bestScore: maxPercentage,
+      categoriesProgress,
+    };
+  } catch (error) {
+    console.error("[quizService] Erro ao buscar estatísticas detalhadas:", error);
     return defaultStats;
   }
 }
