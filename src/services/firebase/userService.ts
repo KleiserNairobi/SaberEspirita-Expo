@@ -15,6 +15,8 @@ export const userService = {
       const userRef = doc(db, "users", uid);
       await updateDoc(userRef, {
         lastSeenAt: serverTimestamp(),
+        notified6Months: false,
+        notified11Months: false,
       });
       console.log("UserService: Timestamp de atividade atualizado.");
     } catch (error) {

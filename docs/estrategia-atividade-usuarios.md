@@ -27,9 +27,37 @@ Para manter o banco de dados otimizado e reduzir custos/riscos, propõe-se um fl
 | **11 meses** | Aviso de desativação de conta por inatividade | Push / E-mail |
 | **12 meses** | Exclusão definitiva dos dados (Auth + Firestore) | - |
 
-### Processo de Limpeza:
+### 4.1 Processo de Limpeza (Fase 12 Meses):
 1.  **Firebase Auth**: Deletar o UID do Authentication via Admin SDK.
-2.  **Firestore**: Realizar o delete recursivo de todos os dados vinculados ao UID (perfil, histórico, progresso).
+2.  **Firebase Storage**: Deletar prefixo `certificates/{uid}/`.
+3.  **OneSignal**: Deletar registro via API usando o `external_user_id` (UID).
+4.  **Firestore**: Realizar o delete de todos os documentos e subcoleções vinculados ao UID.
+
+### 4.2 Mapeamento de Rastros (Footprint)
+Para garantir a exclusão definitiva, a Cloud Function deve processar os seguintes caminhos:
+
+| Tipo | Caminho / Coleção | Identificador |
+| :--- | :--- | :--- |
+| **Documento** | `users/{uid}` | ID do Documento |
+| **Documento** | `users_scores/{uid}` | ID do Documento |
+| **Documento** | `users_completed_subcategories/{uid}` | ID do Documento |
+| **Documento** | `users_history/{uid}` | ID do Documento |
+| **Documento** | `chatLimits/{uid}` | ID do Documento |
+| **Documento** | `user_prayer_favorites/{uid}` | ID do Documento |
+| **Documento** | `user_reflection_favorites/{uid}` | ID do Documento |
+| **Coleção** | `ambient_player_logs` | Campo `userId` |
+| **Coleção** | `scientific_chat_logs` | Campo `userId` |
+| **Coleção** | `emotional_chat_logs` | Campo `userId` |
+| **Coleção** | `meditation_logs` | Campo `userId` |
+| **Coleção** | `prayer_logs` | Campo `userId` |
+| **Coleção** | `certificates` | Campo `userId` |
+| **Coleção** | `course_feedbacks` | Campo `userId` |
+| **Subcoleção** | `users/{uid}/truthOrFalseResponses` | Recursivo |
+| **Subcoleção** | `users/{uid}/courseProgress` | Recursivo |
+| **Subcoleção** | `users/{uid}/history` | Recursivo |
+| **Subcoleção** | `users/{uid}/progress` | Recursivo |
+| **Array** | `broadcast_logs/{hash}` | Campo `sentToEmails` |
+
 
 ## 5. Benefícios Estratégicos
 *   **Métricas Reais**: Foco no DAU (Daily Active Users) e MAU (Monthly Active Users), e não em downloads brutos.
