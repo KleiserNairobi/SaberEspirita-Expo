@@ -1,18 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
+
 import { Platform } from "react-native";
-import { OneSignal, LogLevel } from "react-native-onesignal";
-import { registerRootComponent } from "expo";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { QueryClient } from "@tanstack/react-query";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
-import { createMMKV } from "react-native-mmkv";
-import { StatusBar } from "expo-status-bar";
-import * as SplashScreen from "expo-splash-screen";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Allura_400Regular } from "@expo-google-fonts/allura";
+import {
+  BarlowCondensed_300Light,
+  BarlowCondensed_400Regular,
+  BarlowCondensed_400Regular_Italic,
+  BarlowCondensed_500Medium,
+  BarlowCondensed_600SemiBold,
+  BarlowCondensed_700Bold,
+} from "@expo-google-fonts/barlow-condensed";
 import { Baskervville_400Regular_Italic } from "@expo-google-fonts/baskervville";
 import {
   Oswald_300Light,
@@ -22,22 +20,29 @@ import {
   Oswald_700Bold,
   useFonts,
 } from "@expo-google-fonts/oswald";
-import {
-  BarlowCondensed_300Light,
-  BarlowCondensed_400Regular,
-  BarlowCondensed_400Regular_Italic,
-  BarlowCondensed_500Medium,
-  BarlowCondensed_600SemiBold,
-  BarlowCondensed_700Bold,
-} from "@expo-google-fonts/barlow-condensed";
-
-import { RootNavigator } from "./src/routers/RootNavigator";
-import { useAppTheme } from "./src/hooks/useAppTheme";
-import { useVersionControl } from "./src/hooks/useVersionControl";
-import { useUpdateModal } from "./src/hooks/useUpdateModal";
-import { UpdateModal } from "./src/components/UpdateModal";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+import { QueryClient } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { registerRootComponent } from "expo";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { createMMKV } from "react-native-mmkv";
+import { LogLevel, OneSignal } from "react-native-onesignal";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import TrackPlayer from "react-native-track-player";
-import { playbackService, setupTrackPlayer } from "./src/services/audio/trackPlayerService";
+
+import { UpdateModal } from "./src/components/UpdateModal";
+import { useAppTheme } from "./src/hooks/useAppTheme";
+import { useUpdateModal } from "./src/hooks/useUpdateModal";
+import { useUserActivity } from "./src/hooks/useUserActivity";
+import { useVersionControl } from "./src/hooks/useVersionControl";
+import { RootNavigator } from "./src/routers/RootNavigator";
+import {
+  playbackService,
+  setupTrackPlayer,
+} from "./src/services/audio/trackPlayerService";
 
 // Configurar MMKV storage para cache do React Query
 const mmkvStorage = createMMKV({ id: "react-query-cache" });
@@ -190,21 +195,24 @@ export default function App() {
 function AppContent() {
   const { resolvedThemeType } = useAppTheme();
 
+  // Ativa monitoramento de atividade do usuário
+  useUserActivity();
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <BottomSheetModalProvider>
-            <PersistQueryClientProvider
-              client={queryClient}
-              persistOptions={{ persister, buster: "1.0.3" }}
-            >
-              <StatusBar 
-                style={resolvedThemeType === "dark" ? "light" : "dark"} 
-                translucent={true}
-                backgroundColor="transparent"
-              />
-              <RootNavigator />
-            </PersistQueryClientProvider>
+          <PersistQueryClientProvider
+            client={queryClient}
+            persistOptions={{ persister, buster: "1.0.3" }}
+          >
+            <StatusBar
+              style={resolvedThemeType === "dark" ? "light" : "dark"}
+              translucent={true}
+              backgroundColor="transparent"
+            />
+            <RootNavigator />
+          </PersistQueryClientProvider>
         </BottomSheetModalProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
