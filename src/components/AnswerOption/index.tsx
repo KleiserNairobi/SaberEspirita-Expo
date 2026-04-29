@@ -1,7 +1,11 @@
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { CheckCircle2, XCircle } from "lucide-react-native";
 import React from "react";
+
 import { Text, TouchableOpacity, View } from "react-native";
+
+import { CheckCircle2, XCircle } from "lucide-react-native";
+
+import { useAppTheme } from "@/hooks/useAppTheme";
+
 import { createStyles } from "./styles";
 
 interface AnswerOptionProps {
@@ -28,12 +32,19 @@ export function AnswerOption({
     checked && !isCorrect && styles.containerError,
   ];
 
+  // Controle manual
+  // Não usa o prop disabled nativo do TouchableOpacity
+  // Evite o lock do HyperOS
+  function handlePress() {
+    if (disabled) return;
+    onPress();
+  }
+
   return (
     <TouchableOpacity
       style={containerStyle}
-      disabled={disabled}
-      onPress={onPress}
-      activeOpacity={0.7}
+      onPress={handlePress}
+      activeOpacity={disabled ? 1 : 0.7} // sem feedback visual se desabilitado
     >
       <View style={styles.content}>
         <Text style={styles.text}>{text}</Text>
