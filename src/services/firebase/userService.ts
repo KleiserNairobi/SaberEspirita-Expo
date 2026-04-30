@@ -44,6 +44,7 @@ export const userService = {
           photoURL: currentUser.photoURL,
           createdAt: new Date(),
           updatedAt: new Date(),
+          lastSeenAt: new Date(),
           totalAllTime: 0,
           totalThisWeek: 0,
           totalThisMonth: 0,
