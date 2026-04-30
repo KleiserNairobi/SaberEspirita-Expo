@@ -116,10 +116,7 @@ export function QuizResultScreen() {
     }
 
     // Se for subcategoria padrão
-    navigation.navigate("Subcategories", {
-      categoryId: categoryId || "DAILY",
-      categoryName: categoryName || "Desafio",
-    });
+    (navigation as any).pop(2);
   }
 
   function handleReview() {

@@ -65,10 +65,7 @@ export function QuizReviewScreen() {
         routes: [{ name: "FixHome" }, { name: "DailyQuizHome" }],
       });
     } else {
-      navigation.navigate("Subcategories", {
-        categoryId,
-        categoryName,
-      });
+      (navigation as any).pop(3);
     }
   }
 
