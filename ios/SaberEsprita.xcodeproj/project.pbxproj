@@ -248,22 +248,23 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = XRJDMVY267;
 						LastSwiftMigration = 1250;
-						DevelopmentTeam = "XRJDMVY267";
 						ProvisioningStyle = Automatic;
 					};
 					33787BA27F844C9FBA34A51D = {
-						DevelopmentTeam = "XRJDMVY267";
+						DevelopmentTeam = XRJDMVY267;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "SaberEsprita" */;
 			compatibilityVersion = "Xcode 15.3";
-			developmentRegion = en;
+			developmentRegion = "pt-BR";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				"pt-BR",
 				Base,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
@@ -484,7 +485,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 44;
-				DEVELOPMENT_TEAM = "XRJDMVY267";
+				DEVELOPMENT_TEAM = XRJDMVY267;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XRJDMVY267;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -505,7 +506,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = app.saberespirita;
-				PRODUCT_NAME = "SaberEsprita";
+				PRODUCT_NAME = SaberEsprita;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = SaberEspiritaProvisionProfileIncludeSign;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -515,7 +516,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "SaberEsprita/SaberEsprita-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1";
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -531,7 +532,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 44;
-				DEVELOPMENT_TEAM = "XRJDMVY267";
+				DEVELOPMENT_TEAM = XRJDMVY267;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XRJDMVY267;
 				INFOPLIST_FILE = SaberEsprita/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
@@ -547,7 +548,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = app.saberespirita;
-				PRODUCT_NAME = "SaberEsprita";
+				PRODUCT_NAME = SaberEsprita;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = SaberEspiritaProvisionProfileIncludeSign;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -556,7 +557,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "SaberEsprita/SaberEsprita-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1";
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -570,7 +571,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 44;
-				DEVELOPMENT_TEAM = "XRJDMVY267";
+				DEVELOPMENT_TEAM = XRJDMVY267;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XRJDMVY267;
 				INFOPLIST_FILE = "OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
@@ -590,7 +591,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				TARGETED_DEVICE_FAMILY = "1";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -721,7 +722,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 44;
-				DEVELOPMENT_TEAM = "XRJDMVY267";
+				DEVELOPMENT_TEAM = XRJDMVY267;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XRJDMVY267;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -745,7 +746,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				TARGETED_DEVICE_FAMILY = "1";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
