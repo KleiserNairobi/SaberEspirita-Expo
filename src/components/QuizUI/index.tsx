@@ -4,7 +4,7 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
 import { ArrowLeft } from "lucide-react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button } from "@/components/Button";
 import { QuestionCard } from "@/components/QuestionCard";
@@ -40,6 +40,7 @@ export function QuizUI({
 }: QuizUIProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
+  const insets = useSafeAreaInsets();
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const scrollViewRef = useRef<ScrollView>(null);
@@ -248,7 +249,12 @@ export function QuizUI({
           backgroundStyle={{ backgroundColor: theme.colors.card }}
           handleIndicatorStyle={{ backgroundColor: theme.colors.border }}
         >
-          <BottomSheetView style={styles.bottomSheetContent}>
+          <BottomSheetView
+            style={[
+              styles.bottomSheetContent,
+              { paddingBottom: theme.spacing.xl + insets.bottom },
+            ]}
+          >
             {stop && (
               <>
                 <Text style={styles.sheetTitle}>Deseja parar o quiz?</Text>
