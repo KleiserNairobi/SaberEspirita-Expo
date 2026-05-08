@@ -74,26 +74,43 @@ export function LessonPlayerScreen() {
   const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } =
     usePrayerPreferencesStore();
 
-  // Rate App Hook
-  const {
-    checkIfShouldAsk,
-    handleRateNow,
-    handleRemindLater,
-    incrementLessonsCompletedCount,
-  } = useRateApp();
-  const rateAppSheetRef = useRef<BottomSheetModal>(null);
-
-  const { courseId, lessonId } = route.params;
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isNarrating, setIsNarrating] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-
   // Estado para configuração do BottomSheet genérico
   const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
     null
   );
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+  const showMessage = useCallback((config: BottomSheetMessageConfig) => {
+    setMessageConfig(config);
+    setTimeout(() => bottomSheetRef.current?.present(), 100);
+  }, []);
+
+  // Rate App Hook
+  const {
+    checkIfShouldAsk,
+    handleRateNow,
+    handleRemindLater,
+    incrementLessonsCompletedCount,
+  } = useRateApp({ showMessage });
+  const rateAppSheetRef = useRef<BottomSheetModal>(null);
+
+  const { courseId, lessonId } = route.params;
+
+  const navigateBackAfterCompletion = useCallback(() => {
+    const state = navigation.getState();
+    const prevRoute = state.routes[state.routes.length - 2];
+
+    if (navigation.canGoBack() && prevRoute?.name === "CourseCurriculum") {
+      navigation.goBack();
+      return;
+    }
+
+    navigation.replace("CourseCurriculum", { courseId });
+  }, [courseId, navigation]);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isNarrating, setIsNarrating] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Ref para FlatList (Carrossel)
   const flatListRef = useRef<FlatList>(null);
@@ -231,7 +248,7 @@ export function LessonPlayerScreen() {
           rateAppSheetRef.current?.present();
         }, 300);
       } else {
-        navigation.goBack();
+        navigateBackAfterCompletion();
       }
     } catch (error) {
       setIsProcessing(false);
@@ -457,14 +474,10 @@ export function LessonPlayerScreen() {
         onRate={handleRateNow}
         onRemindLater={() => {
           handleRemindLater();
-          navigation.goBack();
+          navigateBackAfterCompletion();
         }}
         onDismiss={() => {
-          // Se fechar sem interagir (tap fora ou swipe down), consideramos como navegar de volta (sem marcar remind later explicitamente talvez?
-          // Ou melhor, checkar se interagiu. Mas para simplicidade, se dismiss e não interagiu, apenas sai.
-          // O hook não muda estado no dismiss puro para não spammar 'remind later' se for só um misclick, mas talvez seja melhor tratar.
-          // Pelo plano: "Na ação do BottomSheet ou fechar -> goBack."
-          navigation.goBack();
+          navigateBackAfterCompletion();
         }}
       />
 
