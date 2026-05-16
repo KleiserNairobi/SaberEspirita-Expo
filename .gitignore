@@ -60,5 +60,6 @@ expo-env.d.ts
 # Firebase config files (not for versioning)
 dev/configs/google-services.json
 dev/configs/GoogleService-Info.plist
+dev/configs/saber-espirita-firebase-adminsdk-*.json
 android/app/google-services.json
 ios/SaberEsprita/GoogleService-Info.plist
