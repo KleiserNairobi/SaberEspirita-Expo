@@ -4,6 +4,7 @@ import { AppState, AppStateStatus } from "react-native";
 
 import { userService } from "@/services/firebase/userService";
 import { useAuthStore } from "@/stores/authStore";
+import { usePreferencesStore } from "@/stores/preferencesStore";
 
 /**
  * Hook para monitorar a atividade do usuário e atualizar o lastSeenAt no Firestore.
@@ -28,6 +29,10 @@ export function useUserActivity() {
 
       try {
         await userService.updateLastSeen(user.uid);
+        userService.setCourseRemindersPref(
+          user.uid,
+          usePreferencesStore.getState().courseNotifications
+        );
 
         // Atualiza o timestamp local para o controle de throttle
         setLastSeenUpdate(now);

@@ -24,6 +24,22 @@ export const userService = {
       console.warn("UserService: Erro ao atualizar timestamp de atividade:", error);
     }
   },
+  async setCourseRemindersPref(uid: string, enabled: boolean) {
+    if (!uid) return;
+    try {
+      const userRef = doc(db, "users", uid);
+      await setDoc(
+        userRef,
+        {
+          "notificationPrefs.course_reminders": enabled,
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+    } catch (error) {
+      console.warn("UserService: Erro ao atualizar preferência course_reminders:", error);
+    }
+  },
   /**
    * Garante que o documento do usuário e seu score inicial existam no Firestore.
    * Útil para o primeiro login ou login social.

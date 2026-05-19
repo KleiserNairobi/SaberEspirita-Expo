@@ -41,6 +41,40 @@ export async function logLessonCompleted(params: {
   }
 }
 
+export async function touchCourseAccess(
+  courseId: string,
+  params?: { lessonId?: string; userId?: string }
+): Promise<void> {
+  const currentUserId = params?.userId || auth.currentUser?.uid;
+  if (!currentUserId || currentUserId === "guest") return;
+
+  const progressRef = doc(db, `users/${currentUserId}/courseProgress/${courseId}`);
+  const lastAccessedAt = new Date();
+
+  try {
+    await updateDoc(progressRef, {
+      lastAccessedAt,
+      ...(params?.lessonId ? { lastLessonId: params.lessonId } : {}),
+    });
+  } catch (error) {
+    await setDoc(
+      progressRef,
+      {
+        userId: currentUserId,
+        courseId,
+        completedLessons: [],
+        ...(params?.lessonId ? { lastLessonId: params.lessonId } : {}),
+        exerciseResults: [],
+        certificateEligible: false,
+        certificateIssued: false,
+        startedAt: lastAccessedAt,
+        lastAccessedAt,
+      },
+      { merge: true }
+    );
+  }
+}
+
 /**
  * Marca uma aula como concluída e atualiza o progresso do usuário no curso
  */

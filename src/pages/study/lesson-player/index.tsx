@@ -35,7 +35,11 @@ import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
 import { AppStackParamList } from "@/routers/types";
 import { logGlossaryView } from "@/services/firebase/glossaryService";
 import { getLessonById } from "@/services/firebase/lessonService";
-import { logLessonCompleted, markLessonAsCompleted } from "@/services/firebase/progressService";
+import {
+  logLessonCompleted,
+  markLessonAsCompleted,
+  touchCourseAccess,
+} from "@/services/firebase/progressService";
 import { useAuthStore } from "@/stores/authStore";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { IGlossaryTerm } from "@/types/glossary";
@@ -55,7 +59,7 @@ const { width } = Dimensions.get("window");
 
 export function LessonPlayerScreen() {
   const { theme } = useAppTheme();
-  const { user } = useAuthStore();
+  const { user, isGuest } = useAuthStore();
   const styles = createStyles(theme);
   const route = useRoute<LessonPlayerRouteProp>();
   const navigation = useNavigation<NavigationProp>();
@@ -95,6 +99,11 @@ export function LessonPlayerScreen() {
   const rateAppSheetRef = useRef<BottomSheetModal>(null);
 
   const { courseId, lessonId } = route.params;
+
+  React.useEffect(() => {
+    if (!user?.uid || isGuest) return;
+    touchCourseAccess(courseId, { lessonId, userId: user.uid });
+  }, [courseId, isGuest, lessonId, user?.uid]);
 
   const navigateBackAfterCompletion = useCallback(() => {
     const state = navigation.getState();
