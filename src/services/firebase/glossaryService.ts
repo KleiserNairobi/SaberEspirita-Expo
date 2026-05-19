@@ -63,24 +63,44 @@ export async function getGlossaryTermsByCategory(
   })) as IGlossaryTerm[];
 }
 
+function getUTCYearMonth(date: Date = new Date()): string {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  return `${y}-${m}`;
+}
+
 /**
  * Registra a visualização de um termo do glossário
  * @param termId ID do termo visualizado
  * @param userId ID do usuário ou "guest"
  */
-export async function logGlossaryView(termId: string, userId: string): Promise<void> {
+export async function logGlossaryView(params: {
+  termId: string;
+  termLabel: string;
+  userId: string;
+  origin: "menu" | "lesson";
+  lessonId?: string;
+}): Promise<void> {
   try {
     const logsRef = collection(db, "glossary_logs");
     const logData = {
-      termId,
-      userId,
+      userId: params.userId,
+      createdAt: serverTimestamp(),
+      yearMonth: getUTCYearMonth(),
+      processed: false,
+      termId: params.termId,
+      termLabel: params.termLabel,
+      origin: params.origin,
+      ...(params.lessonId ? { lessonId: params.lessonId } : {}),
       action: "view",
       timestamp: serverTimestamp(),
     };
 
     await addDoc(logsRef, logData);
     if (__DEV__) {
-      console.log(`[GlossaryService] Log registrado: ${termId} por ${userId}`);
+      console.log(
+        `[GlossaryService] Log registrado: ${params.termId} por ${params.userId}`
+      );
     }
   } catch (error) {
     if (__DEV__) {

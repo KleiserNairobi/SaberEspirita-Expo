@@ -329,7 +329,12 @@ export function CourseCurriculumScreen() {
   }
 
   // ✅ Helper para renderizar item de exercício
-  const renderExerciseItem = (exercise: any, lessonId: string, index: number) => {
+  const renderExerciseItem = (
+    exercise: any,
+    lessonId: string,
+    lessonTitle: string,
+    index: number
+  ) => {
     // 1. Verificar progresso do exercício
     const exerciseResult = progress?.exerciseResults?.find(
       (r) => r.exerciseId === exercise.id
@@ -359,6 +364,7 @@ export function CourseCurriculumScreen() {
                 navigation.navigate("CourseQuiz", {
                   courseId,
                   lessonId: lessonId,
+                  lessonTitle,
                   quizId: exercise.quizId,
                   exerciseId: exercise.id,
                   categoryName: "Exercício de Fixação",
@@ -379,6 +385,7 @@ export function CourseCurriculumScreen() {
         navigation.navigate("CourseQuiz", {
           courseId,
           lessonId: lessonId,
+          lessonTitle,
           quizId: exercise.quizId,
           exerciseId: exercise.id,
           categoryName: "Exercício de Fixação",
@@ -577,7 +584,9 @@ export function CourseCurriculumScreen() {
         {/* LISTA DE EXERCÍCIOS (Renderizada abaixo do card da aula) */}
         {lessonExercises.length > 0 && (
           <View style={styles.exercisesListContainer}>
-            {lessonExercises.map((ex, idx) => renderExerciseItem(ex, item.id, idx))}
+            {lessonExercises.map((ex, idx) =>
+              renderExerciseItem(ex, item.id, item.title, idx)
+            )}
           </View>
         )}
       </View>

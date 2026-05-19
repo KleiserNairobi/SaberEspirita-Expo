@@ -12,8 +12,12 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
-import { StatsService } from "@/services/firebase/statsService";
-import { addUserHistory, saveUserCompletedSubcategories, updateUserScore } from "@/services/firebase/quizService";
+import {
+  addUserHistory,
+  logQuizAttempt,
+  saveUserCompletedSubcategories,
+  updateUserScore,
+} from "@/services/firebase/quizService";
 import { useQuiz, QUIZ_KEYS } from "@/hooks/queries/useQuiz";
 import { IQuizAnswer, IQuizHistory } from "@/types/quiz";
 
@@ -44,7 +48,12 @@ export function StandardQuizScreen() {
     if (!quiz || isSubmitting) return;
 
     if (useAuthStore.getState().isGuest) {
-      StatsService.incrementQuizCount("general", true);
+      await logQuizAttempt({
+        userId: "guest",
+        quizType: "general",
+        quizId: quiz.id,
+        quizTitle: subcategoryName || quiz.id,
+      });
       setMessageConfig({
         type: "info",
         title: "Modo Visitante",
@@ -83,6 +92,13 @@ export function StandardQuizScreen() {
       const { user } = useAuthStore.getState();
 
       if (user?.uid && categoryId && subcategoryId) {
+        await logQuizAttempt({
+          userId: user.uid,
+          quizType: "general",
+          quizId: quiz.id,
+          quizTitle: subcategoryName || quiz.id,
+        });
+
         const userHistory: IQuizHistory = {
           userId: user.uid,
           categoryId: categoryId,

@@ -50,8 +50,12 @@ export default function ReflectionScreen() {
   // Registrar leitura da reflexão
   function handleFinishReading() {
     if (reflection && !hasLogged.current) {
-      const userId = user?.uid || "guest";
-      logMeditationUsage(reflection.id, userId, "reflection");
+      logMeditationUsage({
+        userId: user?.uid || "guest",
+        itemId: reflection.id,
+        itemTitle: reflection.title,
+        contentType: "reflection",
+      });
       hasLogged.current = true;
     }
 

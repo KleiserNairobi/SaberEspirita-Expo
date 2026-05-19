@@ -1,10 +1,12 @@
 import { db } from "@/configs/firebase/firebase";
 import {
+  addDoc,
   collection,
   getDocs,
   doc,
   getDoc,
   query,
+  serverTimestamp,
   where,
   setDoc,
   updateDoc,
@@ -21,7 +23,6 @@ import {
   IUserDetailedStats, 
   ICategoryProgress 
 } from "@/types/quiz";
-import { StatsService } from "@/services/firebase/statsService";
 
 // Mapeamento de ícones (mesmo do CLI, adaptado para Lucide)
 const iconMapping: Record<string, string> = {
@@ -32,6 +33,86 @@ const iconMapping: Record<string, string> = {
   ESPIRITOS: "User",
   DIVERSOS: "Sparkles",
 };
+
+function getUTCYearMonth(date: Date = new Date()): string {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  return `${y}-${m}`;
+}
+
+export async function logQuizAttempt(params:
+  | {
+      userId: string;
+      quizType: "general";
+      quizId: string;
+      quizTitle: string;
+    }
+  | {
+      userId: string;
+      quizType: "lesson";
+      quizId: string;
+      quizTitle: string;
+      courseId: string;
+      lessonId: string;
+      lessonTitle: string;
+      score?: number;
+      passed?: boolean;
+    }
+): Promise<void> {
+  try {
+    const logsRef = collection(db, "quiz_logs");
+    const base = {
+      userId: params.userId,
+      createdAt: serverTimestamp(),
+      yearMonth: getUTCYearMonth(),
+      processed: false,
+      quizType: params.quizType,
+      quizId: params.quizId,
+      quizTitle: params.quizTitle,
+    };
+
+    if (params.quizType === "lesson") {
+      await addDoc(logsRef, {
+        ...base,
+        courseId: params.courseId,
+        lessonId: params.lessonId,
+        lessonTitle: params.lessonTitle,
+        ...(typeof params.score === "number" ? { score: params.score } : {}),
+        ...(typeof params.passed === "boolean" ? { passed: params.passed } : {}),
+      });
+      return;
+    }
+
+    await addDoc(logsRef, base);
+  } catch (error) {
+    if (__DEV__) {
+      console.warn("[logQuizAttempt] Failed to log quiz attempt:", error);
+    }
+  }
+}
+
+export async function logDailyChallengeAttempt(params: {
+  userId: string;
+  challengeId: string;
+  date: string;
+}): Promise<void> {
+  try {
+    const logsRef = collection(db, "challenge_logs");
+    await addDoc(logsRef, {
+      userId: params.userId,
+      createdAt: serverTimestamp(),
+      yearMonth: getUTCYearMonth(),
+      processed: false,
+      quizType: "daily_challenge",
+      challengeId: params.challengeId,
+      date: params.date,
+    });
+  } catch (error) {
+    if (__DEV__) {
+      console.warn("[logDailyChallengeAttempt] Failed to log daily challenge:", error);
+    }
+  }
+}
 
 // ==================== CATEGORIAS ====================
 
@@ -219,10 +300,6 @@ export async function addUserHistory(
     );
     await setDoc(userHistoryRef, history);
     console.log("Histórico adicionado com sucesso!");
-
-    // Incrementa contador global de quizzes
-    const isGuest = history.userId === "guest";
-    StatsService.incrementQuizCount("general", isGuest);
   } catch (error) {
     console.log("Erro ao adicionar histórico:", error);
   }

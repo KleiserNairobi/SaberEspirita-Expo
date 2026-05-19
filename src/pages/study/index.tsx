@@ -65,10 +65,10 @@ export function StudyScreen() {
         navigation.navigate("FixTab", { screen: "TruthOrFalseHome" });
         break;
       case "5": // Converse com o Guia
-        navigation.navigate("EmotionalChat");
+        navigation.navigate("EmotionalChat", { origin: "ore" });
         break;
       case "6": // Pergunte ao Sr. Allan
-        navigation.navigate("ScientificChat", {});
+        navigation.navigate("ScientificChat", { origin: "direct" });
         break;
       default:
         console.log(`Item ${itemId} clicado - navegação pendente`);
@@ -134,7 +134,7 @@ export function StudyScreen() {
           description="Tire suas dúvidas científicas e filosóficas com base nas obras básicas."
           buttonText="Perguntar"
           icon={Feather}
-          onPress={() => navigation.navigate("ScientificChat", {})}
+          onPress={() => navigation.navigate("ScientificChat", { origin: "direct" })}
         />
       </View>
     );

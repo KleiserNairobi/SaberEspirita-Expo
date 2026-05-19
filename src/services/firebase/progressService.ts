@@ -1,6 +1,9 @@
 import {
+  addDoc,
+  collection,
   doc,
   getDoc,
+  serverTimestamp,
   setDoc,
   updateDoc,
   arrayUnion,
@@ -8,7 +11,35 @@ import {
 } from "firebase/firestore";
 import { db, auth } from "@/configs/firebase/firebase";
 
-import { StatsService } from "@/services/firebase/statsService";
+function getUTCYearMonth(date: Date = new Date()): string {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  return `${y}-${m}`;
+}
+
+export async function logLessonCompleted(params: {
+  userId: string;
+  courseId: string;
+  lessonId: string;
+  lessonTitle: string;
+}): Promise<void> {
+  try {
+    const logsRef = collection(db, "lesson_logs");
+    await addDoc(logsRef, {
+      userId: params.userId,
+      createdAt: serverTimestamp(),
+      yearMonth: getUTCYearMonth(),
+      processed: false,
+      courseId: params.courseId,
+      lessonId: params.lessonId,
+      lessonTitle: params.lessonTitle,
+    });
+  } catch (error) {
+    if (__DEV__) {
+      console.warn("[logLessonCompleted] Failed to log lesson completion:", error);
+    }
+  }
+}
 
 /**
  * Marca uma aula como concluída e atualiza o progresso do usuário no curso
@@ -179,9 +210,5 @@ export async function saveExerciseResult(
   });
 
   console.log("✅ [saveExerciseResult] Resultado salvo com sucesso");
-
-  // Incrementa contador global de quizzes (Tentativas)
-  StatsService.incrementQuizCount("lesson");
-
   console.log("🎉 [saveExerciseResult] FIM - Sucesso!");
 }

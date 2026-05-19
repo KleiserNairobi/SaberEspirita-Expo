@@ -12,8 +12,7 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
-import { StatsService } from "@/services/firebase/statsService";
-import { getQuizById } from "@/services/firebase/quizService";
+import { getQuizById, logQuizAttempt } from "@/services/firebase/quizService";
 import { saveExerciseResult } from "@/services/firebase/progressService";
 import { COURSE_PROGRESS_KEYS } from "@/hooks/queries/useCourseProgress";
 import { IQuizAnswer } from "@/types/quiz";
@@ -34,6 +33,7 @@ export function CourseQuizScreen() {
     subtitle,
     courseId,
     lessonId,
+    lessonTitle,
     quizId,
     exerciseId,
   } = route.params;
@@ -52,7 +52,24 @@ export function CourseQuizScreen() {
     if (!quiz || isSubmitting) return;
 
     if (useAuthStore.getState().isGuest) {
-      StatsService.incrementQuizCount("lesson", true);
+      const correctAnswers = answers.filter(
+        (a) => a.selectedAnswerIndex === a.correctAnswerIndex
+      ).length;
+      const totalQuestions = quiz.questions.length;
+      const percentage = Math.floor((correctAnswers / totalQuestions) * 100);
+
+      await logQuizAttempt({
+        userId: "guest",
+        quizType: "lesson",
+        quizId: quiz.id,
+        quizTitle: subcategoryName || quiz.id,
+        courseId,
+        lessonId,
+        lessonTitle,
+        score: percentage,
+        passed: percentage >= 70,
+      });
+
       setMessageConfig({
         type: "info",
         title: "Modo Visitante",
@@ -91,6 +108,18 @@ export function CourseQuizScreen() {
       const { user } = useAuthStore.getState();
 
       if (user?.uid) {
+        await logQuizAttempt({
+          userId: user.uid,
+          quizType: "lesson",
+          quizId: quiz.id,
+          quizTitle: subcategoryName || quiz.id,
+          courseId,
+          lessonId,
+          lessonTitle,
+          score: percentage,
+          passed: percentage >= 70,
+        });
+
         if (courseId && lessonId) {
           if (exerciseId) {
             // Salva apenas o resultado do exercício; a conclusão da AULA é responsabilidade do LessonPlayer

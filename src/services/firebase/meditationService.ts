@@ -73,24 +73,30 @@ export async function getMeditationById(id: string): Promise<IMeditation | null>
  * Opcional, usado para métricas de usuário.
  */
 export async function logMeditationUsage(
-  meditationId: string,
-  userId: string = "guest",
-  type: "reflection" | "guided" = "guided"
+  params: {
+    itemId: string;
+    itemTitle: string;
+    userId: string;
+    contentType: "reflection" | "guided_meditation";
+  }
 ): Promise<void> {
   try {
-    // Registra métricas de uso no Firestore via trigger (meditation_logs)
     const logsRef = collection(db, "meditation_logs");
     await addDoc(logsRef, {
-      itemId: meditationId,
-      userId,
-      type,
+      userId: params.userId,
       createdAt: serverTimestamp(),
+      yearMonth: new Date().toISOString().slice(0, 7),
+      processed: false,
+      itemId: params.itemId,
+      itemTitle: params.itemTitle,
+      contentType: params.contentType,
+      type: params.contentType === "guided_meditation" ? "guided" : "reflection",
       timestamp: serverTimestamp(),
     });
 
     if (__DEV__) {
       console.log(
-        `[Analytics] Meditação/Reflexão ${meditationId} (${type}) acessada por ${userId}`
+        `[Analytics] Meditation log: ${params.itemId} (${params.contentType}) by ${params.userId}`
       );
     }
   } catch (error) {

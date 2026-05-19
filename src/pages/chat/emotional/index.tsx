@@ -37,6 +37,7 @@ export function EmotionalChatScreen() {
 
   const route = useRoute<any>();
   const initialMessage = route.params?.initialMessage;
+  const origin = route.params?.origin;
 
   // Enviar mensagem inicial se fornecida
   useEffect(() => {
@@ -139,7 +140,7 @@ export function EmotionalChatScreen() {
     incrementUsage.mutate("emotional");
 
     // 4. Log Analytics
-    logEmotionalChat(user?.uid || "guest", text.length);
+    logEmotionalChat(user?.uid || "guest", text.length, { origin });
   }
 
   return (

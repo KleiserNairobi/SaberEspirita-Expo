@@ -10,7 +10,6 @@ import { AuthNavigator } from "./AuthNavigator";
 import { AppNavigator } from "./AppNavigator";
 import { WelcomeScreen } from "@/pages/onboarding/welcome";
 import { logScreenView } from "@/services/analytics/analyticsService";
-import { StatsService } from "@/services/firebase/statsService";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -96,13 +95,6 @@ export function RootNavigator() {
       if (unsubscribe) unsubscribe();
     };
   }, [initializeAuth]);
-
-  // Logar visita ao iniciar o app (uma vez por montagem e inicialização)
-  useEffect(() => {
-    if (initialized) {
-      StatsService.logDailyVisit(isGuest);
-    }
-  }, [initialized, isGuest]);
 
   // Exibir tela de carregamento até inicialização
   if (!initialized) {

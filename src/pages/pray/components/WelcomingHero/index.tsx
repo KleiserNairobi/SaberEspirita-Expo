@@ -98,6 +98,7 @@ export function WelcomingHero() {
       : "";
     navigation.navigate("EmotionalChat", {
       initialMessage: `Olá. ${moodContext} Poderia me ajudar com uma oração personalizada para o meu momento?`,
+      origin: "ore",
     });
   }
 

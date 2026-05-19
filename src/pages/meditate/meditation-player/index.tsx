@@ -196,7 +196,12 @@ export default function MeditationPlayerScreen() {
   // --- LOG DE USO (analytics) ---
   useEffect(() => {
     if (isPlaying && meditation && !hasLogged.current) {
-      logMeditationUsage(meditation.id, user?.uid || "guest", "guided");
+      logMeditationUsage({
+        userId: user?.uid || "guest",
+        itemId: meditation.id,
+        itemTitle: meditation.title,
+        contentType: "guided_meditation",
+      });
       hasLogged.current = true;
     }
   }, [isPlaying, meditation, user]);

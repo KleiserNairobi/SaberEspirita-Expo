@@ -12,8 +12,11 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
-import { StatsService } from "@/services/firebase/statsService";
-import { addUserHistory, updateUserScore } from "@/services/firebase/quizService";
+import {
+  addUserHistory,
+  logDailyChallengeAttempt,
+  updateUserScore,
+} from "@/services/firebase/quizService";
 import { useDailyChallenge } from "@/hooks/queries/useDailyChallenge";
 import { IQuizAnswer, IQuizHistory } from "@/types/quiz";
 
@@ -34,7 +37,17 @@ export function DailyQuizScreen() {
     if (!quiz || isSubmitting) return;
 
     if (useAuthStore.getState().isGuest) {
-      StatsService.incrementQuizCount("general", true);
+      const today = new Date()
+        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+        .split(" ")[0];
+      const dailySubcategoryId = `DAILY_${today}`;
+
+      await logDailyChallengeAttempt({
+        userId: "guest",
+        challengeId: dailySubcategoryId,
+        date: today,
+      });
+
       setMessageConfig({
         type: "info",
         title: "Modo Visitante",
@@ -75,6 +88,12 @@ export function DailyQuizScreen() {
       if (user?.uid) {
         const today = new Date().toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" }).split(" ")[0];
         const dailySubcategoryId = `DAILY_${today}`;
+
+        await logDailyChallengeAttempt({
+          userId: user.uid,
+          challengeId: dailySubcategoryId,
+          date: today,
+        });
 
         const userHistory: IQuizHistory = {
           userId: user.uid,

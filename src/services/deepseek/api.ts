@@ -1,6 +1,7 @@
 import { deepSeekClient } from "./config";
 import { ChatType, getSystemPrompt } from "../prompt";
 import { ChatMessage, DEEPSEEK_MODEL } from "@/types/chat";
+import type OpenAI from "openai";
 
 /**
  * Faz streaming de resposta do DeepSeek

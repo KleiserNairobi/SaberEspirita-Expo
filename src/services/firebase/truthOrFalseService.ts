@@ -1,21 +1,24 @@
 import {
+  addDoc,
   collection,
   doc,
   getDoc,
-  setDoc,
   getDocs,
-  query,
-  orderBy,
   limit,
-  where,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
   updateDoc,
+  where,
   writeBatch,
 } from "firebase/firestore";
+
 import { db } from "@/configs/firebase/firebase";
-import { loadString, saveString, remove, clear } from "@/utils/Storage";
 import { useAuthStore } from "@/stores/authStore";
-import { IUserTruthOrFalseResponse } from "@/types/userTruthOrFalseResponse";
 import { ITruthOrFalseStats, getDefaultStats } from "@/types/truthOrFalseStats";
+import { IUserTruthOrFalseResponse } from "@/types/userTruthOrFalseResponse";
+import { clear, loadString, remove, saveString } from "@/utils/Storage";
 import { calculateStats, getTodayString } from "@/utils/truthOrFalseUtils";
 
 // Chaves de armazenamento
@@ -28,6 +31,12 @@ const KEYS = {
 
 // Tempo de cache para estatísticas (1 hora)
 const STATS_CACHE_DURATION = 3600000;
+
+function getUTCYearMonth(date: Date = new Date()): string {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  return `${y}-${m}`;
+}
 
 /**
  * Service para gerenciar dados do Verdade ou Mentira
@@ -104,6 +113,16 @@ export class TruthOrFalseService {
       // 2. Sincronizar com Firestore (background)
       const docRef = doc(db, "users", userId, "truthOrFalseResponses", response.id);
       await setDoc(docRef, fullResponse);
+
+      await addDoc(collection(db, "truth_or_false_logs"), {
+        userId,
+        createdAt: serverTimestamp(),
+        yearMonth: getUTCYearMonth(),
+        processed: false,
+        questionId: fullResponse.questionId,
+        answer: fullResponse.userAnswer ? "true" : "false",
+        correct: fullResponse.isCorrect,
+      });
 
       // 3. Invalidar cache de estatísticas
       remove(KEYS.STATS);
