@@ -1,24 +1,26 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import * as AppleAuthentication from "expo-apple-authentication";
 import {
-  createUserWithEmailAndPassword,
-  signOut as firebaseSignOut,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail as firebaseSendPasswordResetEmail,
-  sendEmailVerification,
+  GoogleAuthProvider,
+  OAuthProvider,
   User,
   UserCredential,
-  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail,
+  signOut as firebaseSignOut,
+  onAuthStateChanged,
+  sendEmailVerification,
   signInWithCredential,
-  OAuthProvider,
+  signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import * as AppleAuthentication from "expo-apple-authentication";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { OneSignal } from "react-native-onesignal";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
+
 import { auth } from "@/configs/firebase/firebase";
 import * as Storage from "@/utils/Storage";
+
 import { usePreferencesStore } from "./preferencesStore";
 
 // Adapter MMKV para Zustand (mesmo padrão do themeStore)
@@ -48,9 +50,11 @@ interface AuthState {
   loading: boolean;
   initialized: boolean;
   error: string | null;
+  lastSeenUpdate: number | null; // Timestamp da última atualização de atividade
 
   // Actions
   setUser: (user: User | null) => void;
+  setLastSeenUpdate: (timestamp: number | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   clearError: () => void;
@@ -108,8 +112,10 @@ export const useAuthStore = create<AuthState>()(
       loading: false,
       initialized: false,
       error: null,
+      lastSeenUpdate: null,
 
       setUser: (user) => set({ user }),
+      setLastSeenUpdate: (lastSeenUpdate) => set({ lastSeenUpdate }),
       setLoading: (loading) => set({ loading }),
       setError: (error) => set({ error }),
       clearError: () => set({ error: null }),
@@ -174,15 +180,19 @@ export const useAuthStore = create<AuthState>()(
           console.log("AuthStore: Iniciando login com Google...");
           const credential = GoogleAuthProvider.credential(idToken);
           const userCredential = await signInWithCredential(auth, credential);
-          
+
           if (name && !userCredential.user.displayName) {
-             await updateProfile(userCredential.user, { displayName: name });
-             await userCredential.user.reload();
+            await updateProfile(userCredential.user, { displayName: name });
+            await userCredential.user.reload();
           }
 
           console.log("AuthStore: Login Google bem-sucedido:", userCredential.user.uid);
           // Ao logar, desativa modo convidado
-          set({ user: auth.currentUser || userCredential.user, isGuest: false, loading: false });
+          set({
+            user: auth.currentUser || userCredential.user,
+            isGuest: false,
+            loading: false,
+          });
           // Sincronizar com OneSignal
           try {
             OneSignal.login(userCredential.user.uid);
@@ -192,7 +202,10 @@ export const useAuthStore = create<AuthState>()(
               course_reminders: preferences.courseNotifications.toString(),
             });
           } catch (onesignalError) {
-            console.error("Erro ao sincronizar OneSignal no login Google:", onesignalError);
+            console.error(
+              "Erro ao sincronizar OneSignal no login Google:",
+              onesignalError
+            );
           }
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
@@ -220,10 +233,14 @@ export const useAuthStore = create<AuthState>()(
           });
 
           const userCredential = await signInWithCredential(auth, firebaseCredential);
-          
+
           let name: string | null = null;
-          if (credential.fullName && (credential.fullName.givenName || credential.fullName.familyName)) {
-            name = `${credential.fullName.givenName || ""} ${credential.fullName.familyName || ""}`.trim();
+          if (
+            credential.fullName &&
+            (credential.fullName.givenName || credential.fullName.familyName)
+          ) {
+            name =
+              `${credential.fullName.givenName || ""} ${credential.fullName.familyName || ""}`.trim();
           }
 
           if (name && !userCredential.user.displayName) {
@@ -232,8 +249,12 @@ export const useAuthStore = create<AuthState>()(
           }
 
           console.log("AuthStore: Login Apple bem-sucedido:", userCredential.user.uid);
-          
-          set({ user: auth.currentUser || userCredential.user, isGuest: false, loading: false });
+
+          set({
+            user: auth.currentUser || userCredential.user,
+            isGuest: false,
+            loading: false,
+          });
 
           // Sincronizar com OneSignal
           try {
@@ -244,13 +265,16 @@ export const useAuthStore = create<AuthState>()(
               course_reminders: preferences.courseNotifications.toString(),
             });
           } catch (onesignalError) {
-            console.error("Erro ao sincronizar OneSignal no login Apple:", onesignalError);
+            console.error(
+              "Erro ao sincronizar OneSignal no login Apple:",
+              onesignalError
+            );
           }
         } catch (error: any) {
           if (error.code === "ERR_REQUEST_CANCELED") {
-             console.log("Login Apple cancelado.");
-             set({ loading: false });
-             return;
+            console.log("Login Apple cancelado.");
+            set({ loading: false });
+            return;
           }
           const errorMessage = getErrorMessage(error);
           console.error("AuthStore: Erro no login Apple:", errorMessage);
@@ -386,6 +410,7 @@ export const useAuthStore = create<AuthState>()(
       partialize: (state) => ({
         user: state.user ? userToStoredUser(state.user) : null,
         isGuest: state.isGuest,
+        lastSeenUpdate: state.lastSeenUpdate,
       }),
       // Após hidratar do MMKV, reconstruir o objeto User
       onRehydrateStorage: () => (state) => {

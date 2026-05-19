@@ -108,7 +108,7 @@ export async function getTrendingPrayers(period: "day" | "week" | "total"): Prom
     if (period === "total") {
       // Busca direto das estatísticas consolidadas
       const statsRef = collection(db, "prayer_stats");
-      const q = query(statsRef, orderBy("usageCount", "desc"), limit(5));
+      const q = query(statsRef, orderBy("usageCount", "desc"), limit(10));
       const snapshot = await getDocs(q);
       prayerIds = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -136,7 +136,7 @@ export async function getTrendingPrayers(period: "day" | "week" | "total"): Prom
       prayerIds = Object.entries(counts)
         .map(([id, count]) => ({ id, count }))
         .sort((a, b) => b.count - a.count)
-        .slice(0, 5);
+        .slice(0, 10);
     }
 
     if (prayerIds.length === 0) return [];

@@ -1,53 +1,56 @@
-import React, { useState, useRef, useCallback } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import React, { useCallback, useRef, useState } from "react";
+
 import {
-  View,
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Share,
   Text,
   TouchableOpacity,
-  ActivityIndicator,
-  Share,
-  FlatList,
-  Dimensions,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
+  View,
 } from "react-native";
-import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
+
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { useAuthStore } from "@/stores/authStore";
-import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
-import { AppStackParamList } from "@/routers/types";
-import { useLesson, useLessons, LESSONS_KEYS } from "@/hooks/queries/useLessons";
-import { useExercises } from "@/hooks/queries/useExercises";
-import { getLessonById } from "@/services/firebase/lessonService";
-
-import {
-  useCourseProgress,
-  COURSE_PROGRESS_KEYS,
-} from "@/hooks/queries/useCourseProgress";
-import { markLessonAsCompleted } from "@/services/firebase/progressService";
-import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
-
-import { LessonSlide } from "./components/LessonSlide";
-import { SlideIndicator } from "./components/SlideIndicator";
-import { ReadingToolbar } from "@/components/ReadingToolbar";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { createStyles } from "./styles";
-import { SHARE_FOOTER } from "@/utils/constants";
-
-import { GlossaryTermBottomSheet } from "./components/GlossaryTermBottomSheet";
-import { IGlossaryTerm } from "@/types/glossary";
-import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
-import { useRateApp } from "@/hooks/useRateApp";
 import { RateAppBottomSheet } from "@/components/RateAppBottomSheet";
-import { DoubtFAB } from "./components/DoubtFAB";
+import { ReadingToolbar } from "@/components/ReadingToolbar";
+import {
+  COURSE_PROGRESS_KEYS,
+  useCourseProgress,
+} from "@/hooks/queries/useCourseProgress";
+import { useExercises } from "@/hooks/queries/useExercises";
+import { LESSONS_KEYS, useLesson, useLessons } from "@/hooks/queries/useLessons";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { useRateApp } from "@/hooks/useRateApp";
+import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
+import { AppStackParamList } from "@/routers/types";
+import { logGlossaryView } from "@/services/firebase/glossaryService";
+import { getLessonById } from "@/services/firebase/lessonService";
+import {
+  logLessonCompleted,
+  markLessonAsCompleted,
+  touchCourseAccess,
+} from "@/services/firebase/progressService";
+import { useAuthStore } from "@/stores/authStore";
+import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
+import { IGlossaryTerm } from "@/types/glossary";
+import { SHARE_FOOTER } from "@/utils/constants";
+import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
 
-// ... existing imports
+import { DoubtFAB } from "./components/DoubtFAB";
+import { GlossaryTermBottomSheet } from "./components/GlossaryTermBottomSheet";
+import { LessonSlide } from "./components/LessonSlide";
+import { SlideIndicator } from "./components/SlideIndicator";
+import { createStyles } from "./styles";
 
 type LessonPlayerRouteProp = RouteProp<AppStackParamList, "LessonPlayer">;
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -56,7 +59,7 @@ const { width } = Dimensions.get("window");
 
 export function LessonPlayerScreen() {
   const { theme } = useAppTheme();
-  const { user } = useAuthStore();
+  const { user, isGuest } = useAuthStore();
   const styles = createStyles(theme);
   const route = useRoute<LessonPlayerRouteProp>();
   const navigation = useNavigation<NavigationProp>();
@@ -74,26 +77,48 @@ export function LessonPlayerScreen() {
   const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } =
     usePrayerPreferencesStore();
 
-  // Rate App Hook
-  const {
-    checkIfShouldAsk,
-    handleRateNow,
-    handleRemindLater,
-    incrementLessonsCompletedCount,
-  } = useRateApp();
-  const rateAppSheetRef = useRef<BottomSheetModal>(null);
-
-  const { courseId, lessonId } = route.params;
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isNarrating, setIsNarrating] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-
   // Estado para configuração do BottomSheet genérico
   const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
     null
   );
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+  const showMessage = useCallback((config: BottomSheetMessageConfig) => {
+    setMessageConfig(config);
+    setTimeout(() => bottomSheetRef.current?.present(), 100);
+  }, []);
+
+  // Rate App Hook
+  const {
+    checkIfShouldAsk,
+    handleRateNow,
+    handleRemindLater,
+    incrementLessonsCompletedCount,
+  } = useRateApp({ showMessage });
+  const rateAppSheetRef = useRef<BottomSheetModal>(null);
+
+  const { courseId, lessonId } = route.params;
+
+  React.useEffect(() => {
+    if (!user?.uid || isGuest) return;
+    touchCourseAccess(courseId, { lessonId, userId: user.uid });
+  }, [courseId, isGuest, lessonId, user?.uid]);
+
+  const navigateBackAfterCompletion = useCallback(() => {
+    const state = navigation.getState();
+    const prevRoute = state.routes[state.routes.length - 2];
+
+    if (navigation.canGoBack() && prevRoute?.name === "CourseCurriculum") {
+      navigation.goBack();
+      return;
+    }
+
+    navigation.replace("CourseCurriculum", { courseId });
+  }, [courseId, navigation]);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [isNarrating, setIsNarrating] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Ref para FlatList (Carrossel)
   const flatListRef = useRef<FlatList>(null);
@@ -177,6 +202,12 @@ export function LessonPlayerScreen() {
 
     // Verificar se é convidado
     if (useAuthStore.getState().isGuest) {
+      await logLessonCompleted({
+        userId: "guest",
+        courseId: lesson.courseId,
+        lessonId: lesson.id,
+        lessonTitle: lesson.title,
+      });
       setMessageConfig({
         type: "info",
         title: "Modo Visitante",
@@ -207,6 +238,14 @@ export function LessonPlayerScreen() {
 
     try {
       await markLessonAsCompleted(lesson.courseId, lesson.id, user?.uid);
+      if (user?.uid) {
+        await logLessonCompleted({
+          userId: user.uid,
+          courseId: lesson.courseId,
+          lessonId: lesson.id,
+          lessonTitle: lesson.title,
+        });
+      }
       incrementLessonsCompletedCount();
 
       if (user?.uid) {
@@ -231,7 +270,7 @@ export function LessonPlayerScreen() {
           rateAppSheetRef.current?.present();
         }, 300);
       } else {
-        navigation.goBack();
+        navigateBackAfterCompletion();
       }
     } catch (error) {
       setIsProcessing(false);
@@ -255,6 +294,8 @@ export function LessonPlayerScreen() {
   const handleAskAI = useCallback(() => {
     if (!lesson) return;
     navigation.navigate("ScientificChat", {
+      origin: "lesson",
+      lessonId: lesson.id,
       initialMessage: `Olá, Sr. Allan! Acabei de completar a aula "${lesson.title}" e gostaria de tirar uma dúvida sobre este tema.`,
     });
   }, [lesson, navigation]);
@@ -275,6 +316,14 @@ export function LessonPlayerScreen() {
       }
 
       if (term) {
+        const userId = user?.uid || "guest";
+        logGlossaryView({
+          termId: term.id,
+          termLabel: term.term,
+          userId,
+          origin: "lesson",
+          lessonId: lesson?.id,
+        });
         setSelectedGlossaryTerm(term);
         setMatchedGlossaryWord(matchedWord);
         setTimeout(() => glossarySheetRef.current?.present(), 50);
@@ -457,14 +506,10 @@ export function LessonPlayerScreen() {
         onRate={handleRateNow}
         onRemindLater={() => {
           handleRemindLater();
-          navigation.goBack();
+          navigateBackAfterCompletion();
         }}
         onDismiss={() => {
-          // Se fechar sem interagir (tap fora ou swipe down), consideramos como navegar de volta (sem marcar remind later explicitamente talvez?
-          // Ou melhor, checkar se interagiu. Mas para simplicidade, se dismiss e não interagiu, apenas sai.
-          // O hook não muda estado no dismiss puro para não spammar 'remind later' se for só um misclick, mas talvez seja melhor tratar.
-          // Pelo plano: "Na ação do BottomSheet ou fechar -> goBack."
-          navigation.goBack();
+          navigateBackAfterCompletion();
         }}
       />
 

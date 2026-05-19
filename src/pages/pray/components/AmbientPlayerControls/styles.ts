@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
-import { Theme } from "@/types/theme";
+import { ITheme } from "@/configs/theme/types";
 
-export const createStyles = (theme: Theme) => StyleSheet.create({
+export const createStyles = (theme: ITheme) => StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",

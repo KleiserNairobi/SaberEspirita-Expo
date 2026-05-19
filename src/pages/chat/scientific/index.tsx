@@ -35,7 +35,7 @@ export function ScientificChatScreen() {
   const flatListRef = useRef<FlatList>(null);
   const route = useRoute<RouteParams>();
 
-  const { initialMessage } = route.params || {};
+  const { initialMessage, origin, lessonId } = route.params || {};
 
   const { messages, isLoading, error, sendMessage, clearChat } = useDeepSeekChat(
     ChatType.SCIENTIFIC
@@ -74,7 +74,7 @@ export function ScientificChatScreen() {
     incrementUsage.mutate("scientific");
 
     // 4. Log Analytics
-    logScientificChat(user?.uid || "guest", text.length);
+    logScientificChat(user?.uid || "guest", text.length, { origin, lessonId });
   }
 
   // Envia mensagem inicial se fornecida

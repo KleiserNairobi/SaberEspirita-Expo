@@ -106,7 +106,12 @@ export function AllTermsScreen() {
 
   function handleTermPress(term: IGlossaryTerm) {
     const userId = user?.uid || "guest";
-    logGlossaryView(term.id, userId);
+    logGlossaryView({
+      termId: term.id,
+      termLabel: term.term,
+      userId,
+      origin: "menu",
+    });
     navigation.navigate("TermDetail", { id: term.id });
   }
 
@@ -215,7 +220,6 @@ export function AllTermsScreen() {
                   value={searchQuery}
                   onChangeText={setSearchQuery}
                   placeholder="Buscar termo..."
-                  editable={!isLoading}
                 />
               </View>
             </View>

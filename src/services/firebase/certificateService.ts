@@ -2,7 +2,7 @@ import * as Print from "expo-print";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import { db, storage } from "@/configs/firebase/firebase";
-import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -195,6 +195,17 @@ export async function generateCertificateCloud(
   });
 
   console.log(`✅ [Certificate] Metadados salvos no Firestore`);
+
+  await addDoc(collection(db, "certificate_logs"), {
+    userId: progress.userId,
+    createdAt: serverTimestamp(),
+    yearMonth: new Date().toISOString().slice(0, 7),
+    processed: false,
+    courseId: course.id,
+    courseTitle: course.title,
+    certificateId: validationCode,
+    timestamp: serverTimestamp(),
+  });
 
   return { uri, certificateNumber, validationCode, pdfUrl };
 }

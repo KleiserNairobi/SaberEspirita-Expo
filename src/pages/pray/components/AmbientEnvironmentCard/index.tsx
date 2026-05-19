@@ -118,7 +118,7 @@ export function AmbientEnvironmentCard({
         // Feedback instantâneo no COMBO e no estado Global
         setDownloading(true);
         setCurrentTrack(null, audio.id); // Registra a intenção Imediatamente!
-        setPendingName(FRIENDLY_NAMES[audio.id] || audio.title);
+        setPendingName(`${audio.title}${COMPOSERS[audio.id] ? ` (${COMPOSERS[audio.id]})` : ""}`);
 
         // Baixa o áudio em segundo plano
         const localUri = await downloadAudio(audio.storagePath, audio.fileName);

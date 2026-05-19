@@ -100,45 +100,23 @@ export function QuizResultScreen() {
   const resultImage = getResultImage(percentage);
 
   async function handleContinue() {
-    // Se for curso, voltar para o currículo
+    // Se for curso: volta 2 telas (QuizResult + CourseQuiz) para a CourseCurriculum já existente na pilha
     if (courseId) {
-      // Usar reset para garantir pilha limpa com TabBar
-      (navigation as any).reset({
-        index: 1,
-        routes: [
-          { name: "Tabs" },
-          {
-            name: "CourseCurriculum",
-            params: { courseId },
-          },
-        ],
-      });
+      (navigation as any).pop(2);
       return;
     }
 
-    // Se for desafio diário, voltar para home
+    // Se for desafio diário: reset para FixHome + DailyQuizHome garantindo pilha limpa e estado atualizado
     if (categoryId === "DAILY") {
       navigation.reset({
-        index: 0,
-        routes: [{ name: "FixHome" }],
+        index: 1,
+        routes: [{ name: "FixHome" }, { name: "DailyQuizHome" }],
       });
       return;
     }
 
-    // FIX: Usar reset para limpar a pilha e garantir que o botão voltar leve à FixHome
-    navigation.reset({
-      index: 1,
-      routes: [
-        { name: "FixHome" },
-        {
-          name: "Subcategories",
-          params: {
-            categoryId: categoryId || "DAILY", // Fallbacks for safety
-            categoryName: categoryName || "Desafio",
-          },
-        },
-      ],
-    });
+    // Se for subcategoria padrão
+    (navigation as any).pop(2);
   }
 
   function handleReview() {

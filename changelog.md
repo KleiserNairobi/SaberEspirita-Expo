@@ -2,6 +2,25 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.13] - 2026-04-29
+
+### Adicionado
+
+- **Meu Desempenho**: Nova tela dedicada às estatísticas dos quizzes gerais, centralizando o histórico e evolução do usuário.
+- **Estatísticas Detalhadas**: Implementação de métricas de desempenho para o **Desafio Diário** e o módulo **Verdade ou Mentira**.
+- **Retenção de Usuários**: Sistema automatizado para monitoramento de atividade (`lastSeenAt`) com notificações de reengajamento após 6 e 11 meses de inatividade.
+
+### Alterado
+
+- **Módulo Fixe (Refatoração)**: Reformulação completa da interface da tela Fixe para integrar as novas estatísticas e melhorar o fluxo de revisão.
+- **Navegação**: Refatoração da navegação do Desafio Diário e integração aprimorada com a tela inicial.
+- **Módulo Ore**: Refatoração da arquitetura do player de áudio ambiente, migrando de estado global para local para maior estabilidade.
+
+### Corrigido
+
+- **Player de Áudio**: Estabilização do motor de áudio no iOS e Android, corrigindo bugs de interrupção.
+- **Quizzes**: Ajustes finos na lógica de progresso e interface dos quizzes.
+
 ## [2.0.12] - 2026-04-17
 
 ### Adicionado

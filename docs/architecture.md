@@ -1,90 +1,94 @@
-# Arquitetura e Documentação Técnica - SaberEspirita-Expo
+# Arquitetura e Documentação Técnica - SaberEspirita-Expo (v2026)
 
 ## 🎯 Visão Geral
 
-O **SaberEspirita-Expo** é um aplicativo móvel voltado para o aprendizado da Doutrina Espírita. Ele foi desenvolvido com foco em retenção, experiência de usuário premium e arquitetura sustentável de médio a longo prazo.
+O **SaberEspirita-Expo** evoluiu de um simples sistema de quizzes para uma plataforma completa de educação e apoio espiritual. A arquitetura atual foca em **estabilidade nativa**, **automação de build** e uma experiência de usuário rica em mídia e inteligência artificial.
 
-### Tech Stack Principal
+### Tech Stack Consolidada
 
-- **Framework Core**: React Native (v0.81) via Expo (v54, Prebuild).
-- **Navegação**: React Navigation (v7) contendo Stacks, Tabs e gerenciamento global de Auth.
-- **Linguagem**: TypeScript (Strict Mode).
-- **Estado Global**: Zustand (persistindo com `react-native-mmkv`).
-- **Data Fetching e Cache**: TanStack Query (React Query) integrado ao Firebase.
-- **Backend/Baas**: Firebase SDK JS (Authentication, Firestore, Storage).
-- **IA Generativa**: Integração com API da DeepSeek (Modelos _chat_ para "Sr. Allan" e "Guia Emocional").
-
----
-
-## 📂 Estrutura de Pastas e Componentização
-
-O código fonte principal está em `src/`, seguindo os guias de estilo rígidos definidos em `.agent/workflows/`.
-
-### Princípios da Estrutura
-
-- `src/routers/`: Responsável exclusivamente pelas rotas. Nenhuma lógica de UI complexa deve existir aqui.
-- `src/pages/`: Ponto de entrada das telas, agrupadas por "Feature" (Ex: `study/`, `pray/`).
-  - Telas complexas possuem suas próprias subpastas internas `components/` e `hooks/`.
-- `src/components/`: Componentes globais que são reutilizados em mais de um módulo do app (Ex: `Carousel`, `AppInput`).
-- `src/services/`: Camada de infraestrutura e fetch de dados externos. Arquipelago do Firebase (`firebase/`), integrações com LLMs (`deepseek/`, `chat/`) e utilitários de mídia (`audio/`).
-- `src/stores/`: Lógica de estado global síncrona com Zustand.
-- `src/types/`: Definições globais de interfaces de dados (Cursos, Aulas, Progresso, Chat).
+- **Framework Core**: [React Native](https://reactnative.dev/) (v0.81.5) via [Expo](https://expo.dev/) (SDK 54) utilizando **Continuous Native Generation (CNG)**.
+- **Linguagem**: TypeScript (Strict Mode) com tipagem Type-Safe para navegação e dados.
+- **Estado & Persistência**:
+  - [Zustand](https://github.com/pmndrs/zustand) para estado global síncrono.
+  - [MMKV](https://github.com/mrousavy/react-native-mmkv) (via Nitro Modules) para persistência ultra-rápida.
+- **Data Fetching**: [TanStack Query](https://tanstack.com/query/latest) (React Query) com persistência offline via MMKV.
+- **Backend Híbrido (Firebase)**:
+  - **SDK JS (v12.6)**: Motor de Auth, Firestore e Storage (estabilidade e facilidade de atualização).
+  - **SDK Nativo (@react-native-firebase/analytics)**: Telemetria e tracking preciso de eventos nativos.
+- **Notificações**: [OneSignal](https://onesignal.com/) integrado via plugin Expo.
+- **Mídia**: [React Native Track Player](https://react-native-track-player.js.org/) para áudio em background e modo imersivo.
 
 ---
 
-## 🧭 Navegação (React Navigation)
+## �️ Infraestrutura e Automação (DevOps Mobile)
 
-O aplicativo utiliza uma arquitetura baseada em múltiplos Navigators aninhados e Type-Safety completa declarada em `src/routers/types.ts`.
+O projeto resolveu o problema do retrabalho nativo através de uma camada de automação robusta localizada na pasta `dev/`:
 
-### Fluxo de Roteamento Principal (`RootNavigator.tsx`)
+### Config Plugins (Modificação Nativa Dinâmica)
 
-1. **Verificação de Splash/Onboarding**: O App decide se envia o usuário para a `Welcome` screen.
-2. **Auth Stack (`AuthNavigator.tsx`)**: Se o estado de Auth (via Firebase + AuthStore) for nulo, apenas LogIn e Cadastro ficam acessíveis.
-3. **App Stack (`AppNavigator.tsx`)**: Protegida. O coração é a `TabNavigator` (Bottom tabs: Study, Fix, Meditate, Pray, Account). A stack principal também abriga páginas Full-Screen e Modais, como `CourseDetails`, `LessonPlayer` e `EmotionalChat`.
+Em vez de editar as pastas `android/` e `ios/` manualmente, o projeto utiliza:
 
----
+- `withModularHeaders.js`: Gerencia a compatibilidade de headers Swift/ObjC para o Firebase no iOS.
+- `withAndroidForegroundPermissions.js`: Garante conformidade com o Android 14+ para serviços de áudio em foreground.
 
-## 🧠 Gerenciamento de Estado (Zustand)
+### Automação de Build
 
-O app abandonou soluções verbosas (Redux) e abraçou o **Zustand** combinado com **MMKV** para persistência física ultra-sensível:
-
-- **AuthStore** (`authStore.ts`): Armazena dados do Firebase User e session token.
-- **ThemeStore** (`themeStore.ts`): Gerencia a preferência do usuário entre Light/Dark/System e injeta dinamicamente na UI global.
-- **PreferencesStores** (`prayerPreferencesStore.ts`, `quizFilterStore.ts`, etc): Stores modulares para controlar comportamento das features individuais (Ex: Autoplay de orações, estado de filtros em quizzes).
+- `patch-android-signature.js`: Injeta automaticamente as credenciais de assinatura (JKS) no Gradle durante o `prebuild`.
+- `patches/`: Correções diretas em bibliotecas via `patch-package`, mantendo o código estável mesmo com bugs em dependências externas.
 
 ---
 
-## 🔄 Data Fetching e Caching (React Query)
+## 🧭 Arquitetura de Software (src/)
 
-**Não utilizamos `useEffect` assíncronos para fetch de banco de dados diretamente em componentes.** Todo acesso de leitura ao Firebase passa pelos Hooks do Tanstack Query (`useQuery`).
+A organização segue princípios de **Feature-Based Architecture**:
 
-- **Isolamento**: Os queries ficam isolados em `src/hooks/queries/` (ex: `useCourses.ts`, `useAllCoursesProgress.ts`).
-- **Caching (`staleTime`)**: Para lidar com custos de leitura no Firestore e modo offline, o App conta com tempo de "stale" elevado em dados estáticos (ex: Lista de Cursos - 24 horas).
-- **Mutações (`useMutation`)**: Ao realizar salvamento de exercícios ou aulas, os queries de progresso são invalidados pelo QueryClient para gerar consistência reativa.
+### 1. Camada de Serviços (`src/services/`)
+
+- **Arquipelago do Firebase**: Serviços granulares para cada entidade (Course, Lesson, Prayer, Quiz, Leaderboard).
+- **IA Generativa (DeepSeek)**: Integração com LLM via streaming, com personas distintas ("Guia Emocional" vs "Allan Kardec") configuradas via System Prompts em `src/services/prompt/`.
+- **Analytics**: Camada unificada que abstrai o Firebase Analytics nativo.
+
+### 2. Navegação em Camadas (`src/routers/`)
+
+- **RootNavigator**: Orquestra o estado de Autenticação.
+- **TabNavigator**: O hub principal com 5 abas (Estude, Fixe, Medite, Ore, Conta).
+- **Navigators Modulares**: Cada aba possui seu próprio Stack (Ex: `PrayNavigator`, `FixNavigator`), permitindo fluxos complexos sem poluir a rota principal.
+
+### 3. Gamificação e Retenção (`src/pages/fix/`)
+
+O módulo "Fixe" centraliza a lógica de retenção:
+
+- **Daily Challenge**: Desafios diários persistidos localmente.
+- **Leaderboard**: Ranking global de usuários integrado ao Firestore.
+- **Truth or False**: Mecânica rápida de quiz para micro-aprendizado.
 
 ---
 
-## 🤖 Integração com IA (DeepSeek)
+## 🧠 Estratégia de Dados
 
-O aplicativo introduz assistentes virtuais através da API da **DeepSeek**, divididos em duas personas configuradas por Prompts de Sistema em `src/services/prompt/`:
+### Persistência e Cache
 
-1. **O Guia Emocional (`EmotionalChat`)**: Prompts configurados com temperatura levemente mais alta (`0.7`) e foco acolhedor.
-2. **O Pesquisador Allan Kardec (`ScientificChat`)**: Prompts restritos a respostas doutrinariamente fiéis, configurado com temperatura baixa (`0.3`) e tokens mais longos para respostas teológicas detalhadas.
+O app utiliza uma estratégia de cache agressiva para minimizar leituras no Firestore e permitir uso offline:
 
-### Fluxo de Streaming
+- Dados de cursos e aulas possuem `staleTime` elevado (24h+).
+- O progresso do usuário é sincronizado via `useMutation` com invalidação imediata de cache para garantir UI reativa.
 
-A integração reside em `src/services/deepseek/api.ts` e utiliza o OpenAI Compatible Endpoint da DeepSeek. A principal API consumida internamente é a `streamDeepSeekChat`, que devolve um `AsyncIterable` da UI, renderizando a resposta em forma de "digitação em tempo real" sem bloquear a tela do usuário.
+### Gerenciamento de Mídia
+
+O áudio é tratado como cidadão de primeira classe:
+
+- Suporte a áudio em background.
+- Integração com controles de mídia do sistema (Lockscreen).
+- `audioCacheService.ts` para gerenciar o download e reprodução eficiente de arquivos.
 
 ---
 
-## 🗄 Modelo de Dados e Firebase
+## 🔐 Segurança e Performance
 
-Os Services de Firestore em `src/services/firebase/` se orientam por coleções raiz altamente relacionais.
+- **TypeScript**: 100% de cobertura nos routers e services.
+- **MMKV**: Substitui o AsyncStorage para evitar gargalos na ponte (bridge) do React Native.
+- **Modular Headers**: Garante que o projeto iOS compile de forma limpa mesmo com a mistura de SDKs JS e Nativo do Firebase.
 
-**Principais Collections:**
+---
 
-- `users`: `{uid}`
-  - sub-collection: `courseProgress` (Acompanhamento individual dos alunos)
-- `courses`: Definição de cursos, níveis (`CourseDifficultyLevel`) e metadados.
-  - sub-collection: `lessons` (Organização linear do conteúdo via interface `ILesson`)
-- `exercises` e `reflections`: Conteúdos apartados para não poluir leituras na coleção de cursos principais, possibilitando reusabilidade dos desafios no tab "Fixe".
+> _Este documento reflete a maturidade alcançada em 2026, onde a automação nativa eliminou o retrabalho e permitiu o crescimento sustentável do app._

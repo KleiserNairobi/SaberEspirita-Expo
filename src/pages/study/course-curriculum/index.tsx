@@ -1,39 +1,47 @@
-import React, { useState, useRef, useEffect } from "react";
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
-import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
+import React, { useEffect, useRef, useState } from "react";
+
+import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
+
+// ✅ NOVO
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
-  CheckCircle,
-  PlayCircle,
-  Lock,
-  ChevronRight,
   BookOpen,
-  Tag,
+  CheckCircle,
+  ChevronRight,
+  CircleAlert,
   Clock,
   Info,
-  CircleAlert,
+  Lock,
+  PlayCircle,
+  Tag,
 } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
+import { BottomSheetMessage } from "@/components/BottomSheetMessage";
+// ✅ NOVO
+import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+// ✅ NOVO
+import { Button } from "@/components/Button";
+// ✅ NOVO
+import { CourseFeedbackBottomSheet } from "@/components/CourseFeedbackBottomSheet";
+import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
+import { useCourse } from "@/hooks/queries/useCourses";
+import { useCourseExercises, useExercises } from "@/hooks/queries/useExercises";
+import { LESSONS_KEYS, useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
-import { useLessons, LESSONS_KEYS } from "@/hooks/queries/useLessons";
-import { useCourse } from "@/hooks/queries/useCourses";
-import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
-import { useExercises, useCourseExercises } from "@/hooks/queries/useExercises";
-import { useQueryClient } from "@tanstack/react-query";
-import { getLessonById } from "@/services/firebase/lessonService";
-import { saveBoolean, loadBoolean } from "@/utils/Storage";
-import { ILesson } from "@/types/course";
-import { ProgressSummaryCard } from "./components/ProgressSummaryCard";
-import { BottomSheetMessage } from "@/components/BottomSheetMessage"; // ✅ NOVO
-import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types"; // ✅ NOVO
-import { BottomSheetModal } from "@gorhom/bottom-sheet"; // ✅ NOVO
-import { Button } from "@/components/Button"; // ✅ NOVO
-import { CourseFeedbackBottomSheet } from "@/components/CourseFeedbackBottomSheet";
 import { saveCourseFeedback } from "@/services/firebase/courseFeedbackService";
+import { getLessonById } from "@/services/firebase/lessonService";
+import { touchCourseAccess } from "@/services/firebase/progressService";
 import { useAuthStore } from "@/stores/authStore";
+import { ILesson } from "@/types/course";
+import { loadBoolean, saveBoolean } from "@/utils/Storage";
+
+import { ProgressSummaryCard } from "./components/ProgressSummaryCard";
 import { createStyles } from "./styles";
 
 type CourseCurriculumRouteProp = RouteProp<AppStackParamList, "CourseCurriculum">;
@@ -107,7 +115,7 @@ export function CourseCurriculumScreen() {
 
   // ✅ NOVO: Ref e Ações para BottomSheet de Avaliação de Curso
   const feedbackSheetRef = useRef<BottomSheetModal>(null);
-  const { user } = useAuthStore();
+  const { user, isGuest } = useAuthStore();
 
   // ✅ NOVO: Estado para esconder botão instantaneamente
   const [hasGloballySubmittedState, setHasGloballySubmittedState] = useState<boolean>(
@@ -230,6 +238,11 @@ export function CourseCurriculumScreen() {
     );
   }, [lessons, courseId, queryClient]);
 
+  useEffect(() => {
+    if (!user?.uid || isGuest) return;
+    touchCourseAccess(courseId, { userId: user.uid });
+  }, [courseId, isGuest, user?.uid]);
+
   function getLessonStatus(lesson: ILesson, index: number): LessonStatus {
     // Verificar se a aula foi concluída
     if (progress?.completedLessons.includes(lesson.id)) {
@@ -329,7 +342,12 @@ export function CourseCurriculumScreen() {
   }
 
   // ✅ Helper para renderizar item de exercício
-  const renderExerciseItem = (exercise: any, lessonId: string, index: number) => {
+  const renderExerciseItem = (
+    exercise: any,
+    lessonId: string,
+    lessonTitle: string,
+    index: number
+  ) => {
     // 1. Verificar progresso do exercício
     const exerciseResult = progress?.exerciseResults?.find(
       (r) => r.exerciseId === exercise.id
@@ -359,9 +377,9 @@ export function CourseCurriculumScreen() {
                 navigation.navigate("CourseQuiz", {
                   courseId,
                   lessonId: lessonId,
+                  lessonTitle,
                   quizId: exercise.quizId,
                   exerciseId: exercise.id,
-                  mode: "course",
                   categoryName: "Exercício de Fixação",
                   subcategoryName: exercise.title || `Exercício ${index + 1}`,
                 });
@@ -380,9 +398,9 @@ export function CourseCurriculumScreen() {
         navigation.navigate("CourseQuiz", {
           courseId,
           lessonId: lessonId,
+          lessonTitle,
           quizId: exercise.quizId,
           exerciseId: exercise.id,
-          mode: "course",
           categoryName: "Exercício de Fixação",
           subcategoryName: exercise.title || `Exercício ${index + 1}`,
         });
@@ -579,7 +597,9 @@ export function CourseCurriculumScreen() {
         {/* LISTA DE EXERCÍCIOS (Renderizada abaixo do card da aula) */}
         {lessonExercises.length > 0 && (
           <View style={styles.exercisesListContainer}>
-            {lessonExercises.map((ex, idx) => renderExerciseItem(ex, item.id, idx))}
+            {lessonExercises.map((ex, idx) =>
+              renderExerciseItem(ex, item.id, item.title, idx)
+            )}
           </View>
         )}
       </View>

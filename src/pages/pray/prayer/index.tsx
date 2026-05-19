@@ -101,7 +101,11 @@ export function PrayerScreen() {
     // 1. Registra com fidelidade que o usuário concluiu esta prece
     if (prayer && !hasLogged.current) {
       const userId = user?.uid || "guest";
-      logPrayerUsage(prayer.id, userId);
+      logPrayerUsage({
+        prayerId: prayer.id,
+        prayerTitle: prayer.title,
+        userId,
+      });
       hasLogged.current = true;
       queryClient.invalidateQueries({ queryKey: ["prayers", "trending"] });
     }

@@ -1,5 +1,12 @@
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/configs/firebase/firebase";
+
+function getUTCYearMonth(date: Date = new Date()): string {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  return `${y}-${m}`;
+}
+
 export async function logAmbientPlay(
   userId: string,
   trackTitle: string,
@@ -9,6 +16,9 @@ export async function logAmbientPlay(
     const logsRef = collection(db, "ambient_player_logs");
     const logData = {
       userId,
+      createdAt: serverTimestamp(),
+      yearMonth: getUTCYearMonth(),
+      processed: false,
       trackTitle,
       trackId,
       action: "play",

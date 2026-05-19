@@ -78,7 +78,7 @@ export function TrendingPrayers() {
           </View>
           
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>Orações em Alta (Top 5)</Text>
+            <Text style={styles.title}>Orações em Alta (Top 10)</Text>
             <Text style={styles.subtitle}>As preces mais lidas pela comunidade</Text>
           </View>
 
@@ -91,7 +91,7 @@ export function TrendingPrayers() {
           style={{
             maxHeight: animatedHeight.interpolate({
               inputRange: [0, 1],
-              outputRange: [0, 600],
+              outputRange: [0, 1200],
             }),
             opacity: animatedOpacity,
             overflow: "hidden",

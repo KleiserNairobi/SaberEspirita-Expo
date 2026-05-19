@@ -1,10 +1,12 @@
 import { db } from "@/configs/firebase/firebase";
 import {
+  addDoc,
   collection,
   getDocs,
   doc,
   getDoc,
   query,
+  serverTimestamp,
   where,
   setDoc,
   updateDoc,
@@ -12,8 +14,15 @@ import {
   deleteDoc,
   Timestamp,
 } from "firebase/firestore";
-import { ICategory, ISubcategory, IQuiz, IQuizHistory } from "@/types/quiz";
-import { StatsService } from "@/services/firebase/statsService";
+import { 
+  ICategory, 
+  ISubcategory, 
+  IQuiz, 
+  IQuizHistory, 
+  IDailyChallengeStats, 
+  IUserDetailedStats, 
+  ICategoryProgress 
+} from "@/types/quiz";
 
 // Mapeamento de ícones (mesmo do CLI, adaptado para Lucide)
 const iconMapping: Record<string, string> = {
@@ -24,6 +33,86 @@ const iconMapping: Record<string, string> = {
   ESPIRITOS: "User",
   DIVERSOS: "Sparkles",
 };
+
+function getUTCYearMonth(date: Date = new Date()): string {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  return `${y}-${m}`;
+}
+
+export async function logQuizAttempt(params:
+  | {
+      userId: string;
+      quizType: "general";
+      quizId: string;
+      quizTitle: string;
+    }
+  | {
+      userId: string;
+      quizType: "lesson";
+      quizId: string;
+      quizTitle: string;
+      courseId: string;
+      lessonId: string;
+      lessonTitle: string;
+      score?: number;
+      passed?: boolean;
+    }
+): Promise<void> {
+  try {
+    const logsRef = collection(db, "quiz_logs");
+    const base = {
+      userId: params.userId,
+      createdAt: serverTimestamp(),
+      yearMonth: getUTCYearMonth(),
+      processed: false,
+      quizType: params.quizType,
+      quizId: params.quizId,
+      quizTitle: params.quizTitle,
+    };
+
+    if (params.quizType === "lesson") {
+      await addDoc(logsRef, {
+        ...base,
+        courseId: params.courseId,
+        lessonId: params.lessonId,
+        lessonTitle: params.lessonTitle,
+        ...(typeof params.score === "number" ? { score: params.score } : {}),
+        ...(typeof params.passed === "boolean" ? { passed: params.passed } : {}),
+      });
+      return;
+    }
+
+    await addDoc(logsRef, base);
+  } catch (error) {
+    if (__DEV__) {
+      console.warn("[logQuizAttempt] Failed to log quiz attempt:", error);
+    }
+  }
+}
+
+export async function logDailyChallengeAttempt(params: {
+  userId: string;
+  challengeId: string;
+  date: string;
+}): Promise<void> {
+  try {
+    const logsRef = collection(db, "challenge_logs");
+    await addDoc(logsRef, {
+      userId: params.userId,
+      createdAt: serverTimestamp(),
+      yearMonth: getUTCYearMonth(),
+      processed: false,
+      quizType: "daily_challenge",
+      challengeId: params.challengeId,
+      date: params.date,
+    });
+  } catch (error) {
+    if (__DEV__) {
+      console.warn("[logDailyChallengeAttempt] Failed to log daily challenge:", error);
+    }
+  }
+}
 
 // ==================== CATEGORIAS ====================
 
@@ -211,12 +300,23 @@ export async function addUserHistory(
     );
     await setDoc(userHistoryRef, history);
     console.log("Histórico adicionado com sucesso!");
-
-    // Incrementa contador global de quizzes
-    const isGuest = history.userId === "guest";
-    StatsService.incrementQuizCount("general", isGuest);
   } catch (error) {
     console.log("Erro ao adicionar histórico:", error);
+  }
+}
+/**
+ * Busca o histórico de quizzes de um usuário específico
+ * @param userId ID do usuário
+ * @returns Lista de histórico de quizzes
+ */
+export async function getUserHistory(userId: string): Promise<IQuizHistory[]> {
+  try {
+    const historyRef = collection(db, "users_history", userId, "history");
+    const historySnapshot = await getDocs(historyRef);
+    return historySnapshot.docs.map((doc) => doc.data() as IQuizHistory);
+  } catch (error) {
+    console.error("[quizService] Erro ao buscar histórico:", error);
+    return [];
   }
 }
 
@@ -376,8 +476,9 @@ export async function getDailyChallengeQuestions(): Promise<IQuiz | null> {
         if (quiz && quiz.questions.length > 0) {
           const questionsWithMeta = quiz.questions.map((q) => ({
             ...q,
-            originSubcategory: randomSub.name,
             originCategory: category.name,
+            originSubcategory: randomSub.name,
+            originSubcategorySubtitle: randomSub.description || undefined,
           }));
           allQuestions.push(...questionsWithMeta);
         }
@@ -515,5 +616,173 @@ export async function getDailyChallengeStatus(userId: string): Promise<boolean> 
   } catch (error) {
     console.error("Erro ao verificar status do desafio diário:", error);
     return false;
+  }
+}
+
+
+export async function getDailyChallengeStats(userId: string): Promise<IDailyChallengeStats> {
+  const defaultStats: IDailyChallengeStats = {
+    currentStreak: 0,
+    longestStreak: 0,
+    totalChallenges: 0,
+    bestAccuracy: 0,
+  };
+
+  try {
+    // 1. Buscar todos os registros DAILY_* do usuário
+    const historyRef = collection(db, "users_history", userId, "history");
+    const q = query(historyRef, where("categoryId", "==", "DAILY"));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) return defaultStats;
+
+    const dailyHistories = snapshot.docs.map((doc) => doc.data() as IQuizHistory);
+
+    // 2. Total de desafios concluidos
+    const totalChallenges = dailyHistories.length;
+
+    // 3. Melhor resultado (maior percentual atingido)
+    const bestAccuracy = Math.max(...dailyHistories.map((h) => h.percentage || 0));
+
+    // 4. Extrair datas no formato YYYY-MM-DD e ordenar decrescente
+    const completedDates = dailyHistories
+      .map((h) => {
+        const date =
+          h.completedAt instanceof Timestamp
+            ? h.completedAt.toDate()
+            : new Date(h.completedAt);
+        return date
+          .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+          .split(" ")[0];
+      })
+      .sort((a, b) => b.localeCompare(a)); // decrescente
+
+    const uniqueDates = Array.from(new Set(completedDates));
+
+    // 5. Streak atual (reutiliza logica existente)
+    const currentStreak = await getUserStreak(userId);
+
+    // 6. Maior sequencia historica
+    let longestStreak = 0;
+    let currentCount = 1;
+
+    for (let i = 0; i < uniqueDates.length - 1; i++) {
+      const current = new Date(uniqueDates[i] + "T12:00:00");
+      const next = new Date(uniqueDates[i + 1] + "T12:00:00");
+      const diffDays = Math.round(
+        (current.getTime() - next.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      if (diffDays === 1) {
+        currentCount++;
+      } else {
+        longestStreak = Math.max(longestStreak, currentCount);
+        currentCount = 1;
+      }
+    }
+    longestStreak = Math.max(longestStreak, currentCount);
+
+    return { currentStreak, longestStreak, totalChallenges, bestAccuracy };
+  } catch (error) {
+    console.error("Erro ao calcular estatísticas do desafio diário:", error);
+    return defaultStats;
+  }
+}
+
+// ==================== ESTATÍSTICAS DETALHADAS ====================
+
+/**
+ * Busca e consolida estatísticas detalhadas de desempenho do usuário.
+ * Agrega dados do histórico de quizzes, progresso de subcategorias e categorias.
+ * 
+ * @param userId ID do usuário no Firebase
+ * @returns Objeto com estatísticas consolidadas
+ */
+export async function getUserDetailedStats(userId: string): Promise<IUserDetailedStats> {
+  const defaultStats: IUserDetailedStats = {
+    totalQuestions: 0,
+    accuracyRate: 0,
+    activeDays: 0,
+    bestScore: 0,
+    categoriesProgress: [],
+  };
+
+  if (!userId || userId === "guest") return defaultStats;
+
+  try {
+    // Busca dados em paralelo para melhor performance
+    const [history, progress, categories] = await Promise.all([
+      getUserHistory(userId),
+      getUserProgress(userId),
+      getCategories(),
+    ]);
+
+    if (history.length === 0) {
+      // Se não há histórico, mas há categorias, retorna progresso zerado por categoria
+      return {
+        ...defaultStats,
+        categoriesProgress: categories.map((cat) => ({
+          categoryId: cat.id,
+          categoryName: cat.name,
+          totalQuestionsAnswered: 0,
+          completionPercentage: 0,
+          icon: iconMapping[cat.id] || "HelpCircle",
+        })),
+      };
+    }
+
+    let totalQuestions = 0;
+    let totalCorrect = 0;
+    let maxPercentage = 0;
+    const uniqueDates = new Set<string>();
+
+    // 1. Processar Histórico Bruto
+    history.forEach((h) => {
+      totalQuestions += h.totalQuestions || 0;
+      totalCorrect += h.correctAnswers || 0;
+      maxPercentage = Math.max(maxPercentage, h.percentage || 0);
+
+      if (h.completedAt) {
+        const date = h.completedAt instanceof Timestamp ? h.completedAt.toDate() : new Date(h.completedAt);
+        // Usar formato ISO local para garantir contagem correta por dia sem problemas de fuso
+        const dateStr = date.toLocaleDateString("sv-SE"); // YYYY-MM-DD
+        uniqueDates.add(dateStr);
+      }
+    });
+
+    const accuracyRate = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+
+    // 2. Calcular Progresso por Categoria
+    // O progresso é baseado na quantidade de subcategorias concluídas vs total da categoria
+    const categoriesProgress: ICategoryProgress[] = categories.map((cat) => {
+      const completedCount = progress[cat.id]?.length || 0;
+      const totalSubcats = cat.subcategoryCount || 0;
+      const completionPercentage =
+        totalSubcats > 0 ? Math.min(100, Math.round((completedCount / totalSubcats) * 100)) : 0;
+
+      // Filtra questões respondidas especificamente para esta categoria
+      const catQuestions = history
+        .filter((h) => h.categoryId === cat.id)
+        .reduce((acc, curr) => acc + (curr.totalQuestions || 0), 0);
+
+      return {
+        categoryId: cat.id,
+        categoryName: cat.name,
+        totalQuestionsAnswered: catQuestions,
+        completionPercentage,
+        icon: iconMapping[cat.id] || "HelpCircle",
+      };
+    });
+
+    return {
+      totalQuestions,
+      accuracyRate,
+      activeDays: uniqueDates.size,
+      bestScore: maxPercentage,
+      categoriesProgress,
+    };
+  } catch (error) {
+    console.error("[quizService] Erro ao buscar estatísticas detalhadas:", error);
+    return defaultStats;
   }
 }

@@ -1,294 +1,96 @@
-# Saber Espírita - Expo App
+# Saber Espírita
 
-Versão moderna e reimaginada do aplicativo **Saber Espírita**, construída utilizando as tecnologias mais recentes do ecossistema React Native e Expo.
+Um aplicativo mobile multiplataforma (iOS e Android) dedicado ao estudo, prática e reflexão da Doutrina Espírita. Desenvolvido com **React Native** e **Expo**, o app integra funcionalidades modernas de áudio, gamificação e inteligência artificial.
 
-Este projeto representa a evolução do **SaberEspirita-Cli** (focado apenas em quizzes). Aqui, o objetivo é aumentar a retenção de usuários expandindo o escopo para **Educação e Aprendizado**.
+## 🚀 Tecnologias e Frameworks
 
-## 🎯 Objetivo e Evolução
+O projeto utiliza o que há de mais moderno no ecossistema mobile:
 
-A versão anterior (CLI) focava exclusivamente em "testar conhecimentos" via quizzes. Percebemos que apenas testar não era suficiente para manter os usuários engajados a longo prazo.
-
-**A nova proposta (Expo) une:**
-
-1.  **Cursos Completos**: Módulos de aprendizado estruturado sobre a Doutrina Espírita.
-2.  **Quizzes (Legado aprimorado)**: A mecânica de testes continua, mas agora integrada aos cursos para validação do aprendizado.
-3.  **Interface Premium**: Uma nova experiência visual para encantar e reter.
-
-## 📱 Funcionalidades
-
-- **Cursos & Aulas**: Conteúdo didático organizado em trilhas de aprendizado.
-- **Quizzes Gamificados**: Testes de conhecimento (feature migrada e melhorada do projeto anterior).
-- **Arquitetura Modular**: Organização por módulos funcionais (auth, pray, meditate, emotional-chat, etc.).
-- **Navegação**: React Navigation com stacks e bottom tabs.
-- **Autenticação**: Login e Registro integrados com Firebase Auth.
-- **Proteção de Rotas**: Redirecionamento inteligente entre áreas públicas e privadas.
-- **Temas**: Suporte nativo a Dark/Light mode com persistência.
-- **Armazenamento Local**: MMKV para performance máxima.
-
-## 🛠 Tech Stack
-
-Principais tecnologias utilizadas:
-
-- **Core**: [React Native](https://reactnative.dev/) (v0.81) com [Expo](https://expo.dev/) (v54).
-- **Navegação**: [React Navigation](https://reactnavigation.org/) (v7) com Native Stack e Bottom Tabs.
-- **Gerenciamento de Estado**: [Zustand](https://github.com/pmndrs/zustand) para estado global.
-- **Backend / BaaS**: Firebase (JS SDK Oficial v12.6).
-  > **Decisão Técnica Importante**: Diferente do projeto CLI que usava `react-native-firebase`, optamos pelo **SDK JS Oficial** nesta versão. Embora o SDK nativo tenha mais recursos, ele traz complexidade de manutenção e quebras frequentes em atualizações do React Native. O SDK JS é mais leve, fácil de instalar e garante maior estabilidade a longo prazo no ecossistema Expo.
-- **Armazenamento Local**: `react-native-mmkv` (via Nitro Modules) para persistência ultra-rápida.
-- **Estilização**: Sistema de tema customizado com tokens de design.
-- **Animações**: `react-native-reanimated` para animações fluidas.
-- **Ícones**: `lucide-react-native` para ícones modernos e consistentes.
+- **Core:** [React Native](https://reactnative.dev/) (v0.81.5) & [Expo](https://expo.dev/) (SDK 54)
+- **Linguagem:** [TypeScript](https://www.typescriptlang.org/)
+- **Backend & Services:**
+  - [Firebase](https://firebase.google.com/) (Analytics, App, Auth)
+  - [OneSignal](https://onesignal.com/) (Notificações Push)
+  - [OpenAI API](https://openai.com/) (Integração com IA)
+- **Gerenciamento de Estado & Dados:**
+  - [Zustand](https://github.com/pmndrs/zustand) (Estado global)
+  - [TanStack Query (React Query)](https://tanstack.com/query/latest) (Cache e requisições)
+  - [MMKV](https://github.com/mrousavy/react-native-mmkv) (Armazenamento local de alta performance)
+- **Navegação:** [React Navigation](https://reactnavigation.org/)
+- **UI & Animações:**
+  - [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/)
+  - [Lucide React Native](https://lucide.dev/) (Ícones)
+  - [Gorhom Bottom Sheet](https://gorhom.github.io/react-native-bottom-sheet/)
+- **Mídia:** [React Native Track Player](https://react-native-track-player.js.org/) (Reprodução de áudio em background)
 
 ## 📂 Estrutura do Projeto
 
-A estrutura segue uma arquitetura modular com React Navigation:
+A arquitetura do projeto é organizada dentro da pasta `src/`:
 
-```
-SaberEspirita-Expo/
-├── src/
-│   ├── assets/                       # Imagens e recursos
-│   │
-│   ├── components/                   # Componentes visuais reutilizáveis
-│   │   ├── AppBackground/
-│   │   ├── AppInput/
-│   │   ├── LegalHeader/
-│   │   ├── LegalSection/
-│   │   ├── SettingsItem/
-│   │   ├── DailyMessageCard/
-│   │   ├── AskGuideCard/
-│   │   └── ...
-│   │
-│   ├── configs/                      # Configurações globais
-│   │   ├── theme/                   # Sistema de temas (light.ts, dark.ts, types.ts)
-│   │   └── firebase/                # Configuração do Firebase
-│   │
-│   ├── contexts/                     # Context API providers
-│   │
-│   ├── data/                         # Dados estáticos (JSON, prayers, etc.)
-│   │
-│   ├── hooks/                        # Custom hooks globais
-│   │   ├── useAppTheme.ts           # Hook de tema
-│   │   └── ...
-│   │
-│   ├── pages/                        # Implementação das telas (organizadas por módulo)
-│   │   ├── auth/                    # Módulo de autenticação
-│   │   │   ├── login/
-│   │   │   └── register/
-│   │   ├── pray/                    # Módulo Ore (orações)
-│   │   │   ├── index.tsx            # Tela principal
-│   │   │   ├── styles.ts            # Estilos
-│   │   │   ├── components/          # Componentes específicos
-│   │   │   ├── hooks/               # Hooks específicos
-│   │   │   ├── category/            # Tela de categoria
-│   │   │   └── prayer/              # Tela de oração individual
-│   │   ├── meditate/                # Módulo Medite
-│   │   ├── emotional-chat/          # Módulo Pergunte ao Guia
-│   │   ├── study/                   # Módulo Estude
-│   │   ├── fix/                     # Módulo Fixe
-│   │   └── account/                 # Módulo Conta/Configurações
-│   │
-│   ├── routers/                      # Navegadores React Navigation
-│   │   ├── RootNavigator.tsx        # Navegador raiz (Auth vs App)
-│   │   ├── AuthNavigator.tsx        # Stack de autenticação (Login, Register)
-│   │   ├── AppNavigator.tsx         # Stack principal do app
-│   │   ├── TabNavigator.tsx         # Bottom tabs (Study, Pray, Meditate, Fix, Account)
-│   │   ├── PrayNavigator.tsx        # Stack do módulo Ore
-│   │   └── types.ts                 # Tipos TypeScript para navegação
-│   │
-│   ├── services/                     # Serviços e integrações
-│   │   ├── deepseek/                # Integração DeepSeek AI
-│   │   ├── chat/                    # Serviços de chat
-│   │   └── ...
-│   │
-│   ├── stores/                       # Stores Zustand
-│   │   ├── authStore.ts             # Estado de autenticação
-│   │   ├── themeStore.ts            # Estado de tema
-│   │   └── ...
-│   │
-│   ├── templates/                    # Templates do app (ex: certificados)
-│   │
-│   ├── types/                        # Tipos TypeScript globais
-│   │
-│   └── utils/                        # Funções utilitárias
-│
-├── App.tsx                           # Entry point da aplicação
-├── android/                          # Código nativo Android (gerado via prebuild)
-├── ios/                              # Código nativo iOS (gerado via prebuild)
-├── assets/                           # Assets globais (ícone, splash)
-├── app.json                          # Configuração do Expo
-├── package.json                      # Dependências
-└── tsconfig.json                     # Configuração TypeScript
-```
+- `assets/`: Recursos estáticos como imagens e sons.
+- `components/`: Componentes de UI reutilizáveis (Input, Button, Cards, etc).
+- `configs/`: Configurações de Firebase, Temas (Dark/Light) e constantes.
+- `contexts/`: Contextos do React para estados compartilhados.
+- `data/`: Dados estáticos, mocks e conteúdos locais.
+- `hooks/`: Hooks customizados, incluindo a camada de `queries` (React Query).
+- `pages/`: Telas principais do aplicativo organizadas por módulos:
+  - `auth/`: Login e Registro.
+  - `chat/`: Interfaces de conversa (Emocional e Científica).
+  - `fix/`: Módulos de gamificação (Quiz, Desafios Diários, Leaderboard).
+  - `meditate/`: Player de meditação e reflexões.
+  - `pray/`: Orações e ambientes sonoros.
+  - `study/`: Catálogo de cursos e currículos.
+  - `glossary/`: Termos e definições espíritas.
 
-### Organização Modular
+## 🛠️ Scripts Disponíveis
 
-Cada módulo em `src/pages/` segue a estrutura:
+No diretório raiz, você pode executar:
 
-```
-modulo-nome/
-├── index.tsx      # Tela principal (named export)
-├── styles.ts      # Estilos usando createStyles(theme)
-├── components/    # Componentes específicos do módulo
-└── hooks/         # Hooks específicos do módulo
-```
+### Desenvolvimento
 
-## 🚀 Como Rodar o Projeto
+- `npm start`: Inicia o Expo Go / Metro Bundler.
+- `npm run android`: Executa o app no emulador Android ou dispositivo conectado.
+- `npm run ios`: Executa o app no simulador iOS.
 
-### Pré-requisitos
+### Qualidade de Código
 
-- **Node.js** (v18 ou superior)
-- **npm** ou **yarn**
-- **Expo CLI** (instalado globalmente ou via npx)
-- **Xcode** (para iOS) ou **Android Studio** (para Android)
+- `npm run lint`: Executa o ESLint para verificar o código.
+- `npm run type-check`: Verifica tipos com TypeScript.
+- `npm run validate`: Executa verificação de tipos, lint e formatação.
 
-### Instalação
+### Build (Android)
 
-1.  Clone o repositório:
+- `npm run prebuild`: Gera as pastas nativas (`android/` e `ios/`).
+- `npm run build:apk`: Gera o arquivo APK para testes.
+- `npm run build:aab`: Gera o arquivo AAB para publicação na Play Store.
 
-```bash
-git clone <repository-url>
-cd SaberEspirita-Expo
-```
+## 📱 Configuração Nativa
 
-2.  Instale as dependências:
+O projeto utiliza o **Expo Prebuild**, o que significa que as pastas `android` e `ios` são geradas dinamicamente. Configurações sensíveis e permissões são gerenciadas via plugins no `app.json`:
 
-```bash
-npm install
-```
+- Suporte a áudio em background.
+- Notificações remotas.
+- Autenticação Social (Google e Apple).
+- Integração nativa com Firebase.
 
-### Executando o Projeto
+## �️ Customizações e Automação (Pasta `dev/`)
 
-Este projeto utiliza **módulos nativos** (MMKV via Nitro Modules), portanto **requer prebuild** para gerar as pastas nativas `android/` e `ios/`.
+O projeto utiliza uma camada de automação para garantir que o **Expo Prebuild** gere as pastas nativas com todas as configurações necessárias:
 
-#### Desenvolvimento com Prebuild
+- **Config Plugins Customizados**:
+  - `withModularHeaders.js`: Resolve dependências de headers modulares no iOS para Firebase.
+  - `withAndroidForegroundPermissions.js`: Configura permissões e serviços de foreground para Android 14+.
+- **Scripts de Build**:
+  - `patch-android-signature.js`: Automatiza a injeção de chaves de assinatura (JKS) no Gradle.
+  - `rename-aab.js`: Organiza e renomeia os artefatos de saída do build.
+- **Ambiente**: Scripts para definição de ambiente e coleta de versões automatizada.
 
-**iOS:**
+## 🩹 Correções (Pasta `patches/`)
 
-```bash
-npm run ios
-```
+Utilizamos o `patch-package` para aplicar correções críticas em dependências externas sem perder a capacidade de atualização:
 
-Este comando executa automaticamente:
+- **`react-native-track-player`**: Patches para compatibilidade de build e suporte a novos SDKs do Android.
 
-1. `expo prebuild` (se necessário)
-2. Compila o projeto nativo iOS
-3. Inicia o Metro bundler
-4. Abre o simulador iOS
+## �📄 Licença
 
-**Android:**
-
-```bash
-npm run android
-```
-
-Este comando executa automaticamente:
-
-1. `expo prebuild` (se necessário)
-2. Compila o projeto nativo Android
-3. Inicia o Metro bundler
-4. Abre o emulador Android
-
-#### Apenas Metro Bundler (sem compilação nativa)
-
-Se você já compilou o app anteriormente e só quer atualizar o código JavaScript:
-
-```bash
-npm start
-```
-
-Depois pressione:
-
-- `a` para Android (requer app já instalado)
-- `i` para iOS (requer app já instalado)
-- `w` para Web
-
-### Scripts Disponíveis
-
-```bash
-npm start          # Inicia o Metro bundler
-npm run ios        # Compila e roda no iOS
-npm run android    # Compila e roda no Android
-npm run web        # Roda na web
-
-# Qualidade de código
-npm run lint       # Verifica erros de linting
-npm run lint:fix   # Corrige erros de linting automaticamente
-npm run format     # Formata código com Prettier
-npm run type-check # Verifica tipos TypeScript
-npm run validate   # Executa type-check + lint + format:check
-```
-
-## 🔧 Configuração do Firebase
-
-1. Crie um projeto no [Firebase Console](https://console.firebase.google.com/)
-2. Adicione um app Web ao projeto
-3. Copie as credenciais de configuração
-4. Atualize o arquivo `src/configs/firebase.ts` com suas credenciais
-
-## 📝 Observações Importantes
-
-- Este projeto utiliza **Expo Prebuild** devido ao uso de módulos nativos (`react-native-mmkv`, `react-native-nitro-modules`).
-- As pastas `android/` e `ios/` são **geradas automaticamente** e não devem ser commitadas no Git (estão no `.gitignore`).
-- Para adicionar novos módulos nativos, execute `npx expo prebuild --clean` para regenerar as pastas nativas.
-- **Foco na Retenção**: Toda nova feature deve pensar em como manter o usuário estudando por mais tempo.
-- O projeto usa **MMKV** para armazenamento local de alta performance, substituindo AsyncStorage.
-
-## 🎨 Sistema de Temas
-
-O app possui suporte completo a temas com três modos:
-
-- **Light**: Tema claro
-- **Dark**: Tema escuro
-- **System**: Segue o tema do sistema operacional
-
-O tema é persistido localmente e aplicado automaticamente em toda a aplicação.
-
-## 🔐 Autenticação
-
-O sistema de autenticação utiliza:
-
-- **Firebase Auth** para gerenciamento de usuários
-- **MMKV** para persistência local da sessão
-- **Zustand** para gerenciamento de estado global
-- Redirecionamento automático entre rotas públicas e privadas
-
-## 📱 Navegação
-
-A navegação utiliza **React Navigation** com arquitetura em camadas:
-
-### Estrutura de Navegadores
-
-1. **RootNavigator**: Gerencia autenticação (Auth vs App)
-2. **AuthNavigator**: Stack de autenticação (Login, Register)
-3. **AppNavigator**: Stack principal com tabs e modais (FAQ, Privacy, Terms, EmotionalChat)
-4. **TabNavigator**: Bottom tabs com 5 abas principais:
-   - Study (Estude)
-   - Fix (Fixe)
-   - Meditate (Medite)
-   - Pray (Ore)
-   - Account (Conta)
-5. **PrayNavigator**: Stack do módulo Ore (Home → Category → Prayer)
-
-### Proteção de Rotas
-
-- Redirecionamento automático baseado no estado de autenticação (Zustand)
-- Usuários não autenticados são redirecionados para AuthNavigator
-- Usuários autenticados acessam AppNavigator
-
-### Tipagem Type-Safe
-
-Todos os navegadores possuem tipos TypeScript definidos em `src/routers/types.ts`:
-
-```typescript
-export type RootStackParamList = {
-  Auth: undefined;
-  App: undefined;
-};
-
-export type AuthStackParamList = {
-  Login: undefined;
-  Register: undefined;
-};
-
-// ... outros tipos
-```
+Este projeto é de uso privado. Todos os direitos reservados.

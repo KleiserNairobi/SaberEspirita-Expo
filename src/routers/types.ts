@@ -16,8 +16,14 @@ export type AppStackParamList = {
   FAQ: undefined;
   Privacy: undefined;
   Terms: undefined;
-  EmotionalChat: { initialMessage?: string } | undefined;
-  ScientificChat: { initialMessage?: string } | undefined;
+  EmotionalChat: { initialMessage?: string; origin?: "medite" | "ore" } | undefined;
+  ScientificChat:
+    | {
+        initialMessage?: string;
+        origin?: "direct" | "lesson" | "glossary";
+        lessonId?: string;
+      }
+    | undefined;
   Glossary: undefined;
   CoursesCatalog: undefined;
   CourseDetails: { courseId: string };
@@ -25,14 +31,13 @@ export type AppStackParamList = {
   LessonPlayer: { courseId: string; lessonId: string };
   CourseCertificate: { courseId: string };
   CourseQuiz: {
-    subcategoryId?: string;
     categoryId?: string;
     categoryName?: string;
     subcategoryName?: string;
     subtitle?: string;
-    mode?: "standard" | "daily" | "course";
     courseId: string;
     lessonId: string;
+    lessonTitle: string;
     quizId: string;
     exerciseId?: string;
   };
@@ -48,6 +53,7 @@ export type AppStackParamList = {
     userAnswers: any[];
     courseId?: string;
     lessonId?: string;
+    exerciseId?: string;
   };
   QuizReview: {
     categoryId: string;
@@ -60,6 +66,7 @@ export type AppStackParamList = {
     userAnswers: any[];
     courseId?: string; // Opcional: usado quando é exercício de curso
   };
+  Performance: undefined;
 };
 
 export type GlossaryStackParamList = {
@@ -80,7 +87,7 @@ export type PrayStackParamList = {
   AllPrayers: { initialCategory?: string };
   PrayerPrep: { id: string };
   Prayer: { id: string };
-  EmotionalChat: { initialMessage?: string } | undefined;
+  EmotionalChat: { initialMessage?: string; origin?: "medite" | "ore" } | undefined;
 };
 
 export type MeditateStackParamList = {
@@ -89,7 +96,7 @@ export type MeditateStackParamList = {
   Reflection: { id: string };
   AllMeditations: undefined;
   MeditationPlayer: { id: string };
-  EmotionalChat: { initialMessage?: string } | undefined;
+  EmotionalChat: { initialMessage?: string; origin?: "medite" | "ore" } | undefined;
 };
 
 export type FixStackParamList = {
@@ -99,17 +106,26 @@ export type FixStackParamList = {
     categoryName: string;
   };
   Leaderboard: undefined;
-  Quiz: {
-    subcategoryId?: string;
+  Performance: undefined;
+  CourseQuiz: {
     categoryId?: string;
     categoryName?: string;
     subcategoryName?: string;
     subtitle?: string;
-    mode?: "standard" | "daily" | "course";
-    courseId?: string;
-    lessonId?: string;
-    quizId?: string;
+    courseId: string;
+    lessonId: string;
+    lessonTitle: string;
+    quizId: string;
     exerciseId?: string;
+  };
+  DailyQuizHome: undefined;
+  DailyQuiz: undefined;
+  StandardQuiz: {
+    subcategoryId: string;
+    categoryId: string;
+    categoryName: string;
+    subcategoryName: string;
+    subtitle?: string;
   };
   QuizResult: {
     categoryId?: string;
@@ -123,6 +139,7 @@ export type FixStackParamList = {
     userAnswers: any[];
     courseId?: string;
     lessonId?: string;
+    exerciseId?: string;
   };
   QuizReview: {
     categoryId: string;

@@ -1,9 +1,14 @@
-import { Alert, Linking, Platform } from "react-native";
+import { Linking, Platform } from "react-native";
 import { useCallback } from "react";
+
+import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
 
-export function useRateApp() {
+export function useRateApp(options?: {
+  showMessage?: (config: BottomSheetMessageConfig) => void;
+}) {
+  const { showMessage } = options ?? {};
   const {
     incrementLessonsCompletedCount,
     setRateAppStatus,
@@ -14,42 +19,25 @@ export function useRateApp() {
     const { rateAppStatus, lessonsCompletedCount, lastRateInteractionDate } =
       usePreferencesStore.getState();
 
-    console.log("[useRateApp] Checking if should ask:", {
-      rateAppStatus,
-      lessonsCompletedCount,
-      lastRateInteractionDate,
-    });
-
-    // Se já avaliou ou declinou, não pede
     if (rateAppStatus === "rated" || rateAppStatus === "declined") {
-      console.log("[useRateApp] User already rated or declined.");
       return false;
     }
 
-    // Regra: Pelo menos 3 lições completadas
     if (lessonsCompletedCount < 3) {
-      console.log(`[useRateApp] Not enough lessons (${lessonsCompletedCount}/3).`);
       return false;
     }
 
-    // Regra: Se "idle", pede
     if (rateAppStatus === "idle") {
-      console.log("[useRateApp] Status idle, asking now.");
       return true;
     }
 
-    // Regra: Se "remind_later", verificar se passou 7 dias
     if (rateAppStatus === "remind_later" && lastRateInteractionDate) {
       const lastDate = new Date(lastRateInteractionDate);
       const now = new Date();
       const diffTime = Math.abs(now.getTime() - lastDate.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      const shouldRemind = diffDays >= 7;
-      console.log(
-        `[useRateApp] Remind later check: ${diffDays} days passed. Should ask: ${shouldRemind}`
-      );
-      return shouldRemind;
+      return diffDays >= 7;
     }
 
     return false;
@@ -63,28 +51,42 @@ export function useRateApp() {
 
       if (canOpen) {
         await Linking.openURL(storeUrl);
-      } else {
-        // Fallback
-        Alert.alert(
-          "Avaliar App",
+        return true;
+      }
+
+      showMessage?.({
+        type: "info",
+        title: "Avaliar App",
+        message:
           Platform.OS === "ios"
             ? "Para avaliar o app, acesse a App Store."
-            : "Para avaliar o app, acesse a Play Store."
-        );
-      }
+            : "Para avaliar o app, acesse a Play Store.",
+        primaryButton: {
+          label: "OK",
+          onPress: () => {},
+        },
+      });
+      return false;
     } catch (error) {
       console.error("Erro ao abrir loja:", error);
-      Alert.alert(
-        "Erro",
-        "Não foi possível abrir a loja. Por favor, tente novamente mais tarde."
-      );
+      showMessage?.({
+        type: "error",
+        title: "Erro",
+        message: "Não foi possível abrir a loja. Por favor, tente novamente mais tarde.",
+        primaryButton: {
+          label: "OK",
+          onPress: () => {},
+        },
+      });
+      return false;
     }
   };
 
   const handleRateNow = async () => {
-    setRateAppStatus("rated");
+    const didOpen = await openStore();
+
+    setRateAppStatus(didOpen ? "rated" : "remind_later");
     updateLastRateInteractionDate();
-    await openStore();
   };
 
   const handleRemindLater = () => {

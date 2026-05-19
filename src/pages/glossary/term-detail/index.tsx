@@ -91,6 +91,7 @@ export function TermDetailScreen() {
 
     // Navega para o chat científico com mensagem inicial sobre o termo
     navigation.navigate("ScientificChat" as any, {
+      origin: "glossary",
       initialMessage: `Gostaria de saber mais sobre ${term.term}`,
     });
   }

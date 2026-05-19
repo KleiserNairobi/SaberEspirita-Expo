@@ -6,8 +6,6 @@ export function createStyles(theme: ITheme) {
     container: {
       paddingVertical: theme.spacing.md,
       paddingHorizontal: theme.spacing.lg,
-      marginHorizontal: theme.spacing.lg,
-      marginBottom: theme.spacing.lg,
       borderRadius: theme.radius.md,
       borderWidth: 1,
       gap: theme.spacing.md,
