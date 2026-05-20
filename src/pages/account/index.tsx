@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
-import { ScrollView, Text, Linking, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { httpsCallable } from "firebase/functions";
 
 import {
   Volume2,
@@ -29,6 +30,7 @@ import { useAccountScreen } from "@/pages/account/hooks/useAccountScreen";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { EditProfileBottomSheet } from "@/pages/account/components/EditProfileBottomSheet";
+import { functions } from "@/configs/firebase/firebase";
 
 export default function AccountScreen() {
   const {
@@ -121,12 +123,11 @@ export default function AccountScreen() {
       type: "question",
       title: "Excluir Conta",
       message:
-        "Você será redirecionado para uma página onde poderá solicitar a exclusão da sua conta e de seus dados. Deseja continuar?",
+        "Esta ação é irreversível: sua conta e seus dados serão excluídos permanentemente. Deseja continuar?",
       primaryButton: {
-        label: "Continuar",
+        label: "Excluir minha conta",
         onPress: () => {
-          Linking.openURL("https://kleisernairobi.github.io/SaberEspirita-Exclusion/");
-          bottomSheetRef.current?.dismiss();
+          void handleConfirmDeleteAccount();
         },
       },
       secondaryButton: {
@@ -139,6 +140,46 @@ export default function AccountScreen() {
     setTimeout(() => {
       bottomSheetRef.current?.present();
     }, 100);
+  }
+
+  async function handleConfirmDeleteAccount() {
+    setMessageConfig({
+      type: "info",
+      title: "Excluindo...",
+      message: "Aguarde enquanto removemos sua conta e seus dados.",
+    });
+    setTimeout(() => {
+      bottomSheetRef.current?.present();
+    }, 100);
+
+    try {
+      const deleteFn = httpsCallable(functions, "deleteMyAccount");
+      await deleteFn({ confirm: true });
+
+      setMessageConfig({
+        type: "success",
+        title: "Conta excluída",
+        message: "Sua conta e seus dados foram removidos com sucesso.",
+      });
+      setTimeout(() => {
+        bottomSheetRef.current?.present();
+      }, 100);
+
+      setTimeout(() => {
+        void signOut();
+      }, 1000);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Não foi possível excluir sua conta agora.";
+      setMessageConfig({
+        type: "error",
+        title: "Erro ao excluir",
+        message,
+      });
+      setTimeout(() => {
+        bottomSheetRef.current?.present();
+      }, 100);
+    }
   }
 
   function handleEditProfilePress() {
