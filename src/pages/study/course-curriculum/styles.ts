@@ -94,6 +94,23 @@ export const createStyles = (theme: ITheme) =>
       marginTop: 4,
     },
 
+    journeyCard: {
+      backgroundColor: theme.colors.card,
+      borderRadius: theme.radius.md,
+      padding: theme.spacing.md,
+      marginBottom: theme.spacing.lg,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    journeyTitle: {
+      ...theme.text("md", "semibold"),
+      color: theme.colors.text,
+      marginBottom: theme.spacing.sm,
+    },
+    journeyText: {
+      ...theme.text("sm", "regular", theme.colors.textSecondary),
+    },
+
     // LESSON CARD (Base)
     lessonCard: {
       flexDirection: "row",

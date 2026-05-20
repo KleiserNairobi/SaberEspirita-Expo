@@ -31,6 +31,7 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { EditProfileBottomSheet } from "@/pages/account/components/EditProfileBottomSheet";
 import { functions } from "@/configs/firebase/firebase";
+import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
 
 export default function AccountScreen() {
   const {
@@ -52,6 +53,8 @@ export default function AccountScreen() {
     signOut,
     isGuest,
   } = useAccountScreen();
+
+  const { data: communityProgress } = useCommunityProgress();
 
   const styles = createStyles(theme);
 
@@ -190,6 +193,16 @@ export default function AccountScreen() {
     editProfileSheetRef.current?.present();
   }
 
+  function handleCommunityLevelInfoPress() {
+    setMessageConfig({
+      type: "info",
+      title: "Como funciona meu nível?",
+      message:
+        "Seu nível é um reconhecimento simbólico da sua jornada: estudo + participação no fórum.\n\n🌿 Cultivador:\n- ≥ 10 aulas concluídas\n- ≥ 5 comentários no fórum\n- ≥ 10 reações recebidas (total)\n- Pelo menos 1 curso com progresso > 50%\n\n🌳 Árvore Frondosa:\n- ≥ 40 aulas concluídas\n- ≥ 2 cursos concluídos\n- ≥ 20 comentários no fórum\n- ≥ 50 reações recebidas (total)\n- ≥ 15 reações 🕊️ ou 🙏\n- ≥ 30 dias ativos",
+    });
+    setTimeout(() => bottomSheetRef.current?.present(), 100);
+  }
+
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
@@ -204,6 +217,13 @@ export default function AccountScreen() {
             displayName={displayName} 
             email={email} 
             onEditPress={handleEditProfilePress}
+            communityLevelLabel={
+              communityProgress?.communityLevelId === "arvore_frondosa"
+                ? "🌳 Árvore Frondosa"
+                : communityProgress?.communityLevelId === "cultivador"
+                  ? "🌿 Cultivador"
+                  : "🌱 Sementeiro"
+            }
           />
 
           {/* Grupo 1: Preferências */}
@@ -260,6 +280,13 @@ export default function AccountScreen() {
               onPress={handleContactUs}
               showDivider
               isFirst
+            />
+            <SettingsItem
+              icon={HelpCircle}
+              title="Como funciona meu nível?"
+              subtitle="Critérios de reconhecimento simbólico"
+              onPress={handleCommunityLevelInfoPress}
+              showDivider
             />
             <SettingsItem
               icon={HelpCircle}

@@ -8,9 +8,15 @@ interface AccountHeaderProps {
   displayName: string;
   email: string;
   onEditPress?: () => void;
+  communityLevelLabel?: string;
 }
 
-export function AccountHeader({ displayName, email, onEditPress }: AccountHeaderProps) {
+export function AccountHeader({
+  displayName,
+  email,
+  onEditPress,
+  communityLevelLabel,
+}: AccountHeaderProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
@@ -30,6 +36,11 @@ export function AccountHeader({ displayName, email, onEditPress }: AccountHeader
 
         <View style={styles.nameRow}>
           <Text style={theme.text("xxl", "semibold")}>{displayName}</Text>
+          {!!communityLevelLabel && (
+            <Text style={theme.text("sm", "semibold", theme.colors.textSecondary)}>
+              {communityLevelLabel}
+            </Text>
+          )}
         </View>
       </TouchableOpacity>
 

@@ -58,6 +58,7 @@ const SCREEN_NAME_MAP: Record<string, string> = {
   CourseDetails: "Detalhes do Curso",
   CourseCurriculum: "Currículo do Curso",
   LessonPlayer: "Player de Lição",
+  LessonForum: "Fórum da Aula",
   CourseQuiz: "Quiz do Curso",
   CourseCertificate: "Certificado do Curso",
 

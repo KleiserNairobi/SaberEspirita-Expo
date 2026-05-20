@@ -21,6 +21,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { CommunityLevelUpModal } from "@/components/CommunityLevelUpModal";
 import { RateAppBottomSheet } from "@/components/RateAppBottomSheet";
 import { ReadingToolbar } from "@/components/ReadingToolbar";
 import {
@@ -28,11 +29,18 @@ import {
   useCourseProgress,
 } from "@/hooks/queries/useCourseProgress";
 import { useExercises } from "@/hooks/queries/useExercises";
+import { useForumHasNewComments } from "@/hooks/queries/useLessonForum";
 import { LESSONS_KEYS, useLesson, useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useRateApp } from "@/hooks/useRateApp";
 import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
 import { AppStackParamList } from "@/routers/types";
+import {
+  getLevelUpIfAny,
+  getStoredCommunityLevelRaw,
+  setStoredCommunityLevel,
+} from "@/services/community/communityLevelService";
+import { getCommunityProgress } from "@/services/firebase/forumService";
 import { logGlossaryView } from "@/services/firebase/glossaryService";
 import { getLessonById } from "@/services/firebase/lessonService";
 import {
@@ -46,8 +54,8 @@ import { IGlossaryTerm } from "@/types/glossary";
 import { SHARE_FOOTER } from "@/utils/constants";
 import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
 
-import { DoubtFAB } from "./components/DoubtFAB";
 import { GlossaryTermBottomSheet } from "./components/GlossaryTermBottomSheet";
+import { LessonActionsFAB } from "./components/LessonActionsFAB";
 import { LessonSlide } from "./components/LessonSlide";
 import { SlideIndicator } from "./components/SlideIndicator";
 import { createStyles } from "./styles";
@@ -82,6 +90,12 @@ export function LessonPlayerScreen() {
     null
   );
 
+  const [levelUpVisible, setLevelUpVisible] = useState(false);
+  const [levelUpId, setLevelUpId] = useState<
+    "sementeiro" | "cultivador" | "arvore_frondosa"
+  >("sementeiro");
+  const [navigateAfterLevelUp, setNavigateAfterLevelUp] = useState(false);
+
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   const showMessage = useCallback((config: BottomSheetMessageConfig) => {
@@ -99,6 +113,9 @@ export function LessonPlayerScreen() {
   const rateAppSheetRef = useRef<BottomSheetModal>(null);
 
   const { courseId, lessonId } = route.params;
+  const { data: courseProgress } = useCourseProgress(courseId);
+  const isLessonAlreadyCompleted =
+    !!courseProgress?.completedLessons?.includes?.(lessonId);
 
   React.useEffect(() => {
     if (!user?.uid || isGuest) return;
@@ -125,6 +142,7 @@ export function LessonPlayerScreen() {
 
   // Fetch da aula
   const { data: lesson, isLoading: isLoadingLesson } = useLesson(courseId, lessonId);
+  const { data: hasNewForum } = useForumHasNewComments(lessonId);
 
   // Fetch dos exercícios associados
   const { data: exercises, isLoading: isLoadingExercises } = useExercises(lessonId);
@@ -200,6 +218,11 @@ export function LessonPlayerScreen() {
   async function handleFinish() {
     if (!lesson) return;
 
+    if (!isGuest && isLessonAlreadyCompleted) {
+      navigateBackAfterCompletion();
+      return;
+    }
+
     // Verificar se é convidado
     if (useAuthStore.getState().isGuest) {
       await logLessonCompleted({
@@ -262,6 +285,30 @@ export function LessonPlayerScreen() {
         ]);
       }
 
+      if (user?.uid) {
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        const progress = await getCommunityProgress(user.uid);
+        if (progress) {
+          const raw = getStoredCommunityLevelRaw(user.uid);
+          if (raw === null) {
+            setStoredCommunityLevel(user.uid, progress.communityLevelId);
+          } else {
+            const levelUp = getLevelUpIfAny({
+              userId: user.uid,
+              currentLevelId: progress.communityLevelId,
+            });
+            if (levelUp) {
+              setLevelUpId(levelUp);
+              setNavigateAfterLevelUp(true);
+              setLevelUpVisible(true);
+              setStoredCommunityLevel(user.uid, levelUp);
+              setIsProcessing(false);
+              return;
+            }
+          }
+        }
+      }
+
       // Verificar se deve pedir avaliação
       if (checkIfShouldAsk()) {
         setIsProcessing(false);
@@ -299,6 +346,41 @@ export function LessonPlayerScreen() {
       initialMessage: `Olá, Sr. Allan! Acabei de completar a aula "${lesson.title}" e gostaria de tirar uma dúvida sobre este tema.`,
     });
   }, [lesson, navigation]);
+
+  const handleOpenForum = useCallback(() => {
+    if (!lesson) return;
+
+    if (useAuthStore.getState().isGuest) {
+      showMessage({
+        type: "info",
+        title: "Fórum",
+        message: "Crie uma conta para participar do fórum e salvar seu progresso.",
+        primaryButton: {
+          label: "Criar Conta",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+            navigation.navigate("Tabs", { screen: "AccountTab" } as any);
+          },
+        },
+        secondaryButton: {
+          label: "Continuar",
+          onPress: () => bottomSheetRef.current?.dismiss(),
+        },
+      });
+      return;
+    }
+
+    const anchorQuestion = lesson.reflectionQuestions?.[0]?.question ?? "";
+    const focusTag = lesson.reflectionQuestions?.[0]?.focus ?? "Autoconhecimento";
+
+    navigation.navigate("LessonForum", {
+      courseId: lesson.courseId,
+      lessonId: lesson.id,
+      lessonTitle: lesson.title,
+      anchorQuestion,
+      focusTag,
+    });
+  }, [lesson, navigation, showMessage]);
 
   const handleGlossaryTermPress = useCallback(
     (termId: string, matchedWord?: string) => {
@@ -476,9 +558,13 @@ export function LessonPlayerScreen() {
 
         {isLastSlide ? (
           <TouchableOpacity
-            style={styles.finishButton}
+            style={[
+              styles.finishButton,
+              (isProcessing || (!isGuest && isLessonAlreadyCompleted)) &&
+                styles.finishButtonDisabled,
+            ]}
             onPress={handleFinish}
-            disabled={isProcessing}
+            disabled={isProcessing || (!isGuest && isLessonAlreadyCompleted)}
           >
             {isProcessing ? (
               <>
@@ -488,7 +574,15 @@ export function LessonPlayerScreen() {
                 </Text>
               </>
             ) : (
-              <Text style={styles.finishButtonText}>Finalizar</Text>
+              <Text
+                style={[
+                  styles.finishButtonText,
+                  (!isGuest && isLessonAlreadyCompleted) &&
+                    styles.finishButtonTextDisabled,
+                ]}
+              >
+                {(!isGuest && isLessonAlreadyCompleted) ? "Concluída" : "Finalizar"}
+              </Text>
             )}
           </TouchableOpacity>
         ) : (
@@ -519,7 +613,24 @@ export function LessonPlayerScreen() {
         matchedWord={matchedGlossaryWord}
       />
 
-      <DoubtFAB visible={isLastSlide} onPress={handleAskAI} />
+      <CommunityLevelUpModal
+        visible={levelUpVisible}
+        levelId={levelUpId}
+        onClose={() => {
+          setLevelUpVisible(false);
+          if (navigateAfterLevelUp) {
+            setNavigateAfterLevelUp(false);
+            navigateBackAfterCompletion();
+          }
+        }}
+      />
+
+      <LessonActionsFAB
+        visible={isLastSlide}
+        hasNewForum={!!hasNewForum}
+        onAskAI={handleAskAI}
+        onOpenForum={handleOpenForum}
+      />
     </SafeAreaView>
   );
 }

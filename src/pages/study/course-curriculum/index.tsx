@@ -32,6 +32,7 @@ import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
 import { useCourse } from "@/hooks/queries/useCourses";
 import { useCourseExercises, useExercises } from "@/hooks/queries/useExercises";
 import { LESSONS_KEYS, useLessons } from "@/hooks/queries/useLessons";
+import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { saveCourseFeedback } from "@/services/firebase/courseFeedbackService";
@@ -116,6 +117,7 @@ export function CourseCurriculumScreen() {
   // ✅ NOVO: Ref e Ações para BottomSheet de Avaliação de Curso
   const feedbackSheetRef = useRef<BottomSheetModal>(null);
   const { user, isGuest } = useAuthStore();
+  const { data: communityProgress } = useCommunityProgress();
 
   // ✅ NOVO: Estado para esconder botão instantaneamente
   const [hasGloballySubmittedState, setHasGloballySubmittedState] = useState<boolean>(
@@ -655,19 +657,42 @@ export function CourseCurriculumScreen() {
             scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={
-              <ProgressSummaryCard
-                courseTitle={course?.title || "Série"}
-                lessonsProgress={lessonsProgress}
-                exercisesProgress={exercisesProgress}
-                totalLessons={totalLessons}
-                completedLessons={completedLessons}
-                totalExercises={totalExercises}
-                completedExercises={completedExercises}
-                certificateEligible={isReadyForCertificate}
-                hasCertificate={certificateEnabled}
-                onRateCourse={hasGloballySubmittedState ? undefined : handleOpenFeedback}
-                onOpenMethodology={handleOpenMethodology}
-              />
+              <View>
+                <ProgressSummaryCard
+                  courseTitle={course?.title || "Série"}
+                  lessonsProgress={lessonsProgress}
+                  exercisesProgress={exercisesProgress}
+                  totalLessons={totalLessons}
+                  completedLessons={completedLessons}
+                  totalExercises={totalExercises}
+                  completedExercises={completedExercises}
+                  certificateEligible={isReadyForCertificate}
+                  hasCertificate={certificateEnabled}
+                  onRateCourse={hasGloballySubmittedState ? undefined : handleOpenFeedback}
+                  onOpenMethodology={handleOpenMethodology}
+                />
+
+                {!isGuest && communityProgress && (
+                  <View style={styles.journeyCard}>
+                    <Text style={styles.journeyTitle}>Sua jornada</Text>
+                    <Text style={styles.journeyText}>
+                      Nível atual:{" "}
+                      {communityProgress.communityLevelId === "arvore_frondosa"
+                        ? "🌳 Árvore Frondosa"
+                        : communityProgress.communityLevelId === "cultivador"
+                          ? "🌿 Cultivador"
+                          : "🌱 Sementeiro"}
+                    </Text>
+                    <Text style={[styles.journeyText, { marginTop: theme.spacing.sm }]}>
+                      {communityProgress.communityLevelId === "arvore_frondosa"
+                        ? "Você já atingiu o nível máximo de reconhecimento."
+                        : communityProgress.communityLevelId === "cultivador"
+                          ? "Próximo: 🌳 Árvore Frondosa — 40 aulas, 2 cursos, 20 comentários, 50 reações, 15 🕊️/🙏 e 30 dias ativos."
+                          : "Próximo: 🌿 Cultivador — 10 aulas, 5 comentários, 10 reações e 1 curso > 50%."}
+                    </Text>
+                  </View>
+                )}
+              </View>
             }
             renderItem={renderLessonItem}
             ListEmptyComponent={
