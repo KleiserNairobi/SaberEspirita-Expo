@@ -1,6 +1,37 @@
-import { doc, setDoc, increment, getFirestore } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getFirestore,
+  increment,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
+
+import { auth } from "@/configs/firebase/firebase";
+import { loadString, saveString } from "@/utils/Storage";
 
 const db = getFirestore();
+
+function getDateStr(date: Date = new Date()): string {
+  return date.toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" }).split(" ")[0];
+}
+
+function getUTCYearMonth(date: Date = new Date()): string {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  return `${y}-${m}`;
+}
+
+function getOrCreateGuestId(): string {
+  const key = "@guest_device_id";
+  const existing = loadString(key);
+  if (existing && existing.startsWith("guest_")) return existing;
+
+  const next = `guest_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+  saveString(key, next);
+  return next;
+}
 
 export const StatsService = {
   /**
@@ -9,21 +40,23 @@ export const StatsService = {
    */
   async logDailyVisit(isGuest: boolean) {
     try {
-      const today = new Date()
-        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
-        .split(" ")[0]; // YYYY-MM-DD
-      const statsRef = doc(db, "daily_stats", today);
+      const userId = isGuest ? getOrCreateGuestId() : auth.currentUser?.uid;
+      if (!userId) return;
 
-      await setDoc(
-        statsRef,
-        {
-          date: today,
-          totalVisits: increment(1),
-          guestVisits: isGuest ? increment(1) : increment(0),
-          userVisits: !isGuest ? increment(1) : increment(0),
-        },
-        { merge: true }
-      );
+      const today = getDateStr();
+      const lastKey = `@visit_last_logged:${userId}`;
+      const last = loadString(lastKey);
+      if (last === today) return;
+
+      await addDoc(collection(db, "visit_logs"), {
+        userId,
+        isGuest,
+        createdAt: serverTimestamp(),
+        yearMonth: getUTCYearMonth(),
+        processed: false,
+      });
+
+      saveString(lastKey, today);
 
       if (__DEV__) {
         console.log(`[StatsService] Visit logged. Guest: ${isGuest}`);
@@ -87,8 +120,6 @@ export const StatsService = {
       console.error("[StatsService] Error incrementing quiz count:", error);
     }
   },
-
-
 
   /**
    * Incrementa o contador global de plays do player ambiente (Sintonia)

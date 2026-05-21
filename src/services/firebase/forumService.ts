@@ -238,33 +238,36 @@ export async function getForumCommentsPage(params: {
 
   const byCommentId = new Map(myReactions.map((r) => [r.commentId, r.type]));
 
-  const comments: ForumComment[] = docs.map((d) => {
+  const comments: ForumComment[] = docs.flatMap((d) => {
     const data = d.data() as any;
+    if (data?.moderationStatus === "HIDDEN") return [];
+
     const createdAt = data.createdAt?.toDate?.() ?? null;
     const updatedAt = data.updatedAt?.toDate?.() ?? null;
     const deletedAt = data.deletedAt?.toDate?.() ?? null;
     const userCommunityLevel = normalizeCommunityLevelId(data.userCommunityLevel);
 
-    return {
-      id: d.id,
-      lessonId: data.lessonId,
-      courseId: data.courseId,
-      userId: data.userId,
-      userName: data.userName,
-      userAvatar: data.userAvatar ?? null,
-      isAnonymous: !!data.isAnonymous,
-      userCommunityLevel,
-      content: data.content,
-      createdAt,
-      updatedAt,
-      reactions: normalizeReactionCounts(data.reactions),
-      myReaction: byCommentId.get(d.id) ?? null,
-      isDeleted: !!data.isDeleted,
-      deletedAt,
-    };
+    return [
+      {
+        id: d.id,
+        lessonId: data.lessonId,
+        courseId: data.courseId,
+        userId: data.userId,
+        userName: data.userName,
+        userAvatar: data.userAvatar ?? null,
+        isAnonymous: !!data.isAnonymous,
+        userCommunityLevel,
+        content: data.content,
+        createdAt,
+        updatedAt,
+        reactions: normalizeReactionCounts(data.reactions),
+        myReaction: byCommentId.get(d.id) ?? null,
+        isDeleted: !!data.isDeleted,
+        deletedAt,
+      },
+    ];
   });
 
   const nextCursor = docs.length > 0 ? docs[docs.length - 1] : null;
   return { comments, cursor: nextCursor };
 }
-
