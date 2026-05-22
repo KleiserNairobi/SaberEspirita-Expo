@@ -348,8 +348,10 @@ export function CourseCurriculumScreen() {
     exercise: any,
     lessonId: string,
     lessonTitle: string,
-    index: number
+    index: number,
+    opts: { isLessonUnavailable: boolean; isComingSoon: boolean }
   ) => {
+    const { isLessonUnavailable, isComingSoon } = opts;
     // 1. Verificar progresso do exercício
     const exerciseResult = progress?.exerciseResults?.find(
       (r) => r.exerciseId === exercise.id
@@ -364,6 +366,22 @@ export function CourseCurriculumScreen() {
     const isAhead = !isLessonCompleted;
 
     const handleExercisePress = () => {
+      if (isLessonUnavailable) {
+        setMessageConfig({
+          type: "info",
+          title: isComingSoon ? "Em breve" : "Aula bloqueada",
+          message: isComingSoon
+            ? "Esta aula ainda não está disponível. O exercício será liberado quando a aula estiver disponível."
+            : "Conclua as aulas anteriores para liberar este exercício.",
+          primaryButton: {
+            label: "ENTENDI",
+            onPress: () => bottomSheetRef.current?.dismiss(),
+          },
+        });
+        bottomSheetRef.current?.present();
+        return;
+      }
+
       if (isAhead) {
         setMessageConfig({
           type: "warning",
@@ -412,8 +430,9 @@ export function CourseCurriculumScreen() {
     return (
       <TouchableOpacity
         key={exercise.id}
-        style={styles.exerciseCard}
+        style={[styles.exerciseCard, isLessonUnavailable && styles.exerciseCardDisabled]}
         onPress={handleExercisePress}
+        activeOpacity={0.7}
       >
         <View style={styles.exerciseLeftContent}>
           {/* Linha conectora visual (opcional, pode ser feito com borda esquerda no container) */}
@@ -452,6 +471,7 @@ export function CourseCurriculumScreen() {
                 styles.exerciseTitle,
                 isCompleted && styles.exerciseTitleCompleted,
                 isFailed && styles.exerciseTitleFailed,
+                isLessonUnavailable && styles.exerciseTitleDisabled,
               ]}
             >
               {exercise.title || `Exercício ${index + 1}`}
@@ -459,7 +479,10 @@ export function CourseCurriculumScreen() {
           </View>
         </View>
 
-        <ChevronRight size={20} color={theme.colors.textSecondary} />
+        <ChevronRight
+          size={20}
+          color={isLessonUnavailable ? theme.colors.muted : theme.colors.textSecondary}
+        />
       </TouchableOpacity>
     );
   };
@@ -600,7 +623,10 @@ export function CourseCurriculumScreen() {
         {lessonExercises.length > 0 && (
           <View style={styles.exercisesListContainer}>
             {lessonExercises.map((ex, idx) =>
-              renderExerciseItem(ex, item.id, item.title, idx)
+              renderExerciseItem(ex, item.id, item.title, idx, {
+                isLessonUnavailable: isComingSoon || status === LessonStatus.LOCKED,
+                isComingSoon,
+              })
             )}
           </View>
         )}

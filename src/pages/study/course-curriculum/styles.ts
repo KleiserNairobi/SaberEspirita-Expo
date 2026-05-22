@@ -337,6 +337,9 @@ export const createStyles = (theme: ITheme) =>
       borderBottomWidth: 1,
       borderBottomColor: `${theme.colors.border}50`, // Mais sutil
     },
+    exerciseCardDisabled: {
+      opacity: 0.55,
+    },
     exerciseLeftContent: {
       flexDirection: "row",
       alignItems: "center",
@@ -378,6 +381,9 @@ export const createStyles = (theme: ITheme) =>
     },
     exerciseTitle: {
       ...theme.text("sm", "regular", theme.colors.textSecondary),
+    },
+    exerciseTitleDisabled: {
+      color: theme.colors.muted,
     },
     exerciseTitleCompleted: {
       color: theme.colors.text,
