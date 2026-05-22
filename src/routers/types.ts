@@ -16,6 +16,7 @@ export type AppStackParamList = {
   FAQ: undefined;
   Privacy: undefined;
   Terms: undefined;
+  Notifications: undefined;
   EmotionalChat: { initialMessage?: string; origin?: "medite" | "ore" } | undefined;
   ScientificChat:
     | {

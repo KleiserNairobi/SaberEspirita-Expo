@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   ActivityIndicator,
-  FlatList,
   Linking,
+  SectionList,
   Switch,
   Text,
   TextInput,
@@ -17,13 +17,15 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ArrowLeft, MoreVertical, Send, Sparkles, Tag } from "lucide-react-native";
+import { doc, getDoc } from "firebase/firestore";
+import { ArrowLeft, MoreVertical, Send, Sparkles } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AppBackground } from "@/components/AppBackground";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { CommunityLevelUpModal } from "@/components/CommunityLevelUpModal";
+import { auth, db } from "@/configs/firebase/firebase";
 import {
   useCommunityProgress,
   useCreateForumComment,
@@ -40,6 +42,7 @@ import {
   getStoredCommunityLevelRaw,
   setStoredCommunityLevel,
 } from "@/services/community/communityLevelService";
+import { touchCourseAccess } from "@/services/firebase/progressService";
 import { useAuthStore } from "@/stores/authStore";
 import { ForumComment, ForumReactionType } from "@/types/forum";
 
@@ -65,6 +68,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const { user, isGuest } = useAuthStore();
+  const uid = auth.currentUser?.uid || user?.uid || null;
 
   const { courseId, lessonId, lessonTitle, anchorQuestion, focusTag } = route.params;
 
@@ -96,6 +100,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
   const [isAnonymous, setIsAnonymous] = useState(false);
 
   const [reactionTarget, setReactionTarget] = useState<ForumComment | null>(null);
+  const reactionRefreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [levelUpVisible, setLevelUpVisible] = useState(false);
   const [levelUpId, setLevelUpId] =
@@ -105,6 +110,11 @@ export function LessonForumScreen({ route, navigation }: Props) {
     const pages = data?.pages ?? [];
     return pages.flatMap((p) => p.comments);
   }, [data?.pages]);
+
+  const sections = useMemo(() => {
+    if (comments.length === 0) return [];
+    return [{ title: "Comentários", data: comments }];
+  }, [comments]);
 
   useEffect(() => {
     if (!user?.uid || isGuest) return;
@@ -120,6 +130,13 @@ export function LessonForumScreen({ route, navigation }: Props) {
   }, [isGuest, lessonId, setLastSeen, user?.uid]);
 
   useEffect(() => {
+    if (!auth.currentUser?.uid || isGuest) return;
+    void touchCourseAccess(courseId, { lessonId, userId: auth.currentUser.uid }).catch(
+      () => {}
+    );
+  }, [courseId, isGuest, lessonId]);
+
+  useEffect(() => {
     if (!user?.uid || isGuest) return;
     const current = communityProgress?.communityLevelId;
     if (!current) return;
@@ -131,6 +148,97 @@ export function LessonForumScreen({ route, navigation }: Props) {
     setLevelUpVisible(true);
     setStoredCommunityLevel(user.uid, levelUp);
   }, [communityProgress?.communityLevelId, isGuest, user?.uid]);
+
+  useEffect(() => {
+    return () => {
+      if (reactionRefreshTimeoutRef.current) {
+        clearTimeout(reactionRefreshTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const ensureCanReact = useCallback(
+    async (
+      comment: ForumComment
+    ): Promise<{ ok: true } | { ok: false; message: string }> => {
+      if (isGuest) {
+        return {
+          ok: false,
+          message: "Crie uma conta para participar do fórum e salvar seu progresso.",
+        };
+      }
+
+      if (!auth.currentUser?.uid) {
+        return {
+          ok: false,
+          message: "Sua sessão expirou. Faça login novamente para reagir.",
+        };
+      }
+
+      const commentRef = doc(db, "lesson_forums", lessonId, "comments", comment.id);
+      const commentSnap = await getDoc(commentRef);
+      if (!commentSnap.exists()) {
+        return { ok: false, message: "Comentário não encontrado. Tente novamente." };
+      }
+
+      const data = commentSnap.data() as Record<string, unknown>;
+      const commentUserId = typeof data.userId === "string" ? data.userId : null;
+      const commentCourseId = typeof data.courseId === "string" ? data.courseId : null;
+      const isDeleted = !!data.isDeleted;
+      const moderationStatus =
+        typeof data.moderationStatus === "string"
+          ? (data.moderationStatus as string)
+          : null;
+
+      if (commentUserId && commentUserId === auth.currentUser.uid) {
+        return { ok: false, message: "Você não pode reagir ao seu próprio comentário." };
+      }
+
+      if (isDeleted) {
+        return {
+          ok: false,
+          message: "Este comentário foi removido e não pode receber reações.",
+        };
+      }
+
+      if (moderationStatus === "HIDDEN") {
+        return {
+          ok: false,
+          message: "Este comentário não está disponível para reações.",
+        };
+      }
+
+      if (!commentCourseId) {
+        return {
+          ok: false,
+          message: "Não foi possível validar o curso deste comentário.",
+        };
+      }
+
+      await touchCourseAccess(commentCourseId, {
+        lessonId,
+        userId: auth.currentUser.uid,
+      }).catch(() => {});
+
+      const progressRef = doc(
+        db,
+        "users",
+        auth.currentUser.uid,
+        "courseProgress",
+        commentCourseId
+      );
+      const progressSnap = await getDoc(progressRef);
+      if (!progressSnap.exists()) {
+        return {
+          ok: false,
+          message: "Você precisa iniciar este curso para reagir no fórum.",
+        };
+      }
+
+      return { ok: true };
+    },
+    [isGuest, lessonId]
+  );
 
   const showGuestMessage = useCallback(() => {
     setMessageConfig({
@@ -195,17 +303,17 @@ export function LessonForumScreen({ route, navigation }: Props) {
   ]);
 
   const handleOpenReactionPicker = useCallback(
-    (comment: ForumComment) => {
-      if (isGuest) {
-        showGuestMessage();
-        return;
-      }
-      if (!user?.uid) return;
-      if (comment.userId === user.uid) {
+    async (comment: ForumComment) => {
+      const validation = await ensureCanReact(comment);
+      if (!validation.ok) {
+        if (isGuest) {
+          showGuestMessage();
+          return;
+        }
         setMessageConfig({
-          type: "info",
+          type: "error",
           title: "Reações",
-          message: "Você não pode reagir ao seu próprio comentário.",
+          message: validation.message,
         });
         setTimeout(() => bottomSheetRef.current?.present(), 100);
         return;
@@ -213,25 +321,54 @@ export function LessonForumScreen({ route, navigation }: Props) {
       setReactionTarget(comment);
       reactionSheetRef.current?.present();
     },
-    [isGuest, showGuestMessage, user?.uid]
+    [ensureCanReact, isGuest, showGuestMessage]
   );
 
   const handleSelectReaction = useCallback(
     async (type: ForumReactionType) => {
       if (!reactionTarget) return;
-      if (!user?.uid) return;
+      if (!auth.currentUser?.uid) return;
 
-      if (reactionTarget.myReaction === type) {
-        await removeReaction({ lessonId, commentId: reactionTarget.id });
-      } else {
-        await setReaction({ lessonId, commentId: reactionTarget.id, type });
+      try {
+        const validation = await ensureCanReact(reactionTarget);
+        if (!validation.ok) {
+          throw new Error(validation.message);
+        }
+        if (reactionTarget.myReaction === type) {
+          await removeReaction({ lessonId, commentId: reactionTarget.id });
+        } else {
+          await setReaction({ lessonId, commentId: reactionTarget.id, type });
+        }
+
+        reactionSheetRef.current?.dismiss();
+        setReactionTarget(null);
+
+        if (reactionRefreshTimeoutRef.current) {
+          clearTimeout(reactionRefreshTimeoutRef.current);
+        }
+        reactionRefreshTimeoutRef.current = setTimeout(() => {
+          void refetch();
+        }, 1200);
+      } catch (e) {
+        const code = String((e as any)?.code ?? "");
+        const baseMessage = String((e as any)?.message ?? "").trim();
+        const message = code.includes("permission-denied")
+          ? __DEV__
+            ? `Sem permissão para salvar sua reação.\n\nuid: ${auth.currentUser?.uid ?? "-"}\nprojectId: ${String(auth.app.options.projectId ?? "-")}\nlessonId: ${lessonId}\ncommentId: ${reactionTarget.id}`
+            : "Sem permissão para salvar sua reação. Reabra a aula para validar sua matrícula ou faça login novamente."
+          : baseMessage.length > 0
+            ? baseMessage
+            : "Não foi possível salvar sua reação agora. Tente novamente.";
+        reactionSheetRef.current?.dismiss();
+        setMessageConfig({
+          type: "error",
+          title: "Reações",
+          message,
+        });
+        setTimeout(() => bottomSheetRef.current?.present(), 100);
       }
-
-      reactionSheetRef.current?.dismiss();
-      setReactionTarget(null);
-      void refetch();
     },
-    [lessonId, reactionTarget, refetch, removeReaction, setReaction, user?.uid]
+    [ensureCanReact, lessonId, reactionTarget, refetch, removeReaction, setReaction]
   );
 
   const handleConfirmDelete = useCallback(
@@ -261,18 +398,29 @@ export function LessonForumScreen({ route, navigation }: Props) {
   const renderComment = useCallback(
     ({ item }: { item: ForumComment }) => {
       const createdAtLabel = item.createdAt ? item.createdAt.toLocaleString("pt-BR") : "";
-      const isMine = !!user?.uid && item.userId === user.uid;
+      const isMine = !!uid && item.userId === uid;
       const canRemove = isMine && !item.isDeleted;
+
+      const baseReactions = item.reactions;
+      const baseTotal =
+        baseReactions.me_tocou +
+        baseReactions.aprendi_algo +
+        baseReactions.quero_refletir +
+        baseReactions.gratidao +
+        baseReactions.luz;
+
+      const displayReactions =
+        baseTotal === 0 && item.myReaction
+          ? { ...baseReactions, [item.myReaction]: 1 }
+          : baseReactions;
+
       const hasAnyReaction =
-        item.reactions.me_tocou +
-          item.reactions.aprendi_algo +
-          item.reactions.quero_refletir +
-          item.reactions.gratidao +
-          item.reactions.luz >
+        displayReactions.me_tocou +
+          displayReactions.aprendi_algo +
+          displayReactions.quero_refletir +
+          displayReactions.gratidao +
+          displayReactions.luz >
         0;
-      const myReactionMeta = item.myReaction
-        ? (REACTIONS.find((r) => r.type === item.myReaction) ?? null)
-        : null;
 
       const content = item.isDeleted ? "Comentário removido pelo autor" : item.content;
 
@@ -309,17 +457,13 @@ export function LessonForumScreen({ route, navigation }: Props) {
 
           <View style={styles.reactionsRow}>
             <View style={styles.reactionsCounts}>
-              {REACTIONS.filter((r) => (item.reactions[r.type] ?? 0) > 0).map((r) => (
+              {REACTIONS.filter((r) => (displayReactions[r.type] ?? 0) > 0).map((r) => (
                 <Text key={r.type} style={styles.reactionCount}>
-                  {r.emoji} {item.reactions[r.type]}
+                  {r.emoji} {displayReactions[r.type]}
                 </Text>
               ))}
               {!hasAnyReaction && (
-                <Text style={styles.reactionCount}>
-                  {myReactionMeta
-                    ? `Sua reação: ${myReactionMeta.emoji} ${myReactionMeta.label}`
-                    : "Seja o primeiro a reagir"}
-                </Text>
+                <Text style={styles.reactionCount}>Seja o primeiro a reagir</Text>
               )}
             </View>
 
@@ -336,7 +480,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
         </View>
       );
     },
-    [handleConfirmDelete, handleOpenReactionPicker, styles, user?.uid]
+    [handleConfirmDelete, handleOpenReactionPicker, styles, uid]
   );
 
   const totalCountLabel = `${comments.length} comentários`;
@@ -385,97 +529,6 @@ export function LessonForumScreen({ route, navigation }: Props) {
     >
       <AppBackground>
         <View style={styles.container}>
-          <View style={styles.header}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
-              activeOpacity={0.7}
-            >
-              <ArrowLeft size={20} color={theme.colors.primary} />
-            </TouchableOpacity>
-
-            <View style={styles.headerTextContainer}>
-              <Text style={styles.title}>Fórum</Text>
-              <Text style={styles.subtitle}>{lessonTitle}</Text>
-            </View>
-          </View>
-
-          <View style={styles.anchorCard}>
-            <View style={styles.anchorHeader}>
-              <View style={styles.anchorIconContainer}>
-                <Sparkles size={20} color={theme.colors.onPrimary} />
-              </View>
-              <View style={styles.anchorHeaderText}>
-                <Text style={styles.anchorTitle}>Pergunta para reflexão</Text>
-                {/* <Text style={styles.anchorSubtitle}>Uma nova pergunta te aguarda</Text> */}
-              </View>
-            </View>
-
-            <Text style={styles.anchorQuestionText}>{anchorQuestion}</Text>
-
-            <View style={styles.anchorMetaRow}>
-              <View style={styles.anchorMetaItem}>
-                <Tag size={16} color={theme.colors.muted} />
-                <Text style={styles.anchorMetaText}>{focusTag}</Text>
-              </View>
-              <View style={styles.commentCountPill}>
-                <Text style={styles.commentCountText}>{totalCountLabel}</Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.inputCard}>
-            <View style={styles.inputRow}>
-              <TextInput
-                value={text}
-                onChangeText={setText}
-                placeholder="Compartilhe sua reflexão…"
-                placeholderTextColor={theme.colors.textSecondary}
-                multiline
-                maxLength={600}
-                style={styles.forumInput}
-              />
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={handlePublish}
-                disabled={isCreating || text.trim().length === 0}
-                style={[
-                  styles.sendButton,
-                  (isCreating || text.trim().length === 0) && styles.sendButtonDisabled,
-                ]}
-              >
-                {isCreating ? (
-                  <ActivityIndicator size="small" color="#fff" />
-                ) : (
-                  <Send size={20} color="#fff" />
-                )}
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.inputFooter}>
-              <Text style={styles.counter}>{text.length}/600</Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: theme.spacing.sm,
-                }}
-              >
-                <Text style={styles.counter}>Anônimo</Text>
-                <Switch
-                  value={isAnonymous}
-                  onValueChange={setIsAnonymous}
-                  trackColor={{
-                    false: theme.colors.muted,
-                    true: theme.colors.primary,
-                  }}
-                  thumbColor={isAnonymous ? "#FFFFFF" : "#f4f3f4"}
-                  ios_backgroundColor={theme.colors.muted}
-                />
-              </View>
-            </View>
-          </View>
-
           {isLoading ? (
             <ActivityIndicator size="large" color={theme.colors.primary} />
           ) : isError ? (
@@ -517,10 +570,118 @@ export function LessonForumScreen({ route, navigation }: Props) {
               )}
             </View>
           ) : (
-            <FlatList
-              data={comments}
+            <SectionList
+              sections={sections}
               keyExtractor={(item) => item.id}
               renderItem={renderComment}
+              stickySectionHeadersEnabled={true}
+              renderSectionHeader={() => (
+                <View style={styles.stickyHeader}>
+                  <View style={styles.inputCard}>
+                    <TextInput
+                      value={text}
+                      onChangeText={setText}
+                      placeholder="Compartilhe sua reflexão…"
+                      placeholderTextColor={theme.colors.textSecondary}
+                      multiline
+                      maxLength={600}
+                      style={styles.forumInput}
+                    />
+
+                    <View style={styles.composerFooter}>
+                      <View style={styles.composerFooterLeft}>
+                        <Text style={styles.counter}>{text.length}/600</Text>
+                      </View>
+
+                      <View style={styles.composerFooterCenter}>
+                        <View style={styles.anonymousRow}>
+                          <Text style={styles.anonymousLabel}>Anônimo</Text>
+                          <Switch
+                            value={isAnonymous}
+                            onValueChange={setIsAnonymous}
+                            trackColor={{
+                              false: theme.colors.muted,
+                              true: theme.colors.primary,
+                            }}
+                            thumbColor={isAnonymous ? "#FFFFFF" : "#f4f3f4"}
+                            ios_backgroundColor={theme.colors.muted}
+                          />
+                        </View>
+                      </View>
+
+                      <View style={styles.composerFooterRight}>
+                        <TouchableOpacity
+                          activeOpacity={0.7}
+                          onPress={handlePublish}
+                          disabled={isCreating || text.trim().length === 0}
+                          style={[
+                            styles.sendButton,
+                            (isCreating || text.trim().length === 0) &&
+                              styles.sendButtonDisabled,
+                          ]}
+                          accessibilityLabel="Publicar"
+                        >
+                          {isCreating ? (
+                            <ActivityIndicator
+                              size="small"
+                              color={theme.colors.onPrimary}
+                            />
+                          ) : (
+                            <>
+                              <Send size={16} color={theme.colors.onPrimary} />
+                              <Text
+                                style={styles.sendButtonText}
+                                numberOfLines={1}
+                                ellipsizeMode="tail"
+                              >
+                                ENVIAR REFLEXÃO
+                              </Text>
+                            </>
+                          )}
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              )}
+              ListHeaderComponent={
+                <>
+                  <View style={styles.header}>
+                    <TouchableOpacity
+                      style={styles.backButton}
+                      onPress={() => navigation.goBack()}
+                      activeOpacity={0.7}
+                    >
+                      <ArrowLeft size={20} color={theme.colors.primary} />
+                    </TouchableOpacity>
+
+                    <View style={styles.headerTextContainer}>
+                      <Text style={styles.title}>Fórum</Text>
+                      <Text style={styles.subtitle}>{lessonTitle}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.anchorCard}>
+                    <View style={styles.anchorHeader}>
+                      <Sparkles size={20} color={theme.colors.reflection} />
+                      <View style={styles.anchorHeaderText}>
+                        <Text style={styles.anchorTitle}>Pergunta para reflexão</Text>
+                        <View style={styles.focusBadge}>
+                          <Text style={styles.focusText}>{focusTag}</Text>
+                        </View>
+                      </View>
+                    </View>
+
+                    <Text style={styles.anchorQuestionText}>{anchorQuestion}</Text>
+
+                    <View style={styles.anchorMetaRow}>
+                      <View style={styles.commentCountPill}>
+                        <Text style={styles.commentCountText}>{totalCountLabel}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </>
+              }
               contentContainerStyle={styles.listContent}
               showsVerticalScrollIndicator={false}
               ListFooterComponent={

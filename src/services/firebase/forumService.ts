@@ -1,7 +1,6 @@
 import {
   addDoc,
   collection,
-  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -14,23 +13,25 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
 
-import { db } from "@/configs/firebase/firebase";
-import { CommunityLevelId, CommunityProgress, ForumComment, ForumReactionType } from "@/types/forum";
-
-function getUTCYearMonth(date: Date = new Date()): string {
-  const y = date.getUTCFullYear();
-  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
-  return `${y}-${m}`;
-}
+import { db, functions } from "@/configs/firebase/firebase";
+import {
+  CommunityLevelId,
+  CommunityProgress,
+  ForumComment,
+  ForumReactionType,
+} from "@/types/forum";
 
 function normalizeCommunityLevelId(value: unknown): CommunityLevelId {
   return value === "cultivador" || value === "arvore_frondosa" ? value : "sementeiro";
 }
 
 function normalizeReactionCounts(value: unknown): Record<ForumReactionType, number> {
-  const obj = typeof value === "object" && value !== null ? (value as Record<string, unknown>) : {};
-  const n = (k: ForumReactionType) => (typeof obj[k] === "number" ? (obj[k] as number) : 0);
+  const obj =
+    typeof value === "object" && value !== null ? (value as Record<string, unknown>) : {};
+  const n = (k: ForumReactionType) =>
+    typeof obj[k] === "number" ? (obj[k] as number) : 0;
   return {
     me_tocou: n("me_tocou"),
     aprendi_algo: n("aprendi_algo"),
@@ -40,7 +41,9 @@ function normalizeReactionCounts(value: unknown): Record<ForumReactionType, numb
   };
 }
 
-export async function getCommunityProgress(userId: string): Promise<CommunityProgress | null> {
+export async function getCommunityProgress(
+  userId: string
+): Promise<CommunityProgress | null> {
   const ref = doc(db, "community_progress", userId);
   const snap = await getDoc(ref);
   if (!snap.exists()) return null;
@@ -50,29 +53,41 @@ export async function getCommunityProgress(userId: string): Promise<CommunityPro
   const reactionsReceivedRaw = stats.reactionsReceived ?? {};
 
   const rr = {
-    me_tocou: typeof reactionsReceivedRaw.me_tocou === "number" ? reactionsReceivedRaw.me_tocou : 0,
+    me_tocou:
+      typeof reactionsReceivedRaw.me_tocou === "number"
+        ? reactionsReceivedRaw.me_tocou
+        : 0,
     aprendi_algo:
-      typeof reactionsReceivedRaw.aprendi_algo === "number" ? reactionsReceivedRaw.aprendi_algo : 0,
+      typeof reactionsReceivedRaw.aprendi_algo === "number"
+        ? reactionsReceivedRaw.aprendi_algo
+        : 0,
     quero_refletir:
       typeof reactionsReceivedRaw.quero_refletir === "number"
         ? reactionsReceivedRaw.quero_refletir
         : 0,
-    gratidao: typeof reactionsReceivedRaw.gratidao === "number" ? reactionsReceivedRaw.gratidao : 0,
+    gratidao:
+      typeof reactionsReceivedRaw.gratidao === "number"
+        ? reactionsReceivedRaw.gratidao
+        : 0,
     luz: typeof reactionsReceivedRaw.luz === "number" ? reactionsReceivedRaw.luz : 0,
-    total: typeof reactionsReceivedRaw.total === "number" ? reactionsReceivedRaw.total : 0,
+    total:
+      typeof reactionsReceivedRaw.total === "number" ? reactionsReceivedRaw.total : 0,
   };
 
   return {
     userId: snap.id,
     communityLevelId: normalizeCommunityLevelId(data.communityLevelId),
     stats: {
-      lessonsCompleted: typeof stats.lessonsCompleted === "number" ? stats.lessonsCompleted : 0,
-      coursesCompleted: typeof stats.coursesCompleted === "number" ? stats.coursesCompleted : 0,
+      lessonsCompleted:
+        typeof stats.lessonsCompleted === "number" ? stats.lessonsCompleted : 0,
+      coursesCompleted:
+        typeof stats.coursesCompleted === "number" ? stats.coursesCompleted : 0,
       forumComments: typeof stats.forumComments === "number" ? stats.forumComments : 0,
       reactionsReceived: rr,
       activeDays: typeof stats.activeDays === "number" ? stats.activeDays : 0,
       lastActiveAt: stats.lastActiveAt?.toDate?.() ?? null,
-      hasCourseOver50: typeof stats.hasCourseOver50 === "boolean" ? stats.hasCourseOver50 : false,
+      hasCourseOver50:
+        typeof stats.hasCourseOver50 === "boolean" ? stats.hasCourseOver50 : false,
     },
   };
 }
@@ -130,20 +145,13 @@ export async function setForumReaction(params: {
   userId: string;
   type: ForumReactionType;
 }): Promise<void> {
-  const ref = doc(
-    db,
-    `lesson_forums/${params.lessonId}/comments/${params.commentId}/reactions/${params.userId}`
-  );
-  await setDoc(
-    ref,
-    {
-      userId: params.userId,
-      type: params.type,
-      createdAt: serverTimestamp(),
-      yearMonth: getUTCYearMonth(),
-    },
-    { merge: true }
-  );
+  const call = httpsCallable(functions, "setForumReactionCallable");
+  await call({
+    lessonId: params.lessonId,
+    commentId: params.commentId,
+    action: "set",
+    type: params.type,
+  });
 }
 
 export async function removeForumReaction(params: {
@@ -151,11 +159,12 @@ export async function removeForumReaction(params: {
   commentId: string;
   userId: string;
 }): Promise<void> {
-  const ref = doc(
-    db,
-    `lesson_forums/${params.lessonId}/comments/${params.commentId}/reactions/${params.userId}`
-  );
-  await deleteDoc(ref);
+  const call = httpsCallable(functions, "setForumReactionCallable");
+  await call({
+    lessonId: params.lessonId,
+    commentId: params.commentId,
+    action: "remove",
+  });
 }
 
 export async function setForumLastSeen(params: {
@@ -181,12 +190,13 @@ export async function hasNewForumComments(params: {
 }): Promise<boolean> {
   const seenRef = doc(db, `users/${params.userId}/forumLastSeen/${params.lessonId}`);
   const seenSnap = await getDoc(seenRef);
-  const lastSeenAt = seenSnap.exists() ? seenSnap.data().lastSeenAt?.toDate?.() ?? null : null;
+  if (!seenSnap.exists()) return false;
+
+  const lastSeenAt = seenSnap.data().lastSeenAt?.toDate?.() ?? null;
+  if (!lastSeenAt) return false;
 
   const commentsRef = collection(db, `lesson_forums/${params.lessonId}/comments`);
-  const q = lastSeenAt
-    ? query(commentsRef, where("createdAt", ">", lastSeenAt), limit(1))
-    : query(commentsRef, limit(1));
+  const q = query(commentsRef, where("createdAt", ">", lastSeenAt), limit(1));
   const snap = await getDocs(q);
   return !snap.empty;
 }
@@ -231,7 +241,9 @@ export async function getForumCommentsPage(params: {
         `lesson_forums/${params.lessonId}/comments/${d.id}/reactions/${params.userId}`
       );
       const reactionSnap = await getDoc(reactionRef);
-      const type = reactionSnap.exists() ? (reactionSnap.data().type as ForumReactionType) : null;
+      const type = reactionSnap.exists()
+        ? (reactionSnap.data().type as ForumReactionType)
+        : null;
       return { commentId: d.id, type };
     })
   );

@@ -1,17 +1,20 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ChevronRight } from "lucide-react-native";
-import React from "react";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { Bell, ChevronRight } from "lucide-react-native";
+import React, { useCallback, useRef, useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Carousel } from "@/components/Carousel";
 import { Biblioteca } from "@/data/Biblioteca";
+import { BottomSheetMessage } from "@/components/BottomSheetMessage";
+import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { AssistantCard } from "@/components/AssistantCard";
+import { useHasUnreadNotifications } from "@/hooks/queries/useNotifications";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { useAuthStore } from "@/stores/authStore";
-
-import { AssistantCard } from "@/components/AssistantCard";
 import { ResumeCard } from "@/components/ResumeCard";
 import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
 import { useFeaturedCourses } from "@/hooks/queries/useCourses";
@@ -25,8 +28,38 @@ type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 export function StudyScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-  const user = useAuthStore((state) => state.user);
+  const { user, isGuest } = useAuthStore();
   const navigation = useNavigation<NavigationProp>();
+
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(null);
+
+  const { data: hasUnreadNotifications = false } = useHasUnreadNotifications();
+
+  const handleOpenNotifications = useCallback(() => {
+    if (isGuest) {
+      setMessageConfig({
+        type: "info",
+        title: "Notificações",
+        message: "Crie uma conta para receber notificações e acompanhar suas interações.",
+        primaryButton: {
+          label: "Criar Conta",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+            navigation.navigate("Tabs", { screen: "AccountTab" } as any);
+          },
+        },
+        secondaryButton: {
+          label: "Continuar",
+          onPress: () => bottomSheetRef.current?.dismiss(),
+        },
+      });
+      setTimeout(() => bottomSheetRef.current?.present(), 100);
+      return;
+    }
+
+    navigation.navigate("Notifications");
+  }, [isGuest, navigation]);
 
   // Fetching de cursos populares via React Query
   const { data: featuredCourses = [], isLoading: loadingFeatured } = useFeaturedCourses();
@@ -78,14 +111,29 @@ export function StudyScreen() {
   function renderHeader() {
     return (
       <View>
-        {/* Header com saudação */}
         <View style={styles.headerContainer}>
-          <Text style={styles.greetingText}>Olá, {user?.displayName || "Usuário"}!</Text>
-          <Text style={styles.subtitleText}>
-            {lastAccessed
-              ? "Vamos continuar sua jornada de conhecimento?"
-              : "Vamos começar sua jornada de conhecimento?"}
-          </Text>
+          <View style={styles.headerTopRow}>
+            <View style={styles.headerTextBlock}>
+              <Text style={styles.greetingText}>Olá, {user?.displayName || "Usuário"}!</Text>
+              <Text style={styles.subtitleText}>
+                {lastAccessed
+                  ? "Vamos continuar sua jornada de conhecimento?"
+                  : "Vamos começar sua jornada de conhecimento?"}
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              style={styles.notificationButton}
+              onPress={handleOpenNotifications}
+              activeOpacity={0.8}
+              accessibilityLabel="Abrir Notificações"
+            >
+              <View style={styles.notificationIconWrap}>
+                <Bell size={20} color={theme.colors.muted} />
+                {hasUnreadNotifications && <View style={styles.notificationDot} />}
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Card de Continuar (Resume) */}
@@ -171,6 +219,8 @@ export function StudyScreen() {
           );
         }}
       />
+
+      <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
     </SafeAreaView>
   );
 }

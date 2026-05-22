@@ -5,6 +5,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
+import { auth } from "@/configs/firebase/firebase";
 import {
   createForumComment,
   getCommunityProgress,
@@ -28,15 +29,16 @@ export const FORUM_KEYS = {
 
 export function useCommunityProgress() {
   const { user, isGuest } = useAuthStore();
+  const uid = auth.currentUser?.uid || user?.uid || null;
 
   return useQuery({
-    queryKey: FORUM_KEYS.communityProgress(user?.uid || "guest"),
+    queryKey: FORUM_KEYS.communityProgress(uid || "guest"),
     queryFn: async () => {
       if (isGuest) return null;
-      if (!user?.uid) return null;
-      return getCommunityProgress(user.uid);
+      if (!uid) return null;
+      return getCommunityProgress(uid);
     },
-    enabled: !!user?.uid && !isGuest,
+    enabled: !!uid && !isGuest,
     refetchOnMount: "always",
     refetchOnReconnect: true,
   });
@@ -44,38 +46,40 @@ export function useCommunityProgress() {
 
 export function useForumHasNewComments(lessonId: string) {
   const { user, isGuest } = useAuthStore();
+  const uid = auth.currentUser?.uid || user?.uid || null;
 
   return useQuery({
-    queryKey: FORUM_KEYS.hasNew(lessonId, user?.uid || "guest"),
+    queryKey: FORUM_KEYS.hasNew(lessonId, uid || "guest"),
     queryFn: async () => {
       if (isGuest) return false;
-      if (!user?.uid || !lessonId) return false;
-      return hasNewForumComments({ userId: user.uid, lessonId });
+      if (!uid || !lessonId) return false;
+      return hasNewForumComments({ userId: uid, lessonId });
     },
-    enabled: !!user?.uid && !isGuest && !!lessonId,
+    enabled: !!uid && !isGuest && !!lessonId,
     refetchOnMount: "always",
   });
 }
 
 export function useLessonForumComments(courseId: string, lessonId: string) {
   const { user, isGuest } = useAuthStore();
+  const uid = auth.currentUser?.uid || user?.uid || null;
 
   return useInfiniteQuery({
-    queryKey: FORUM_KEYS.comments(lessonId, user?.uid || "guest"),
+    queryKey: FORUM_KEYS.comments(lessonId, uid || "guest"),
     queryFn: async ({ pageParam }) => {
       if (isGuest) {
         return { comments: [], cursor: null };
       }
-      if (!user?.uid) return { comments: [], cursor: null };
+      if (!uid) return { comments: [], cursor: null };
       return getForumCommentsPage({
         lessonId,
         courseId,
-        userId: user.uid,
+        userId: uid,
         pageSize: 20,
         cursor: pageParam ?? undefined,
       });
     },
-    enabled: !!lessonId && !!courseId && !!user?.uid && !isGuest,
+    enabled: !!lessonId && !!courseId && !!uid && !isGuest,
     retry: false,
     initialPageParam: null as unknown,
     getNextPageParam: (lastPage) => lastPage.cursor ?? undefined,
@@ -157,6 +161,7 @@ export function useSoftDeleteForumComment() {
 export function useSetForumReaction() {
   const queryClient = useQueryClient();
   const { user, isGuest } = useAuthStore();
+  const uid = auth.currentUser?.uid || user?.uid || null;
 
   return useMutation({
     mutationFn: async (params: {
@@ -165,26 +170,26 @@ export function useSetForumReaction() {
       type: ForumReactionType;
     }) => {
       if (isGuest) throw new Error("guest");
-      if (!user?.uid) throw new Error("User not authenticated");
+      if (!auth.currentUser?.uid) throw new Error("User not authenticated");
       await setForumReaction({
         lessonId: params.lessonId,
         commentId: params.commentId,
-        userId: user.uid,
+        userId: auth.currentUser.uid,
         type: params.type,
       });
     },
     onMutate: async (vars) => {
-      const uid = user?.uid || "guest";
+      const cacheUid = uid || "guest";
       await queryClient.cancelQueries({
-        queryKey: FORUM_KEYS.comments(vars.lessonId, uid),
+        queryKey: FORUM_KEYS.comments(vars.lessonId, cacheUid),
       });
 
       const previous = queryClient.getQueryData<any>(
-        FORUM_KEYS.comments(vars.lessonId, uid)
+        FORUM_KEYS.comments(vars.lessonId, cacheUid)
       );
 
       queryClient.setQueryData<any>(
-        FORUM_KEYS.comments(vars.lessonId, uid),
+        FORUM_KEYS.comments(vars.lessonId, cacheUid),
         (old: any) => {
           if (!old?.pages) return old;
 
@@ -213,7 +218,7 @@ export function useSetForumReaction() {
         }
       );
 
-      return { previous, uid };
+      return { previous, uid: cacheUid };
     },
     onError: (_err, vars, ctx) => {
       if (ctx?.previous) {
@@ -225,10 +230,10 @@ export function useSetForumReaction() {
     },
     onSuccess: (_data, vars) => {
       queryClient.invalidateQueries({
-        queryKey: FORUM_KEYS.comments(vars.lessonId, user?.uid || "guest"),
+        queryKey: FORUM_KEYS.comments(vars.lessonId, uid || "guest"),
       });
       queryClient.invalidateQueries({
-        queryKey: FORUM_KEYS.communityProgress(user?.uid || "guest"),
+        queryKey: FORUM_KEYS.communityProgress(uid || "guest"),
       });
     },
   });
@@ -237,29 +242,30 @@ export function useSetForumReaction() {
 export function useRemoveForumReaction() {
   const queryClient = useQueryClient();
   const { user, isGuest } = useAuthStore();
+  const uid = auth.currentUser?.uid || user?.uid || null;
 
   return useMutation({
     mutationFn: async (params: { lessonId: string; commentId: string }) => {
       if (isGuest) throw new Error("guest");
-      if (!user?.uid) throw new Error("User not authenticated");
+      if (!auth.currentUser?.uid) throw new Error("User not authenticated");
       await removeForumReaction({
         lessonId: params.lessonId,
         commentId: params.commentId,
-        userId: user.uid,
+        userId: auth.currentUser.uid,
       });
     },
     onMutate: async (vars) => {
-      const uid = user?.uid || "guest";
+      const cacheUid = uid || "guest";
       await queryClient.cancelQueries({
-        queryKey: FORUM_KEYS.comments(vars.lessonId, uid),
+        queryKey: FORUM_KEYS.comments(vars.lessonId, cacheUid),
       });
 
       const previous = queryClient.getQueryData<any>(
-        FORUM_KEYS.comments(vars.lessonId, uid)
+        FORUM_KEYS.comments(vars.lessonId, cacheUid)
       );
 
       queryClient.setQueryData<any>(
-        FORUM_KEYS.comments(vars.lessonId, uid),
+        FORUM_KEYS.comments(vars.lessonId, cacheUid),
         (old: any) => {
           if (!old?.pages) return old;
 
@@ -268,10 +274,11 @@ export function useRemoveForumReaction() {
               if (c.id !== vars.commentId) return c;
 
               const prevType = c.myReaction;
-              if (!prevType) return { ...c, myReaction: null };
+              if (!prevType) return c;
 
               const reactions = { ...c.reactions };
               reactions[prevType] = Math.max(0, (reactions[prevType] ?? 0) - 1);
+
               return { ...c, reactions, myReaction: null };
             });
 
@@ -282,7 +289,7 @@ export function useRemoveForumReaction() {
         }
       );
 
-      return { previous, uid };
+      return { previous, uid: cacheUid };
     },
     onError: (_err, vars, ctx) => {
       if (ctx?.previous) {
@@ -294,10 +301,10 @@ export function useRemoveForumReaction() {
     },
     onSuccess: (_data, vars) => {
       queryClient.invalidateQueries({
-        queryKey: FORUM_KEYS.comments(vars.lessonId, user?.uid || "guest"),
+        queryKey: FORUM_KEYS.comments(vars.lessonId, uid || "guest"),
       });
       queryClient.invalidateQueries({
-        queryKey: FORUM_KEYS.communityProgress(user?.uid || "guest"),
+        queryKey: FORUM_KEYS.communityProgress(uid || "guest"),
       });
     },
   });
