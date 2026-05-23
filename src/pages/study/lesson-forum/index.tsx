@@ -18,7 +18,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { doc, getDoc } from "firebase/firestore";
-import { ArrowLeft, Brain, HandHeart, Heart, Lightbulb, MoreVertical, Send, Sparkles, X } from "lucide-react-native";
+import { ArrowLeft, Brain, HandHeart, Heart, Leaf, Lightbulb, MoreVertical, Send, Sparkles, Sprout, TreePalm, X } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AppBackground } from "@/components/AppBackground";
@@ -60,9 +60,9 @@ const REACTIONS: Array<{ type: ForumReactionType; Icon: React.FC<any>; label: st
 ];
 
 function getLevelLabel(levelId: ForumComment["userCommunityLevel"]): string {
-  if (levelId === "arvore_frondosa") return "🌳 Árvore Frondosa";
-  if (levelId === "cultivador") return "🌿 Cultivador";
-  return "🌱 Sementeiro";
+  if (levelId === "arvore_frondosa") return "Árvore Frondosa";
+  if (levelId === "cultivador") return "Cultivador";
+  return "Sementeiro";
 }
 
 export function LessonForumScreen({ route, navigation }: Props) {
@@ -459,9 +459,18 @@ export function LessonForumScreen({ route, navigation }: Props) {
               <View style={{ flex: 1 }}>
                 <Text style={styles.name}>{item.userName}</Text>
                 <Text style={styles.meta}>{createdAtLabel}</Text>
-                <Text style={styles.levelTag}>
-                  {getLevelLabel(item.userCommunityLevel)}
-                </Text>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 2 }}>
+                  {item.userCommunityLevel === "arvore_frondosa" ? (
+                    <TreePalm size={12} color={theme.colors.textSecondary} />
+                  ) : item.userCommunityLevel === "cultivador" ? (
+                    <Leaf size={12} color={theme.colors.textSecondary} />
+                  ) : (
+                    <Sprout size={12} color={theme.colors.textSecondary} />
+                  )}
+                  <Text style={styles.levelTag}>
+                    {getLevelLabel(item.userCommunityLevel)}
+                  </Text>
+                </View>
               </View>
             </View>
 

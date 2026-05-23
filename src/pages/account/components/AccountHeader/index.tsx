@@ -1,4 +1,5 @@
-import { Pencil } from "lucide-react-native";
+import { Leaf, Pencil, Sprout, TreePalm } from "lucide-react-native";
+import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -8,17 +9,25 @@ interface AccountHeaderProps {
   displayName: string;
   email: string;
   onEditPress?: () => void;
-  communityLevelLabel?: string;
+  communityLevelId?: "sementeiro" | "cultivador" | "arvore_frondosa";
 }
+
+const levelConfig = {
+  sementeiro: { label: "Sementeiro", Icon: Sprout },
+  cultivador: { label: "Cultivador", Icon: Leaf },
+  arvore_frondosa: { label: "Árvore Frondosa", Icon: TreePalm },
+};
 
 export function AccountHeader({
   displayName,
   email,
   onEditPress,
-  communityLevelLabel,
+  communityLevelId,
 }: AccountHeaderProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
+
+  const level = communityLevelId ? levelConfig[communityLevelId] : null;
 
   return (
     <View style={styles.header}>
@@ -36,10 +45,13 @@ export function AccountHeader({
 
         <View style={styles.nameRow}>
           <Text style={theme.text("xxl", "semibold")}>{displayName}</Text>
-          {!!communityLevelLabel && (
-            <Text style={theme.text("sm", "semibold", theme.colors.textSecondary)}>
-              {communityLevelLabel}
-            </Text>
+          {!!level && (
+            <View style={{ flexDirection: "row", alignItems: "center", marginTop: 4, gap: 4 }}>
+              <level.Icon size={14} color={theme.colors.textSecondary} />
+              <Text style={theme.text("sm", "semibold", theme.colors.textSecondary)}>
+                {level.label}
+              </Text>
+            </View>
           )}
         </View>
       </TouchableOpacity>

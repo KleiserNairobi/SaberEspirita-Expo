@@ -198,7 +198,7 @@ export default function AccountScreen() {
       type: "info",
       title: "Como funciona meu nível?",
       message:
-        "Seu nível é um reconhecimento simbólico da sua jornada: estudo + participação no fórum.\n\n🌿 Cultivador:\n- ≥ 10 aulas concluídas\n- ≥ 5 comentários no fórum\n- ≥ 10 reações recebidas (total)\n- Pelo menos 1 curso com progresso > 50%\n\n🌳 Árvore Frondosa:\n- ≥ 40 aulas concluídas\n- ≥ 2 cursos concluídos\n- ≥ 20 comentários no fórum\n- ≥ 50 reações recebidas (total)\n- ≥ 15 reações 🕊️ ou 🙏\n- ≥ 30 dias ativos",
+        "Seu nível é um reconhecimento simbólico da sua jornada: estudo + participação no fórum.\n\nCultivador:\n- ≥ 10 aulas concluídas\n- ≥ 5 comentários no fórum\n- ≥ 10 reações recebidas (total)\n- Pelo menos 1 curso com progresso > 50%\n\nÁrvore Frondosa:\n- ≥ 40 aulas concluídas\n- ≥ 2 cursos concluídos\n- ≥ 20 comentários no fórum\n- ≥ 50 reações recebidas (total)\n- ≥ 15 reações Me tocou ou Gratidão\n- ≥ 30 dias ativos",
     });
     setTimeout(() => bottomSheetRef.current?.present(), 100);
   }
@@ -217,12 +217,8 @@ export default function AccountScreen() {
             displayName={displayName} 
             email={email} 
             onEditPress={handleEditProfilePress}
-            communityLevelLabel={
-              communityProgress?.communityLevelId === "arvore_frondosa"
-                ? "🌳 Árvore Frondosa"
-                : communityProgress?.communityLevelId === "cultivador"
-                  ? "🌿 Cultivador"
-                  : "🌱 Sementeiro"
+            communityLevelId={
+              (communityProgress?.communityLevelId as any) || "sementeiro"
             }
           />
 

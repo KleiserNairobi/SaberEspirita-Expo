@@ -3,7 +3,7 @@ import React, { forwardRef } from "react";
 import { Text, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Leaf, Sprout, TreePalm } from "lucide-react-native";
+import { HandHeart, Heart, Leaf, Sprout, TreePalm } from "lucide-react-native";
 
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
@@ -54,8 +54,20 @@ export const JourneyBottomSheet = forwardRef<BottomSheetModal, JourneyBottomShee
         title: "Árvore Frondosa",
         icon: TreePalm,
         description: "Referência de presença, profundidade e fraternidade na comunidade.",
-        rules:
-          "40 aulas, 2 cursos, 20 comentários, 50 reações (15 🕊️/🙏) e 30 dias ativos.",
+        rules: (
+          <View style={{ marginTop: 2 }}>
+            <Text style={styles.levelRules}>
+              40 aulas, 2 cursos, 20 comentários,
+            </Text>
+            <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap", marginTop: 2 }}>
+              <Text style={styles.levelRules}>50 reações (15 </Text>
+              <Heart size={12} color={theme.colors.textSecondary} />
+              <Text style={styles.levelRules}> / </Text>
+              <HandHeart size={12} color={theme.colors.textSecondary} />
+              <Text style={styles.levelRules}>) e 30 dias ativos.</Text>
+            </View>
+          </View>
+        ),
       },
     ];
 
@@ -104,7 +116,11 @@ export const JourneyBottomSheet = forwardRef<BottomSheetModal, JourneyBottomShee
                     {isCurrent && " (Atual)"}
                   </Text>
                   <Text style={styles.levelDescription}>{level.description}</Text>
-                  <Text style={styles.levelRules}>{level.rules}</Text>
+                  {typeof level.rules === "string" ? (
+                    <Text style={styles.levelRules}>{level.rules}</Text>
+                  ) : (
+                    level.rules
+                  )}
                 </View>
               </View>
             );
