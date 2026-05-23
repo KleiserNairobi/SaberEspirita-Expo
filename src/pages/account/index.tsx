@@ -30,6 +30,7 @@ import { useAccountScreen } from "@/pages/account/hooks/useAccountScreen";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { EditProfileBottomSheet } from "@/pages/account/components/EditProfileBottomSheet";
+import { CommunityLevelInfoBottomSheet } from "@/pages/account/components/CommunityLevelInfoBottomSheet";
 import { functions } from "@/configs/firebase/firebase";
 import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
 
@@ -61,6 +62,7 @@ export default function AccountScreen() {
   // BottomSheet Logic
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const editProfileSheetRef = useRef<BottomSheetModal>(null);
+  const communityLevelInfoSheetRef = useRef<BottomSheetModal>(null);
   const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
     null
   );
@@ -194,13 +196,7 @@ export default function AccountScreen() {
   }
 
   function handleCommunityLevelInfoPress() {
-    setMessageConfig({
-      type: "info",
-      title: "Como funciona meu nível?",
-      message:
-        "Seu nível é um reconhecimento simbólico da sua jornada: estudo + participação no fórum.\n\nCultivador:\n- ≥ 10 aulas concluídas\n- ≥ 5 comentários no fórum\n- ≥ 10 reações recebidas (total)\n- Pelo menos 1 curso com progresso > 50%\n\nÁrvore Frondosa:\n- ≥ 40 aulas concluídas\n- ≥ 2 cursos concluídos\n- ≥ 20 comentários no fórum\n- ≥ 50 reações recebidas (total)\n- ≥ 15 reações Me tocou ou Gratidão\n- ≥ 30 dias ativos",
-    });
-    setTimeout(() => bottomSheetRef.current?.present(), 100);
+    communityLevelInfoSheetRef.current?.present();
   }
 
   return (
@@ -382,6 +378,13 @@ export default function AccountScreen() {
         ref={editProfileSheetRef}
         initialName={displayName}
         onSave={handleUpdateName}
+      />
+
+      <CommunityLevelInfoBottomSheet
+        ref={communityLevelInfoSheetRef}
+        currentLevelId={
+          (communityProgress?.communityLevelId as any) || "sementeiro"
+        }
       />
     </SafeAreaView>
   );
