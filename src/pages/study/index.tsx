@@ -1,25 +1,29 @@
+import React, { useCallback, useRef, useState } from "react";
+
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
+
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Bell, ChevronRight } from "lucide-react-native";
-import React, { useCallback, useRef, useState } from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { Bell, ChevronRight, Leaf, Sprout, TreePalm } from "lucide-react-native";
+import { Feather } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Carousel } from "@/components/Carousel";
-import { Biblioteca } from "@/data/Biblioteca";
+import { AssistantCard } from "@/components/AssistantCard";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
-import { AssistantCard } from "@/components/AssistantCard";
+import { Carousel } from "@/components/Carousel";
+import { JourneyBottomSheet } from "@/components/JourneyBottomSheet";
+import { ResumeCard } from "@/components/ResumeCard";
+import { Biblioteca } from "@/data/Biblioteca";
+import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
+import { useFeaturedCourses } from "@/hooks/queries/useCourses";
+import { useLastAccessedCourse } from "@/hooks/queries/useLastAccessedCourse";
+import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
 import { useHasUnreadNotifications } from "@/hooks/queries/useNotifications";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { useAuthStore } from "@/stores/authStore";
-import { ResumeCard } from "@/components/ResumeCard";
-import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
-import { useFeaturedCourses } from "@/hooks/queries/useCourses";
-import { useLastAccessedCourse } from "@/hooks/queries/useLastAccessedCourse";
-import { Feather } from "lucide-react-native";
 
 import { createStyles } from "./styles";
 
@@ -32,9 +36,17 @@ export function StudyScreen() {
   const navigation = useNavigation<NavigationProp>();
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(null);
+  const journeySheetRef = useRef<BottomSheetModal>(null);
+  const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
+    null
+  );
 
   const { data: hasUnreadNotifications = false } = useHasUnreadNotifications();
+  const { data: communityProgress } = useCommunityProgress();
+
+  const handleOpenJourney = useCallback(() => {
+    journeySheetRef.current?.present();
+  }, []);
 
   const handleOpenNotifications = useCallback(() => {
     if (isGuest) {
@@ -114,25 +126,48 @@ export function StudyScreen() {
         <View style={styles.headerContainer}>
           <View style={styles.headerTopRow}>
             <View style={styles.headerTextBlock}>
-              <Text style={styles.greetingText}>Olá, {user?.displayName || "Usuário"}!</Text>
+              <Text style={styles.greetingText}>
+                Olá, {user?.displayName || "Usuário"}!
+              </Text>
               <Text style={styles.subtitleText}>
                 {lastAccessed
-                  ? "Vamos continuar sua jornada de conhecimento?"
-                  : "Vamos começar sua jornada de conhecimento?"}
+                  ? "Vamos continuar sua jornada?"
+                  : "Vamos começar sua jornada?"}
               </Text>
             </View>
 
-            <TouchableOpacity
-              style={styles.notificationButton}
-              onPress={handleOpenNotifications}
-              activeOpacity={0.8}
-              accessibilityLabel="Abrir Notificações"
-            >
-              <View style={styles.notificationIconWrap}>
-                <Bell size={20} color={theme.colors.muted} />
-                {hasUnreadNotifications && <View style={styles.notificationDot} />}
-              </View>
-            </TouchableOpacity>
+            <View style={{ flexDirection: "row", gap: 12 }}>
+              <TouchableOpacity
+                style={styles.notificationButton}
+                onPress={handleOpenNotifications}
+                activeOpacity={0.8}
+                accessibilityLabel="Abrir Notificações"
+              >
+                <View style={styles.notificationIconWrap}>
+                  <Bell size={20} color={theme.colors.muted} />
+                  {hasUnreadNotifications && <View style={styles.notificationDot} />}
+                </View>
+              </TouchableOpacity>
+
+              {!isGuest && communityProgress && (
+                <TouchableOpacity
+                  style={styles.notificationButton}
+                  onPress={handleOpenJourney}
+                  activeOpacity={0.8}
+                  accessibilityLabel="Sua Jornada"
+                >
+                  <View style={styles.notificationIconWrap}>
+                    {communityProgress.communityLevelId === "arvore_frondosa" ? (
+                      <TreePalm size={20} color={theme.colors.primary} />
+                    ) : communityProgress.communityLevelId === "cultivador" ? (
+                      <Leaf size={20} color={theme.colors.primary} />
+                    ) : (
+                      <Sprout size={20} color={theme.colors.primary} />
+                    )}
+                  </View>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </View>
 
@@ -221,6 +256,10 @@ export function StudyScreen() {
       />
 
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
+      <JourneyBottomSheet
+        ref={journeySheetRef}
+        currentLevelId={communityProgress?.communityLevelId}
+      />
     </SafeAreaView>
   );
 }

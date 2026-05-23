@@ -256,6 +256,18 @@ export const createStyles = (theme: ITheme) =>
     reactionCount: {
       ...theme.text("sm", "medium", theme.colors.textSecondary),
     },
+    reactionCountBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: `${theme.colors.border}60`,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: theme.radius.sm,
+    },
+    reactionCountText: {
+      ...theme.text("sm", "medium", theme.colors.textSecondary),
+    },
     reactButton: {
       ...theme.text("sm", "semibold", theme.colors.primary),
     },
@@ -288,34 +300,57 @@ export const createStyles = (theme: ITheme) =>
       width: 40,
       height: 4,
     },
+    reactionSheetHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: theme.spacing.lg,
+    },
+    closeButton: {
+      padding: theme.spacing.xs,
+      backgroundColor: `${theme.colors.border}40`,
+      borderRadius: theme.radius.full,
+      alignItems: "center",
+      justifyContent: "center",
+    },
     reactionSheetContent: {
-      paddingHorizontal: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.xl,
       paddingTop: theme.spacing.sm,
-      paddingBottom: theme.spacing.lg,
+      paddingBottom: theme.spacing.xl,
     },
     reactionSheetTitle: {
-      ...theme.text("lg", "bold"),
+      ...theme.text("xl", "bold"),
       color: theme.colors.text,
     },
     reactionOptions: {
       flexDirection: "row",
       flexWrap: "wrap",
-      gap: theme.spacing.md,
-      marginTop: theme.spacing.lg,
+      justifyContent: "space-between",
+      rowGap: theme.spacing.md,
     },
     reactionOption: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: theme.spacing.sm,
       paddingVertical: theme.spacing.sm,
-      paddingHorizontal: theme.spacing.md,
+      paddingHorizontal: theme.spacing.sm,
       borderRadius: theme.radius.full,
+      backgroundColor: theme.colors.card,
       borderWidth: 1,
       borderColor: theme.colors.border,
+      width: "48%",
     },
     reactionOptionSelected: {
+      backgroundColor: `${theme.colors.primary}10`,
       borderColor: theme.colors.primary,
     },
     reactionOptionText: {
       ...theme.text("sm", "semibold"),
-      color: theme.colors.text,
+      color: theme.colors.textSecondary,
+    },
+    reactionOptionTextSelected: {
+      color: theme.colors.primary,
     },
     stickyHeader: {
       backgroundColor: theme.colors.background,

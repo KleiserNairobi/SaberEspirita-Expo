@@ -18,7 +18,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { doc, getDoc } from "firebase/firestore";
-import { ArrowLeft, MoreVertical, Send, Sparkles } from "lucide-react-native";
+import { ArrowLeft, Brain, HandHeart, Heart, Lightbulb, MoreVertical, Send, Sparkles, X } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AppBackground } from "@/components/AppBackground";
@@ -35,6 +35,7 @@ import {
   useSetForumReaction,
   useSoftDeleteForumComment,
 } from "@/hooks/queries/useLessonForum";
+import { useLesson } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import type { AppStackParamList } from "@/routers/types";
 import {
@@ -50,12 +51,12 @@ import { createStyles } from "./styles";
 
 type Props = NativeStackScreenProps<AppStackParamList, "LessonForum">;
 
-const REACTIONS: Array<{ type: ForumReactionType; emoji: string; label: string }> = [
-  { type: "me_tocou", emoji: "🕊️", label: "Me tocou" },
-  { type: "aprendi_algo", emoji: "💡", label: "Aprendi" },
-  { type: "quero_refletir", emoji: "🤔", label: "Refletir" },
-  { type: "gratidao", emoji: "🙏", label: "Gratidão" },
-  { type: "luz", emoji: "✨", label: "Luz" },
+const REACTIONS: Array<{ type: ForumReactionType; Icon: React.FC<any>; label: string }> = [
+  { type: "me_tocou", Icon: Heart, label: "Me tocou" },
+  { type: "aprendi_algo", Icon: Lightbulb, label: "Aprendi" },
+  { type: "quero_refletir", Icon: Brain, label: "Refletir" },
+  { type: "gratidao", Icon: HandHeart, label: "Gratidão" },
+  { type: "luz", Icon: Sparkles, label: "Luz" },
 ];
 
 function getLevelLabel(levelId: ForumComment["userCommunityLevel"]): string {
@@ -71,6 +72,29 @@ export function LessonForumScreen({ route, navigation }: Props) {
   const uid = auth.currentUser?.uid || user?.uid || null;
 
   const { courseId, lessonId, lessonTitle, anchorQuestion, focusTag } = route.params;
+
+  const { data: lesson, isLoading: isLoadingLesson } = useLesson(courseId, lessonId);
+
+  const displayAnchorQuestion = anchorQuestion || lesson?.forumPrompt || "Reflexão da Aula";
+  const displayFocusTag = focusTag || lesson?.forumFocusTag || "Reflexão";
+
+  useEffect(() => {
+    if (lesson && lesson.forumEnabled === false) {
+      setMessageConfig({
+        type: "info",
+        title: "Fórum",
+        message: "O fórum não está habilitado para esta aula.",
+        primaryButton: {
+          label: "Voltar",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+            navigation.goBack();
+          },
+        },
+      });
+      setTimeout(() => bottomSheetRef.current?.present(), 100);
+    }
+  }, [lesson, navigation]);
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const reactionSheetRef = useRef<BottomSheetModal>(null);
@@ -112,7 +136,6 @@ export function LessonForumScreen({ route, navigation }: Props) {
   }, [data?.pages]);
 
   const sections = useMemo(() => {
-    if (comments.length === 0) return [];
     return [{ title: "Comentários", data: comments }];
   }, [comments]);
 
@@ -457,11 +480,17 @@ export function LessonForumScreen({ route, navigation }: Props) {
 
           <View style={styles.reactionsRow}>
             <View style={styles.reactionsCounts}>
-              {REACTIONS.filter((r) => (displayReactions[r.type] ?? 0) > 0).map((r) => (
-                <Text key={r.type} style={styles.reactionCount}>
-                  {r.emoji} {displayReactions[r.type]}
-                </Text>
-              ))}
+              {REACTIONS.filter((r) => (displayReactions[r.type] ?? 0) > 0).map((r) => {
+                const Icon = r.Icon;
+                return (
+                  <View key={r.type} style={styles.reactionCountBadge}>
+                    <Icon size={14} color={theme.colors.textSecondary} />
+                    <Text style={styles.reactionCountText}>
+                      {displayReactions[r.type]}
+                    </Text>
+                  </View>
+                );
+              })}
               {!hasAnyReaction && (
                 <Text style={styles.reactionCount}>Seja o primeiro a reagir</Text>
               )}
@@ -667,12 +696,12 @@ export function LessonForumScreen({ route, navigation }: Props) {
                       <View style={styles.anchorHeaderText}>
                         <Text style={styles.anchorTitle}>Pergunta para reflexão</Text>
                         <View style={styles.focusBadge}>
-                          <Text style={styles.focusText}>{focusTag}</Text>
+                          <Text style={styles.focusText}>{displayFocusTag}</Text>
                         </View>
                       </View>
                     </View>
 
-                    <Text style={styles.anchorQuestionText}>{anchorQuestion}</Text>
+                    <Text style={styles.anchorQuestionText}>{displayAnchorQuestion}</Text>
 
                     <View style={styles.anchorMetaRow}>
                       <View style={styles.commentCountPill}>
@@ -723,24 +752,47 @@ export function LessonForumScreen({ route, navigation }: Props) {
             onDismiss={() => setReactionTarget(null)}
           >
             <BottomSheetView style={styles.reactionSheetContent}>
-              <Text style={styles.reactionSheetTitle}>Reagir</Text>
+              <View style={styles.reactionSheetHeader}>
+                <Text style={styles.reactionSheetTitle}>Reagir</Text>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  style={styles.closeButton}
+                  onPress={() => reactionSheetRef.current?.dismiss()}
+                  accessibilityLabel="Fechar opções de reação"
+                >
+                  <X size={20} color={theme.colors.textSecondary} />
+                </TouchableOpacity>
+              </View>
+
               <View style={styles.reactionOptions}>
-                {REACTIONS.map((r) => (
-                  <TouchableOpacity
-                    key={r.type}
-                    activeOpacity={0.7}
-                    style={[
-                      styles.reactionOption,
-                      reactionTarget?.myReaction === r.type &&
-                        styles.reactionOptionSelected,
-                    ]}
-                    onPress={() => handleSelectReaction(r.type)}
-                  >
-                    <Text style={styles.reactionOptionText}>
-                      {r.emoji} {r.label}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                {REACTIONS.map((r) => {
+                  const Icon = r.Icon;
+                  const isSelected = reactionTarget?.myReaction === r.type;
+                  return (
+                    <TouchableOpacity
+                      key={r.type}
+                      activeOpacity={0.7}
+                      style={[
+                        styles.reactionOption,
+                        isSelected && styles.reactionOptionSelected,
+                      ]}
+                      onPress={() => handleSelectReaction(r.type)}
+                    >
+                      <Icon
+                        size={18}
+                        color={isSelected ? theme.colors.primary : theme.colors.textSecondary}
+                      />
+                      <Text
+                        style={[
+                          styles.reactionOptionText,
+                          isSelected && styles.reactionOptionTextSelected,
+                        ]}
+                      >
+                        {r.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             </BottomSheetView>
           </BottomSheetModal>

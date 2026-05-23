@@ -40,6 +40,9 @@ export interface ILesson {
   durationMinutes: number;
   source?: string;
   chapter?: string;
+  forumEnabled?: boolean;
+  forumPrompt?: string | null;
+  forumFocusTag?: string | null;
   status: LessonStatus;
   videoUrl?: string;
   audioUrl?: string;

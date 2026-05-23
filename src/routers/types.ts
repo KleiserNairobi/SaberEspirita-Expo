@@ -34,8 +34,8 @@ export type AppStackParamList = {
     courseId: string;
     lessonId: string;
     lessonTitle: string;
-    anchorQuestion: string;
-    focusTag: string;
+    anchorQuestion?: string;
+    focusTag?: string;
   };
   CourseCertificate: { courseId: string };
   CourseQuiz: {
