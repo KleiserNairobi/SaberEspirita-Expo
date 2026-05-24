@@ -143,10 +143,8 @@ export function StudyScreen() {
                 activeOpacity={0.8}
                 accessibilityLabel="Abrir Notificações"
               >
-                <View style={styles.notificationIconWrap}>
-                  <Bell size={20} color={theme.colors.muted} />
-                  {hasUnreadNotifications && <View style={styles.notificationDot} />}
-                </View>
+                <Bell size={20} color={theme.colors.primary} />
+                {hasUnreadNotifications && <View style={styles.notificationDot} />}
               </TouchableOpacity>
 
               {!isGuest && communityProgress && (

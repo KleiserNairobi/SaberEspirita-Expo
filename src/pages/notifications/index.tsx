@@ -2,7 +2,17 @@ import { useCallback, useMemo, useRef, useState } from "react";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ArrowLeft, CheckCheck } from "lucide-react-native";
+import {
+  ArrowLeft,
+  Brain,
+  CheckCheck,
+  HandHeart,
+  Heart,
+  Lightbulb,
+  Megaphone,
+  MessageSquare,
+  Sparkles,
+} from "lucide-react-native";
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -29,15 +39,78 @@ function formatWhen(date: Date | null): string {
 }
 
 function getTitle(item: NotificationItem): string {
+  if (item.type === "admin_broadcast") return item.title || "Aviso do sistema";
   if (item.type === "forum_reaction_received") return "Nova reação";
   return "Novo comentário";
 }
 
-function getSubtitle(item: NotificationItem): string {
-  if (item.type === "forum_reaction_received") {
-    return "Alguém reagiu ao seu comentário no fórum.";
+function getReactionIcon(reactionType: string | null) {
+  if (reactionType === "me_tocou") return Heart;
+  if (reactionType === "aprendi_algo") return Lightbulb;
+  if (reactionType === "quero_refletir") return Brain;
+  if (reactionType === "gratidao") return HandHeart;
+  if (reactionType === "luz") return Sparkles;
+  return Sparkles;
+}
+
+function getAdminBroadcastColor(theme: any): string {
+  return theme.colors.warning || "#F59E0B";
+}
+
+function getReactionColor(reactionType: string | null, theme: any): string {
+  if (reactionType === "me_tocou") return theme.colors.reflection || "#E91E63";
+  if (reactionType === "aprendi_algo") return theme.colors.warning || "#FFB300";
+  if (reactionType === "quero_refletir") return theme.colors.primary || "#1E88E5";
+  if (reactionType === "gratidao") return theme.colors.success || "#43A047";
+  if (reactionType === "luz") return "#9C27B0"; // Cor roxa clássica de Luz espírita/brilhante
+  return theme.colors.textSecondary;
+}
+
+function renderItemText(item: NotificationItem, styles: any) {
+  if (item.type === "admin_broadcast") {
+    return (
+      <Text style={styles.rowSubtitle}>{item.body || ""}</Text>
+    );
   }
-  return "Novo comentário em uma aula que você participou.";
+
+  const fromUser = item.fromUserName || "Alguém";
+  const lessonName = item.lessonTitle;
+
+  if (item.type === "forum_reaction_received") {
+    const reactionLabel =
+      item.reactionType === "me_tocou" ? "Me tocou" :
+      item.reactionType === "aprendi_algo" ? "Aprendi" :
+      item.reactionType === "quero_refletir" ? "Refletir" :
+      item.reactionType === "gratidao" ? "Gratidão" :
+      item.reactionType === "luz" ? "Luz" : "Reação";
+
+    if (lessonName) {
+      return (
+        <Text style={styles.rowSubtitle}>
+          <Text style={styles.boldText}>{fromUser}</Text> reagiu com <Text style={styles.boldText}>{reactionLabel}</Text> à sua reflexão na aula <Text style={styles.boldText}>{lessonName}</Text>.
+        </Text>
+      );
+    }
+    return (
+      <Text style={styles.rowSubtitle}>
+        <Text style={styles.boldText}>{fromUser}</Text> reagiu ao seu comentário no fórum.
+      </Text>
+    );
+  }
+
+  // forum_new_comment_thread
+  if (lessonName) {
+    return (
+      <Text style={styles.rowSubtitle}>
+        <Text style={styles.boldText}>{fromUser}</Text> comentou na aula <Text style={styles.boldText}>{lessonName}</Text>.
+      </Text>
+    );
+  }
+  return (
+    <Text style={styles.rowSubtitle}>
+      <Text style={styles.boldText}>{fromUser}</Text> comentou em uma aula que você participou.
+    </Text>
+  );
 }
 
 export function NotificationsScreen({ navigation }: Props) {
@@ -71,6 +144,14 @@ export function NotificationsScreen({ navigation }: Props) {
     async (item: NotificationItem) => {
       if (isGuest) return;
       if (!user?.uid) return;
+
+      // admin_broadcast: sem destino de navegação — só marca como lida
+      if (item.type === "admin_broadcast") {
+        if (!item.readAt) {
+          await markRead(item.id).catch(() => {});
+        }
+        return;
+      }
 
       if (!item.courseId || !item.lessonId) {
         setMessageConfig({
@@ -153,12 +234,12 @@ export function NotificationsScreen({ navigation }: Props) {
             activeOpacity={0.7}
             accessibilityLabel="Voltar"
           >
-            <ArrowLeft size={20} color={theme.colors.muted} />
+            <ArrowLeft size={20} color={theme.colors.primary} />
           </TouchableOpacity>
 
           <View style={styles.headerText}>
             <Text style={styles.title}>Notificações</Text>
-            <Text style={styles.subtitle}>Acompanhe suas interações no fórum</Text>
+            <Text style={styles.subtitle}>Suas notificações e avisos</Text>
           </View>
 
           <TouchableOpacity
@@ -171,7 +252,7 @@ export function NotificationsScreen({ navigation }: Props) {
             {isMarkingAll ? (
               <ActivityIndicator size="small" color={theme.colors.primary} />
             ) : (
-              <CheckCheck size={20} color={theme.colors.muted} />
+              <CheckCheck size={20} color={theme.colors.primary} />
             )}
           </TouchableOpacity>
         </View>
@@ -207,19 +288,40 @@ export function NotificationsScreen({ navigation }: Props) {
             ListEmptyComponent={<Text style={styles.emptyText}>{emptyLabel}</Text>}
             renderItem={({ item }) => {
               const isUnread = !item.readAt;
+              const IconComponent =
+                item.type === "admin_broadcast"
+                  ? Megaphone
+                  : item.type === "forum_reaction_received"
+                  ? getReactionIcon(item.reactionType)
+                  : MessageSquare;
+
+              const iconColor =
+                item.type === "admin_broadcast"
+                  ? getAdminBroadcastColor(theme)
+                  : item.type === "forum_reaction_received"
+                  ? getReactionColor(item.reactionType, theme)
+                  : theme.colors.primary;
 
               return (
                 <TouchableOpacity
-                  style={[styles.row, isUnread && styles.rowUnread]}
+                  style={[styles.row, !isUnread && styles.rowRead]}
                   onPress={() => handleOpenItem(item)}
                   activeOpacity={0.7}
                   disabled={isGuest}
                 >
-                  <View style={styles.rowTop}>
-                    <Text style={styles.rowTitle}>{getTitle(item)}</Text>
-                    <Text style={styles.rowWhen}>{formatWhen(item.createdAt)}</Text>
+                  {isUnread && <View style={styles.unreadDot} />}
+
+                  <View style={[styles.iconContainer, { backgroundColor: `${iconColor}15` }]}>
+                    <IconComponent size={20} color={iconColor} strokeWidth={2.2} />
                   </View>
-                  <Text style={styles.rowSubtitle}>{getSubtitle(item)}</Text>
+
+                  <View style={styles.contentWrap}>
+                    <View style={styles.rowTop}>
+                      <Text style={styles.rowTitle}>{getTitle(item)}</Text>
+                      <Text style={styles.rowWhen}>{formatWhen(item.createdAt)}</Text>
+                    </View>
+                    {renderItemText(item, styles)}
+                  </View>
                 </TouchableOpacity>
               );
             }}

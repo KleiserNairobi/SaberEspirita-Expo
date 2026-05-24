@@ -20,6 +20,7 @@ import { NotificationItem, NotificationType } from "@/types/notifications";
 function normalizeNotificationType(value: unknown): NotificationType | null {
   if (value === "forum_reaction_received") return value;
   if (value === "forum_new_comment_thread") return value;
+  if (value === "admin_broadcast") return value;
   return null;
 }
 
@@ -63,8 +64,13 @@ function mapNotificationDoc(id: string, data: Record<string, unknown>): Notifica
     reactionType: normalizeReactionType(data.reactionType),
     createdAt: toDateOrNull(data.createdAt),
     readAt: toDateOrNull(data.readAt),
+    fromUserName: normalizeString(data.fromUserName),
+    lessonTitle: normalizeString(data.lessonTitle),
+    title: normalizeString(data.title),
+    body: normalizeString(data.body),
   };
 }
+
 
 export async function hasUnreadNotifications(params: { userId: string }): Promise<boolean> {
   const ref = collection(db, `users/${params.userId}/notifications`);

@@ -10,7 +10,7 @@ export const createStyles = (theme: ITheme) =>
     container: {
       flex: 1,
       padding: theme.spacing.lg,
-      paddingBottom: 150,
+      paddingBottom: theme.spacing.xl,
     },
     header: {
       flexDirection: "row",
@@ -82,17 +82,36 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("md", "semibold", theme.colors.primary),
     },
     row: {
+      flexDirection: "row",
       backgroundColor: theme.colors.card,
       borderWidth: 1,
       borderColor: theme.colors.border,
       borderRadius: theme.radius.md,
       padding: theme.spacing.md,
       marginBottom: theme.spacing.sm,
-      gap: theme.spacing.xs,
+      gap: theme.spacing.md,
+      alignItems: "center",
     },
-    rowUnread: {
-      borderColor: `${theme.colors.primary}55`,
-      backgroundColor: `${theme.colors.primary}10`,
+    rowRead: {
+      borderColor: `${theme.colors.primary}40`,
+      backgroundColor: `${theme.colors.primary}08`,
+    },
+    unreadDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: theme.colors.primary,
+    },
+    iconContainer: {
+      width: 40,
+      height: 40,
+      borderRadius: theme.radius.full,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    contentWrap: {
+      flex: 1,
+      gap: 2,
     },
     rowTop: {
       flexDirection: "row",
@@ -109,18 +128,17 @@ export const createStyles = (theme: ITheme) =>
     },
     rowSubtitle: {
       ...theme.text("sm", "regular", theme.colors.textSecondary),
+      lineHeight: 18,
+    },
+    boldText: {
+      fontWeight: "600",
+      color: theme.colors.text,
     },
     loadMore: {
-      marginTop: theme.spacing.md,
-      alignSelf: "center",
-      paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.md,
-      borderRadius: theme.radius.full,
-      backgroundColor: theme.colors.card,
-      borderWidth: 1,
-      borderColor: theme.colors.border,
+      alignItems: "center",
     },
     loadMoreText: {
-      ...theme.text("md", "semibold", theme.colors.primary),
+      ...theme.text("sm", "semibold", theme.colors.primary),
     },
   });

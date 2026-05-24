@@ -1,5 +1,8 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { collection, limit, onSnapshot, query, where } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { db } from "@/configs/firebase/firebase";
 import {
   getNotificationsPage,
   hasUnreadNotifications,
@@ -15,17 +18,31 @@ export const NOTIFICATION_KEYS = {
 
 export function useHasUnreadNotifications() {
   const { user, isGuest } = useAuthStore();
+  const [hasUnread, setHasUnread] = useState(false);
 
-  return useQuery({
-    queryKey: NOTIFICATION_KEYS.hasUnread(user?.uid || "guest"),
-    queryFn: async () => {
-      if (isGuest) return false;
-      if (!user?.uid) return false;
-      return hasUnreadNotifications({ userId: user.uid });
-    },
-    enabled: !!user?.uid && !isGuest,
-    refetchOnMount: "always",
-  });
+  useEffect(() => {
+    if (isGuest || !user?.uid) {
+      setHasUnread(false);
+      return;
+    }
+
+    const ref = collection(db, `users/${user.uid}/notifications`);
+    const q = query(ref, where("readAt", "==", null), limit(1));
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snap) => {
+        setHasUnread(!snap.empty);
+      },
+      (error) => {
+        console.error("[useHasUnreadNotifications] onSnapshot error:", error);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user?.uid, isGuest]);
+
+  return { data: hasUnread, isLoading: false };
 }
 
 export function useNotifications() {

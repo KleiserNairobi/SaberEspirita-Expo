@@ -22,6 +22,7 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
     },
     notificationButton: {
+      position: "relative",
       width: 40,
       height: 40,
       borderRadius: theme.radius.full,
@@ -38,13 +39,13 @@ export const createStyles = (theme: ITheme) =>
     },
     notificationDot: {
       position: "absolute",
-      top: -1,
-      right: -1,
-      width: 8,
-      height: 8,
-      borderRadius: 4,
-      backgroundColor: "#FF3B30",
-      borderWidth: 1,
+      top: -2,
+      right: -2,
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      backgroundColor: theme.colors.success,
+      borderWidth: 2,
       borderColor: theme.colors.background,
     },
     greetingText: {
