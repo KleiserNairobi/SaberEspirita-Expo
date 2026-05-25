@@ -111,6 +111,7 @@ export function useAccountScreen() {
     isGuest,
     displayName,
     email,
+    photoURL: isGuest ? null : (user?.photoURL ?? null),
     themeIcon: getThemeIcon(),
     themeLabel: getThemeLabel(),
     preferences,

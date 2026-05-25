@@ -7,20 +7,20 @@ import { createStyles } from "./styles";
 
 interface AccountHeaderProps {
   displayName: string;
-  email: string;
+  email?: string;
+  photoURL?: string | null;
   onEditPress?: () => void;
   communityLevelId?: "sementeiro" | "cultivador" | "arvore_frondosa";
 }
 
 const levelConfig = {
-  sementeiro: { label: "Sementeiro", Icon: Sprout },
-  cultivador: { label: "Cultivador", Icon: Leaf },
+  sementeiro: { label: "Sementeiro(a)", Icon: Sprout },
+  cultivador: { label: "Cultivador(a)", Icon: Leaf },
   arvore_frondosa: { label: "Árvore Frondosa", Icon: TreePalm },
 };
 
 export function AccountHeader({
   displayName,
-  email,
   onEditPress,
   communityLevelId,
 }: AccountHeaderProps) {
@@ -28,6 +28,20 @@ export function AccountHeader({
   const styles = createStyles(theme);
 
   const level = communityLevelId ? levelConfig[communityLevelId] : null;
+
+  const badgeColor =
+    communityLevelId === "arvore_frondosa"
+      ? theme.colors.reflection
+      : communityLevelId === "cultivador"
+        ? theme.colors.primary
+        : theme.colors.textSecondary;
+
+  const badgeBg =
+    communityLevelId === "arvore_frondosa"
+      ? `${theme.colors.reflection}20`
+      : communityLevelId === "cultivador"
+        ? `${theme.colors.primary}20`
+        : `${theme.colors.border}60`;
 
   return (
     <View style={styles.header}>
@@ -43,22 +57,22 @@ export function AccountHeader({
           </View>
         </View>
 
-        <View style={styles.nameRow}>
-          <Text style={theme.text("xxl", "semibold")}>{displayName}</Text>
-          {!!level && (
-            <View style={{ flexDirection: "row", alignItems: "center", marginTop: 4, gap: 4 }}>
-              <level.Icon size={14} color={theme.colors.textSecondary} />
-              <Text style={theme.text("sm", "semibold", theme.colors.textSecondary)}>
-                {level.label}
-              </Text>
-            </View>
-          )}
-        </View>
-      </TouchableOpacity>
+        <Text style={theme.text("xxl", "semibold")}>{displayName}</Text>
 
-      <Text style={theme.text("lg", "semibold", theme.colors.textSecondary)}>
-        {email}
-      </Text>
+        {!!level && (
+          <View style={[styles.levelBadge, { backgroundColor: badgeBg }]}>
+            <level.Icon size={12} color={badgeColor} style={{ flexShrink: 0 }} />
+            <Text
+              style={[
+                theme.text("xs", "semibold"),
+                { color: badgeColor },
+              ]}
+            >
+              {level.label}
+            </Text>
+          </View>
+        )}
+      </TouchableOpacity>
     </View>
   );
 }

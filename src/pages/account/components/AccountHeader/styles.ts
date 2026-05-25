@@ -39,9 +39,13 @@ export const createStyles = (theme: ITheme) =>
       alignItems: "center",
       justifyContent: "center",
     },
-    nameRow: {
+    levelBadge: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 8,
+      gap: 4,
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+      borderRadius: theme.radius.sm,
+      alignSelf: "center",
     },
   });

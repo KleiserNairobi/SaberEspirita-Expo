@@ -82,8 +82,8 @@ const REACTIONS: Array<{ type: ForumReactionType; Icon: React.FC<any>; label: st
 
 function getLevelLabel(levelId: ForumComment["userCommunityLevel"]): string {
   if (levelId === "arvore_frondosa") return "Árvore Frondosa";
-  if (levelId === "cultivador") return "Cultivador";
-  return "Sementeiro";
+  if (levelId === "cultivador") return "Cultivador(a)";
+  return "Sementeiro(a)";
 }
 
 export function LessonForumScreen({ route, navigation }: Props) {
@@ -530,10 +530,10 @@ export function LessonForumScreen({ route, navigation }: Props) {
       const content = item.isDeleted ? "Comentário removido pelo autor" : item.content;
 
       return (
-        <View style={styles.commentCard}>
+        <View style={[styles.commentCard, item.isDeleted && { backgroundColor: `${theme.colors.error}25` }]}>
           <View style={{ flexDirection: "row", gap: theme.spacing.md }}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
+            <View style={[styles.avatar, item.isDeleted && { backgroundColor: `${theme.colors.error}15` }]}>
+              <Text style={[styles.avatarText, item.isDeleted && { color: theme.colors.error }]}>
                 {(item.userName || "E").charAt(0).toUpperCase()}
               </Text>
             </View>
@@ -561,24 +561,25 @@ export function LessonForumScreen({ route, navigation }: Props) {
                 )}
               </View>
 
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 4,
-                  marginTop: 6,
-                  alignSelf: "flex-start",
-                  backgroundColor:
-                    item.userCommunityLevel === "arvore_frondosa"
-                      ? `${theme.colors.reflection}20`
-                      : item.userCommunityLevel === "cultivador"
-                        ? `${theme.colors.primary}20`
-                        : `${theme.colors.border}60`,
-                  paddingHorizontal: 8,
-                  paddingVertical: 3,
-                  borderRadius: theme.radius.sm,
-                }}
-              >
+              {!item.isDeleted && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 4,
+                    marginTop: 6,
+                    alignSelf: "flex-start",
+                    backgroundColor:
+                      item.userCommunityLevel === "arvore_frondosa"
+                        ? `${theme.colors.reflection}20`
+                        : item.userCommunityLevel === "cultivador"
+                          ? `${theme.colors.primary}20`
+                          : `${theme.colors.border}60`,
+                    paddingHorizontal: 8,
+                    paddingVertical: 3,
+                    borderRadius: theme.radius.sm,
+                  }}
+                >
                 {item.userCommunityLevel === "arvore_frondosa" ? (
                   <TreePalm size={12} color={theme.colors.reflection} />
                 ) : item.userCommunityLevel === "cultivador" ? (
@@ -605,8 +606,15 @@ export function LessonForumScreen({ route, navigation }: Props) {
                   {getLevelLabel(item.userCommunityLevel)}
                 </Text>
               </View>
+              )}
 
-              <Text style={[styles.content, { marginTop: 8, marginBottom: 0 }]}>
+              <Text
+                style={[
+                  styles.content,
+                  { marginTop: 8, marginBottom: 0 },
+                  item.isDeleted && { fontStyle: "italic", color: theme.colors.error },
+                ]}
+              >
                 {content}
               </Text>
             </View>
@@ -622,7 +630,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
               {REACTIONS.filter((r) => (displayReactions[r.type] ?? 0) > 0).map((r) => {
                 const Icon = r.Icon;
                 return (
-                  <View key={r.type} style={styles.reactionCountBadge}>
+                  <View key={r.type} style={[styles.reactionCountBadge, item.isDeleted && { backgroundColor: `${theme.colors.error}15` }]}>
                     <Icon size={14} color={theme.colors.textSecondary} />
                     <Text style={styles.reactionCountText}>
                       {displayReactions[r.type]}
@@ -630,7 +638,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
                   </View>
                 );
               })}
-              {!hasAnyReaction && (
+              {!hasAnyReaction && !item.isDeleted && (
                 <Text style={styles.reactionCount}>Seja o primeiro a reagir</Text>
               )}
             </View>

@@ -37,14 +37,14 @@ export const JourneyBottomSheet = forwardRef<BottomSheetModal, JourneyBottomShee
     const levels = [
       {
         id: "sementeiro",
-        title: "Sementeiro",
+        title: "Sementeiro(a)",
         icon: Sprout,
         description: "Deu os primeiros passos na jornada do conhecimento.",
         rules: "Ponto de partida automático ao criar a conta.",
       },
       {
         id: "cultivador",
-        title: "Cultivador",
+        title: "Cultivador(a)",
         icon: Leaf,
         description: "Cultiva o estudo com constância e partilha sua reflexão.",
         rules: "10 aulas, 5 comentários, 10 reações e 1 curso > 50%.",

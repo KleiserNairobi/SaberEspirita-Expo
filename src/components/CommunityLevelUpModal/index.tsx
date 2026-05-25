@@ -24,7 +24,7 @@ function getPresentation(levelId: CommunityLevelUpModalProps["levelId"]): {
   if (levelId === "cultivador") {
     return {
       Icon: Leaf,
-      title: "Cultivador",
+      title: "Cultivador(a)",
       message:
         "Sua constância no estudo e na partilha começa a florescer. A semente que você plantou está se tornando raiz.",
     };
@@ -32,7 +32,7 @@ function getPresentation(levelId: CommunityLevelUpModalProps["levelId"]): {
 
   return {
     Icon: Sprout,
-    title: "Sementeiro",
+    title: "Sementeiro(a)",
     message: "Deu os primeiros passos na jornada do conhecimento.",
   };
 }

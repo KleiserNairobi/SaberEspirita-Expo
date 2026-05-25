@@ -39,6 +39,7 @@ export default function AccountScreen() {
     theme,
     displayName,
     email,
+    photoURL,
     themeIcon,
     themeLabel,
     preferences,
@@ -211,7 +212,8 @@ export default function AccountScreen() {
         >
           <AccountHeader 
             displayName={displayName} 
-            email={email} 
+            email={email}
+            photoURL={photoURL}
             onEditPress={handleEditProfilePress}
             communityLevelId={
               (communityProgress?.communityLevelId as any) || "sementeiro"
