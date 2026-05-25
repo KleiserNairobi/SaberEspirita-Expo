@@ -1,9 +1,11 @@
+import React, { useRef, useState } from "react";
+
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery } from "@tanstack/react-query";
 import { BookOpen, Clock, Tag, User } from "lucide-react-native";
-import React, { useEffect, useRef, useState } from "react";
-import { Alert, ScrollView, Text, View, TouchableOpacity } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ReadingToolbar } from "@/components/ReadingToolbar";
@@ -16,6 +18,7 @@ import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
 import { shareReflection } from "@/utils/sharing";
 import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
+
 import { createStyles } from "./styles";
 
 type ReflectionScreenRouteProp = RouteProp<MeditateStackParamList, "Reflection">;
@@ -25,7 +28,7 @@ export default function ReflectionScreen() {
   const styles = createStyles(theme);
   const route = useRoute<ReflectionScreenRouteProp>();
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
-  const { user, isGuest } = useAuth();
+  const { user } = useAuth();
   const insets = useSafeAreaInsets();
 
   const [isNarrating, setIsNarrating] = useState(false);
@@ -131,7 +134,7 @@ export default function ReflectionScreen() {
   const topicLabel = reflection.topic;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
+    <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.scrollContent}
@@ -217,12 +220,7 @@ export default function ReflectionScreen() {
       </ScrollView>
 
       {/* Rodapé Fixo com Botão Finalizar */}
-      <View
-        style={[
-          styles.fixedFooter,
-          { paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : 32 },
-        ]}
-      >
+      <View style={[styles.fixedFooter, { paddingBottom: Math.max(insets.bottom, 24) }]}>
         <TouchableOpacity
           style={styles.finishButton}
           onPress={handleFinishReading}

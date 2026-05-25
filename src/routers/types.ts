@@ -16,6 +16,7 @@ export type AppStackParamList = {
   FAQ: undefined;
   Privacy: undefined;
   Terms: undefined;
+  Notifications: undefined;
   EmotionalChat: { initialMessage?: string; origin?: "medite" | "ore" } | undefined;
   ScientificChat:
     | {
@@ -29,6 +30,13 @@ export type AppStackParamList = {
   CourseDetails: { courseId: string };
   CourseCurriculum: { courseId: string };
   LessonPlayer: { courseId: string; lessonId: string };
+  LessonForum: {
+    courseId: string;
+    lessonId: string;
+    lessonTitle: string;
+    anchorQuestion?: string;
+    focusTag?: string;
+  };
   CourseCertificate: { courseId: string };
   CourseQuiz: {
     categoryId?: string;

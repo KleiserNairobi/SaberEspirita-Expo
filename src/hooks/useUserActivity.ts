@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 
 import { AppState, AppStateStatus } from "react-native";
 
+import { StatsService } from "@/services/firebase/statsService";
 import { userService } from "@/services/firebase/userService";
 import { useAuthStore } from "@/stores/authStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
@@ -18,8 +19,13 @@ export function useUserActivity() {
   const THROTTLE_TIME = 30 * 60 * 1000;
 
   const checkAndUpdateActivity = async () => {
-    // Só atualizamos para usuários logados reais (não convidados)
-    if (!user || isGuest) return;
+    if (isGuest) {
+      await StatsService.logDailyVisit(true);
+      return;
+    }
+    if (!user) return;
+
+    await StatsService.logDailyVisit(false);
 
     const now = Date.now();
 

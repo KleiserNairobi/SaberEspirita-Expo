@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+
 import { ITheme } from "@/configs/theme/types";
 
 export const createStyles = (theme: ITheme) =>
@@ -72,9 +73,16 @@ export const createStyles = (theme: ITheme) =>
       alignItems: "center",
       justifyContent: "center",
     },
+    finishButtonDisabled: {
+      backgroundColor: theme.colors.border,
+      opacity: 0.7,
+    },
     finishButtonText: {
       ...theme.text("sm", "bold"),
       color: "#FFFFFF",
+    },
+    finishButtonTextDisabled: {
+      color: theme.colors.textSecondary,
     },
     loadingContainer: {
       flex: 1,

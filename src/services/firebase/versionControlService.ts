@@ -34,7 +34,12 @@ export async function getVersionControlData(): Promise<VersionControlData | null
     }
 
     return docSnap.data() as VersionControlData;
-  } catch (error) {
+  } catch (error: any) {
+    // Permissão negada é esperado quando as regras do Firestore ainda não
+    // incluem leitura pública de app_settings. Retorna null silenciosamente.
+    if (error?.code === "permission-denied") {
+      return null;
+    }
     console.error("Erro ao buscar dados de version control:", error);
     throw error;
   }
