@@ -15,7 +15,9 @@ import { CourseCertificateScreen } from "@/pages/study/course-certificate";
 import { CourseCurriculumScreen } from "@/pages/study/course-curriculum";
 import { CourseDetailsScreen } from "@/pages/study/course-details";
 import { CoursesCatalogScreen } from "@/pages/study/courses-catalog";
+import { LessonForumScreen } from "@/pages/study/lesson-forum";
 import { LessonPlayerScreen } from "@/pages/study/lesson-player";
+import { NotificationsScreen } from "@/pages/notifications";
 import { GlossaryNavigator } from "./GlossaryNavigator";
 import { TabNavigator } from "./TabNavigator";
 
@@ -36,6 +38,7 @@ export function AppNavigator() {
         }}
       >
         <Stack.Screen name="Tabs" component={TabNavigator} />
+        <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="FAQ" component={FAQScreen} />
         <Stack.Screen name="Privacy" component={PrivacyScreen} />
         <Stack.Screen name="Terms" component={TermsScreen} />
@@ -46,6 +49,7 @@ export function AppNavigator() {
         <Stack.Screen name="CourseDetails" component={CourseDetailsScreen} />
         <Stack.Screen name="CourseCurriculum" component={CourseCurriculumScreen} />
         <Stack.Screen name="LessonPlayer" component={LessonPlayerScreen} />
+        <Stack.Screen name="LessonForum" component={LessonForumScreen} />
         <Stack.Screen name="CourseQuiz" component={CourseQuizScreen} />
         <Stack.Screen name="QuizResult" component={QuizResultScreen} />
         <Stack.Screen name="QuizReview" component={QuizReviewScreen} />

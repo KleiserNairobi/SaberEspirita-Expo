@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
-import { Sparkles } from "lucide-react-native";
+import { Compass } from "lucide-react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { IReflectionQuestion } from "@/types/course";
 import { ITheme } from "@/configs/theme/types";
@@ -54,7 +54,7 @@ export function ReflectionQuestionsCard({
       ]}
     >
       <View style={styles.header}>
-        <Sparkles size={20} color={theme.colors.reflection} />
+        <Compass size={20} color={theme.colors.reflection} />
         <Text style={styles.headerTitle}>Para Refletir</Text>
       </View>
 

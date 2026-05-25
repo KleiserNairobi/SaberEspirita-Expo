@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
 
-// ✅ NOVO
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -22,11 +21,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
-// ✅ NOVO
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
-// ✅ NOVO
 import { Button } from "@/components/Button";
-// ✅ NOVO
 import { CourseFeedbackBottomSheet } from "@/components/CourseFeedbackBottomSheet";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
 import { useCourse } from "@/hooks/queries/useCourses";
@@ -346,8 +342,10 @@ export function CourseCurriculumScreen() {
     exercise: any,
     lessonId: string,
     lessonTitle: string,
-    index: number
+    index: number,
+    opts: { isLessonUnavailable: boolean; isComingSoon: boolean }
   ) => {
+    const { isLessonUnavailable, isComingSoon } = opts;
     // 1. Verificar progresso do exercício
     const exerciseResult = progress?.exerciseResults?.find(
       (r) => r.exerciseId === exercise.id
@@ -362,6 +360,22 @@ export function CourseCurriculumScreen() {
     const isAhead = !isLessonCompleted;
 
     const handleExercisePress = () => {
+      if (isLessonUnavailable) {
+        setMessageConfig({
+          type: "info",
+          title: isComingSoon ? "Em breve" : "Aula bloqueada",
+          message: isComingSoon
+            ? "Esta aula ainda não está disponível. O exercício será liberado quando a aula estiver disponível."
+            : "Conclua as aulas anteriores para liberar este exercício.",
+          primaryButton: {
+            label: "ENTENDI",
+            onPress: () => bottomSheetRef.current?.dismiss(),
+          },
+        });
+        bottomSheetRef.current?.present();
+        return;
+      }
+
       if (isAhead) {
         setMessageConfig({
           type: "warning",
@@ -410,8 +424,9 @@ export function CourseCurriculumScreen() {
     return (
       <TouchableOpacity
         key={exercise.id}
-        style={styles.exerciseCard}
+        style={[styles.exerciseCard, isLessonUnavailable && styles.exerciseCardDisabled]}
         onPress={handleExercisePress}
+        activeOpacity={0.7}
       >
         <View style={styles.exerciseLeftContent}>
           {/* Linha conectora visual (opcional, pode ser feito com borda esquerda no container) */}
@@ -450,6 +465,7 @@ export function CourseCurriculumScreen() {
                 styles.exerciseTitle,
                 isCompleted && styles.exerciseTitleCompleted,
                 isFailed && styles.exerciseTitleFailed,
+                isLessonUnavailable && styles.exerciseTitleDisabled,
               ]}
             >
               {exercise.title || `Exercício ${index + 1}`}
@@ -457,7 +473,97 @@ export function CourseCurriculumScreen() {
           </View>
         </View>
 
-        <ChevronRight size={20} color={theme.colors.textSecondary} />
+        <ChevronRight
+          size={20}
+          color={isLessonUnavailable ? theme.colors.muted : theme.colors.textSecondary}
+        />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderForumItem = (
+    lesson: ILesson,
+    opts: {
+      isLessonUnavailable: boolean;
+      isComingSoon: boolean;
+      lessonStatus: LessonStatus;
+    }
+  ) => {
+    const { isLessonUnavailable, isComingSoon, lessonStatus } = opts;
+
+    const handleForumPress = () => {
+      if (isLessonUnavailable) {
+        setMessageConfig({
+          type: "info",
+          title: isComingSoon ? "Em breve" : "Fórum bloqueado",
+          message: isComingSoon
+            ? "O fórum será liberado quando a aula estiver disponível."
+            : "Conclua as aulas anteriores para acessar o fórum desta aula.",
+          primaryButton: {
+            label: "ENTENDI",
+            onPress: () => bottomSheetRef.current?.dismiss(),
+          },
+        });
+        setTimeout(() => bottomSheetRef.current?.present(), 100);
+        return;
+      }
+
+      if (lessonStatus !== LessonStatus.COMPLETED) {
+        setMessageConfig({
+          type: "info",
+          title: "Fórum bloqueado",
+          message: "O fórum estará acessível para você quando concluir esta aula.",
+          primaryButton: {
+            label: "ENTENDI",
+            onPress: () => bottomSheetRef.current?.dismiss(),
+          },
+        });
+        setTimeout(() => bottomSheetRef.current?.present(), 100);
+        return;
+      }
+
+      navigation.navigate("LessonForum", {
+        courseId,
+        lessonId: lesson.id,
+        lessonTitle: lesson.title,
+      });
+    };
+
+    return (
+      <TouchableOpacity
+        key={`forum-${lesson.id}`}
+        style={[styles.exerciseCard, isLessonUnavailable && styles.exerciseCardDisabled]}
+        onPress={handleForumPress}
+        activeOpacity={0.7}
+      >
+        <View style={styles.exerciseLeftContent}>
+          <View style={styles.connectorLine} />
+
+          <View
+            style={[
+              styles.exerciseIconContainer,
+              isLessonUnavailable && { borderColor: theme.colors.muted },
+            ]}
+          >
+            <View style={styles.exerciseDot} />
+          </View>
+
+          <View style={styles.exerciseTextContainer}>
+            <Text
+              style={[
+                styles.exerciseTitle,
+                isLessonUnavailable && styles.exerciseTitleDisabled,
+              ]}
+            >
+              Fórum: Reflexão
+            </Text>
+          </View>
+        </View>
+
+        <ChevronRight
+          size={20}
+          color={isLessonUnavailable ? theme.colors.muted : theme.colors.textSecondary}
+        />
       </TouchableOpacity>
     );
   };
@@ -585,21 +691,28 @@ export function CourseCurriculumScreen() {
             {/* DIREITA (CHEVRON) */}
             <ChevronRight size={24} color={theme.colors.textSecondary} />
           </View>
-
-          {/* BARRA DE PROGRESSO INTERNA (Só para Em Andamento) */}
-          {status === LessonStatus.IN_PROGRESS && (
-            <View style={styles.internalProgressBarBg}>
-              <View style={[styles.internalProgressBarFill, { width: "55%" }]} />
-            </View>
-          )}
         </TouchableOpacity>
 
         {/* LISTA DE EXERCÍCIOS (Renderizada abaixo do card da aula) */}
         {lessonExercises.length > 0 && (
           <View style={styles.exercisesListContainer}>
             {lessonExercises.map((ex, idx) =>
-              renderExerciseItem(ex, item.id, item.title, idx)
+              renderExerciseItem(ex, item.id, item.title, idx, {
+                isLessonUnavailable: isComingSoon || status === LessonStatus.LOCKED,
+                isComingSoon,
+              })
             )}
+          </View>
+        )}
+
+        {/* FÓRUM (Renderizado apenas se a aula tiver habilitado) */}
+        {item.forumEnabled && (
+          <View style={styles.exercisesListContainer}>
+            {renderForumItem(item, {
+              isLessonUnavailable: isComingSoon || status === LessonStatus.LOCKED,
+              isComingSoon,
+              lessonStatus: status,
+            })}
           </View>
         )}
       </View>
@@ -655,19 +768,23 @@ export function CourseCurriculumScreen() {
             scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={
-              <ProgressSummaryCard
-                courseTitle={course?.title || "Série"}
-                lessonsProgress={lessonsProgress}
-                exercisesProgress={exercisesProgress}
-                totalLessons={totalLessons}
-                completedLessons={completedLessons}
-                totalExercises={totalExercises}
-                completedExercises={completedExercises}
-                certificateEligible={isReadyForCertificate}
-                hasCertificate={certificateEnabled}
-                onRateCourse={hasGloballySubmittedState ? undefined : handleOpenFeedback}
-                onOpenMethodology={handleOpenMethodology}
-              />
+              <View>
+                <ProgressSummaryCard
+                  courseTitle={course?.title || "Série"}
+                  lessonsProgress={lessonsProgress}
+                  exercisesProgress={exercisesProgress}
+                  totalLessons={totalLessons}
+                  completedLessons={completedLessons}
+                  totalExercises={totalExercises}
+                  completedExercises={completedExercises}
+                  certificateEligible={isReadyForCertificate}
+                  hasCertificate={certificateEnabled}
+                  onRateCourse={
+                    hasGloballySubmittedState ? undefined : handleOpenFeedback
+                  }
+                  onOpenMethodology={handleOpenMethodology}
+                />
+              </View>
             }
             renderItem={renderLessonItem}
             ListEmptyComponent={

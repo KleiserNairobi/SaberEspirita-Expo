@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
-import { ScrollView, Text, Linking, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { httpsCallable } from "firebase/functions";
 
 import {
   Volume2,
@@ -29,12 +30,16 @@ import { useAccountScreen } from "@/pages/account/hooks/useAccountScreen";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { EditProfileBottomSheet } from "@/pages/account/components/EditProfileBottomSheet";
+import { CommunityLevelInfoBottomSheet } from "@/pages/account/components/CommunityLevelInfoBottomSheet";
+import { functions } from "@/configs/firebase/firebase";
+import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
 
 export default function AccountScreen() {
   const {
     theme,
     displayName,
     email,
+    photoURL,
     themeIcon,
     themeLabel,
     preferences,
@@ -51,11 +56,14 @@ export default function AccountScreen() {
     isGuest,
   } = useAccountScreen();
 
+  const { data: communityProgress } = useCommunityProgress();
+
   const styles = createStyles(theme);
 
   // BottomSheet Logic
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const editProfileSheetRef = useRef<BottomSheetModal>(null);
+  const communityLevelInfoSheetRef = useRef<BottomSheetModal>(null);
   const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
     null
   );
@@ -121,12 +129,11 @@ export default function AccountScreen() {
       type: "question",
       title: "Excluir Conta",
       message:
-        "Você será redirecionado para uma página onde poderá solicitar a exclusão da sua conta e de seus dados. Deseja continuar?",
+        "Esta ação é irreversível: sua conta e seus dados serão excluídos permanentemente. Deseja continuar?",
       primaryButton: {
-        label: "Continuar",
+        label: "Excluir minha conta",
         onPress: () => {
-          Linking.openURL("https://kleisernairobi.github.io/SaberEspirita-Exclusion/");
-          bottomSheetRef.current?.dismiss();
+          void handleConfirmDeleteAccount();
         },
       },
       secondaryButton: {
@@ -141,12 +148,56 @@ export default function AccountScreen() {
     }, 100);
   }
 
+  async function handleConfirmDeleteAccount() {
+    setMessageConfig({
+      type: "info",
+      title: "Excluindo...",
+      message: "Aguarde enquanto removemos sua conta e seus dados.",
+    });
+    setTimeout(() => {
+      bottomSheetRef.current?.present();
+    }, 100);
+
+    try {
+      const deleteFn = httpsCallable(functions, "deleteMyAccount");
+      await deleteFn({ confirm: true });
+
+      setMessageConfig({
+        type: "success",
+        title: "Conta excluída",
+        message: "Sua conta e seus dados foram removidos com sucesso.",
+      });
+      setTimeout(() => {
+        bottomSheetRef.current?.present();
+      }, 100);
+
+      setTimeout(() => {
+        void signOut();
+      }, 1000);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Não foi possível excluir sua conta agora.";
+      setMessageConfig({
+        type: "error",
+        title: "Erro ao excluir",
+        message,
+      });
+      setTimeout(() => {
+        bottomSheetRef.current?.present();
+      }, 100);
+    }
+  }
+
   function handleEditProfilePress() {
     if (isGuest) {
       handleLogoutPress();
       return;
     }
     editProfileSheetRef.current?.present();
+  }
+
+  function handleCommunityLevelInfoPress() {
+    communityLevelInfoSheetRef.current?.present();
   }
 
   return (
@@ -161,8 +212,12 @@ export default function AccountScreen() {
         >
           <AccountHeader 
             displayName={displayName} 
-            email={email} 
+            email={email}
+            photoURL={photoURL}
             onEditPress={handleEditProfilePress}
+            communityLevelId={
+              (communityProgress?.communityLevelId as any) || "sementeiro"
+            }
           />
 
           {/* Grupo 1: Preferências */}
@@ -219,6 +274,13 @@ export default function AccountScreen() {
               onPress={handleContactUs}
               showDivider
               isFirst
+            />
+            <SettingsItem
+              icon={HelpCircle}
+              title="Como funciona meu nível?"
+              subtitle="Critérios de reconhecimento simbólico"
+              onPress={handleCommunityLevelInfoPress}
+              showDivider
             />
             <SettingsItem
               icon={HelpCircle}
@@ -318,6 +380,13 @@ export default function AccountScreen() {
         ref={editProfileSheetRef}
         initialName={displayName}
         onSave={handleUpdateName}
+      />
+
+      <CommunityLevelInfoBottomSheet
+        ref={communityLevelInfoSheetRef}
+        currentLevelId={
+          (communityProgress?.communityLevelId as any) || "sementeiro"
+        }
       />
     </SafeAreaView>
   );
