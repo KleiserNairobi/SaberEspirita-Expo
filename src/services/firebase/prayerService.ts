@@ -124,7 +124,7 @@ export async function getTrendingPrayers(period: "day" | "week" | "total"): Prom
         dateLimit.setDate(dateLimit.getDate() - 7); // Últimos 7 dias
       }
 
-      const q = query(logsRef, where("timestamp", ">=", dateLimit), limit(100)); // Pega uma amostra de logs
+      const q = query(logsRef, where("createdAt", ">=", dateLimit), limit(100)); // Pega uma amostra de logs
       const snapshot = await getDocs(q);
       
       const counts: Record<string, number> = {};
