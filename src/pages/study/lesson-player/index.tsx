@@ -630,6 +630,7 @@ export function LessonPlayerScreen() {
         hasNewForum={!!hasNewForum}
         onAskAI={handleAskAI}
         onOpenForum={handleOpenForum}
+        forumEnabled={!!lesson.forumEnabled}
       />
     </SafeAreaView>
   );

@@ -24,7 +24,7 @@ export const JourneyBottomSheet = forwardRef<BottomSheetModal, JourneyBottomShee
     const config: BottomSheetMessageConfig = {
       type: "info",
       title: "Sua Jornada de Conhecimento",
-      message: "Avance nos estudos e contribua com a comunidade para evoluir.",
+      message: "Avance nos estudos e contribua \ncom a comunidade para evoluir.",
       primaryButton: {
         label: "Entendi",
         onPress: () => {
@@ -56,10 +56,15 @@ export const JourneyBottomSheet = forwardRef<BottomSheetModal, JourneyBottomShee
         description: "Referência de presença, profundidade e fraternidade na comunidade.",
         rules: (
           <View style={{ marginTop: 2 }}>
-            <Text style={styles.levelRules}>
-              40 aulas, 2 cursos, 20 comentários,
-            </Text>
-            <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap", marginTop: 2 }}>
+            <Text style={styles.levelRules}>40 aulas, 2 cursos, 20 comentários,</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                flexWrap: "wrap",
+                marginTop: 2,
+              }}
+            >
               <Text style={styles.levelRules}>50 reações (15 </Text>
               <Heart size={12} color={theme.colors.textSecondary} />
               <Text style={styles.levelRules}> / </Text>

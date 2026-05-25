@@ -10,6 +10,7 @@ interface LessonActionsFABProps {
   hasNewForum: boolean;
   onAskAI: () => void;
   onOpenForum: () => void;
+  forumEnabled?: boolean;
 }
 
 export function LessonActionsFAB({
@@ -17,6 +18,7 @@ export function LessonActionsFAB({
   hasNewForum,
   onAskAI,
   onOpenForum,
+  forumEnabled = false,
 }: LessonActionsFABProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -47,6 +49,14 @@ export function LessonActionsFAB({
     setExpanded((v) => !v);
   }
 
+  function handleMainButtonPress() {
+    if (forumEnabled) {
+      toggleExpanded();
+    } else {
+      onAskAI();
+    }
+  }
+
   function handleAskAI() {
     setExpanded(false);
     onAskAI();
@@ -67,38 +77,40 @@ export function LessonActionsFAB({
         },
       ]}
     >
-      <Animated.View style={[styles.actionsRow, { opacity: actionsOpacity }]}>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={handleAskAI}
-          activeOpacity={0.8}
-          accessibilityLabel="Perguntar à IA"
-        >
-          <MessageSquare size={20} color={theme.colors.onPrimary} strokeWidth={2.5} />
-          <Text style={styles.actionLabel}>IA</Text>
-        </TouchableOpacity>
+      {forumEnabled && (
+        <Animated.View style={[styles.actionsRow, { opacity: actionsOpacity }]}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={handleAskAI}
+            activeOpacity={0.8}
+            accessibilityLabel="Perguntar à IA"
+          >
+            <MessageSquare size={20} color={theme.colors.onPrimary} strokeWidth={2.5} />
+            <Text style={styles.actionLabel}>Sr. Allan</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={handleOpenForum}
-          activeOpacity={0.8}
-          accessibilityLabel="Abrir Fórum"
-        >
-          <View style={styles.forumIconWrap}>
-            <MessageCircle size={20} color={theme.colors.onPrimary} strokeWidth={2.5} />
-            {hasNewForum && <View style={styles.newDot} />}
-          </View>
-          <Text style={styles.actionLabel}>Fórum</Text>
-        </TouchableOpacity>
-      </Animated.View>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={handleOpenForum}
+            activeOpacity={0.8}
+            accessibilityLabel="Abrir Fórum"
+          >
+            <View style={styles.forumIconWrap}>
+              <MessageCircle size={20} color={theme.colors.onPrimary} strokeWidth={2.5} />
+              {hasNewForum && <View style={styles.newDot} />}
+            </View>
+            <Text style={styles.actionLabel}>Fórum</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      )}
 
       <TouchableOpacity
         style={styles.mainButton}
-        onPress={toggleExpanded}
+        onPress={handleMainButtonPress}
         activeOpacity={0.8}
-        accessibilityLabel="Ações da aula"
+        accessibilityLabel={forumEnabled ? "Ações da aula" : "Perguntar à IA"}
       >
-        {expanded ? (
+        {expanded && forumEnabled ? (
           <X size={22} color={theme.colors.onPrimary} strokeWidth={2.5} />
         ) : (
           <MessageSquare size={22} color={theme.colors.onPrimary} strokeWidth={2.5} />
@@ -116,11 +128,6 @@ const createStyles = (theme: ITheme) =>
       bottom: 100,
       zIndex: 999,
       alignItems: "flex-end",
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.3,
-      shadowRadius: 4.65,
-      elevation: 8,
     },
     actionsRow: {
       flexDirection: "row",
