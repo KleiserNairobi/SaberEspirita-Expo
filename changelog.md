@@ -2,6 +2,27 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.14] - 2026-05-25
+
+### Adicionado
+
+- **Fórum da Aula**: Novo sistema completo de Fórum de Discussão integrado ao player de lições (`LessonForum`), com suporte a comentários, respostas encadeadas e controle de exibição de conteúdo.
+- **Reações no Fórum**: Sistema interativo de reações para os comentários dos alunos (*me_tocou*, *aprendi_algo*, *quero_refletir*, *gratidao*, *luz*), atualizando estatísticas de progresso comunitário do autor e do reagente.
+- **Central de Notificações**: Nova tela de Notificações no aplicativo (`NotificationsScreen`) com paginação e sincronização em tempo real de reações recebidas, respostas em threads seguidas e transmissões gerais da administração (`admin_broadcast`).
+- **Nível da Comunidade & Jornada**: Introdução do progresso de engajamento da comunidade espiritual com modal de evolução de nível (`CommunityLevelUpModal`) e painéis visuais informativos (`JourneyBottomSheet` e `CommunityLevelInfoBottomSheet`).
+- **Privacidade (Exclusão de Conta com Motivo)**: Novo fluxo de exclusão definitiva da conta diretamente na tela de configurações, integrando a coleta de motivos específicos do ecossistema do app e a gravação de logs estruturados de desligamento na coleção `deleted_users_logs` no Firestore.
+
+### Alterado
+
+- **Player de Lição**: Integração do botão flutuante de ações rápidas (`LessonActionsFAB`), facilitando o acesso instantâneo ao Fórum da aula a partir da lição atual.
+- **Currículo do Curso**: Otimização do design da tela de currículo e inclusão de prefetch automático em segundo plano das próximas 3 aulas para otimizar o carregamento.
+- **Cabeçalho de Perfil**: Refatoração do `AccountHeader` para exibição dinâmica e harmoniosa das informações de nível comunitário, barra de progresso de experiência e avatar do usuário.
+
+### Corrigido
+
+- **Sincronização de Notificações**: Correções no fluxo de leitura em lote (`markAllNotificationsRead`) e nos estilos da listagem de notificações.
+- **Ajustes de UI**: Correção de sobreposição de elementos visuais na tela de currículo do curso e alinhamento dos botões flutuantes.
+
 ## [2.0.13] - 2026-04-29
 
 ### Adicionado

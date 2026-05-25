@@ -31,6 +31,7 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { EditProfileBottomSheet } from "@/pages/account/components/EditProfileBottomSheet";
 import { CommunityLevelInfoBottomSheet } from "@/pages/account/components/CommunityLevelInfoBottomSheet";
+import { DeleteAccountBottomSheet } from "@/pages/account/components/DeleteAccountBottomSheet";
 import { functions } from "@/configs/firebase/firebase";
 import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
 
@@ -64,6 +65,7 @@ export default function AccountScreen() {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const editProfileSheetRef = useRef<BottomSheetModal>(null);
   const communityLevelInfoSheetRef = useRef<BottomSheetModal>(null);
+  const deleteAccountSheetRef = useRef<BottomSheetModal>(null);
   const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
     null
   );
@@ -125,30 +127,10 @@ export default function AccountScreen() {
   }
 
   function handleDeleteAccountPress() {
-    setMessageConfig({
-      type: "question",
-      title: "Excluir Conta",
-      message:
-        "Esta ação é irreversível: sua conta e seus dados serão excluídos permanentemente. Deseja continuar?",
-      primaryButton: {
-        label: "Excluir minha conta",
-        onPress: () => {
-          void handleConfirmDeleteAccount();
-        },
-      },
-      secondaryButton: {
-        label: "Cancelar",
-        onPress: () => {
-          bottomSheetRef.current?.dismiss();
-        },
-      },
-    });
-    setTimeout(() => {
-      bottomSheetRef.current?.present();
-    }, 100);
+    deleteAccountSheetRef.current?.present();
   }
 
-  async function handleConfirmDeleteAccount() {
+  async function handleConfirmDeleteAccount(reason: string) {
     setMessageConfig({
       type: "info",
       title: "Excluindo...",
@@ -160,7 +142,7 @@ export default function AccountScreen() {
 
     try {
       const deleteFn = httpsCallable(functions, "deleteMyAccount");
-      await deleteFn({ confirm: true });
+      await deleteFn({ confirm: true, reason });
 
       setMessageConfig({
         type: "success",
@@ -173,7 +155,7 @@ export default function AccountScreen() {
 
       setTimeout(() => {
         void signOut();
-      }, 1000);
+      }, 2000); // 2 segundos para o usuário conseguir ler o aviso de sucesso antes do logout/redirecionamento
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Não foi possível excluir sua conta agora.";
@@ -387,6 +369,11 @@ export default function AccountScreen() {
         currentLevelId={
           (communityProgress?.communityLevelId as any) || "sementeiro"
         }
+      />
+
+      <DeleteAccountBottomSheet
+        ref={deleteAccountSheetRef}
+        onConfirm={handleConfirmDeleteAccount}
       />
     </SafeAreaView>
   );
