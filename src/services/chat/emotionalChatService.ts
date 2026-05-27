@@ -1,23 +1,26 @@
 import { ChatService } from "@/types/chat";
 import { callDeepSeekProxy } from "../deepseek/proxy";
-import { ChatType } from "../prompt";
+import { ChatType, getSystemPrompt } from "../prompt";
 
 /**
- * Serviço de chat emocional (Guia)
+ * Serviço de chat emocional (O Guia)
  *
  * Chama a Cloud Function deepseekProxy para manter a API Key segura no servidor.
- * O resultado é retornado como resposta completa (sem streaming SSE),
- * pois Cloud Functions não suportam SSE nativo.
- * O efeito de digitação é gerado client-side pelo simulateStreaming no useDeepSeekChat.
+ * O system prompt da persona "Guia" é injetado como primeira mensagem do array,
+ * garantindo que o modelo responda sempre dentro do contexto espírita emocional.
  */
 export const emotionalChatService: ChatService = async (
   userMessage,
   history,
-  onChunkReceived,
+  _onChunkReceived,
   onComplete
 ) => {
-  // Monta as mensagens com histórico completo: [...turnos anteriores, nova mensagem]
+  // System prompt emocional (persona O Guia) — DEVE ser a primeira mensagem
+  const systemPrompt = getSystemPrompt(ChatType.EMOTIONAL);
+
+  // Monta: [system, ...histórico de turnos anteriores, nova mensagem do usuário]
   const messages = [
+    { role: "system" as const, content: systemPrompt },
     ...history,
     { role: "user" as const, content: userMessage },
   ];
@@ -25,7 +28,6 @@ export const emotionalChatService: ChatService = async (
   // Chama o proxy seguro no servidor (API Key protegida na Cloud Function)
   const content = await callDeepSeekProxy(messages, ChatType.EMOTIONAL);
 
-  // Entrega a resposta completa de uma vez
-  // O hook useDeepSeekChat usa simulateStreaming para criar o efeito de digitação
+  // Entrega resposta completa — simulateStreaming no hook cria o efeito de digitação
   onComplete(content);
 };
