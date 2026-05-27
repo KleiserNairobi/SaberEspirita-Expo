@@ -1,7 +1,6 @@
 import { ChatService } from "@/types/chat";
 import { ChatType } from "../prompt";
-import { emotionalChatService } from "./emotionalChatService";
-import { scientificChatService } from "./scientificChatService";
+import { emotionalChatService, scientificChatService } from "./chatServiceFactory";
 import { detectIntention, IntentionType } from "./intentionDetector";
 
 /**
@@ -69,65 +68,6 @@ Até a próxima!`;
       blocked: true,
       response: farewellResponse,
     };
-  }
-
-  // Filtros específicos para chat emocional
-  if (chatType === ChatType.EMOTIONAL) {
-    if (intention.type === IntentionType.OFF_TOPIC) {
-      return {
-        blocked: true,
-        response: `Desculpe, amigo(a)...  
-Compreendo sua curiosidade, mas fui criado especificamente para oferecer apoio emocional e consolo espiritual.
-
-Posso ajudar você se estiver passando por:
-- Momentos de tristeza ou angústia
-- Dificuldades emocionais
-- Busca por paz interior
-- Crises existenciais
-
-Como posso oferecer conforto ao seu coração hoje?`,
-      };
-    }
-
-    if (intention.type === IntentionType.DOCTRINAL_QUESTION) {
-      return {
-        blocked: true,
-        response: `Percebo que sua pergunta é de natureza doutrinária, amigo(a). 📚
-
-Para questões sobre os ensinamentos espíritas, recomendo conversar com o **Sr. Allan Kardec**, nosso assistente especializado em doutrina.
-
-Estou aqui para oferecer **apoio emocional e consolo espiritual**. Há algo que inquieta seu coração neste momento?`,
-      };
-    }
-  }
-
-  // Filtros específicos para chat científico
-  if (chatType === ChatType.SCIENTIFIC) {
-    if (intention.type === IntentionType.OFF_TOPIC) {
-      return {
-        blocked: true,
-        response: `Perdão, mas minha especialidade é a Doutrina Espírita. 📚
-
-Posso ajudar você com questões sobre:
-- As obras básicas do Espiritismo
-- Conceitos doutrinários
-- Princípios espíritas
-- Ensinamentos de Allan Kardec
-
-Qual é sua dúvida doutrinária?`,
-      };
-    }
-
-    if (intention.type === IntentionType.EMOTIONAL_SUPPORT) {
-      return {
-        blocked: true,
-        response: `Percebo que você está buscando apoio emocional. 🕊️
-
-Para questões de consolo e apoio espiritual, recomendo conversar com **O Guia**, nosso assistente especializado em apoio emocional.
-
-Estou aqui para esclarecer **dúvidas doutrinárias**. Tem alguma pergunta sobre os ensinamentos espíritas?`,
-      };
-    }
   }
 
   return { blocked: false };
