@@ -377,23 +377,17 @@ export const useAuthStore = create<AuthState>()(
             });
           } else {
             // Firebase retornou null
-            // Verificar se há usuário persistido no MMKV OU se é Guest
-            const { user: currentUser, isGuest } = get();
+            const { isGuest } = get();
 
-            if (currentUser) {
-              console.log(
-                "AuthStore: Firebase null, mas usuário encontrado no MMKV. Mantendo sessão."
-              );
-              // Mantém o usuário do MMKV (persistência offline)
-              set({ initialized: true, loading: false });
-            } else if (isGuest) {
+            if (isGuest) {
               console.log(
                 "AuthStore: Usuário convidado detectado. Mantendo sessão de convidado."
               );
               set({ initialized: true, loading: false });
             } else {
-              // Nenhum usuário e não é guest
-              console.log("AuthStore: Nenhum usuário autenticado");
+              // Se o Firebase real diz que não há usuário e não é convidado,
+              // limpamos o estado fantasma do MMKV para evitar loop de permissão negada.
+              console.log("AuthStore: Nenhum usuário autenticado no Firebase (limpando estado offline)");
               set({ user: null, isGuest: false, initialized: true, loading: false });
             }
           }
