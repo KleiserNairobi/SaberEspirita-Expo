@@ -1,41 +1,31 @@
 import { ChatService } from "@/types/chat";
-import { streamDeepSeekChat } from "../deepseek";
+import { callDeepSeekProxy } from "../deepseek/proxy";
 import { ChatType } from "../prompt";
 
 /**
- * Serviço de chat científico (Sr. Allan)
- * Processa mensagens com foco em esclarecimentos doutrinários
+ * Serviço de chat científico (Sr. Allan Kardec)
+ *
+ * Chama a Cloud Function deepseekProxy para manter a API Key segura no servidor.
+ * O resultado é retornado como resposta completa (sem streaming SSE),
+ * pois Cloud Functions não suportam SSE nativo.
+ * O efeito de digitação é gerado client-side pelo simulateStreaming no useDeepSeekChat.
  */
 export const scientificChatService: ChatService = async (
-  userMessage: string,
-  onChunkReceived: (chunk: string) => void,
-  onComplete: (fullResponse: string) => void
-): Promise<void> => {
-  console.log("🔵 scientificChatService: Processando mensagem");
+  userMessage,
+  history,
+  onChunkReceived,
+  onComplete
+) => {
+  // Monta as mensagens com histórico completo: [...turnos anteriores, nova mensagem]
+  const messages = [
+    ...history,
+    { role: "user" as const, content: userMessage },
+  ];
 
-  try {
-    const history = [
-      {
-        role: "user",
-        content: userMessage,
-      } as const,
-    ];
+  // Chama o proxy seguro no servidor (API Key protegida na Cloud Function)
+  const content = await callDeepSeekProxy(messages, ChatType.SCIENTIFIC);
 
-    const stream = await streamDeepSeekChat(history, ChatType.SCIENTIFIC);
-
-    let fullResponse = "";
-
-    for await (const chunk of stream) {
-      const content = chunk.choices[0]?.delta?.content || "";
-      if (content) {
-        fullResponse += content;
-        onChunkReceived(content);
-      }
-    }
-
-    onComplete(fullResponse);
-  } catch (error) {
-    console.error("❌ Erro na API DeepSeek (Scientific):", error);
-    throw error;
-  }
+  // Entrega a resposta completa de uma vez
+  // O hook useDeepSeekChat usa simulateStreaming para criar o efeito de digitação
+  onComplete(content);
 };

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useCallback } from "react";
 import { View, FlatList, Text, Platform, KeyboardAvoidingView } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -39,12 +39,59 @@ export function EmotionalChatScreen() {
   const initialMessage = route.params?.initialMessage;
   const origin = route.params?.origin;
 
-  // Enviar mensagem inicial se fornecida
+  const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
+  const [bottomSheetConfig, setBottomSheetConfig] =
+    React.useState<BottomSheetMessageConfig | null>(null);
+
+  const { data: limits } = useChatLimits("emotional");
+  const incrementUsage = useIncrementChatUsage();
+
+  // Memoizado para evitar closure desatualizada no useEffect do initialMessage
+  const handleSendMessage = useCallback(
+    async (text: string) => {
+      if (!text.trim()) return;
+
+      // 1. Verificar limites antes de enviar
+      if (limits && !limits.canSend) {
+        setBottomSheetConfig({
+          type: "info",
+          title: "Limite diário atingido",
+          message: `${limits.reason || "Limite atingido"}\n\nEnquanto isso, que tal explorar nossos cursos ou fazer uma leitura edificante?`,
+          primaryButton: {
+            label: "Entendi",
+            onPress: () => bottomSheetModalRef.current?.dismiss(),
+          },
+        });
+        bottomSheetModalRef.current?.present();
+        return;
+      }
+
+      // 2. Incrementar ANTES de enviar para evitar race condition de envio duplo
+      incrementUsage.mutate("emotional", {
+        onError: (err) => {
+          console.error("[ChatLimits] Falha ao incrementar uso emocional:", err);
+        },
+      });
+
+      // 3. Enviar mensagem
+      await sendMessage(text);
+
+      // 4. Log Analytics
+      logEmotionalChat(user?.uid || "guest", text.length, { origin });
+    },
+    [limits, sendMessage, incrementUsage, user, origin]
+  );
+
+  // Ref de controle para garantir que a mensagem inicial seja enviada exatamente uma vez
+  const initialMessageSent = useRef(false);
+
   useEffect(() => {
-    if (initialMessage && messages.length === 0 && !isLoading) {
+    if (initialMessage && !initialMessageSent.current) {
+      initialMessageSent.current = true;
       handleSendMessage(initialMessage);
     }
-  }, [initialMessage, messages.length, isLoading]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Auto-scroll para última mensagem
   useEffect(() => {
@@ -65,7 +112,7 @@ export function EmotionalChatScreen() {
         <Text style={styles.emptyIcon}>🕊️</Text>
         <Text style={styles.emptyTitle}>Bem-vindo ao Guia</Text>
         <Text style={styles.emptyText}>
-          Estou aqui para oferecer apoio emocional e {"\n"}consolo espiritual. Como posso
+          Estou aqui para oferecer apoio emocional e {"\\n"}consolo espiritual. Como posso
           ajudar seu coração hoje?
         </Text>
       </View>
@@ -75,7 +122,6 @@ export function EmotionalChatScreen() {
   function renderFooter() {
     if (!isLoading) return null;
 
-    // Verifica se a última mensagem é do assistente e está vazia (ainda não começou o streaming)
     const lastMessage = messages[messages.length - 1];
     const shouldShowTyping =
       !lastMessage || lastMessage.isUser || lastMessage.text === "";
@@ -105,42 +151,6 @@ export function EmotionalChatScreen() {
         </View>
       </View>
     );
-  }
-
-  // Importações adicionais
-  const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
-  const [bottomSheetConfig, setBottomSheetConfig] =
-    React.useState<BottomSheetMessageConfig | null>(null);
-
-  const { data: limits } = useChatLimits("emotional");
-  const incrementUsage = useIncrementChatUsage();
-
-  async function handleSendMessage(text: string) {
-    if (!text.trim()) return;
-
-    // 1. Verificar limites antes de enviar
-    if (limits && !limits.canSend) {
-      setBottomSheetConfig({
-        type: "info",
-        title: "Limite diário atingido",
-        message: `${limits.reason || "Limite atingido"}\n\nEnquanto isso, que tal explorar nossos cursos ou fazer uma leitura edificante?`,
-        primaryButton: {
-          label: "Entendi",
-          onPress: () => bottomSheetModalRef.current?.dismiss(),
-        },
-      });
-      bottomSheetModalRef.current?.present();
-      return;
-    }
-
-    // 2. Enviar mensagem
-    await sendMessage(text);
-
-    // 3. Incrementar uso (sem bloquear o usuário se falhar)
-    incrementUsage.mutate("emotional");
-
-    // 4. Log Analytics
-    logEmotionalChat(user?.uid || "guest", text.length, { origin });
   }
 
   return (

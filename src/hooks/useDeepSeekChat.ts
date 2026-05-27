@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Message, UseChatReturn } from "@/types/chat";
+import { Message, ChatMessage, UseChatReturn } from "@/types/chat";
 import {
   detectIntention,
   IntentionType,
@@ -7,6 +7,19 @@ import {
   shouldBlockMessage,
 } from "@/services/chat";
 import { ChatType } from "@/services/prompt";
+
+/**
+ * Converte o array de mensagens da UI (Message[]) para o formato da API (ChatMessage[]).
+ * Exclui mensagens de erro e a mensagem vazia do assistente que ainda está sendo streamada.
+ */
+function toApiMessages(messages: Message[]): ChatMessage[] {
+  return messages
+    .filter((m) => !m.isError && m.text.trim() !== "")
+    .map((m) => ({
+      role: m.isUser ? ("user" as const) : ("assistant" as const),
+      content: m.text,
+    }));
+}
 
 /**
  * Hook principal para gerenciar chat com DeepSeek
@@ -17,7 +30,7 @@ export function useDeepSeekChat(chatType: ChatType = ChatType.EMOTIONAL): UseCha
   const [error, setError] = useState<string | null>(null);
 
   /**
-   * Simula streaming palavra por palavra para respostas locais
+   * Simula streaming palavra por palavra para respostas locais (saudações, despedidas)
    */
   const simulateStreaming = useCallback(async (text: string, messageId: string) => {
     const words = text.split(" ");
@@ -30,7 +43,6 @@ export function useDeepSeekChat(chatType: ChatType = ChatType.EMOTIONAL): UseCha
         prev.map((msg) => (msg.id === messageId ? { ...msg, text: accumulated } : msg))
       );
 
-      // Delay entre palavras (30-50ms)
       await new Promise((resolve) => setTimeout(resolve, 40));
     }
   }, []);
@@ -53,7 +65,13 @@ export function useDeepSeekChat(chatType: ChatType = ChatType.EMOTIONAL): UseCha
         timestamp: new Date(),
       };
 
-      setMessages((prev) => [...prev, userMsg]);
+      // Captura o histórico atual ANTES de adicionar a nova mensagem do usuário
+      // para passar ao service apenas as mensagens já concluídas
+      let historySnapshot: Message[] = [];
+      setMessages((prev) => {
+        historySnapshot = prev;
+        return [...prev, userMsg];
+      });
 
       try {
         // Verifica bloqueios (saudações, despedidas, off-topic, etc.)
@@ -68,11 +86,10 @@ export function useDeepSeekChat(chatType: ChatType = ChatType.EMOTIONAL): UseCha
 
           setMessages((prev) => [...prev, blockMsg]);
           await simulateStreaming(blockCheck.response, blockMsg.id);
-          setIsLoading(false);
           return;
         }
 
-        // Cria mensagem do assistente (vazia inicialmente)
+        // Cria mensagem do assistente (vazia inicialmente para mostrar streaming)
         const assistantMsg: Message = {
           id: (Date.now() + 1).toString(),
           text: "",
@@ -82,34 +99,26 @@ export function useDeepSeekChat(chatType: ChatType = ChatType.EMOTIONAL): UseCha
 
         setMessages((prev) => [...prev, assistantMsg]);
 
-        // Chama serviço de chat com streaming
+        // Converte histórico anterior para formato da API
+        const apiHistory = toApiMessages(historySnapshot);
+
+        // Chama serviço de chat (via Cloud Function proxy — sem streaming SSE)
         const chatService = getChatService(chatType);
 
         await chatService(
           userMessage,
-          // onChunkReceived
-          (chunk: string) => {
-            setMessages((prev) =>
-              prev.map((msg) =>
-                msg.id === assistantMsg.id ? { ...msg, text: msg.text + chunk } : msg
-              )
-            );
-          },
-          // onComplete
-          (fullResponse: string) => {
-            setMessages((prev) =>
-              prev.map((msg) =>
-                msg.id === assistantMsg.id ? { ...msg, text: fullResponse } : msg
-              )
-            );
-            setIsLoading(false);
+          apiHistory,
+          // onChunkReceived — não utilizado com o proxy (resposta chega completa)
+          (_chunk: string) => {},
+          // onComplete — recebe a resposta completa e simula digitação client-side
+          async (fullResponse: string) => {
+            await simulateStreaming(fullResponse, assistantMsg.id);
           }
         );
       } catch (err) {
         console.error("Erro ao enviar mensagem:", err);
         setError("Desculpe, ocorreu um erro. Tente novamente.");
 
-        // Adiciona mensagem de erro
         const errorMsg: Message = {
           id: (Date.now() + 1).toString(),
           text: "Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.",
@@ -119,6 +128,8 @@ export function useDeepSeekChat(chatType: ChatType = ChatType.EMOTIONAL): UseCha
         };
 
         setMessages((prev) => [...prev, errorMsg]);
+      } finally {
+        // Garante que o loading sempre destrava, mesmo se o stream for interrompido
         setIsLoading(false);
       }
     },

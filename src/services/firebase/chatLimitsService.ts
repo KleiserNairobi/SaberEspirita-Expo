@@ -5,6 +5,7 @@ import {
   updateDoc,
   serverTimestamp,
   Timestamp,
+  increment,
 } from "firebase/firestore";
 
 import { db } from "@/configs/firebase/firebase";
@@ -135,7 +136,7 @@ export class ChatLimitsService {
 
     const dailyKey = chatType === "emotional" ? "dailyEmotional" : "dailyScientific";
 
-    // Buscar dados atuais novamente para garantir consistência
+    // Verifica se o documento existe; se não, inicializa primeiro
     const limitsSnap = await getDoc(limitsRef);
     if (!limitsSnap.exists()) {
       await this.initializeUserLimits(userId);
@@ -144,30 +145,28 @@ export class ChatLimitsService {
 
     const limits = limitsSnap.data() as UserChatLimits;
 
-    // Preparar updates
-    // IMPORTANTE: Usamos Timestamp.fromDate(now) aqui para garantir que o cooldown
-    // seja calculado com base no relógio do cliente, evitando problemas de clock skew
-    // com o servidor que travam o usuário por mais de 5s.
-    const updates: any = {
+    // Prepara updates usando increment() atômico do Firestore
+    // Isso evita race conditions em multi-dispositivo (read-then-write)
+    const updates: Record<string, any> = {
       lastMessageAt: Timestamp.fromDate(now),
       updatedAt: serverTimestamp(),
     };
 
-    // Atualizar contador diário
+    // Contador diário: reseta se mudou o dia, incrementa atomicamente se for o mesmo dia
     if (limits[dailyKey].date === today) {
-      updates[`${dailyKey}.count`] = limits[dailyKey].count + 1;
+      updates[`${dailyKey}.count`] = increment(1);
     } else {
-      // Novo dia, resetar
+      // Novo dia: reseta o contador (não pode usar increment aqui pois precisa resetar)
       updates[`${dailyKey}.date`] = today;
       updates[`${dailyKey}.count`] = 1;
       updates[`${dailyKey}.lastResetAt`] = Timestamp.fromDate(now);
     }
 
-    // Atualizar contador mensal
+    // Contador mensal: reseta se mudou o mês, incrementa atomicamente se for o mesmo mês
     if (limits.monthlyTotal.month === thisMonth) {
-      updates["monthlyTotal.count"] = limits.monthlyTotal.count + 1;
+      updates["monthlyTotal.count"] = increment(1);
     } else {
-      // Novo mês, resetar
+      // Novo mês: reseta o contador
       updates["monthlyTotal.month"] = thisMonth;
       updates["monthlyTotal.count"] = 1;
       updates["monthlyTotal.lastResetAt"] = Timestamp.fromDate(now);

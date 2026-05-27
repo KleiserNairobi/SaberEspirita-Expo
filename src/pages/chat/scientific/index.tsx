@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useCallback } from "react";
 import { View, FlatList, Text, Platform, KeyboardAvoidingView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -41,7 +41,6 @@ export function ScientificChatScreen() {
     ChatType.SCIENTIFIC
   );
 
-  // Importações adicionais
   const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
   const [bottomSheetConfig, setBottomSheetConfig] =
     React.useState<BottomSheetMessageConfig | null>(null);
@@ -49,43 +48,52 @@ export function ScientificChatScreen() {
   const { data: limits } = useChatLimits("scientific");
   const incrementUsage = useIncrementChatUsage();
 
-  async function handleSendMessage(text: string) {
-    if (!text.trim()) return;
+  // Memoizado para evitar closure desatualizada no useEffect do initialMessage
+  const handleSendMessage = useCallback(
+    async (text: string) => {
+      if (!text.trim()) return;
 
-    // 1. Verificar limites antes de enviar
-    if (limits && !limits.canSend) {
-      setBottomSheetConfig({
-        type: "info",
-        title: "Limite diário atingido",
-        message: `${limits.reason || "Limite atingido"}\n\nEnquanto isso, que tal explorar nossos cursos ou fazer uma leitura edificante?`,
-        primaryButton: {
-          label: "Entendi",
-          onPress: () => bottomSheetModalRef.current?.dismiss(),
+      // 1. Verificar limites antes de enviar
+      if (limits && !limits.canSend) {
+        setBottomSheetConfig({
+          type: "info",
+          title: "Limite diário atingido",
+          message: `${limits.reason || "Limite atingido"}\n\nEnquanto isso, que tal explorar nossos cursos ou fazer uma leitura edificante?`,
+          primaryButton: {
+            label: "Entendi",
+            onPress: () => bottomSheetModalRef.current?.dismiss(),
+          },
+        });
+        bottomSheetModalRef.current?.present();
+        return;
+      }
+
+      // 2. Incrementar ANTES de enviar para evitar race condition de envio duplo
+      incrementUsage.mutate("scientific", {
+        onError: (err) => {
+          console.error("[ChatLimits] Falha ao incrementar uso científico:", err);
         },
       });
-      bottomSheetModalRef.current?.present();
-      return;
-    }
 
-    // 2. Enviar mensagem
-    await sendMessage(text);
+      // 3. Enviar mensagem
+      await sendMessage(text);
 
-    // 3. Incrementar uso
-    incrementUsage.mutate("scientific");
+      // 4. Log Analytics
+      logScientificChat(user?.uid || "guest", text.length, { origin, lessonId });
+    },
+    [limits, sendMessage, incrementUsage, user, origin, lessonId]
+  );
 
-    // 4. Log Analytics
-    logScientificChat(user?.uid || "guest", text.length, { origin, lessonId });
-  }
+  // Ref de controle para garantir que a mensagem inicial seja enviada exatamente uma vez
+  const initialMessageSent = useRef(false);
 
-  // Envia mensagem inicial se fornecida
   useEffect(() => {
-    if (initialMessage && messages.length === 0) {
-      // Pequeno delay para garantir que os limites foram carregados
-      setTimeout(() => {
-        handleSendMessage(initialMessage);
-      }, 500);
+    if (initialMessage && !initialMessageSent.current) {
+      initialMessageSent.current = true;
+      handleSendMessage(initialMessage);
     }
-  }, [initialMessage]); // Removido messages.length do dep array para evitar loop, embora a lógica interna proteja
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Auto-scroll para última mensagem
   useEffect(() => {
@@ -106,8 +114,8 @@ export function ScientificChatScreen() {
         <Text style={styles.emptyIcon}>📚</Text>
         <Text style={styles.emptyTitle}>Bem-vindo, estudante</Text>
         <Text style={styles.emptyText}>
-          Estou aqui para esclarecer suas dúvidas {"\n"}doutrinárias sobre o Espiritismo.
-          {"\n"}Como posso ajudá-lo?
+          Estou aqui para esclarecer suas dúvidas {"\\n"}doutrinárias sobre o Espiritismo.
+          {"\\n"}Como posso ajudá-lo?
         </Text>
       </View>
     );
@@ -116,7 +124,6 @@ export function ScientificChatScreen() {
   function renderFooter() {
     if (!isLoading) return null;
 
-    // Verifica se a última mensagem é do assistente e está vazia (ainda não começou o streaming)
     const lastMessage = messages[messages.length - 1];
     const shouldShowTyping =
       !lastMessage || lastMessage.isUser || lastMessage.text === "";
