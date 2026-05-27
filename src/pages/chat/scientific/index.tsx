@@ -114,8 +114,7 @@ export function ScientificChatScreen() {
         <Text style={styles.emptyIcon}>📚</Text>
         <Text style={styles.emptyTitle}>Bem-vindo, estudante</Text>
         <Text style={styles.emptyText}>
-          Estou aqui para esclarecer suas dúvidas {"\\n"}doutrinárias sobre o Espiritismo.
-          {"\\n"}Como posso ajudá-lo?
+          Estou aqui para esclarecer suas dúvidas doutrinárias sobre o Espiritismo. Como posso ajudá-lo?
         </Text>
       </View>
     );

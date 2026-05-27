@@ -112,8 +112,7 @@ export function EmotionalChatScreen() {
         <Text style={styles.emptyIcon}>🕊️</Text>
         <Text style={styles.emptyTitle}>Bem-vindo ao Guia</Text>
         <Text style={styles.emptyText}>
-          Estou aqui para oferecer apoio emocional e {"\\n"}consolo espiritual. Como posso
-          ajudar seu coração hoje?
+          Estou aqui para oferecer apoio emocional e consolo espiritual. Como posso ajudar seu coração hoje?
         </Text>
       </View>
     );
