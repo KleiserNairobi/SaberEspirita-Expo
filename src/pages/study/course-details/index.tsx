@@ -94,11 +94,11 @@ export function CourseDetailsScreen() {
   }
 
   function handleStartCourse() {
-    navigation.navigate("CourseCurriculum", { courseId });
+    navigation.navigate("CourseCurriculum", { courseId, autoEnroll: true });
   }
 
   function handleViewLessons() {
-    navigation.navigate("CourseCurriculum", { courseId });
+    navigation.navigate("CourseCurriculum", { courseId, autoEnroll: false });
   }
 
   if (loading) {

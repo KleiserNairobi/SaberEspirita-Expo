@@ -23,33 +23,25 @@ export function useUserActivity() {
       await StatsService.logDailyVisit(true);
       return;
     }
+
     if (!user) return;
-
     await StatsService.logDailyVisit(false);
-
     const now = Date.now();
 
     // Se nunca atualizou OU se a última atualização foi há mais de 30 minutos
     if (!lastSeenUpdate || now - lastSeenUpdate > THROTTLE_TIME) {
-      console.log("[Activity] Atualizando lastSeenAt no servidor...");
-
       try {
         await userService.updateLastSeen(user.uid);
         userService.setCourseRemindersPref(
           user.uid,
           usePreferencesStore.getState().courseNotifications
         );
-
-        // Atualiza o timestamp local para o controle de throttle
         setLastSeenUpdate(now);
       } catch (error) {
         console.error("[Activity] Erro ao processar atualização de atividade:", error);
       }
     } else {
       const minutesLeft = Math.ceil((THROTTLE_TIME - (now - lastSeenUpdate)) / 60000);
-      console.log(
-        `[Activity] Pulando atualização. Próxima em aproximadamente ${minutesLeft} min.`
-      );
     }
   };
 

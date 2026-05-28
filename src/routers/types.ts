@@ -28,7 +28,7 @@ export type AppStackParamList = {
   Glossary: undefined;
   CoursesCatalog: undefined;
   CourseDetails: { courseId: string };
-  CourseCurriculum: { courseId: string };
+  CourseCurriculum: { courseId: string; autoEnroll?: boolean };
   LessonPlayer: { courseId: string; lessonId: string };
   LessonForum: {
     courseId: string;
