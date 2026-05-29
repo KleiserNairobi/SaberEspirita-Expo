@@ -28,8 +28,9 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
         ? course.imageUrl
         : require("@/assets/images/placeholder.png");
 
-  // Verificar se o curso está em breve
+  // Verificar se o curso está em breve ou encerrado
   const isComingSoon = course.status === "COMING_SOON";
+  const isLegacy = course.status === "LEGACY" || course.allowNewEnrollments === false;
 
   return (
     <TouchableOpacity
@@ -63,10 +64,14 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
           </Text>
         </View>
 
-        {/* Se COMING_SOON: Badge laranja no lugar dos metadados */}
+        {/* Se COMING_SOON ou LEGACY: Badge no lugar dos metadados */}
         {isComingSoon ? (
           <View style={styles.comingSoonBadgeLarge}>
             <Text style={styles.comingSoonTextLarge}>EM BREVE</Text>
+          </View>
+        ) : isLegacy ? (
+          <View style={[styles.comingSoonBadgeLarge, { backgroundColor: theme.colors.muted }]}>
+            <Text style={[styles.comingSoonTextLarge, { color: theme.colors.background }]}>ENCERRADO</Text>
           </View>
         ) : (
           <>

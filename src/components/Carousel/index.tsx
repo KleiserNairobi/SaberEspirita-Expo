@@ -1,3 +1,4 @@
+import { useCourseRating } from "@/hooks/queries/useCourseRating";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import type { ICourse, IUserCourseProgress } from "@/types/course";
 import { useIsFocused } from "@react-navigation/native";
@@ -49,6 +50,9 @@ const CarouselItem = React.memo(function CarouselItem({
 }: CarouselItemProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
+  const { data: rating } = useCourseRating(item.id);
+  const finalRating = rating ?? item.rating;
+
   const inputRange = [
     (index - 1) * ITEM_SIZE,
     index * ITEM_SIZE,
@@ -113,6 +117,15 @@ const CarouselItem = React.memo(function CarouselItem({
             priority={index <= 2 ? "high" : "normal"}
           />
           <View style={styles.overlay} />
+
+          {/* BADGE DE AVALIAÇÃO */}
+          {finalRating !== undefined && finalRating !== null && (
+            <View style={styles.ratingBadge}>
+              <Text style={styles.ratingBadgeStar}>★</Text>
+              <Text style={styles.ratingBadgeText}>{finalRating.toFixed(1)}</Text>
+            </View>
+          )}
+
           <View style={styles.textOverlayContainer}>
             <Text style={styles.title} numberOfLines={2}>
               {item.title}

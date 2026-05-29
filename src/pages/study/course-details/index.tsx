@@ -1,36 +1,40 @@
 import React from "react";
+import { useEffect, useRef, useState } from "react";
+
 import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
+
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
-  ArrowLeft,
-  BookOpen,
-  Clock,
-  BarChart2,
-  FileText,
-  Award,
   AlertCircle,
+  ArrowLeft,
+  Award,
+  BarChart2,
+  BookOpen,
   CheckCircle2,
+  Clock,
+  FileText,
   MessageCircle,
   Star,
 } from "lucide-react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { AppStackParamList } from "@/routers/types";
-import { useCourse } from "@/hooks/queries/useCourses";
-import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
-import { createStyles } from "./styles";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useRef, useState, useEffect } from "react";
+import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
+import { useCourseRating } from "@/hooks/queries/useCourseRating";
+import { useCourse } from "@/hooks/queries/useCourses";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { AppStackParamList } from "@/routers/types";
+
+import { createStyles } from "./styles";
 
 type CourseDetailsRouteProp = RouteProp<AppStackParamList, "CourseDetails">;
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -46,6 +50,7 @@ export function CourseDetailsScreen() {
   // React Query Fetch
   const { data: course, isLoading: isLoadingCourse } = useCourse(courseId);
   const { data: progress, isLoading: isLoadingProgress } = useCourseProgress(courseId);
+  const { data: rating } = useCourseRating(courseId);
 
   const isEnrolled = !!progress; // Se tem objeto de progresso, está matriculado
 
@@ -173,7 +178,7 @@ export function CourseDetailsScreen() {
           showsVerticalScrollIndicator={false}
         >
           {/* PROGRESS CARD */}
-          {isEnrolled && (
+          {/* {isEnrolled && (
             <View style={styles.progressCard}>
               <View style={styles.progressHeader}>
                 <Text style={styles.progressLabel}>PROGRESSO DA SÉRIE</Text>
@@ -186,7 +191,7 @@ export function CourseDetailsScreen() {
                 {completedCount} de {totalLessons} aulas concluídas
               </Text>
             </View>
-          )}
+          )} */}
 
           {/* DESCRIPTION */}
           <View style={styles.section}>
@@ -271,10 +276,16 @@ export function CourseDetailsScreen() {
             {/* Avaliação */}
             <View style={styles.statItem}>
               <View style={styles.iconCircle}>
-                <Star size={16} color={theme.colors.primary} />
+                <Star
+                  size={16}
+                  color={theme.colors.primary}
+                  fill={(rating ?? course.rating) ? theme.colors.primary : "none"}
+                />
               </View>
               <Text style={styles.statText}>
-                {course.rating ? `★ ${Number(course.rating).toFixed(1)}` : "☆ Seja o primeiro"}
+                {(rating ?? course.rating)
+                  ? `${Number(rating ?? course.rating).toFixed(1)}/5`
+                  : "Seja o primeiro"}
               </Text>
             </View>
           </View>
@@ -317,7 +328,9 @@ export function CourseDetailsScreen() {
             <View style={styles.footerButtons}>
               <TouchableOpacity
                 style={[styles.primaryButton, styles.flexButton]}
-                onPress={() => navigation.replace("CourseDetails", { courseId: "COURSE-00008" })}
+                onPress={() =>
+                  navigation.replace("CourseDetails", { courseId: "COURSE-00008" })
+                }
               >
                 <Text style={styles.primaryButtonText}>IR PARA NOVA EDIÇÃO</Text>
               </TouchableOpacity>
