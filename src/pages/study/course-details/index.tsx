@@ -18,6 +18,8 @@ import {
   Award,
   AlertCircle,
   CheckCircle2,
+  MessageCircle,
+  Star,
 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -28,7 +30,7 @@ import { createStyles } from "./styles";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 type CourseDetailsRouteProp = RouteProp<AppStackParamList, "CourseDetails">;
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -44,6 +46,8 @@ export function CourseDetailsScreen() {
   // React Query Fetch
   const { data: course, isLoading: isLoadingCourse } = useCourse(courseId);
   const { data: progress, isLoading: isLoadingProgress } = useCourseProgress(courseId);
+
+  const isEnrolled = !!progress; // Se tem objeto de progresso, está matriculado
 
   // Modal de Metodologia
   const bottomSheetRef = useRef<BottomSheetModal>(null);
@@ -67,6 +71,35 @@ export function CourseDetailsScreen() {
     bottomSheetRef.current?.present();
   };
 
+  const isLegacy = course?.status === "LEGACY" || course?.allowNewEnrollments === false;
+
+  useEffect(() => {
+    if (course && !isEnrolled && isLegacy) {
+      setMessageConfig({
+        type: "warning",
+        title: "Edição Encerrada",
+        message:
+          "Esta edição foi encerrada e substituída por uma versão revisada. Recomendamos iniciar a nova jornada de estudos.",
+        primaryButton: {
+          label: "IR PARA NOVA EDIÇÃO",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+            navigation.replace("CourseDetails", { courseId: "COURSE-00008" });
+          },
+        },
+        secondaryButton: {
+          label: "FECHAR",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+          },
+        },
+      });
+      setTimeout(() => {
+        bottomSheetRef.current?.present();
+      }, 500);
+    }
+  }, [course, isEnrolled, navigation]);
+
   // Loading unificado: aguarda tanto curso quanto progresso
   const loading = isLoadingCourse || isLoadingProgress;
 
@@ -76,8 +109,6 @@ export function CourseDetailsScreen() {
 
   const userProgress =
     totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
-
-  const isEnrolled = !!progress; // Se tem objeto de progresso, está matriculado
 
   // Dados de certificação
   const hasCertification = course?.certification?.enabled || false;
@@ -226,6 +257,26 @@ export function CourseDetailsScreen() {
               </View>
               <Text style={styles.statText}>{exerciseCount} Exercícios</Text>
             </View>
+
+            {/* Fórum */}
+            <View style={styles.statItem}>
+              <View style={styles.iconCircle}>
+                <MessageCircle size={16} color={theme.colors.primary} />
+              </View>
+              <Text style={styles.statText}>
+                {course.hasForum ? "Fórum ativo" : "Sem fórum"}
+              </Text>
+            </View>
+
+            {/* Avaliação */}
+            <View style={styles.statItem}>
+              <View style={styles.iconCircle}>
+                <Star size={16} color={theme.colors.primary} />
+              </View>
+              <Text style={styles.statText}>
+                {course.rating ? `★ ${Number(course.rating).toFixed(1)}` : "☆ Seja o primeiro"}
+              </Text>
+            </View>
           </View>
 
           {/* REQUISITOS PARA CERTIFICADO */}
@@ -262,6 +313,15 @@ export function CourseDetailsScreen() {
                 {userProgress === 100 ? "VER CURRÍCULO" : "CONTINUAR SÉRIE"}
               </Text>
             </TouchableOpacity>
+          ) : isLegacy ? (
+            <View style={styles.footerButtons}>
+              <TouchableOpacity
+                style={[styles.primaryButton, styles.flexButton]}
+                onPress={() => navigation.replace("CourseDetails", { courseId: "COURSE-00008" })}
+              >
+                <Text style={styles.primaryButtonText}>IR PARA NOVA EDIÇÃO</Text>
+              </TouchableOpacity>
+            </View>
           ) : (
             <View style={styles.footerButtons}>
               <TouchableOpacity
