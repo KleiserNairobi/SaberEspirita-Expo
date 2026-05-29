@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+
 import { ITheme } from "@/configs/theme/types";
 
 export const createStyles = (theme: ITheme) =>
@@ -8,34 +9,110 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: theme.colors.background,
     },
 
-    // HEADER
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.md,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
+    // SCROLL CONTENT (REMOVIDO DO CONTAINER EXTERNO)
+    scrollContent: {
+      paddingBottom: 120,
     },
-    backButton: {
+
+    // IMAGEM DE CAPA NO TOPO
+    coverImage: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      height: 280,
+    },
+    imageOverlay: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      height: 280,
+      backgroundColor: "rgba(0,0,0,0.25)", // Ligeiramente mais escuro para aumentar contraste do título branco
+    },
+    staticTitleContainer: {
+      height: 248,
+      justifyContent: "flex-end", // Empurra o título para a base da imagem, logo acima do card
+      paddingHorizontal: theme.spacing.md,
+      paddingBottom: 44, // Deixa 44px de margem na base (a curva branca sobrepõe 32px)
+    },
+    imageTitleSection: {
+      alignSelf: "stretch",
+    },
+    imageCourseTitle: {
+      marginBottom: 10,
+      ...theme.text("xxl", "bold"),
+      color: theme.colors.onSecondary,
+      fontFamily: "Oswald_600SemiBold",
+      lineHeight: 32,
+      textShadowColor: "rgba(0, 0, 0, 0.6)",
+      textShadowOffset: { width: 1, height: 1 },
+      textShadowRadius: 3,
+    },
+
+    // CABEÇALHO FLUTUANTE
+    floatingHeader: {
+      position: "absolute",
+      left: theme.spacing.md,
+      right: theme.spacing.md,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      zIndex: 100,
+    },
+    floatingBackButton: {
       width: 40,
       height: 40,
       borderRadius: 20,
+      backgroundColor: "rgba(0,0,0,0.5)",
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: theme.colors.accent,
-      marginRight: theme.spacing.md,
     },
-    headerTitle: {
-      ...theme.text("lg", "bold"),
-      color: theme.colors.text,
-      flex: 1,
+    floatingShareButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: "rgba(0,0,0,0.5)",
+      justifyContent: "center",
+      alignItems: "center",
     },
 
-    // SCROLL CONTENT
-    scrollContent: {
-      padding: theme.spacing.md,
-      paddingBottom: 120, // Espaço para footer fixo
+    // CONTAINER DE CONTEÚDO PRINCIPAL (FIXO)
+    mainContentContainer: {
+      flex: 1, // Preenche todo o espaço flexível restante da tela
+      backgroundColor: theme.colors.background,
+      borderTopLeftRadius: 32,
+      borderTopRightRadius: 32,
+      marginTop: -32, // Sobe para sobrepor ligeiramente a imagem de fundo
+    },
+    cardScroll: {
+      flex: 1,
+    },
+    cardScrollContent: {
+      paddingHorizontal: theme.spacing.md,
+      paddingTop: theme.spacing.lg,
+      paddingBottom: 150, // Espaço confortável para o footer fixo
+    },
+    metadataRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      flexWrap: "wrap",
+      gap: 6,
+      marginBottom: theme.spacing.md,
+    },
+    metadataItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    metadataText: {
+      ...theme.text("xs", "regular", theme.colors.muted),
+      fontSize: 11,
+    },
+    metadataSeparator: {
+      ...theme.text("xs", "regular", theme.colors.muted),
+      fontSize: 11,
     },
 
     // PROGRESS (SEM CARD)
@@ -136,7 +213,7 @@ export const createStyles = (theme: ITheme) =>
 
     // SECTION
     section: {
-      marginVertical: theme.spacing.md,
+      // marginVertical: theme.spacing.sm,
     },
     sectionTitle: {
       ...theme.text("lg", "semibold"),

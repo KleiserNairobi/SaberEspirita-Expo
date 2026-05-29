@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
+  Share,
   Text,
   TouchableOpacity,
   View,
@@ -12,6 +13,7 @@ import {
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Image } from "expo-image";
 import {
   AlertCircle,
   ArrowLeft,
@@ -22,6 +24,7 @@ import {
   Clock,
   FileText,
   MessageCircle,
+  Share2,
   Star,
 } from "lucide-react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
@@ -53,6 +56,24 @@ export function CourseDetailsScreen() {
   const { data: rating } = useCourseRating(courseId);
 
   const isEnrolled = !!progress; // Se tem objeto de progresso, está matriculado
+
+  const handleShare = async () => {
+    if (!course) return;
+    try {
+      await Share.share({
+        message: `Confira a série espiritual "${course.title}" no Saber Espírita!`,
+      });
+    } catch (error) {
+      console.error("Erro ao compartilhar:", error);
+    }
+  };
+
+  const imageSource =
+    course && typeof course.imageUrl === "string" && course.imageUrl.trim().length > 0
+      ? { uri: course.imageUrl }
+      : course && typeof course.imageUrl === "number"
+        ? course.imageUrl
+        : require("@/assets/images/placeholder.png");
 
   // Modal de Metodologia
   const bottomSheetRef = useRef<BottomSheetModal>(null);
@@ -161,22 +182,78 @@ export function CourseDetailsScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-      <View style={styles.container}>
-        {/* HEADER */}
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-            <ArrowLeft size={24} color={theme.colors.text} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle} numberOfLines={1}>
-            {course.title}
-          </Text>
-        </View>
+    <View style={styles.container}>
+      {/* IMAGEM DE CAPA NO TOPO */}
+      <Image
+        source={imageSource}
+        style={styles.coverImage}
+        contentFit="cover"
+        transition={200}
+      />
+      <View style={styles.imageOverlay} />
 
+      {/* CABEÇALHO FLUTUANTE */}
+      <View style={[styles.floatingHeader, { top: insets.top + 10 }]}>
+        <TouchableOpacity style={styles.floatingBackButton} onPress={handleGoBack}>
+          <ArrowLeft size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.floatingShareButton} onPress={handleShare}>
+          <Share2 size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+      </View>
+
+      {/* TÍTULO SOBRE A IMAGEM DE CAPA (FIXOS) */}
+      <View style={styles.staticTitleContainer}>
+        <View style={styles.imageTitleSection}>
+          <Text style={styles.imageCourseTitle}>{course.title}</Text>
+        </View>
+      </View>
+
+      {/* CONTAINER DO CONTEÚDO PRINCIPAL (FIXO) */}
+      <View style={styles.mainContentContainer}>
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
+          style={styles.cardScroll}
+          contentContainerStyle={styles.cardScrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {/* Metadados da Série */}
+          <View style={styles.metadataRow}>
+            {/* Aulas */}
+            <View style={styles.metadataItem}>
+              <BookOpen size={12} color={theme.colors.muted} />
+              <Text style={styles.metadataText}>{course.lessonCount} aulas</Text>
+            </View>
+
+            <Text style={styles.metadataSeparator}>•</Text>
+
+            {/* Duração */}
+            <View style={styles.metadataItem}>
+              <Clock size={12} color={theme.colors.muted} />
+              <Text style={styles.metadataText}>{durationText}</Text>
+            </View>
+
+            <Text style={styles.metadataSeparator}>•</Text>
+
+            {/* Nível */}
+            <View style={styles.metadataItem}>
+              <BarChart2 size={12} color={theme.colors.muted} />
+              <Text style={styles.metadataText}>{course.difficultyLevel || "Iniciante"}</Text>
+            </View>
+
+            {/* Média de Avaliação (se houver) */}
+            {(rating ?? course.rating) && (
+              <>
+                <Text style={styles.metadataSeparator}>•</Text>
+                <View style={styles.metadataItem}>
+                  <Star size={12} color={theme.colors.muted} fill={theme.colors.muted} />
+                  <Text style={styles.metadataText}>
+                    {Number(rating ?? course.rating).toFixed(1)}/5
+                  </Text>
+                </View>
+              </>
+            )}
+          </View>
+
           {/* PROGRESS CARD */}
           {/* {isEnrolled && (
             <View style={styles.progressCard}>
@@ -315,47 +392,52 @@ export function CourseDetailsScreen() {
             </View>
           )}
         </ScrollView>
+      </View>
 
-        {/* FIXED FOOTER */}
-        <View style={styles.footer}>
-          {isEnrolled ? (
-            <TouchableOpacity style={styles.primaryButton} onPress={handleStartCourse}>
-              <Text style={styles.primaryButtonText}>
-                {userProgress === 100 ? "VER CURRÍCULO" : "CONTINUAR SÉRIE"}
-              </Text>
+      {/* FIXED FOOTER */}
+      <View
+        style={[
+          styles.footer,
+          { paddingBottom: insets.bottom > 0 ? insets.bottom + 10 : theme.spacing.md },
+        ]}
+      >
+        {isEnrolled ? (
+          <TouchableOpacity style={styles.primaryButton} onPress={handleStartCourse}>
+            <Text style={styles.primaryButtonText}>
+              {userProgress === 100 ? "VER CURRÍCULO" : "CONTINUAR SÉRIE"}
+            </Text>
+          </TouchableOpacity>
+        ) : isLegacy ? (
+          <View style={styles.footerButtons}>
+            <TouchableOpacity
+              style={[styles.primaryButton, styles.flexButton]}
+              onPress={() =>
+                navigation.replace("CourseDetails", { courseId: "COURSE-00008" })
+              }
+            >
+              <Text style={styles.primaryButtonText}>IR PARA NOVA EDIÇÃO</Text>
             </TouchableOpacity>
-          ) : isLegacy ? (
-            <View style={styles.footerButtons}>
-              <TouchableOpacity
-                style={[styles.primaryButton, styles.flexButton]}
-                onPress={() =>
-                  navigation.replace("CourseDetails", { courseId: "COURSE-00008" })
-                }
-              >
-                <Text style={styles.primaryButtonText}>IR PARA NOVA EDIÇÃO</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={styles.footerButtons}>
-              <TouchableOpacity
-                style={[styles.primaryButton, styles.flexButton]}
-                onPress={handleStartCourse}
-              >
-                <Text style={styles.primaryButtonText}>INICIAR SÉRIE</Text>
-              </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.footerButtons}>
+            <TouchableOpacity
+              style={[styles.primaryButton, styles.flexButton]}
+              onPress={handleStartCourse}
+            >
+              <Text style={styles.primaryButtonText}>INICIAR SÉRIE</Text>
+            </TouchableOpacity>
 
-              <TouchableOpacity
-                style={[styles.secondaryButton, styles.flexButton]}
-                onPress={handleViewLessons}
-              >
-                <Text style={styles.secondaryButtonText}>VER AULAS</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
+            <TouchableOpacity
+              style={[styles.secondaryButton, styles.flexButton]}
+              onPress={handleViewLessons}
+            >
+              <Text style={styles.secondaryButtonText}>VER AULAS</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
-    </SafeAreaView>
+    </View>
   );
 }
