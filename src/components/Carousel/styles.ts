@@ -121,7 +121,7 @@ export const createStyles = (theme: ITheme) =>
       position: "absolute",
       top: 12,
       right: 12,
-      backgroundColor: "#FFFFFF",
+      backgroundColor: "rgba(255, 255, 255, 0.7)",
       paddingHorizontal: 8,
       paddingVertical: 4,
       borderRadius: 12,

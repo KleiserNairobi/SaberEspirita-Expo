@@ -2,12 +2,34 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.16] - 2026-05-30
+
+### Adicionado
+
+- **Avaliação de Cursos**: Passamos a exibir a nota de avaliação média diretamente nos cards de cursos na tela inicial.
+- **Ementa do Curso**: Adicionados novos campos informativos na tela de detalhes do curso, incluindo indicadores do fórum e a nota de avaliação.
+
+### Alterado
+
+- **Transição de Cursos**: Encerramento do curso "Introdução à Doutrina", com redirecionamento de estudo para a nova série "Entendendo o Espiritismo".
+- **UI/UX**: Ajustes gerais na interface de usuário, incluindo a aplicação de transparência no badge de nota dos cards Populares, o que garante melhor contraste e harmonia com imagens de capa variadas.
+
+## [2.0.15] - 2026-05-27
+
+### Alterado
+
+- Atualizações de segurança de rotina nos nossos servidores.
+
+### Corrigido
+
+- Melhorias de estabilidade e correções de bugs internos.
+
 ## [2.0.14] - 2026-05-25
 
 ### Adicionado
 
 - **Fórum da Aula**: Novo sistema completo de Fórum de Discussão integrado ao player de lições (`LessonForum`), com suporte a comentários, respostas encadeadas e controle de exibição de conteúdo.
-- **Reações no Fórum**: Sistema interativo de reações para os comentários dos alunos (*me_tocou*, *aprendi_algo*, *quero_refletir*, *gratidao*, *luz*), atualizando estatísticas de progresso comunitário do autor e do reagente.
+- **Reações no Fórum**: Sistema interativo de reações para os comentários dos alunos (_me_tocou_, _aprendi_algo_, _quero_refletir_, _gratidao_, _luz_), atualizando estatísticas de progresso comunitário do autor e do reagente.
 - **Central de Notificações**: Nova tela de Notificações no aplicativo (`NotificationsScreen`) com paginação e sincronização em tempo real de reações recebidas, respostas em threads seguidas e transmissões gerais da administração (`admin_broadcast`).
 - **Nível da Comunidade & Jornada**: Introdução do progresso de engajamento da comunidade espiritual com modal de evolução de nível (`CommunityLevelUpModal`) e painéis visuais informativos (`JourneyBottomSheet` e `CommunityLevelInfoBottomSheet`).
 - **Privacidade (Exclusão de Conta com Motivo)**: Novo fluxo de exclusão definitiva da conta diretamente na tela de configurações, integrando a coleta de motivos específicos do ecossistema do app e a gravação de logs estruturados de desligamento na coleção `deleted_users_logs` no Firestore.
