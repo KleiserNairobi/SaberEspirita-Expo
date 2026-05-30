@@ -14,15 +14,41 @@ import {
   deleteDoc,
   Timestamp,
 } from "firebase/firestore";
-import { 
-  ICategory, 
-  ISubcategory, 
-  IQuiz, 
-  IQuizHistory, 
-  IDailyChallengeStats, 
-  IUserDetailedStats, 
-  ICategoryProgress 
+import {
+  ICategory,
+  ISubcategory,
+  IQuiz,
+  IQuizHistory,
+  IDailyChallengeStats,
+  IUserDetailedStats,
+  ICategoryProgress
 } from "@/types/quiz";
+import { load, save } from "@/utils/Storage";
+
+// TTL de 24h em milissegundos para cache de dados estáticos do quiz
+const QUIZ_CACHE_TTL_MS = 1000 * 60 * 60 * 24;
+
+const CACHE_KEYS = {
+  categories: "@quiz_cache:categories",
+  subcategories: (categoryId: string) => `@quiz_cache:subcategories:${categoryId}`,
+} as const;
+
+interface CacheEntry<T> {
+  data: T;
+  cachedAt: number;
+}
+
+function loadFromCache<T>(key: string): T | null {
+  const entry = load<CacheEntry<T>>(key);
+  if (!entry) return null;
+  const isExpired = Date.now() - entry.cachedAt > QUIZ_CACHE_TTL_MS;
+  if (isExpired) return null;
+  return entry.data;
+}
+
+function saveToCache<T>(key: string, data: T): void {
+  save(key, { data, cachedAt: Date.now() } satisfies CacheEntry<T>);
+}
 
 // Mapeamento de ícones (mesmo do CLI, adaptado para Lucide)
 const iconMapping: Record<string, string> = {
@@ -118,6 +144,10 @@ export async function logDailyChallengeAttempt(params: {
 
 export async function getCategories(): Promise<ICategory[]> {
   try {
+    // Verifica cache MMKV antes de bater no Firestore
+    const cached = loadFromCache<ICategory[]>(CACHE_KEYS.categories);
+    if (cached) return cached;
+
     const categoriesSnapshot = await getDocs(collection(db, "categories"));
     const categoriesData: ICategory[] = categoriesSnapshot.docs.map((docSnap) => {
       const data = docSnap.data();
@@ -134,6 +164,9 @@ export async function getCategories(): Promise<ICategory[]> {
         icon: iconMapping[titleUpper] || "HelpCircle",
       };
     });
+
+    // Salva no cache por 24h
+    saveToCache(CACHE_KEYS.categories, categoriesData);
     return categoriesData;
   } catch (error) {
     console.log("Erro ao obter categorias:", error);
@@ -145,6 +178,11 @@ export async function getCategories(): Promise<ICategory[]> {
 
 export async function getSubcategories(idCategory: string): Promise<ISubcategory[]> {
   try {
+    // Verifica cache MMKV antes de bater no Firestore
+    const cacheKey = CACHE_KEYS.subcategories(idCategory);
+    const cached = loadFromCache<ISubcategory[]>(cacheKey);
+    if (cached) return cached;
+
     const subcategoriesRef = collection(db, "subcategories");
     const q = query(subcategoriesRef, where("idCategory", "==", idCategory));
     const subcategoriesSnapshot = await getDocs(q);
@@ -161,6 +199,9 @@ export async function getSubcategories(idCategory: string): Promise<ISubcategory
         };
       }
     );
+
+    // Salva no cache por 24h
+    saveToCache(cacheKey, subcategoriesData);
     return subcategoriesData;
   } catch (error) {
     console.log("Erro ao obter subcategorias:", error);

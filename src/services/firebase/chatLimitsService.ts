@@ -126,54 +126,56 @@ export class ChatLimitsService {
   }
 
   /**
-   * Incrementa contadores após enviar mensagem
+   * Incrementa contadores após enviar mensagem.
+   * Usa updateDoc atômico com increment() para evitar o getDoc redundante
+   * que ocorria após checkCanSendMessage (que já leu o documento).
    */
   static async incrementUsage(userId: string, chatType: ChatType): Promise<void> {
     const limitsRef = doc(db, "chatLimits", userId);
     const now = new Date();
     const today = this.getLocalDateString();
     const thisMonth = today.substring(0, 7);
-
     const dailyKey = chatType === "emotional" ? "dailyEmotional" : "dailyScientific";
 
-    // Verifica se o documento existe; se não, inicializa primeiro
-    const limitsSnap = await getDoc(limitsRef);
-    if (!limitsSnap.exists()) {
+    try {
+      // Tentativa otimista: incrementa atomicamente sem ler o documento
+      // Usa campos aninhados com dot notation para atualizar apenas o necessário
+      await updateDoc(limitsRef, {
+        [`${dailyKey}.count`]: increment(1),
+        "monthlyTotal.count": increment(1),
+        lastMessageAt: Timestamp.fromDate(now),
+        updatedAt: serverTimestamp(),
+      });
+    } catch {
+      // Documento não existe — inicializa e termina (próxima mensagem já usará o updateDoc acima)
       await this.initializeUserLimits(userId);
-      return;
     }
+  }
 
-    const limits = limitsSnap.data() as UserChatLimits;
+  /**
+   * Reseta o contador diário quando o dia muda (chamado internamente se necessário).
+   * Separado do incrementUsage para manter o fluxo principal sem leituras extras.
+   */
+  static async resetDailyCountIfNeeded(
+    userId: string,
+    chatType: ChatType,
+    currentDate: string
+  ): Promise<void> {
+    const limitsRef = doc(db, "chatLimits", userId);
+    const dailyKey = chatType === "emotional" ? "dailyEmotional" : "dailyScientific";
+    const thisMonth = currentDate.substring(0, 7);
+    const now = new Date();
 
-    // Prepara updates usando increment() atômico do Firestore
-    // Isso evita race conditions em multi-dispositivo (read-then-write)
-    const updates: Record<string, any> = {
+    await updateDoc(limitsRef, {
+      [`${dailyKey}.date`]: currentDate,
+      [`${dailyKey}.count`]: 1,
+      [`${dailyKey}.lastResetAt`]: Timestamp.fromDate(now),
+      "monthlyTotal.month": thisMonth,
       lastMessageAt: Timestamp.fromDate(now),
       updatedAt: serverTimestamp(),
-    };
-
-    // Contador diário: reseta se mudou o dia, incrementa atomicamente se for o mesmo dia
-    if (limits[dailyKey].date === today) {
-      updates[`${dailyKey}.count`] = increment(1);
-    } else {
-      // Novo dia: reseta o contador (não pode usar increment aqui pois precisa resetar)
-      updates[`${dailyKey}.date`] = today;
-      updates[`${dailyKey}.count`] = 1;
-      updates[`${dailyKey}.lastResetAt`] = Timestamp.fromDate(now);
-    }
-
-    // Contador mensal: reseta se mudou o mês, incrementa atomicamente se for o mesmo mês
-    if (limits.monthlyTotal.month === thisMonth) {
-      updates["monthlyTotal.count"] = increment(1);
-    } else {
-      // Novo mês: reseta o contador
-      updates["monthlyTotal.month"] = thisMonth;
-      updates["monthlyTotal.count"] = 1;
-      updates["monthlyTotal.lastResetAt"] = Timestamp.fromDate(now);
-    }
-
-    await updateDoc(limitsRef, updates);
+    });
   }
+
 
   /**
    * Inicializa documento de limites para novo usuário

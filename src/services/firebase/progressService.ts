@@ -76,78 +76,38 @@ export async function touchCourseAccess(
 }
 
 /**
- * Marca uma aula como concluída e atualiza o progresso do usuário no curso
+ * Marca uma aula como concluída e atualiza o progresso do usuário no curso.
+ * Usa setDoc com merge para criar ou atualizar o documento atomicamente,
+ * eliminando a necessidade de leitura prévia (read-then-write).
  */
 export async function markLessonAsCompleted(
   courseId: string,
   lessonId: string,
   userId?: string
 ): Promise<void> {
-  console.log("🔵 [markLessonAsCompleted] INÍCIO", { courseId, lessonId, userId });
-
   const currentUserId = userId || auth.currentUser?.uid;
 
   if (!currentUserId) {
-    console.error("❌ [markLessonAsCompleted] Usuário não autenticado");
     throw new Error("Usuário não autenticado");
   }
 
-  console.log("✅ [markLessonAsCompleted] UserId:", currentUserId);
-
   const progressRef = doc(db, `users/${currentUserId}/courseProgress/${courseId}`);
-  console.log(
-    "📍 [markLessonAsCompleted] Path Firestore:",
-    `users/${currentUserId}/courseProgress/${courseId}`
-  );
 
-  const progressDoc = await getDoc(progressRef);
-  console.log("📄 [markLessonAsCompleted] Documento existe?", progressDoc.exists());
-
-  if (progressDoc.exists()) {
-    // Atualizar progresso existente
-    const currentProgress = progressDoc.data();
-    const completedLessons = currentProgress.completedLessons || [];
-    console.log("📝 [markLessonAsCompleted] Progresso atual:", { completedLessons });
-
-    // Adicionar aula se não estiver completa
-    if (!completedLessons.includes(lessonId)) {
-      const newCompletedCount = completedLessons.length + 1;
-
-      console.log("🔄 [markLessonAsCompleted] Atualizando progresso...", {
-        newCompletedCount,
-      });
-
-      await updateDoc(progressRef, {
-        completedLessons: arrayUnion(lessonId),
-        lastLessonId: lessonId,
-        lastAccessedAt: new Date(),
-      });
-
-      console.log("✅ [markLessonAsCompleted] Progresso atualizado com sucesso!");
-    } else {
-      console.log("⚠️ [markLessonAsCompleted] Aula já estava concluída");
-    }
-  } else {
-    // Criar novo documento de progresso
-    console.log("🆕 [markLessonAsCompleted] Criando novo documento de progresso...");
-
-    await setDoc(progressRef, {
+  // setDoc com merge cria o documento se não existir ou atualiza se já existir.
+  // arrayUnion garante que o lessonId não seja duplicado — operação atômica e idempotente.
+  await setDoc(
+    progressRef,
+    {
       userId: currentUserId,
       courseId,
-      completedLessons: [lessonId],
+      completedLessons: arrayUnion(lessonId),
       lastLessonId: lessonId,
-      exerciseResults: [],
-      certificateEligible: false,
-      certificateIssued: false,
-      startedAt: new Date(),
       lastAccessedAt: new Date(),
-    });
-
-    console.log("✅ [markLessonAsCompleted] Novo documento criado com sucesso!");
-  }
-
-  console.log("🎉 [markLessonAsCompleted] FIM - Sucesso!");
+    },
+    { merge: true }
+  );
 }
+
 
 /**
  * Salva resultado de exercício e atualiza progresso

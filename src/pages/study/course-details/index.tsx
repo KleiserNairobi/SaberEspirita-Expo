@@ -36,6 +36,7 @@ import { useCourseRating } from "@/hooks/queries/useCourseRating";
 import { useCourse } from "@/hooks/queries/useCourses";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
+import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
 
 import { createStyles } from "./styles";
 
@@ -57,16 +58,24 @@ export function CourseDetailsScreen() {
 
   const isEnrolled = !!progress; // Se tem objeto de progresso, está matriculado
 
-  const handleShare = async () => {
+  async function handleShare() {
     if (!course) return;
     try {
+      const shareMessage = [
+        `Confira a série espiritual "${course.title}" no Saber Espírita!`,
+        "",
+        "Baixe o app e comece a estudar agora mesmo:",
+        `🤖 Android: ${PLAY_STORE_URL}`,
+        `🍎 iOS: ${APP_STORE_URL}`
+      ].join("\n");
+
       await Share.share({
-        message: `Confira a série espiritual "${course.title}" no Saber Espírita!`,
+        message: shareMessage,
       });
     } catch (error) {
       console.error("Erro ao compartilhar:", error);
     }
-  };
+  }
 
   const imageSource =
     course && typeof course.imageUrl === "string" && course.imageUrl.trim().length > 0
@@ -81,7 +90,7 @@ export function CourseDetailsScreen() {
     null
   );
 
-  const handleOpenMethodology = () => {
+  function handleOpenMethodology() {
     setMessageConfig({
       type: "info",
       title: "Entenda nossa pedagogia",

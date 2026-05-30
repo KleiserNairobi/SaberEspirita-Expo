@@ -17,7 +17,7 @@ export function useDailyChallenge(enabled = true) {
     queryKey: ["dailyQuiz", today],
     queryFn: getDailyChallengeQuestions,
     staleTime: 1000 * 60 * 60 * 24, // Cache for 24h
-    gcTime: 1000 * 60 * 60 * 24,
+    gcTime: 1000 * 60 * 60 * 24,    // Manter em memória por 24h (mesmo ciclo do desafio)
     enabled,
   });
 }
