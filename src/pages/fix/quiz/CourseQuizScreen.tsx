@@ -1,10 +1,12 @@
 import React, { useRef, useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { ActivityIndicator, Text, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { StatusBar } from "expo-status-bar";
+import { BookOpen, Leaf, ArrowLeft } from "lucide-react-native";
 
 import { FixStackParamList } from "@/routers/types";
 import { QuizUI } from "@/components/QuizUI";
@@ -16,6 +18,8 @@ import { getQuizById, logQuizAttempt } from "@/services/firebase/quizService";
 import { saveExerciseResult } from "@/services/firebase/progressService";
 import { COURSE_PROGRESS_KEYS } from "@/hooks/queries/useCourseProgress";
 import { IQuizAnswer } from "@/types/quiz";
+import { Button } from "@/components/Button";
+import { ITheme } from "@/configs/theme/types";
 
 type CourseQuizRouteProp = RouteProp<FixStackParamList, "CourseQuiz">;
 type CourseQuizNavigationProp = NativeStackNavigationProp<FixStackParamList, "CourseQuiz">;
@@ -25,6 +29,7 @@ export function CourseQuizScreen() {
   const navigation = useNavigation<CourseQuizNavigationProp>();
   const queryClient = useQueryClient();
   const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const {
     categoryId,
@@ -175,18 +180,40 @@ export function CourseQuizScreen() {
   }
 
   if (!isLoading && !quiz) {
+    const errorColor = theme.colors.error || "#C94B4B";
+    const bgIconColor = errorColor + "15";
+
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <View style={styles.loadingContainer}>
-          <Text style={[styles.loadingText, { color: theme.colors.error || "#FF6B6B", marginBottom: 16 }]}>
-            Exercício não encontrado.
-          </Text>
-          <Text style={[styles.loadingText, { fontSize: 14, marginBottom: 24, color: theme.colors.textSecondary }]}>
-            Não foi possível carregar as questões deste exercício.
-          </Text>
-          <TouchableOpacity onPress={handleStop}>
-            <Text style={{ color: theme.colors.primary, fontWeight: "600" }}>← Voltar</Text>
-          </TouchableOpacity>
+        <StatusBar style={theme.isDark ? "light" : "dark"} />
+        <View style={styles.errorContainer}>
+          <View style={styles.card}>
+            <Leaf
+              size={140}
+              color={theme.colors.primary}
+              style={styles.bgLeaf}
+            />
+
+            <View style={[styles.iconWrapper, { backgroundColor: bgIconColor }]}>
+              <BookOpen size={36} color={errorColor} />
+            </View>
+
+            <Text style={styles.title}>
+              Exercício não encontrado
+            </Text>
+
+            <Text style={styles.description}>
+              Não foi possível carregar as questões deste exercício. Por favor, retorne à tela anterior e tente novamente.
+            </Text>
+
+            <Button
+              title="Voltar"
+              onPress={handleStop}
+              variant="primary"
+              fullWidth
+              icon={<ArrowLeft size={18} color="white" style={{ marginRight: 8 }} />}
+            />
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -222,8 +249,62 @@ export function CourseQuizScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  loadingText: { fontSize: 16, fontWeight: "500" },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    loadingText: {
+      ...theme.text("md", "medium", theme.colors.textSecondary),
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: theme.spacing.lg,
+    },
+    card: {
+      width: "100%",
+      maxWidth: 340,
+      backgroundColor: theme.colors.card,
+      borderRadius: theme.radius.lg,
+      padding: theme.spacing.xl,
+      alignItems: "center",
+      ...theme.shadows.md,
+      position: "relative",
+      overflow: "hidden",
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    iconWrapper: {
+      width: 72,
+      height: 72,
+      borderRadius: 36,
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: theme.spacing.lg,
+    },
+    title: {
+      ...theme.text("xl", "bold", theme.colors.text),
+      textAlign: "center",
+      marginBottom: theme.spacing.sm,
+    },
+    description: {
+      ...theme.text("sm", "regular", theme.colors.textSecondary),
+      textAlign: "center",
+      marginBottom: theme.spacing.xl,
+      lineHeight: 20,
+    },
+    bgLeaf: {
+      position: "absolute",
+      bottom: -30,
+      right: -30,
+      opacity: theme.isDark ? 0.03 : 0.06,
+      transform: [{ rotate: "45deg" }],
+    },
+  });

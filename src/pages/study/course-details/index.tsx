@@ -61,16 +61,28 @@ export function CourseDetailsScreen() {
   async function handleShare() {
     if (!course) return;
     try {
-      const shareMessage = [
-        `Confira a série espiritual "${course.title}" no Saber Espírita!`,
-        "",
-        "Baixe o app e comece a estudar agora mesmo:",
-        `🤖 Android: ${PLAY_STORE_URL}`,
-        `🍎 iOS: ${APP_STORE_URL}`
-      ].join("\n");
+      const parts = [`Confira a série "${course.title}" no Saber Espírita!`];
+
+      if (course.description) {
+        parts.push(`\nSobre a Série:\n${course.description}`);
+      }
+
+      if (course.learningObjectives && course.learningObjectives.length > 0) {
+        parts.push(
+          `\nObjetivos da Série:\n${course.learningObjectives.map((obj) => `✅ ${obj}`).join("\n")}`
+        );
+      }
+
+      if (typeof course.imageUrl === "string") {
+        parts.push(`\nImagem de Capa: ${course.imageUrl}`);
+      }
+
+      parts.push("\nBaixe o app e comece a estudar agora mesmo:");
+      parts.push(`🤖 Android: ${PLAY_STORE_URL}`);
+      parts.push(`🍎 iOS: ${APP_STORE_URL}`);
 
       await Share.share({
-        message: shareMessage,
+        message: parts.join("\n"),
       });
     } catch (error) {
       console.error("Erro ao compartilhar:", error);
@@ -104,7 +116,7 @@ export function CourseDetailsScreen() {
       },
     });
     bottomSheetRef.current?.present();
-  };
+  }
 
   const isLegacy = course?.status === "LEGACY" || course?.allowNewEnrollments === false;
 
@@ -246,7 +258,9 @@ export function CourseDetailsScreen() {
             {/* Nível */}
             <View style={styles.metadataItem}>
               <BarChart2 size={12} color={theme.colors.muted} />
-              <Text style={styles.metadataText}>{course.difficultyLevel || "Iniciante"}</Text>
+              <Text style={styles.metadataText}>
+                {course.difficultyLevel || "Iniciante"}
+              </Text>
             </View>
 
             {/* Média de Avaliação (se houver) */}
