@@ -2,9 +2,9 @@ import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetTextInput,
-  BottomSheetView,
+  BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useMemo, useState } from "react";
 import { Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -17,11 +17,11 @@ interface DeleteAccountBottomSheetProps {
 }
 
 const REASONS = [
-  "Conteúdo não condizente com a Doutrina Espírita",
-  "Achei os conteúdos (aulas, meditações ou orações) pouco relevantes",
-  "Não gostei da dinâmica dos quizzes e desafios",
   "Não utilizo mais o aplicativo",
   "Problemas técnicos ou travamentos constantes",
+  "Achei os conteúdos (aulas, meditações ou orações) pouco relevantes",
+  "Não gostei da dinâmica dos quizzes e desafios",
+  "Conteúdo não condizente com a Doutrina Espírita",
   "Outro motivo",
 ];
 
@@ -32,6 +32,8 @@ export const DeleteAccountBottomSheet = forwardRef<
   const { theme } = useAppTheme();
   const insets = useSafeAreaInsets();
   const styles = createStyles(theme);
+
+  const snapPoints = useMemo(() => ["100%"], []);
 
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [customReason, setCustomReason] = useState("");
@@ -84,15 +86,16 @@ export const DeleteAccountBottomSheet = forwardRef<
   return (
     <BottomSheetModal
       ref={ref}
-      enableDynamicSizing
+      snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
       backgroundStyle={{ backgroundColor: theme.colors.card }}
       handleIndicatorStyle={{ backgroundColor: theme.colors.border }}
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
     >
-      <BottomSheetView
-        style={[styles.container, { paddingBottom: Math.max(insets.bottom, 24) }]}
+      <BottomSheetScrollView
+        contentContainerStyle={[styles.container, { paddingBottom: Math.max(insets.bottom, 24) }]}
+        keyboardShouldPersistTaps="handled"
       >
         <View>
           <Text style={styles.title}>Excluir Conta</Text>
@@ -161,7 +164,7 @@ export const DeleteAccountBottomSheet = forwardRef<
             fullWidth
           />
         </View>
-      </BottomSheetView>
+      </BottomSheetScrollView>
     </BottomSheetModal>
   );
 });
