@@ -8,22 +8,25 @@
     "newArchEnabled": true,
     "userInterfaceStyle": "automatic",
     "icon": "./assets/images/icon.png",
-
     "ios": {
       "buildNumber": "50",
       "supportsTablet": false,
       "bundleIdentifier": "app.saberespirita",
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification", "audio"],
+        "UIBackgroundModes": [
+          "remote-notification",
+          "audio"
+        ],
         "NSLocationWhenInUseUsageDescription": "Permita sua localização em uso para receber notificações personalizadas sobre o Saber Espírita."
       },
       "entitlements": {
         "aps-environment": "production",
-        "com.apple.security.application-groups": ["group.app.saberespirita.onesignal"]
+        "com.apple.security.application-groups": [
+          "group.app.saberespirita.onesignal"
+        ]
       },
       "googleServicesFile": "./dev/configs/GoogleService-Info.plist"
     },
-
     "android": {
       "versionCode": 50,
       "edgeToEdgeEnabled": true,
@@ -49,7 +52,6 @@
         "backgroundColor": "#ffffff"
       }
     },
-
     "plugins": [
       [
         "expo-splash-screen",
@@ -92,7 +94,8 @@
       "./dev/plugins/withModularHeaders.js",
       "expo-font",
       "@react-native-google-signin/google-signin",
-      "expo-apple-authentication"
+      "expo-apple-authentication",
+      "expo-secure-store"
     ]
   }
 }
