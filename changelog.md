@@ -11,6 +11,10 @@ Este documento registra todas as alterações relevantes do projeto a partir da 
 - **Cache Offline (Bypass Protection)**: Mecanismo de persistência local (MMKV) que mantém o bloqueio do aparelho ativo instantaneamente mesmo sem conexão de rede.
 - **Tela de Acesso Suspenso**: Nova interface para dispositivos bloqueados, com suporte integrado a envio de e-mail e exibição de código de referência por meio do componente customizado `BottomSheetMessage`.
 
+### Alterado
+
+- **Termo de Uso**: Atualizado o Termo de Uso para incluir informações sobre bloqueio por dispositivo e penalidades por uso indevido.
+
 ## [2.0.16] - 2026-05-30
 
 ### Adicionado
