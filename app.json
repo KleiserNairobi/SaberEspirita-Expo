@@ -3,40 +3,26 @@
     "name": "Saber Espírita",
     "slug": "saber-espirita",
     "scheme": "saber-espirita",
-    "version": "2.0.16",
+    "version": "2.0.17",
     "orientation": "portrait",
-    "newArchEnabled": true,
     "userInterfaceStyle": "automatic",
     "icon": "./assets/images/icon.png",
     "ios": {
-      "buildNumber": "50",
+      "buildNumber": "51",
       "supportsTablet": false,
       "bundleIdentifier": "app.saberespirita",
       "infoPlist": {
-        "UIBackgroundModes": [
-          "remote-notification",
-          "audio"
-        ],
+        "UIBackgroundModes": ["remote-notification", "audio"],
         "NSLocationWhenInUseUsageDescription": "Permita sua localização em uso para receber notificações personalizadas sobre o Saber Espírita."
       },
       "entitlements": {
         "aps-environment": "production",
-        "com.apple.security.application-groups": [
-          "group.app.saberespirita.onesignal"
-        ]
+        "com.apple.security.application-groups": ["group.app.saberespirita.onesignal"]
       },
       "googleServicesFile": "./dev/configs/GoogleService-Info.plist"
     },
     "android": {
-      "versionCode": 50,
-      "edgeToEdgeEnabled": true,
-      "statusBar": {
-        "translucent": true,
-        "backgroundColor": "#00000000"
-      },
-      "navigationBar": {
-        "backgroundColor": "#00000000"
-      },
+      "versionCode": 51,
       "predictiveBackGestureEnabled": false,
       "package": "app.saberespirita",
       "softwareKeyboardLayoutMode": "pan",
