@@ -58,6 +58,7 @@ export const userService = {
     try {
       const userDocRef = doc(db, "users", currentUser.uid);
       const userDoc = await getDoc(userDocRef);
+      const { androidId, iosIdfv, secureDeviceId } = await getDeviceIdentifiers();
 
       // Se o documento raiz não existir, criamos o perfil básico e o score
       if (!userDoc.exists()) {
@@ -73,6 +74,11 @@ export const userService = {
           totalThisWeek: 0,
           totalThisMonth: 0,
           level: 1,
+          deviceIds: {
+            androidId,
+            iosIdfv,
+            secureDeviceId,
+          },
         };
 
         // Salvar em users_scores (para o ranking)
@@ -88,11 +94,27 @@ export const userService = {
         );
 
         console.log(
-          "UserService: Perfil e Scores criados para o usuário:",
+          "UserService: Perfil, Scores e DeviceIDs criados para a nova conta:",
           currentUser.uid
         );
       } else {
         const data = userDoc.data();
+
+        // Sempre atualizar os deviceIds e lastSeenAt no login para rastreabilidade
+        await setDoc(
+          userDocRef,
+          {
+            lastSeenAt: new Date(),
+            updatedAt: new Date(),
+            deviceIds: {
+              androidId,
+              iosIdfv,
+              secureDeviceId,
+            },
+          },
+          { merge: true }
+        );
+        console.log("UserService: DeviceIDs atualizados no login do usuário:", currentUser.uid);
 
         // Cenario 1: Firestore não tem o nome (ou é "Usuário"), mas o Auth TEM um nome real (ex: vindo do Google/Apple)
         // Solução: Atualiza o Firestore com o nome real
