@@ -3,6 +3,7 @@ import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firest
 
 import { auth, db } from "@/configs/firebase/firebase";
 import { useAuthStore } from "@/stores/authStore";
+import { getDeviceIdentifiers } from "@/utils/device";
 
 export const userService = {
   /**
@@ -12,16 +13,23 @@ export const userService = {
   async updateLastSeen(uid: string) {
     if (!uid) return;
     try {
+      const { androidId, iosIdfv, secureDeviceId } = await getDeviceIdentifiers();
+      
       const userRef = doc(db, "users", uid);
       await updateDoc(userRef, {
         lastSeenAt: serverTimestamp(),
         notified6Months: false,
         notified11Months: false,
+        deviceIds: {
+          androidId,
+          iosIdfv,
+          secureDeviceId,
+        },
       });
-      console.log("UserService: Timestamp de atividade atualizado.");
+      console.log("UserService: Timestamp de atividade e DeviceIDs atualizados.");
     } catch (error) {
       // Falha silenciosa para não atrapalhar o fluxo do usuário
-      console.warn("UserService: Erro ao atualizar timestamp de atividade:", error);
+      console.warn("UserService: Erro ao atualizar timestamp de atividade e DeviceIDs:", error);
     }
   },
   async setCourseRemindersPref(uid: string, enabled: boolean) {
