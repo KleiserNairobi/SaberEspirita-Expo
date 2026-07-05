@@ -259,4 +259,29 @@ export const createStyles = (theme: ITheme) =>
     secondaryButtonText: {
       ...theme.text("md", "bold", theme.colors.primary),
     },
+
+    // ABAS (TABS)
+    tabContainer: {
+      flexDirection: "row",
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+      marginBottom: theme.spacing.md,
+      marginTop: theme.spacing.xs,
+      gap: theme.spacing.lg,
+    },
+    tabButton: {
+      paddingVertical: theme.spacing.sm,
+      borderBottomWidth: 2,
+      borderBottomColor: "transparent",
+    },
+    activeTabButton: {
+      borderBottomColor: theme.colors.primary,
+    },
+    tabText: {
+      ...theme.text("md", "medium", theme.colors.textSecondary),
+    },
+    activeTabText: {
+      color: theme.colors.primary,
+      fontWeight: "bold",
+    },
   });

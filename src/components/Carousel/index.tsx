@@ -87,7 +87,7 @@ const CarouselItem = React.memo(function CarouselItem({
 
   const isComingSoon = item.status === "COMING_SOON";
 
-  const hasStarted = progress && progress.completedLessons.length > 0;
+  const hasStarted = !!progress;
   const completionPercent =
     item.lessonCount > 0
       ? ((progress?.completedLessons.length || 0) / item.lessonCount) * 100
