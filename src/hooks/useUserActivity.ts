@@ -7,6 +7,9 @@ import { userService } from "@/services/firebase/userService";
 import { useAuthStore } from "@/stores/authStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 
+// Controla a primeira execução do hook por inicialização de sessão em memória
+let isFirstExecutionInSession = true;
+
 /**
  * Hook para monitorar a atividade do usuário e atualizar o lastSeenAt no Firestore.
  * Utiliza um sistema de throttle (30 minutos) para economizar recursos do Firebase.
@@ -28,8 +31,10 @@ export function useUserActivity() {
     await StatsService.logDailyVisit(false);
     const now = Date.now();
 
-    // Se nunca atualizou OU se a última atualização foi há mais de 30 minutos
-    if (!lastSeenUpdate || now - lastSeenUpdate > THROTTLE_TIME) {
+    // Se for a primeira inicialização do app na sessão atual, ignoramos o throttle de 30 minutos
+    // para garantir o registro imediato do dispositivo (deviceIds) no Firestore.
+    if (isFirstExecutionInSession || !lastSeenUpdate || now - lastSeenUpdate > THROTTLE_TIME) {
+      isFirstExecutionInSession = false;
       try {
         await userService.updateLastSeen(user.uid);
         userService.setCourseRemindersPref(

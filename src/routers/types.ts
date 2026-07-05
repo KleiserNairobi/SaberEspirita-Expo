@@ -4,6 +4,7 @@ export type RootStackParamList = {
   Auth: undefined;
   Welcome: undefined;
   App: undefined;
+  Banned: undefined;
 };
 
 export type AuthStackParamList = {

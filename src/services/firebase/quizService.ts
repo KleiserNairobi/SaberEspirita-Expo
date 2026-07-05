@@ -1,32 +1,33 @@
-import { db } from "@/configs/firebase/firebase";
 import {
+  Timestamp,
   addDoc,
+  arrayUnion,
   collection,
-  getDocs,
+  deleteDoc,
   doc,
   getDoc,
+  getDocs,
   query,
   serverTimestamp,
-  where,
   setDoc,
   updateDoc,
-  arrayUnion,
-  deleteDoc,
-  Timestamp,
+  where,
 } from "firebase/firestore";
+
+import { db } from "@/configs/firebase/firebase";
 import {
   ICategory,
-  ISubcategory,
+  ICategoryProgress,
+  IDailyChallengeStats,
   IQuiz,
   IQuizHistory,
-  IDailyChallengeStats,
+  ISubcategory,
   IUserDetailedStats,
-  ICategoryProgress
 } from "@/types/quiz";
 import { load, save } from "@/utils/Storage";
 
-// TTL de 24h em milissegundos para cache de dados estáticos do quiz
-const QUIZ_CACHE_TTL_MS = 1000 * 60 * 60 * 24;
+// TTL de 24h em produção ou 5 segundos em desenvolvimento para cache de dados do quiz
+const QUIZ_CACHE_TTL_MS = __DEV__ ? 1000 * 5 : 1000 * 60 * 60 * 24;
 
 const CACHE_KEYS = {
   categories: "@quiz_cache:categories",
@@ -66,24 +67,25 @@ function getUTCYearMonth(date: Date = new Date()): string {
   return `${y}-${m}`;
 }
 
-export async function logQuizAttempt(params:
-  | {
-      userId: string;
-      quizType: "general";
-      quizId: string;
-      quizTitle: string;
-    }
-  | {
-      userId: string;
-      quizType: "lesson";
-      quizId: string;
-      quizTitle: string;
-      courseId: string;
-      lessonId: string;
-      lessonTitle: string;
-      score?: number;
-      passed?: boolean;
-    }
+export async function logQuizAttempt(
+  params:
+    | {
+        userId: string;
+        quizType: "general";
+        quizId: string;
+        quizTitle: string;
+      }
+    | {
+        userId: string;
+        quizType: "lesson";
+        quizId: string;
+        quizTitle: string;
+        courseId: string;
+        lessonId: string;
+        lessonTitle: string;
+        score?: number;
+        passed?: boolean;
+      }
 ): Promise<void> {
   try {
     const logsRef = collection(db, "quiz_logs");
@@ -581,7 +583,7 @@ export async function getUserStreak(userId: string): Promise<number> {
     const now = new Date();
     const today = now
       .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
-      .split(" " )[0];
+      .split(" ")[0];
     const yesterdayDate = new Date(now);
     yesterdayDate.setDate(now.getDate() - 1);
     const yesterday = yesterdayDate
@@ -596,7 +598,7 @@ export async function getUserStreak(userId: string): Promise<number> {
     // Contar dias consecutivos usando as strings
     // Já temos as datas únicas e ordenadas descrescentemente (uniqueDates)
     // A primeira data (uniqueDates[0]) é a âncora (hoje ou ontem)
-    
+
     streak = 1;
     let lastDate = new Date(uniqueDates[0] + "T12:00:00"); // Perto do meio-dia para evitar problemas de fuso ao subtrair dias
 
@@ -660,8 +662,9 @@ export async function getDailyChallengeStatus(userId: string): Promise<boolean> 
   }
 }
 
-
-export async function getDailyChallengeStats(userId: string): Promise<IDailyChallengeStats> {
+export async function getDailyChallengeStats(
+  userId: string
+): Promise<IDailyChallengeStats> {
   const defaultStats: IDailyChallengeStats = {
     currentStreak: 0,
     longestStreak: 0,
@@ -735,7 +738,7 @@ export async function getDailyChallengeStats(userId: string): Promise<IDailyChal
 /**
  * Busca e consolida estatísticas detalhadas de desempenho do usuário.
  * Agrega dados do histórico de quizzes, progresso de subcategorias e categorias.
- * 
+ *
  * @param userId ID do usuário no Firebase
  * @returns Objeto com estatísticas consolidadas
  */
@@ -784,14 +787,18 @@ export async function getUserDetailedStats(userId: string): Promise<IUserDetaile
       maxPercentage = Math.max(maxPercentage, h.percentage || 0);
 
       if (h.completedAt) {
-        const date = h.completedAt instanceof Timestamp ? h.completedAt.toDate() : new Date(h.completedAt);
+        const date =
+          h.completedAt instanceof Timestamp
+            ? h.completedAt.toDate()
+            : new Date(h.completedAt);
         // Usar formato ISO local para garantir contagem correta por dia sem problemas de fuso
         const dateStr = date.toLocaleDateString("sv-SE"); // YYYY-MM-DD
         uniqueDates.add(dateStr);
       }
     });
 
-    const accuracyRate = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+    const accuracyRate =
+      totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
 
     // 2. Calcular Progresso por Categoria
     // O progresso é baseado na quantidade de subcategorias concluídas vs total da categoria
@@ -799,7 +806,9 @@ export async function getUserDetailedStats(userId: string): Promise<IUserDetaile
       const completedCount = progress[cat.id]?.length || 0;
       const totalSubcats = cat.subcategoryCount || 0;
       const completionPercentage =
-        totalSubcats > 0 ? Math.min(100, Math.round((completedCount / totalSubcats) * 100)) : 0;
+        totalSubcats > 0
+          ? Math.min(100, Math.round((completedCount / totalSubcats) * 100))
+          : 0;
 
       // Filtra questões respondidas especificamente para esta categoria
       const catQuestions = history
