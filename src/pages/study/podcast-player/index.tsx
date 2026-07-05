@@ -1,18 +1,21 @@
-import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Share, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AppStackParamList } from "@/routers/types";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ArrowLeft, Pause, Play, SkipBack, SkipForward } from "lucide-react-native";
+import { Clock, Headphones, Pause, Play, SkipBack, SkipForward } from "lucide-react-native";
 import TrackPlayer, {
   RepeatMode,
   State,
   usePlaybackState,
   useProgress,
 } from "react-native-track-player";
+
+import { HeroHeader } from "@/components/HeroHeader";
+import { ContentSheet } from "@/components/ContentSheet";
+import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
 
 import { usePodcast } from "@/hooks/queries/usePodcasts";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -200,6 +203,25 @@ export default function PodcastPlayerScreen() {
     navigation.goBack();
   }
 
+  async function handleShare() {
+    if (!podcast) return;
+    try {
+      const parts = [`Confira o episódio de podcast "${podcast.title}" do Saber Espírita!`];
+      if (podcast.description) {
+        parts.push(`\nSobre o Episódio:\n${podcast.description}`);
+      }
+      parts.push("\nBaixe o app e ouça agora mesmo:");
+      parts.push(`🤖 Android: ${PLAY_STORE_URL}`);
+      parts.push(`🍎 iOS: ${APP_STORE_URL}`);
+
+      await Share.share({
+        message: parts.join("\n"),
+      });
+    } catch (error) {
+      console.error("Erro ao compartilhar podcast:", error);
+    }
+  }
+
   const togglePlayPause = async () => {
     if (isPlaying) {
       await TrackPlayer.pause();
@@ -242,98 +264,104 @@ export default function PodcastPlayerScreen() {
     );
   }
 
+  const effectiveDuration = duration > 0 ? duration : lastKnownDuration.current;
+
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top"]}>
-      {/* Header Padronizado */}
-      <View style={styles.navHeader}>
-        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-          <ArrowLeft size={20} color={theme.colors.primary} />
-        </TouchableOpacity>
-        <Text style={styles.navTitle}>Podcast</Text>
-      </View>
+    <View style={styles.safeArea}>
+      <HeroHeader
+        imageUrl={podcast.imageUrl}
+        title={podcast.title}
+        subtitle={podcast.author}
+        onBack={handleGoBack}
+        onShare={handleShare}
+      />
 
-      <View style={styles.content}>
-        {/* Cover Art do Podcast */}
-        <View style={styles.coverArtContainer}>
-          <Image
-            source={{ uri: podcast.imageUrl }}
-            style={styles.coverArt}
-            contentFit="cover"
-            transition={500}
-            cachePolicy="memory-disk"
-            placeholder={require("@/assets/images/placeholder.png")}
-            placeholderContentFit="cover"
-          />
-        </View>
+      <ContentSheet contentContainerStyle={styles.contentSheetScroll}>
+        {/* Descrição */}
+        <View style={styles.descriptionSection}>
+          <Text style={styles.sectionTitle}>Sobre este Episódio</Text>
 
-        {/* Título e Autor */}
-        <View style={styles.infoContainer}>
-          <Text style={styles.title} numberOfLines={2}>
-            {podcast.title}
+          {/* Metadados leves */}
+          <View style={styles.metadataRow}>
+            <View style={styles.metadataItem}>
+              <Clock size={12} color={theme.colors.muted} />
+              <Text style={styles.metadataText}>{formatTime(effectiveDuration)}</Text>
+            </View>
+            <Text style={styles.metadataSeparator}>•</Text>
+            <View style={styles.metadataItem}>
+              <Headphones size={12} color={theme.colors.muted} />
+              <Text style={styles.metadataText}>Podcast</Text>
+            </View>
+          </View>
+
+          <Text style={styles.descriptionText}>
+            {podcast.description || "Sem descrição disponível."}
           </Text>
-          <Text style={styles.author}>{podcast.author}</Text>
         </View>
 
-        {/* Barra de Progresso Real (Track Player) */}
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBarBackground}>
-            <View
-              style={[
-                styles.progressBarFill,
-                {
-                  width: `${duration > 0 ? (position / duration) * 100 : 0}%`,
-                },
-              ]}
-            />
-          </View>
-          <View style={styles.timeRow}>
-            <Text style={styles.timeText}>{formatTime(position)}</Text>
-            <Text style={styles.timeText}>{formatTime(duration)}</Text>
-          </View>
-        </View>
-
-        {/* Controles de Áudio */}
-        <View style={styles.controlsContainer}>
-          <TouchableOpacity
-            style={styles.secondaryControl}
-            onPress={handleSeekBackward}
-            activeOpacity={0.7}
-          >
-            <SkipBack size={24} color={theme.colors.textSecondary} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.playButton}
-            onPress={togglePlayPause}
-            activeOpacity={0.8}
-            disabled={isLoading}
-          >
-            {isPlaying ? (
-              <Pause
-                size={26}
-                color={theme.colors.background}
-                fill={theme.colors.background}
+        {/* Player de Áudio */}
+        <View style={styles.playerContainer}>
+          {/* Barra de Progresso Real */}
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBarBackground}>
+              <View
+                style={[
+                  styles.progressBarFill,
+                  {
+                    width: `${duration > 0 ? (position / duration) * 100 : 0}%`,
+                  },
+                ]}
               />
-            ) : !isReady ? (
-              <ActivityIndicator size="small" color={theme.colors.background} />
-            ) : (
-              <Play
-                size={26}
-                color={theme.colors.background}
-                fill={theme.colors.background}
-              />
-            )}
-          </TouchableOpacity>
+            </View>
+            <View style={styles.timeRow}>
+              <Text style={styles.timeText}>{formatTime(position)}</Text>
+              <Text style={styles.timeText}>{formatTime(effectiveDuration)}</Text>
+            </View>
+          </View>
 
-          <TouchableOpacity
-            style={styles.secondaryControl}
-            onPress={handleSeekForward}
-            activeOpacity={0.7}
-          >
-            <SkipForward size={24} color={theme.colors.textSecondary} />
-          </TouchableOpacity>
+          {/* Controles de Áudio */}
+          <View style={styles.controlsContainer}>
+            <TouchableOpacity
+              style={styles.secondaryControl}
+              onPress={handleSeekBackward}
+              activeOpacity={0.7}
+            >
+              <SkipBack size={24} color={theme.colors.textSecondary} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.playButton}
+              onPress={togglePlayPause}
+              activeOpacity={0.8}
+              disabled={isLoading}
+            >
+              {isPlaying ? (
+                <Pause
+                  size={26}
+                  color={theme.colors.background}
+                  fill={theme.colors.background}
+                />
+              ) : !isReady ? (
+                <ActivityIndicator size="small" color={theme.colors.background} />
+              ) : (
+                <Play
+                  size={26}
+                  color={theme.colors.background}
+                  fill={theme.colors.background}
+                />
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.secondaryControl}
+              onPress={handleSeekForward}
+              activeOpacity={0.7}
+            >
+              <SkipForward size={24} color={theme.colors.textSecondary} />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </ContentSheet>
+    </View>
   );
 }

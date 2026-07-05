@@ -13,10 +13,8 @@ import {
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Image } from "expo-image";
 import {
   AlertCircle,
-  ArrowLeft,
   Award,
   BarChart2,
   BookOpen,
@@ -24,13 +22,14 @@ import {
   Clock,
   FileText,
   MessageCircle,
-  Share2,
   Star,
 } from "lucide-react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { HeroHeader } from "@/components/HeroHeader";
+import { ContentSheet } from "@/components/ContentSheet";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
 import { useCourseRating } from "@/hooks/queries/useCourseRating";
 import { useCourse } from "@/hooks/queries/useCourses";
@@ -89,12 +88,7 @@ export function CourseDetailsScreen() {
     }
   }
 
-  const imageSource =
-    course && typeof course.imageUrl === "string" && course.imageUrl.trim().length > 0
-      ? { uri: course.imageUrl }
-      : course && typeof course.imageUrl === "number"
-        ? course.imageUrl
-        : require("@/assets/images/placeholder.png");
+
 
   // Modal de Metodologia
   const bottomSheetRef = useRef<BottomSheetModal>(null);
@@ -204,39 +198,14 @@ export function CourseDetailsScreen() {
 
   return (
     <View style={styles.container}>
-      {/* IMAGEM DE CAPA NO TOPO */}
-      <Image
-        source={imageSource}
-        style={styles.coverImage}
-        contentFit="cover"
-        transition={200}
+      <HeroHeader
+        imageUrl={course.imageUrl}
+        title={course.title}
+        onBack={handleGoBack}
+        onShare={handleShare}
       />
-      <View style={styles.imageOverlay} />
 
-      {/* CABEÇALHO FLUTUANTE */}
-      <View style={[styles.floatingHeader, { top: insets.top + 10 }]}>
-        <TouchableOpacity style={styles.floatingBackButton} onPress={handleGoBack}>
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.floatingShareButton} onPress={handleShare}>
-          <Share2 size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
-
-      {/* TÍTULO SOBRE A IMAGEM DE CAPA (FIXOS) */}
-      <View style={styles.staticTitleContainer}>
-        <View style={styles.imageTitleSection}>
-          <Text style={styles.imageCourseTitle}>{course.title}</Text>
-        </View>
-      </View>
-
-      {/* CONTAINER DO CONTEÚDO PRINCIPAL (FIXO) */}
-      <View style={styles.mainContentContainer}>
-        <ScrollView
-          style={styles.cardScroll}
-          contentContainerStyle={styles.cardScrollContent}
-          showsVerticalScrollIndicator={false}
-        >
+      <ContentSheet>
           {/* Metadados da Série */}
           <View style={styles.metadataRow}>
             {/* Aulas */}
@@ -414,8 +383,7 @@ export function CourseDetailsScreen() {
               </View>
             </View>
           )}
-        </ScrollView>
-      </View>
+      </ContentSheet>
 
       {/* FIXED FOOTER */}
       <View

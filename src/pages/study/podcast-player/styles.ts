@@ -1,7 +1,5 @@
 import { ITheme } from "@/configs/theme/types";
-import { Dimensions, StyleSheet } from "react-native";
-
-const { width } = Dimensions.get("window");
+import { StyleSheet } from "react-native";
 
 export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
@@ -14,70 +12,51 @@ export const createStyles = (theme: ITheme) =>
       alignItems: "center",
       justifyContent: "center",
     },
-    navHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingHorizontal: 16,
-      paddingVertical: 16,
-      zIndex: 10,
+    contentSheetScroll: {
+      paddingBottom: 60,
     },
-    backButton: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: theme.colors.accent,
-      marginRight: 16,
+    descriptionSection: {
+      marginBottom: theme.spacing.lg,
     },
-    navTitle: {
+    sectionTitle: {
       ...theme.text("lg", "semibold"),
       color: theme.colors.text,
+      marginBottom: theme.spacing.xs,
     },
-    content: {
-      flex: 1,
+    descriptionText: {
+      ...theme.text("md", "regular", theme.colors.textSecondary),
+      textAlign: "justify",
+      lineHeight: 24,
+    },
+    metadataRow: {
+      flexDirection: "row",
       alignItems: "center",
-      paddingHorizontal: 30,
+      justifyContent: "flex-start",
+      flexWrap: "wrap",
+      gap: 6,
+      marginBottom: theme.spacing.md,
     },
-    coverArtContainer: {
-      width: width * 0.6,
-      height: width * 0.6,
-      borderRadius: theme.radius.xl,
-      overflow: "hidden",
-      marginBottom: 40,
-      shadowColor: theme.colors.primary,
-      shadowOffset: { width: 0, height: 10 },
-      shadowOpacity: 0.2,
-      shadowRadius: 20,
-      elevation: 10,
-    },
-    coverArt: {
-      width: "100%",
-      height: "100%",
-      backgroundColor: theme.colors.border,
-    },
-    infoContainer: {
+    metadataItem: {
+      flexDirection: "row",
       alignItems: "center",
-      marginBottom: 40,
+      gap: 4,
+    },
+    metadataText: {
+      ...theme.text("xs", "regular", theme.colors.muted),
+      fontSize: 11,
+    },
+    metadataSeparator: {
+      ...theme.text("xs", "regular", theme.colors.muted),
+      fontSize: 11,
+    },
+    playerContainer: {
+      marginTop: theme.spacing.md,
       width: "100%",
-    },
-    title: {
-      ...theme.text("xl", "semibold"),
-      color: theme.colors.text,
-      textAlign: "center",
-      marginBottom: 8,
-    },
-    author: {
-      ...theme.text("md", "regular"),
-      color: theme.colors.primary,
-      textAlign: "center",
-      fontFamily: "Oswald_400Regular",
-      letterSpacing: 1,
     },
     progressContainer: {
       width: "100%",
-      marginTop: 30,
-      marginBottom: 20,
+      marginTop: theme.spacing.md,
+      marginBottom: theme.spacing.md,
     },
     progressBarBackground: {
       height: 6,
@@ -105,6 +84,7 @@ export const createStyles = (theme: ITheme) =>
       justifyContent: "space-between",
       width: "100%",
       paddingHorizontal: 20,
+      marginTop: theme.spacing.sm,
     },
     playButton: {
       width: 64,
