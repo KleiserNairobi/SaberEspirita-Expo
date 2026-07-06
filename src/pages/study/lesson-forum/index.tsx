@@ -120,7 +120,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const reactionSheetRef = useRef<BottomSheetModal>(null);
-  const reactionSnapPoints = useMemo(() => ["40%"], []);
+  const reactionSnapPoints = useMemo(() => ["48%"], []);
   const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
     null
   );
@@ -430,37 +430,35 @@ export function LessonForumScreen({ route, navigation }: Props) {
       if (!reactionTarget) return;
       if (!auth.currentUser?.uid) return;
 
+      const target = reactionTarget;
+
+      // Fecha o picker e limpa o target imediatamente para resposta instantânea na UI
+      reactionSheetRef.current?.dismiss();
+      setReactionTarget(null);
+
       try {
-        const validation = await ensureCanReact(reactionTarget);
+        const validation = await ensureCanReact(target);
         if (!validation.ok) {
           throw new Error(validation.message);
         }
-        if (reactionTarget.myReaction === type) {
-          await removeReaction({ lessonId, commentId: reactionTarget.id });
+        if (target.myReaction === type) {
+          await removeReaction({ lessonId, commentId: target.id });
         } else {
-          await setReaction({ lessonId, commentId: reactionTarget.id, type });
+          await setReaction({ lessonId, commentId: target.id, type });
         }
 
-        reactionSheetRef.current?.dismiss();
-        setReactionTarget(null);
-
-        if (reactionRefreshTimeoutRef.current) {
-          clearTimeout(reactionRefreshTimeoutRef.current);
-        }
-        reactionRefreshTimeoutRef.current = setTimeout(() => {
-          void refetch();
-        }, 1200);
+        // Removido o setTimeout com refetch() forçado para evitar concorrência com o cache otimista
       } catch (e) {
         const code = String((e as any)?.code ?? "");
         const baseMessage = String((e as any)?.message ?? "").trim();
         const message = code.includes("permission-denied")
           ? __DEV__
-            ? `Sem permissão para salvar sua reação.\n\nuid: ${auth.currentUser?.uid ?? "-"}\nprojectId: ${String(auth.app.options.projectId ?? "-")}\nlessonId: ${lessonId}\ncommentId: ${reactionTarget.id}`
+            ? `Sem permissão para salvar sua reação.\n\nuid: ${auth.currentUser?.uid ?? "-"}\nprojectId: ${String(auth.app.options.projectId ?? "-")}\nlessonId: ${lessonId}\ncommentId: ${target.id}`
             : "Sem permissão para salvar sua reação. Reabra a aula para validar sua matrícula ou faça login novamente."
           : baseMessage.length > 0
             ? baseMessage
             : "Não foi possível salvar sua reação agora. Tente novamente.";
-        reactionSheetRef.current?.dismiss();
+
         setMessageConfig({
           type: "error",
           title: "Reações",
@@ -473,7 +471,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
         setTimeout(() => bottomSheetRef.current?.present(), 100);
       }
     },
-    [ensureCanReact, lessonId, reactionTarget, refetch, removeReaction, setReaction]
+    [ensureCanReact, lessonId, reactionTarget, removeReaction, setReaction]
   );
 
   const handleConfirmDelete = useCallback(

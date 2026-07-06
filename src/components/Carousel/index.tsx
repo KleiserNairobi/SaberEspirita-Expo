@@ -1,10 +1,5 @@
-import { useCourseRating } from "@/hooks/queries/useCourseRating";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import type { ICourse, IUserCourseProgress } from "@/types/course";
-import { useIsFocused } from "@react-navigation/native";
-import { Image } from "expo-image";
-import { CheckCircle2, Clock, Play, Plus } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
+
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -12,15 +7,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { useIsFocused } from "@react-navigation/native";
+import { Image } from "expo-image";
+import { CheckCircle2, Clock, Play, Plus } from "lucide-react-native";
 import Animated, {
   Extrapolation,
-  interpolate,
   SharedValue,
+  interpolate,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
-import { createStyles, ITEM_SIZE, SPACER_ITEM_SIZE } from "./styles";
+
+import { useCourseRating } from "@/hooks/queries/useCourseRating";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import type { ICourse, IUserCourseProgress } from "@/types/course";
+
+import { ITEM_SIZE, SPACER_ITEM_SIZE, createStyles } from "./styles";
 
 // Fator de multiplicação para simular loop infinito
 // Reduzido para 10 para evitar avisos de VirtualizedList e economizar memória.
@@ -83,7 +87,7 @@ const CarouselItem = React.memo(function CarouselItem({
       ? { uri: item.imageUrl }
       : typeof item.imageUrl === "number"
         ? item.imageUrl
-        : require("@/assets/images/placeholder.png");
+        : require("@/assets/images/placeholder.jpeg");
 
   const isComingSoon = item.status === "COMING_SOON";
 

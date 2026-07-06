@@ -1,9 +1,13 @@
 import React from "react";
+
 import { Text, TouchableOpacity, View, ViewStyle } from "react-native";
+
 import { Image } from "expo-image";
 import { ArrowLeft, Share2 } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { useAppTheme } from "@/hooks/useAppTheme";
+
 import { createStyles } from "./styles";
 
 interface HeroHeaderProps {
@@ -32,13 +36,16 @@ export function HeroHeader({
       ? { uri: imageUrl }
       : typeof imageUrl === "number"
         ? imageUrl
-        : require("@/assets/images/placeholder.png");
+        : require("@/assets/images/placeholder.jpeg");
 
   return (
     <View style={style}>
       {/* IMAGEM DE CAPA NO TOPO */}
       <Image
         source={imageSource}
+        placeholder={require("@/assets/images/placeholder.jpeg")}
+        placeholderContentFit="cover"
+        priority="high"
         style={styles.coverImage}
         contentFit="cover"
         transition={200}
@@ -47,11 +54,19 @@ export function HeroHeader({
 
       {/* CABEÇALHO FLUTUANTE */}
       <View style={[styles.floatingHeader, { top: insets.top + 10 }]}>
-        <TouchableOpacity style={styles.floatingBackButton} onPress={onBack} activeOpacity={0.7}>
+        <TouchableOpacity
+          style={styles.floatingBackButton}
+          onPress={onBack}
+          activeOpacity={0.7}
+        >
           <ArrowLeft size={24} color="#FFFFFF" />
         </TouchableOpacity>
         {onShare && (
-          <TouchableOpacity style={styles.floatingShareButton} onPress={onShare} activeOpacity={0.7}>
+          <TouchableOpacity
+            style={styles.floatingShareButton}
+            onPress={onShare}
+            activeOpacity={0.7}
+          >
             <Share2 size={24} color="#FFFFFF" />
           </TouchableOpacity>
         )}
