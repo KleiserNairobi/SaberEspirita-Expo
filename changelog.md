@@ -2,6 +2,28 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.18] - 2026-07-06
+
+### Adicionado
+
+- **Módulo de Podcasts**: Lançamento da funcionalidade de podcasts no aplicativo, trazendo uma nova aba para visualização de episódios e player de áudio dedicado (`podcast-player`).
+- **Integração com Firebase & Queries**: Criação do serviço `podcastService` integrado ao Firestore e hook `usePodcasts` para sincronização em tempo real de novos episódios.
+- **Estado Global de Áudio**: Implementação da store global `podcastPlayerStore` para controle fluido do player, permitindo navegar pelo app enquanto ouve.
+- **Componente ContentSheet**: Introdução de novo componente reutilizável para exibição elegante de metadados e conteúdos detalhados.
+
+### Alterado
+
+- **HeroHeader Compartilhado**: Refatoração completa e centralização do `HeroHeader` (utilizado nas telas de Detalhes de Curso, Meditação e Podcasts), com otimização no pré-carregamento e priorização de imagens para eliminar telas cinzas vazias.
+- **Unificação dos Players de Áudio**: Sincronização e refatoração arquitetural entre o player de meditações guiadas e o de podcasts para consistência visual e funcional.
+- **Tela de Detalhes de Curso**: Ajustes no layout de ementa, migrando o cabeçalho para o novo `HeroHeader` compartilhado.
+- **Atualização de Builds (v2.0.18 / Build 53)**: Incremento e sincronização das versões de release no `package.json`, `app.json`, `build.gradle` (Android) e arquivos do Xcode/OneSignal (iOS).
+
+### Corrigido
+
+- **Persistência de Device IDs**: Correção de fluxo crítico forçando o registro dos identificadores únicos de segurança do aparelho (`deviceIds`) na inicialização fria do aplicativo.
+- **Estabilidade do Carousel e Cards**: Ajustes de layout, dimensões e pisca-pisca na renderização dos cards de cursos, de áudio ambiente e no componente de carrossel.
+- **Fórum de Lições**: Correção de quebra de layout e melhorias de usabilidade no componente `LessonForum`.
+
 ## [2.0.17] - 2026-07-04
 
 ### Adicionado
