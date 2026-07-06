@@ -39,7 +39,7 @@ import {
   TreePalm,
   X,
 } from "lucide-react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AppBackground } from "@/components/AppBackground";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
@@ -88,6 +88,7 @@ function getLevelLabel(levelId: ForumComment["userCommunityLevel"]): string {
 
 export function LessonForumScreen({ route, navigation }: Props) {
   const { theme } = useAppTheme();
+  const insets = useSafeAreaInsets();
   const styles = createStyles(theme);
   const { user, isGuest } = useAuthStore();
   const uid = auth.currentUser?.uid || user?.uid || null;
@@ -120,7 +121,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const reactionSheetRef = useRef<BottomSheetModal>(null);
-  const reactionSnapPoints = useMemo(() => ["48%"], []);
+  const reactionSnapPoints = useMemo(() => ["50%"], []);
   const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
     null
   );
@@ -938,7 +939,12 @@ export function LessonForumScreen({ route, navigation }: Props) {
             handleIndicatorStyle={styles.handleIndicator}
             onDismiss={() => setReactionTarget(null)}
           >
-            <BottomSheetView style={styles.reactionSheetContent}>
+            <BottomSheetView
+              style={[
+                styles.reactionSheetContent,
+                { paddingBottom: Math.max(insets.bottom, theme.spacing.xl) },
+              ]}
+            >
               <View style={styles.reactionSheetHeader}>
                 <Text style={styles.reactionSheetTitle}>Reagir</Text>
                 <TouchableOpacity
