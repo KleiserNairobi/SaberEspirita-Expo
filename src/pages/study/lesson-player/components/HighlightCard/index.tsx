@@ -17,6 +17,7 @@ interface HighlightCardProps {
   fontSize?: number;
   glossaryTerms?: IGlossaryTerm[];
   onGlossaryTermPress?: (termId: string, matchedWord?: string) => void;
+  slideIndex: number;
 }
 
 export function HighlightCard({
@@ -24,6 +25,7 @@ export function HighlightCard({
   fontSize = 16,
   glossaryTerms = [],
   onGlossaryTermPress,
+  slideIndex,
 }: HighlightCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -100,7 +102,7 @@ export function HighlightCard({
               }}
               rules={{
                 paragraph: (node, children, parent, styles) => (
-                  <Text key={node.key} style={styles.paragraph}>
+                  <Text key={`${slideIndex}_highlight_${index}_${node.key}`} style={styles.paragraph}>
                     {children}
                   </Text>
                 ),
@@ -109,7 +111,7 @@ export function HighlightCard({
                   if (href.startsWith("glossary://")) {
                     return (
                       <Text
-                        key={node.key}
+                        key={`${slideIndex}_highlight_${index}_${node.key}`}
                         style={{
                           color: theme.colors.text,
                           textDecorationLine: "underline",
@@ -127,7 +129,7 @@ export function HighlightCard({
                   }
                   return (
                     <Text
-                      key={node.key}
+                      key={`${slideIndex}_highlight_${index}_${node.key}`}
                       style={styles.link}
                       onPress={() => onLinkPress?.(href)}
                     >

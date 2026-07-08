@@ -76,6 +76,8 @@ export type AppStackParamList = {
     courseId?: string; // Opcional: usado quando é exercício de curso
   };
   Performance: undefined;
+  AllPodcasts: undefined;
+  PodcastPlayer: { id: string };
 };
 
 export type GlossaryStackParamList = {

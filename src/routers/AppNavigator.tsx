@@ -20,6 +20,8 @@ import { LessonPlayerScreen } from "@/pages/study/lesson-player";
 import { NotificationsScreen } from "@/pages/notifications";
 import { GlossaryNavigator } from "./GlossaryNavigator";
 import { TabNavigator } from "./TabNavigator";
+import AllPodcastsScreen from "@/pages/study/all-podcasts";
+import PodcastPlayerScreen from "@/pages/study/podcast-player";
 
 import type { AppStackParamList } from "./types";
 
@@ -55,6 +57,8 @@ export function AppNavigator() {
         <Stack.Screen name="QuizReview" component={QuizReviewScreen} />
         <Stack.Screen name="CourseCertificate" component={CourseCertificateScreen} />
         <Stack.Screen name="Performance" component={PerformanceScreen} />
+        <Stack.Screen name="AllPodcasts" component={AllPodcastsScreen} />
+        <Stack.Screen name="PodcastPlayer" component={PodcastPlayerScreen} />
       </Stack.Navigator>
     </BottomSheetModalProvider>
   );

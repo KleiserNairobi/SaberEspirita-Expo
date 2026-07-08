@@ -101,18 +101,20 @@ export async function getFeaturedPrayers(): Promise<IPrayer[]> {
  * Busca as orações mais lidas com base no período (day, week, total)
  * Integração real com prayer_logs e prayer_stats
  */
-export async function getTrendingPrayers(period: "day" | "week" | "total"): Promise<IPrayer[]> {
+export async function getTrendingPrayers(
+  period: "day" | "week" | "total"
+): Promise<IPrayer[]> {
   try {
     let prayerIds: { id: string; count: number }[] = [];
 
     if (period === "total") {
-      // Busca direto das estatísticas consolidadas
-      const statsRef = collection(db, "prayer_stats");
-      const q = query(statsRef, orderBy("usageCount", "desc"), limit(10));
+      // Busca direto das estatísticas consolidadas no item_stats/prayer/items
+      const statsRef = collection(db, "item_stats", "prayer", "items");
+      const q = query(statsRef, orderBy("totalCount", "desc"), limit(10));
       const snapshot = await getDocs(q);
-      prayerIds = snapshot.docs.map(doc => ({
+      prayerIds = snapshot.docs.map((doc) => ({
         id: doc.id,
-        count: doc.data().usageCount || 0
+        count: doc.data().totalCount || 0,
       }));
     } else {
       // Busca nos logs recentes (Hoje ou Semana)
@@ -126,9 +128,9 @@ export async function getTrendingPrayers(period: "day" | "week" | "total"): Prom
 
       const q = query(logsRef, where("createdAt", ">=", dateLimit), limit(100)); // Pega uma amostra de logs
       const snapshot = await getDocs(q);
-      
+
       const counts: Record<string, number> = {};
-      snapshot.docs.forEach(doc => {
+      snapshot.docs.forEach((doc) => {
         const id = doc.data().prayerId;
         if (id) counts[id] = (counts[id] || 0) + 1;
       });
@@ -142,23 +144,22 @@ export async function getTrendingPrayers(period: "day" | "week" | "total"): Prom
     if (prayerIds.length === 0) return [];
 
     // Busca os detalhes das orações (Join)
-    const ids = prayerIds.map(p => p.id);
+    const ids = prayerIds.map((p) => p.id);
     const prayers = await getPrayersByIds(ids);
 
     // Reordena as orações conforme o ranking e anexa o contador
     return prayerIds
-      .map(p => {
-        const prayer = prayers.find(item => item.id === p.id);
+      .map((p) => {
+        const prayer = prayers.find((item) => item.id === p.id);
         if (prayer) {
           return {
             ...prayer,
-            displayCount: p.count // Campo temporário para exibição no ranking
+            displayCount: p.count, // Campo temporário para exibição no ranking
           };
         }
         return null;
       })
-      .filter((p): p is (IPrayer & { displayCount: number }) => !!p);
-
+      .filter((p): p is IPrayer & { displayCount: number } => !!p);
   } catch (error) {
     console.warn("[TrendingService] Erro ao buscar rankings:", error);
     return [];
@@ -219,10 +220,12 @@ export async function getRecentPrayerIds(days: number): Promise<string[]> {
 /**
  * Busca todas as orações e as mapeia com seus respectivos categoryIds
  */
-export async function getAllPrayersWithCategories(): Promise<(IPrayer & { categories: string[] })[]> {
+export async function getAllPrayersWithCategories(): Promise<
+  (IPrayer & { categories: string[] })[]
+> {
   const prayersRef = collection(db, "prayers");
   const prayersSnapshot = await getDocs(prayersRef);
-  
+
   const prayers = prayersSnapshot.docs.map((doc) => mapDocToPrayer(doc));
 
   const linksRef = collection(db, "prayer_category_links");

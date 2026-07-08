@@ -14,19 +14,27 @@ Para um aprendizado duradouro e transformador, é preciso estudar, refletir e pr
 
 ### 📚 **Estude: Trilhas de Aprendizado Estruturado**
 
-Acesse cursos completos e módulos didáticos exclusivos sobre a Doutrina Espírita. Aprenda no seu próprio ritmo com conteúdos ricos, organizados para acolher e guiar desde iniciantes até os estudiosos mais avançados.
+Acesse cursos completos e módulos didáticos exclusivos sobre a Doutrina Espírita. Aprenda no seu próprio ritmo com conteúdos ricos, organizados para acolher e guiar desde iniciantes até os estudiosos mais avançados. **Agora com Glossário Contextual:** acesse definições rápidas de termos doutrinários diretamente durante as lições com um simples toque.
 
-### 🎯 **Fixe: Testes de Conhecimento Gamificados**
+### 🎙️ **Ouça: Podcasts Espíritas em Segundo Plano**
 
-Sua jornada de aprendizado conta com testes de conhecimento envolventes! Integrados aos cursos, os quizzes servem para validar sua compreensão e ajudá-lo a reter o que estudou de forma interativa e divertida.
+Uma aba inteiramente dedicada a podcasts instrutivos e episódios de reflexão. Com o nosso **player de áudio dedicado**, você pode iniciar um episódio e continuar navegando livremente pelo aplicativo ou realizando outras atividades, garantindo que o conhecimento espírita acompanhe a sua rotina.
+
+### 🎯 **Fixe: Testes de Conhecimento e Desempenho**
+
+Sua jornada de aprendizado conta com testes de conhecimento envolventes! Divirta-se com o **Desafio Diário** e o jogo **Verdade ou Mentira**, e acompanhe a sua evolução em tempo real no painel **Meu Desempenho**, que centraliza suas estatísticas e histórico de acertos para incentivar o seu progresso.
+
+### 👥 **Conecte-se: Fórum de Discussão e Nível Comunitário**
+
+O estudo se fortalece quando compartilhado. Participe ativamente do **Fórum da Aula** integrado ao player de lições, onde você pode debater temas com outros alunos. Demonstre empatia utilizando as **Reações Fraternas** (como *me tocou*, *gratidão* e *luz*) e acompanhe sua evolução na comunidade subindo de nível e expandindo sua jornada espiritual.
 
 ### 🧘 **Medite: Paz e Autoconhecimento**
 
 Faça uma pausa compassiva no seu dia com nosso módulo medite, desenvolvendo sua serenidade interior com textos profundos para reflexão e áudios de meditações guiadas para trazer foco ao momento presente.
 
-### 🙏 **Ore: Conexão a qualquer momento**
+### 🙏 **Ore: Conectado com o seu Momento**
 
-Um espaço completamente amigável focado em suas orações e preces diárias. Descubra categorias e textos inspiradores para os momentos em que seu coração precisa daquela elevação espiritual.
+Um espaço focado em suas orações e preces diárias. Com a nova experiência do módulo Ore, você pode selecionar o seu **"Humor de Agora"** para receber sugestões de preces personalizadas para o seu momento. Descubra também as **"Orações em Alta"** mais lidas pela comunidade e desfrute de trilhas suaves de áudio ambiente.
 
 ### 🤖 Inteligência Artificial: Acolhimento e Sabedoria
 
@@ -43,6 +51,7 @@ Acreditamos que todo o seu contato conosco deve ser agradável. Construímos o n
 
 - **Interface Moderna e Deslumbrante:** Projetada para encantar os olhos e facilitar o foco, entregando uma experiência de alto nível.
 - **Modos Claro e Escuro:** Acompanha suas preferências de leitura para conforto visual, seja qual for a hora do seu estudo.
+- **Acesso Rápido e Seguro:** Entre instantaneamente no aplicativo utilizando o **Login Social** com a sua conta Google ou Apple.
 - **Rápido como um pensamento:** Armazenamento potente rodando em segundo plano. Suas orações e temas carregam instantaneamente!
 - **Perfil e Seu Estudo nas Nuvens:** Crie sua conta facilmente e tenha seu progresso sempre a salvo, acessível de qualquer lugar.
 

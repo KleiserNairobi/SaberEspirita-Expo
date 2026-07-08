@@ -14,85 +14,7 @@ export const createStyles = (theme: ITheme) =>
       paddingBottom: 120,
     },
 
-    // IMAGEM DE CAPA NO TOPO
-    coverImage: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      height: 280,
-    },
-    imageOverlay: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      height: 280,
-      backgroundColor: "rgba(0,0,0,0.25)", // Ligeiramente mais escuro para aumentar contraste do título branco
-    },
-    staticTitleContainer: {
-      height: 248,
-      justifyContent: "flex-end", // Empurra o título para a base da imagem, logo acima do card
-      paddingHorizontal: theme.spacing.md,
-      paddingBottom: 44, // Deixa 44px de margem na base (a curva branca sobrepõe 32px)
-    },
-    imageTitleSection: {
-      alignSelf: "stretch",
-    },
-    imageCourseTitle: {
-      marginBottom: 10,
-      ...theme.text("xxl", "bold"),
-      color: theme.colors.onSecondary,
-      fontFamily: "Oswald_600SemiBold",
-      lineHeight: 32,
-      textShadowColor: "rgba(0, 0, 0, 0.6)",
-      textShadowOffset: { width: 1, height: 1 },
-      textShadowRadius: 3,
-    },
 
-    // CABEÇALHO FLUTUANTE
-    floatingHeader: {
-      position: "absolute",
-      left: theme.spacing.md,
-      right: theme.spacing.md,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      zIndex: 100,
-    },
-    floatingBackButton: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: "rgba(0,0,0,0.5)",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    floatingShareButton: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: "rgba(0,0,0,0.5)",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-
-    // CONTAINER DE CONTEÚDO PRINCIPAL (FIXO)
-    mainContentContainer: {
-      flex: 1, // Preenche todo o espaço flexível restante da tela
-      backgroundColor: theme.colors.background,
-      borderTopLeftRadius: 32,
-      borderTopRightRadius: 32,
-      marginTop: -32, // Sobe para sobrepor ligeiramente a imagem de fundo
-    },
-    cardScroll: {
-      flex: 1,
-    },
-    cardScrollContent: {
-      paddingHorizontal: theme.spacing.md,
-      paddingTop: theme.spacing.lg,
-      paddingBottom: 150, // Espaço confortável para o footer fixo
-    },
     metadataRow: {
       flexDirection: "row",
       alignItems: "center",
@@ -336,5 +258,30 @@ export const createStyles = (theme: ITheme) =>
     },
     secondaryButtonText: {
       ...theme.text("md", "bold", theme.colors.primary),
+    },
+
+    // ABAS (TABS)
+    tabContainer: {
+      flexDirection: "row",
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+      marginBottom: theme.spacing.md,
+      marginTop: theme.spacing.xs,
+      gap: theme.spacing.lg,
+    },
+    tabButton: {
+      paddingVertical: theme.spacing.sm,
+      borderBottomWidth: 2,
+      borderBottomColor: "transparent",
+    },
+    activeTabButton: {
+      borderBottomColor: theme.colors.primary,
+    },
+    tabText: {
+      ...theme.text("md", "medium", theme.colors.textSecondary),
+    },
+    activeTabText: {
+      color: theme.colors.primary,
+      fontWeight: "bold",
     },
   });

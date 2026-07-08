@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Share, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { MeditateStackParamList } from "@/routers/types";
+import { AppStackParamList } from "@/routers/types";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Clock, Headphones, Pause, Play, SkipBack, SkipForward } from "lucide-react-native";
@@ -17,56 +17,58 @@ import { HeroHeader } from "@/components/HeroHeader";
 import { ContentSheet } from "@/components/ContentSheet";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
 
-import { useMeditation } from "@/hooks/queries/useMeditations";
+import { usePodcast } from "@/hooks/queries/usePodcasts";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getCachedAudioUri } from "@/services/audio/audioCacheService";
-import { logMeditationUsage } from "@/services/firebase/meditationService";
+import { logPodcastUsage } from "@/services/firebase/podcastService";
 import { useAuth } from "@/stores/authStore";
-import { useMeditationPlayerStore } from "@/stores/meditationPlayerStore";
+import { usePodcastPlayerStore } from "@/stores/podcastPlayerStore";
 import { createStyles } from "./styles";
 
-export default function MeditationPlayerScreen() {
+type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
+
+export default function PodcastPlayerScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-  const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
-  const route = useRoute<RouteProp<MeditateStackParamList, "MeditationPlayer">>();
+  const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<RouteProp<AppStackParamList, "PodcastPlayer">>();
   const { id } = route.params;
   const { user } = useAuth();
   const hasLogged = React.useRef(false);
 
-  // --- ESTADO GLOBAL: meditação em memória (vinda da listagem) ---
+  // --- ESTADO GLOBAL: podcast em memória (vindo da listagem) ---
   // Evita re-fetch do Firestore quando os dados já estão disponíveis.
-  const cachedMeditation = useMeditationPlayerStore((s) => s.currentMeditation);
+  const cachedPodcast = usePodcastPlayerStore((s) => s.currentPodcast);
 
   // Só aciona o fetch se não temos o objeto em memória OU se o id não bate
-  const shouldFetch = !cachedMeditation || cachedMeditation.id !== id;
-  const { data: fetchedMeditation, isLoading } = useMeditation(shouldFetch ? id : "");
+  const shouldFetch = !cachedPodcast || cachedPodcast.id !== id;
+  const { data: fetchedPodcast, isLoading } = usePodcast(shouldFetch ? id : "");
 
-  // Resolve a fonte da meditação: store (instantâneo) > fetch (fallback)
-  const meditation = shouldFetch ? fetchedMeditation : cachedMeditation;
+  // Resolve a fonte do podcast: store (instantâneo) > fetch (fallback)
+  const podcast = shouldFetch ? fetchedPodcast : cachedPodcast;
 
   // --- CACHE LOCAL DE ÁUDIO (FileSystem) ---
   const [localAudioUri, setLocalAudioUri] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchLocalAudio() {
-      if (meditation?.audioUrl) {
+      if (podcast?.audioUrl) {
         try {
-          const uri = await getCachedAudioUri(meditation.audioUrl);
+          const uri = await getCachedAudioUri(podcast.audioUrl);
           setLocalAudioUri(uri);
         } catch (error) {
           console.error(
-            "[MeditationPlayer] Falha ao obter URI de áudio em cache:",
+            "[PodcastPlayer] Falha ao obter URI de áudio em cache:",
             error
           );
-          setLocalAudioUri(meditation.audioUrl); // fallback para URL remota
+          setLocalAudioUri(podcast.audioUrl); // fallback para URL remota
         }
       }
     }
     fetchLocalAudio();
-  }, [meditation?.audioUrl]);
+  }, [podcast?.audioUrl]);
 
-  // --- ESTADO DO TRACK PLAYER (desacoplado do Ore) ---
+  // --- ESTADO DO TRACK PLAYER ---
   const { position, duration } = useProgress(500);
   const [isPlaying, setPlaying] = useState(false);
 
@@ -87,7 +89,6 @@ export default function MeditationPlayerScreen() {
   // --- DETECÇÃO DE FIM VIA useProgress (cross-platform garantido) ---
   // É a única fonte verdadeiramente confiável em iOS e Android.
   // State.Ended e PlaybackQueueEnded são inconsistentes no Android (ExoPlayer).
-  // position e duration são atualizados pelo timer nativo a cada 500ms.
   useEffect(() => {
     const effectiveDuration = duration > 0 ? duration : lastKnownDuration.current;
     if (
@@ -98,17 +99,12 @@ export default function MeditationPlayerScreen() {
     ) {
       hasResetOnEnd.current = true;
       setPlaying(false);
-      // 1. pause(): seta playWhenReady=false no ExoPlayer/AVPlayer.
-      //    OBRIGATÓRIO antes do seekTo(0) — sem isso, o player reinicia
-      //    automaticamente após o seek pois playWhenReady ainda é true.
-      // 2. seekTo(0): reseta posição para o início sem zerar duration nem limpar fila.
       TrackPlayer.pause()
         .catch(() => {})
         .finally(() => {
           TrackPlayer.seekTo(0).catch(() => {});
         });
     } else if (position > 0 && position < effectiveDuration - 1) {
-      // Reprodução em curso: libera o lock para permitir nova detecção
       hasResetOnEnd.current = false;
     }
   }, [position, duration]);
@@ -126,22 +122,20 @@ export default function MeditationPlayerScreen() {
   }, [playbackState.state]);
 
   // --- SETUP E CARREGAMENTO DO ÁUDIO ---
-  // Lógica de lock para evitar race conditions em Fast Refresh / remounts
   useEffect(() => {
     let isActive = true;
 
     async function setupAndLoad() {
-      if (localAudioUri && meditation) {
+      if (localAudioUri && podcast) {
         try {
-          // Pergunta diretamente ao engine nativo o que está tocando
           const currentNativeTrackIndex = await TrackPlayer.getActiveTrackIndex();
           let currentNativeTrack = null;
           if (currentNativeTrackIndex !== undefined && currentNativeTrackIndex !== null) {
             currentNativeTrack = await TrackPlayer.getTrack(currentNativeTrackIndex);
           }
 
-          // Se a meditação já está carregada na engine nativa, apenas dá play (sem re-injeção)
-          if (currentNativeTrack?.id === meditation.id) {
+          // Se o podcast já está carregado na engine nativa, apenas dá play
+          if (currentNativeTrack?.id === podcast.id) {
             const currentState = await TrackPlayer.getPlaybackState();
             if (currentState.state !== State.Playing) {
               await TrackPlayer.play();
@@ -159,11 +153,11 @@ export default function MeditationPlayerScreen() {
           if (!isActive) return;
 
           await TrackPlayer.add({
-            id: meditation.id,
+            id: podcast.id,
             url: localAudioUri,
-            title: meditation.title,
-            artist: meditation.author,
-            artwork: meditation.imageUrl,
+            title: podcast.title,
+            artist: podcast.author,
+            artwork: podcast.imageUrl,
           });
 
           if (!isActive) return;
@@ -176,7 +170,7 @@ export default function MeditationPlayerScreen() {
           setPlaying(true);
         } catch (err) {
           console.error(
-            "[MeditationPlayer] Erro crítico ao carregar/iniciar o player:",
+            "[PodcastPlayer] Erro crítico ao carregar/iniciar o player:",
             err
           );
         }
@@ -186,28 +180,23 @@ export default function MeditationPlayerScreen() {
     setupAndLoad();
 
     return () => {
-      // KILL-SWITCH LOCAL: cancela operações assíncronas pendentes
       isActive = false;
       setPlaying(false);
-
-      // stop() para o áudio e reseta posição para 0, mantendo a fila inteira.
-      // É mais seguro que reset() no cleanup do iOS (evita "Removed Instance").
       TrackPlayer.stop().catch(() => {});
     };
-  }, [localAudioUri, meditation?.id]);
+  }, [localAudioUri, podcast?.id]);
 
   // --- LOG DE USO (analytics) ---
   useEffect(() => {
-    if (isPlaying && meditation && !hasLogged.current) {
-      logMeditationUsage({
+    if (isPlaying && podcast && !hasLogged.current) {
+      logPodcastUsage({
         userId: user?.uid || "guest",
-        itemId: meditation.id,
-        itemTitle: meditation.title,
-        contentType: "guided_meditation",
+        itemId: podcast.id,
+        itemTitle: podcast.title,
       });
       hasLogged.current = true;
     }
-  }, [isPlaying, meditation, user]);
+  }, [isPlaying, podcast, user]);
 
   // --- HANDLERS ---
   function handleGoBack() {
@@ -215,11 +204,11 @@ export default function MeditationPlayerScreen() {
   }
 
   async function handleShare() {
-    if (!meditation) return;
+    if (!podcast) return;
     try {
-      const parts = [`Confira a meditação guiada "${meditation.title}" no Saber Espírita!`];
-      if (meditation.description) {
-        parts.push(`\nSobre esta Meditação:\n${meditation.description}`);
+      const parts = [`Confira o episódio de podcast "${podcast.title}" do Saber Espírita!`];
+      if (podcast.description) {
+        parts.push(`\nSobre o Episódio:\n${podcast.description}`);
       }
       parts.push("\nBaixe o app e ouça agora mesmo:");
       parts.push(`🤖 Android: ${PLAY_STORE_URL}`);
@@ -229,13 +218,11 @@ export default function MeditationPlayerScreen() {
         message: parts.join("\n"),
       });
     } catch (error) {
-      console.error("Erro ao compartilhar meditação:", error);
+      console.error("Erro ao compartilhar podcast:", error);
     }
   }
 
   const togglePlayPause = async () => {
-    // stop() reseta posição para 0 e mantém fila — um play() após stop()
-    // sempre reinicia do começo, sem necessidade de tratamento especial.
     if (isPlaying) {
       await TrackPlayer.pause();
       setPlaying(false);
@@ -247,11 +234,8 @@ export default function MeditationPlayerScreen() {
 
   async function handleSeekForward() {
     if (!isReady) return;
-    // Usa lastKnownDuration como fallback: após pause()+seekTo(0), duration pode ser
-    // momentaneamente 0 no useProgress, causando Math.min(newTime, 0) = 0 (bug de seek).
     const effectiveDuration = duration > 0 ? duration : lastKnownDuration.current;
     const newTime = position + 15;
-    // Limita a 1.5s antes do fim para não disparar o detector de fim acidentalmente
     await TrackPlayer.seekTo(Math.min(newTime, Math.max(0, effectiveDuration - 1.5)));
   }
 
@@ -270,7 +254,7 @@ export default function MeditationPlayerScreen() {
   }
 
   // --- ESTADOS DE CARREGAMENTO ---
-  if ((isLoading && shouldFetch) || !meditation) {
+  if ((isLoading && shouldFetch) || !podcast) {
     return (
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
         <View style={styles.loadingContainer}>
@@ -285,9 +269,9 @@ export default function MeditationPlayerScreen() {
   return (
     <View style={styles.safeArea}>
       <HeroHeader
-        imageUrl={meditation.imageUrl}
-        title={meditation.title}
-        subtitle={meditation.author}
+        imageUrl={podcast.imageUrl}
+        title={podcast.title}
+        subtitle={podcast.author}
         onBack={handleGoBack}
         onShare={handleShare}
       />
@@ -295,7 +279,7 @@ export default function MeditationPlayerScreen() {
       <ContentSheet contentContainerStyle={styles.contentSheetScroll}>
         {/* Descrição */}
         <View style={styles.descriptionSection}>
-          <Text style={styles.sectionTitle}>Sobre esta Meditação</Text>
+          <Text style={styles.sectionTitle}>Sobre este Episódio</Text>
 
           {/* Metadados leves */}
           <View style={styles.metadataRow}>
@@ -306,12 +290,12 @@ export default function MeditationPlayerScreen() {
             <Text style={styles.metadataSeparator}>•</Text>
             <View style={styles.metadataItem}>
               <Headphones size={12} color={theme.colors.muted} />
-              <Text style={styles.metadataText}>Meditação Guiada</Text>
+              <Text style={styles.metadataText}>Podcast</Text>
             </View>
           </View>
 
           <Text style={styles.descriptionText}>
-            {meditation.description || "Sem descrição disponível."}
+            {podcast.description || "Sem descrição disponível."}
           </Text>
         </View>
 

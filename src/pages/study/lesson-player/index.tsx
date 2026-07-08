@@ -530,6 +530,7 @@ export function LessonPlayerScreen() {
             reflectionQuestions={lesson.reflectionQuestions}
             glossaryTerms={glossaryTerms}
             onGlossaryTermPress={handleGlossaryTermPress}
+            slideIndex={index}
           />
         )}
       />

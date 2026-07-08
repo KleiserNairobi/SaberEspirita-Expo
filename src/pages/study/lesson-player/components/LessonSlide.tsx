@@ -18,6 +18,7 @@ interface LessonSlideProps {
   reflectionQuestions?: IReflectionQuestion[];
   glossaryTerms?: IGlossaryTerm[];
   onGlossaryTermPress?: (termId: string, matchedWord?: string) => void;
+  slideIndex: number;
 }
 
 export const LessonSlide = memo(
@@ -28,6 +29,7 @@ export const LessonSlide = memo(
     reflectionQuestions,
     glossaryTerms,
     onGlossaryTermPress,
+    slideIndex,
   }: LessonSlideProps) => {
     const { theme } = useAppTheme();
     const styles = createStyles(theme);
@@ -50,6 +52,7 @@ export const LessonSlide = memo(
             slideType={slide.slideType}
             glossaryTerms={termsForInjection}
             onGlossaryTermPress={onGlossaryTermPress}
+            slideIndex={slideIndex}
           />
 
           {slide.highlights && slide.highlights.length > 0 && (
@@ -58,6 +61,7 @@ export const LessonSlide = memo(
               fontSize={fontSize}
               glossaryTerms={termsForInjection}
               onGlossaryTermPress={onGlossaryTermPress}
+              slideIndex={slideIndex}
             />
           )}
 

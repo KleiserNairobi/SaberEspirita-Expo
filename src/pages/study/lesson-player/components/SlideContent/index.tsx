@@ -15,6 +15,7 @@ interface SlideContentProps {
   slideType?: string; // Tipo do slide (ex: "Contexto do Capítulo", "Tese Central")
   glossaryTerms?: IGlossaryTerm[];
   onGlossaryTermPress?: (termId: string, matchedWord?: string) => void;
+  slideIndex: number;
 }
 
 export function SlideContent({
@@ -25,6 +26,7 @@ export function SlideContent({
   slideType,
   glossaryTerms = [],
   onGlossaryTermPress,
+  slideIndex,
 }: SlideContentProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -183,12 +185,12 @@ export function SlideContent({
         }}
         rules={{
           body: (node, children, parent, styles) => (
-            <View key={node.key} style={styles.body}>
+            <View key={`${slideIndex}_${node.key}`} style={styles.body}>
               {children}
             </View>
           ),
           paragraph: (node, children, parent, styles) => (
-            <Text key={node.key} style={styles.paragraph}>
+            <Text key={`${slideIndex}_${node.key}`} style={styles.paragraph}>
               {children}
             </Text>
           ),
@@ -197,7 +199,7 @@ export function SlideContent({
             if (href.startsWith("glossary://")) {
               return (
                 <Text
-                  key={node.key}
+                  key={`${slideIndex}_${node.key}`}
                   style={{
                     color: theme.colors.text,
                     textDecorationLine: "underline",
@@ -216,7 +218,7 @@ export function SlideContent({
             }
             return (
               <Text
-                key={node.key}
+                key={`${slideIndex}_${node.key}`}
                 style={styles.link}
                 onPress={() => onLinkPress?.(href)}
               >

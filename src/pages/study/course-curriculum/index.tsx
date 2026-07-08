@@ -758,7 +758,7 @@ export function CourseCurriculumScreen() {
           <FlatList
             ref={flatListRef}
             data={lessons}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item, index) => `${item.id}_${index}`}
             contentContainerStyle={styles.listContent}
             onScroll={(e) => {
               scrollOffsetMap.set(courseId, e.nativeEvent.contentOffset.y);
