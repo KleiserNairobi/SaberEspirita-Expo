@@ -107,7 +107,7 @@ export function ProgressSummaryCard({
               <Text style={styles.methodologyButtonText}>Sobre a Pedagogia</Text>
             </TouchableOpacity>
           )}
-          {onRateCourse && (
+          {onRateCourse && completedLessons > 0 && (
             <TouchableOpacity
               style={styles.rateButton}
               onPress={onRateCourse}

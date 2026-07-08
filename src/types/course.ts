@@ -15,12 +15,15 @@ export interface ICourse {
   releaseYear?: number;
   featured?: boolean;
   status: CourseStatus;
+  allowNewEnrollments?: boolean;
   certification: {
     enabled: boolean;
     minimumGrade: number;
     requiredLessonsPercent: number;
     requiredExercisesPercent: number;
   };
+  rating?: number;
+  hasForum?: boolean;
   stats?: {
     exerciseCount: number;
     totalDurationMinutes: number;
@@ -102,7 +105,7 @@ export interface IUserCourseProgress {
 
 export type CourseDifficultyLevel = "Iniciante" | "Intermediário" | "Avançado";
 
-export type CourseStatus = "PUBLISHED" | "COMING_SOON" | "DRAFT";
+export type CourseStatus = "PUBLISHED" | "COMING_SOON" | "DRAFT" | "LEGACY";
 
 export type LessonStatus = "PUBLISHED" | "COMING_SOON" | "DRAFT";
 

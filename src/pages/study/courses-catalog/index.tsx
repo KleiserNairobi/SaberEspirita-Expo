@@ -67,7 +67,7 @@ const CatalogCourseItem = React.memo(
       totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
     // Verifica se o curso tem progresso (foi iniciado)
-    const hasProgress = !!progressData && completedCount > 0;
+    const hasProgress = !!progressData;
 
     return (
       <View style={{ paddingHorizontal: theme.spacing.lg }}>

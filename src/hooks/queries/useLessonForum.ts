@@ -56,7 +56,8 @@ export function useForumHasNewComments(lessonId: string) {
       return hasNewForumComments({ userId: uid, lessonId });
     },
     enabled: !!uid && !isGuest && !!lessonId,
-    refetchOnMount: "always",
+    staleTime: 1000 * 60 * 1, // 1 minuto
+    refetchOnMount: true,
   });
 }
 
@@ -83,8 +84,8 @@ export function useLessonForumComments(courseId: string, lessonId: string) {
     retry: false,
     initialPageParam: null as unknown,
     getNextPageParam: (lastPage) => lastPage.cursor ?? undefined,
-    staleTime: 0,
-    refetchOnMount: "always",
+    staleTime: 1000 * 60 * 2, // 2 minutos — mitiga N+1 reads enquanto desnormalização não é implementada
+    refetchOnMount: true,
   });
 }
 

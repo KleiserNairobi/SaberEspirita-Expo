@@ -25,26 +25,12 @@ export function useMeditations() {
 export function useFeaturedMeditations() {
   return useQuery({
     queryKey: MEDITATION_KEYS.featured,
-    queryFn: async () => {
-      // Força a busca de todas para garantir que pegamos as meditações novas 
-      // que sabemos que existem e estão retornando na listagem completa.
-      const all = await getMeditations();
-      
-      const featured = all
-        .filter((m) => m.featured === true)
-        .sort((a, b) => {
-          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-          // As mais novas (Saber Espírita) primeiro
-          return dateB - dateA;
-        });
-
-      console.log(`[useFeaturedMeditations] Encontradas ${featured.length} meditações em destaque.`);
-      return featured;
-    },
-    staleTime: 0, // Força revalidação imediata
-    gcTime: 1000 * 60 * 10,
-    refetchOnMount: "always",
+    // Usa a query direta no Firestore (where featured == true) ao invés de buscar tudo e filtrar no cliente
+    queryFn: getFeaturedMeditations,
+    staleTime: 1000 * 60 * 30, // 30 minutos — conteúdo raramente muda
+    gcTime: 1000 * 60 * 60,
+    refetchOnMount: false,
+    refetchOnReconnect: true,
   });
 }
 

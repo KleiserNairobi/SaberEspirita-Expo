@@ -6,6 +6,7 @@ import {
   HandHeart,
   LucideIcon,
   MessageCircleQuestion,
+  Mic,
 } from "lucide-react-native";
 
 export type Biblioteca = {
@@ -15,6 +16,11 @@ export type Biblioteca = {
 };
 
 export const Biblioteca: Biblioteca[] = [
+  {
+    id: "3",
+    title: "Podcasts",
+    icon: Mic,
+  },
   {
     id: "2",
     title: "Glossário\nEspírita",

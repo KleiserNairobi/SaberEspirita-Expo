@@ -3,14 +3,12 @@
     "name": "Saber Espírita",
     "slug": "saber-espirita",
     "scheme": "saber-espirita",
-    "version": "2.0.14",
+    "version": "2.0.18",
     "orientation": "portrait",
-    "newArchEnabled": true,
     "userInterfaceStyle": "automatic",
     "icon": "./assets/images/icon.png",
-
     "ios": {
-      "buildNumber": "45",
+      "buildNumber": "53",
       "supportsTablet": false,
       "bundleIdentifier": "app.saberespirita",
       "infoPlist": {
@@ -23,17 +21,8 @@
       },
       "googleServicesFile": "./dev/configs/GoogleService-Info.plist"
     },
-
     "android": {
-      "versionCode": 45,
-      "edgeToEdgeEnabled": true,
-      "statusBar": {
-        "translucent": true,
-        "backgroundColor": "#00000000"
-      },
-      "navigationBar": {
-        "backgroundColor": "#00000000"
-      },
+      "versionCode": 53,
       "predictiveBackGestureEnabled": false,
       "package": "app.saberespirita",
       "softwareKeyboardLayoutMode": "pan",
@@ -49,7 +38,6 @@
         "backgroundColor": "#ffffff"
       }
     },
-
     "plugins": [
       [
         "expo-splash-screen",
@@ -92,7 +80,8 @@
       "./dev/plugins/withModularHeaders.js",
       "expo-font",
       "@react-native-google-signin/google-signin",
-      "expo-apple-authentication"
+      "expo-apple-authentication",
+      "expo-secure-store"
     ]
   }
 }

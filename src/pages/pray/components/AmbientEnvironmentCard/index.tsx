@@ -1,6 +1,5 @@
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { ChevronDown, Moon, Music, Pause, Play, Waves } from "lucide-react-native";
 import React from "react";
+
 import {
   ActivityIndicator,
   Alert,
@@ -9,6 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { ChevronDown, Moon, Music, Pause, Play, Waves } from "lucide-react-native";
 import { State, usePlaybackState } from "react-native-track-player";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -18,6 +20,7 @@ import { downloadAudio } from "@/services/firebase/ambientAudioService";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { useMoodStore } from "@/stores/moodStore";
 import { IAmbientAudio } from "@/types/ambientAudio";
+
 import { AmbientSelectionBottomSheet } from "./AmbientSelectionBottomSheet";
 import { createStyles } from "./styles";
 
@@ -118,7 +121,9 @@ export function AmbientEnvironmentCard({
         // Feedback instantâneo no COMBO e no estado Global
         setDownloading(true);
         setCurrentTrack(null, audio.id); // Registra a intenção Imediatamente!
-        setPendingName(`${audio.title}${COMPOSERS[audio.id] ? ` (${COMPOSERS[audio.id]})` : ""}`);
+        setPendingName(
+          `${audio.title}${COMPOSERS[audio.id] ? ` (${COMPOSERS[audio.id]})` : ""}`
+        );
 
         // Baixa o áudio em segundo plano
         const localUri = await downloadAudio(audio.storagePath, audio.fileName);
@@ -227,7 +232,7 @@ export function AmbientEnvironmentCard({
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require("@/assets/images/placeholder.png")} // Placeholder imersivo
+        source={require("@/assets/images/placeholder.jpeg")} // Placeholder imersivo
         style={styles.backgroundImage}
         imageStyle={{ opacity: 0.2 }}
       >

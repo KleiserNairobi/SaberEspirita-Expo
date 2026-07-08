@@ -4,6 +4,7 @@ export type RootStackParamList = {
   Auth: undefined;
   Welcome: undefined;
   App: undefined;
+  Banned: undefined;
 };
 
 export type AuthStackParamList = {
@@ -28,7 +29,7 @@ export type AppStackParamList = {
   Glossary: undefined;
   CoursesCatalog: undefined;
   CourseDetails: { courseId: string };
-  CourseCurriculum: { courseId: string };
+  CourseCurriculum: { courseId: string; autoEnroll?: boolean };
   LessonPlayer: { courseId: string; lessonId: string };
   LessonForum: {
     courseId: string;
@@ -75,6 +76,8 @@ export type AppStackParamList = {
     courseId?: string; // Opcional: usado quando é exercício de curso
   };
   Performance: undefined;
+  AllPodcasts: undefined;
+  PodcastPlayer: { id: string };
 };
 
 export type GlossaryStackParamList = {

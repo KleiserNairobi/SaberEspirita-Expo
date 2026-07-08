@@ -15,6 +15,12 @@ import { db } from "../../configs/firebase/firebase";
 
 export const MEDITATIONS_COLLECTION = "meditations";
 
+function getUTCYearMonth(date: Date = new Date()): string {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  return `${y}-${m}`;
+}
+
 /**
  * Converte um documento do Firestore para o tipo IMeditation, tratando Timestamps
  */
@@ -85,7 +91,7 @@ export async function logMeditationUsage(
     await addDoc(logsRef, {
       userId: params.userId,
       createdAt: serverTimestamp(),
-      yearMonth: new Date().toISOString().slice(0, 7),
+      yearMonth: getUTCYearMonth(),
       processed: false,
       itemId: params.itemId,
       itemTitle: params.itemTitle,

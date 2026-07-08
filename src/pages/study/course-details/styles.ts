@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+
 import { ITheme } from "@/configs/theme/types";
 
 export const createStyles = (theme: ITheme) =>
@@ -8,34 +9,32 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: theme.colors.background,
     },
 
-    // HEADER
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.md,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
-    },
-    backButton: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: theme.colors.accent,
-      marginRight: theme.spacing.md,
-    },
-    headerTitle: {
-      ...theme.text("lg", "bold"),
-      color: theme.colors.text,
-      flex: 1,
+    // SCROLL CONTENT (REMOVIDO DO CONTAINER EXTERNO)
+    scrollContent: {
+      paddingBottom: 120,
     },
 
-    // SCROLL CONTENT
-    scrollContent: {
-      padding: theme.spacing.md,
-      paddingBottom: 120, // Espaço para footer fixo
+
+    metadataRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      flexWrap: "wrap",
+      gap: 6,
+      marginBottom: theme.spacing.md,
+    },
+    metadataItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    metadataText: {
+      ...theme.text("xs", "regular", theme.colors.muted),
+      fontSize: 11,
+    },
+    metadataSeparator: {
+      ...theme.text("xs", "regular", theme.colors.muted),
+      fontSize: 11,
     },
 
     // PROGRESS (SEM CARD)
@@ -136,7 +135,7 @@ export const createStyles = (theme: ITheme) =>
 
     // SECTION
     section: {
-      marginVertical: theme.spacing.md,
+      // marginVertical: theme.spacing.sm,
     },
     sectionTitle: {
       ...theme.text("lg", "semibold"),
@@ -259,5 +258,30 @@ export const createStyles = (theme: ITheme) =>
     },
     secondaryButtonText: {
       ...theme.text("md", "bold", theme.colors.primary),
+    },
+
+    // ABAS (TABS)
+    tabContainer: {
+      flexDirection: "row",
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+      marginBottom: theme.spacing.md,
+      marginTop: theme.spacing.xs,
+      gap: theme.spacing.lg,
+    },
+    tabButton: {
+      paddingVertical: theme.spacing.sm,
+      borderBottomWidth: 2,
+      borderBottomColor: "transparent",
+    },
+    activeTabButton: {
+      borderBottomColor: theme.colors.primary,
+    },
+    tabText: {
+      ...theme.text("md", "medium", theme.colors.textSecondary),
+    },
+    activeTabText: {
+      color: theme.colors.primary,
+      fontWeight: "bold",
     },
   });

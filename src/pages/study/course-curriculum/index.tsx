@@ -60,7 +60,7 @@ export function CourseCurriculumScreen() {
   const styles = createStyles(theme);
   const route = useRoute<CourseCurriculumRouteProp>();
   const navigation = useNavigation<NavigationProp>();
-  const { courseId } = route.params;
+  const { courseId, autoEnroll } = route.params;
 
   // Fetch das aulas reais
   const { data: lessons = [], isLoading: isLoadingLessons } = useLessons(courseId);
@@ -236,8 +236,15 @@ export function CourseCurriculumScreen() {
 
   useEffect(() => {
     if (!user?.uid || isGuest) return;
-    touchCourseAccess(courseId, { userId: user.uid });
-  }, [courseId, isGuest, user?.uid]);
+
+    // Só matricula/toca o acesso se:
+    // 1. autoEnroll for verdadeiro (veio do botão "Iniciar Série")
+    // 2. OU se o usuário já possui um progresso registrado no banco para este curso (já estava matriculado)
+    const alreadyEnrolled = !!progress;
+    if (autoEnroll || alreadyEnrolled) {
+      touchCourseAccess(courseId, { userId: user.uid });
+    }
+  }, [courseId, isGuest, user?.uid, autoEnroll, progress]);
 
   function getLessonStatus(lesson: ILesson, index: number): LessonStatus {
     // Verificar se a aula foi concluída
@@ -751,7 +758,7 @@ export function CourseCurriculumScreen() {
           <FlatList
             ref={flatListRef}
             data={lessons}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item, index) => `${item.id}_${index}`}
             contentContainerStyle={styles.listContent}
             onScroll={(e) => {
               scrollOffsetMap.set(courseId, e.nativeEvent.contentOffset.y);

@@ -68,9 +68,9 @@ export function ReferenceCard({
             <Text style={styles.headerTitle}>Glossário</Text>
           </View>
           <View style={styles.pillsContainer}>
-            {glossary.map((term) => (
+            {glossary.map((term, index) => (
               <TouchableOpacity
-                key={term.id}
+                key={`${term.id}_${index}`}
                 style={styles.pill}
                 onPress={() => onGlossaryTermPress?.(term.id)}
               >

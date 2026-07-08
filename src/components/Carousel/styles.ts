@@ -1,4 +1,5 @@
 import { Dimensions, StyleSheet } from "react-native";
+
 import { ITheme } from "@/configs/theme/types";
 
 const { width } = Dimensions.get("window");
@@ -115,5 +116,33 @@ export const createStyles = (theme: ITheme) =>
       letterSpacing: 0.8,
       textAlign: "center",
       textTransform: "uppercase",
+    },
+    ratingBadge: {
+      position: "absolute",
+      top: 12,
+      right: 12,
+      backgroundColor: "rgba(255, 255, 255, 0.7)",
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 12,
+      flexDirection: "row",
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3,
+      elevation: 2,
+      zIndex: 10,
+    },
+    ratingBadgeStar: {
+      color: theme.colors.primary,
+      fontSize: 12,
+      marginRight: 2,
+    },
+    ratingBadgeText: {
+      fontFamily: "BarlowCondensed_600SemiBold",
+      fontSize: 12,
+      color: "#1E1E1E", // Cor escura para contraste excelente no fundo branco
+      fontWeight: "bold",
     },
   });

@@ -46,6 +46,7 @@ export interface IntentionResult {
  */
 export type ChatService = (
   userMessage: string,
+  history: ChatMessage[],
   onChunkReceived: (chunk: string) => void,
   onComplete: (fullResponse: string) => void
 ) => Promise<void>;

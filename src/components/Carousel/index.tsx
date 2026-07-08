@@ -1,9 +1,5 @@
-import { useAppTheme } from "@/hooks/useAppTheme";
-import type { ICourse, IUserCourseProgress } from "@/types/course";
-import { useIsFocused } from "@react-navigation/native";
-import { Image } from "expo-image";
-import { CheckCircle2, Clock, Play, Plus } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
+
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -11,15 +7,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { useIsFocused } from "@react-navigation/native";
+import { Image } from "expo-image";
+import { CheckCircle2, Clock, Play, Plus } from "lucide-react-native";
 import Animated, {
   Extrapolation,
-  interpolate,
   SharedValue,
+  interpolate,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
-import { createStyles, ITEM_SIZE, SPACER_ITEM_SIZE } from "./styles";
+
+import { useCourseRating } from "@/hooks/queries/useCourseRating";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import type { ICourse, IUserCourseProgress } from "@/types/course";
+
+import { ITEM_SIZE, SPACER_ITEM_SIZE, createStyles } from "./styles";
 
 // Fator de multiplicação para simular loop infinito
 // Reduzido para 10 para evitar avisos de VirtualizedList e economizar memória.
@@ -49,6 +54,9 @@ const CarouselItem = React.memo(function CarouselItem({
 }: CarouselItemProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
+  const { data: rating } = useCourseRating(item.id);
+  const finalRating = rating ?? item.rating;
+
   const inputRange = [
     (index - 1) * ITEM_SIZE,
     index * ITEM_SIZE,
@@ -79,11 +87,11 @@ const CarouselItem = React.memo(function CarouselItem({
       ? { uri: item.imageUrl }
       : typeof item.imageUrl === "number"
         ? item.imageUrl
-        : require("@/assets/images/placeholder.png");
+        : require("@/assets/images/placeholder.jpeg");
 
   const isComingSoon = item.status === "COMING_SOON";
 
-  const hasStarted = progress && progress.completedLessons.length > 0;
+  const hasStarted = !!progress;
   const completionPercent =
     item.lessonCount > 0
       ? ((progress?.completedLessons.length || 0) / item.lessonCount) * 100
@@ -113,6 +121,15 @@ const CarouselItem = React.memo(function CarouselItem({
             priority={index <= 2 ? "high" : "normal"}
           />
           <View style={styles.overlay} />
+
+          {/* BADGE DE AVALIAÇÃO */}
+          {finalRating !== undefined && finalRating !== null && (
+            <View style={styles.ratingBadge}>
+              <Text style={styles.ratingBadgeStar}>★</Text>
+              <Text style={styles.ratingBadgeText}>{finalRating.toFixed(1)}</Text>
+            </View>
+          )}
+
           <View style={styles.textOverlayContainer}>
             <Text style={styles.title} numberOfLines={2}>
               {item.title}

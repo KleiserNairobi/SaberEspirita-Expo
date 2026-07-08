@@ -85,5 +85,6 @@ export function useLastAccessedCourse() {
       };
     },
     enabled: !!user?.uid,
+    staleTime: 1000 * 60 * 5, // 5 minutos — evita 3 reads em série a cada volta à Home
   });
 }

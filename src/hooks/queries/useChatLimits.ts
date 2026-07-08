@@ -17,7 +17,7 @@ export function useChatLimits(chatType: ChatType) {
       return ChatLimitsService.checkCanSendMessage(user.uid, chatType);
     },
     enabled: !!user?.uid || isGuest,
-    staleTime: 0, // Sempre buscar dados frescos para garantir cooldown correto
+    staleTime: 30_000, // 30 segundos — dados são invalidados corretamente via invalidateQueries após incrementUsage
     refetchOnMount: true,
   });
 }

@@ -1,49 +1,99 @@
 import React from "react";
+import { useEffect, useRef, useState } from "react";
+
 import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
+  Share,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
+
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
-  ArrowLeft,
-  BookOpen,
-  Clock,
-  BarChart2,
-  FileText,
-  Award,
   AlertCircle,
+  Award,
+  BarChart2,
+  BookOpen,
   CheckCircle2,
+  Clock,
+  FileText,
+  MessageCircle,
+  PlayCircle,
+  Star,
 } from "lucide-react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { AppStackParamList } from "@/routers/types";
-import { useCourse } from "@/hooks/queries/useCourses";
-import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
-import { createStyles } from "./styles";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useRef, useState } from "react";
+import { ContentSheet } from "@/components/ContentSheet";
+import { HeroHeader } from "@/components/HeroHeader";
+import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
+import { useCourseRating } from "@/hooks/queries/useCourseRating";
+import { useCourse } from "@/hooks/queries/useCourses";
+import { useLessons } from "@/hooks/queries/useLessons";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { AppStackParamList } from "@/routers/types";
+import { ILesson } from "@/types/course";
+import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
 
-type CourseDetailsRouteProp = RouteProp<AppStackParamList, "CourseDetails">;
+import { createStyles } from "./styles";
+
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
 export function CourseDetailsScreen() {
   const { theme } = useAppTheme();
   const insets = useSafeAreaInsets();
   const styles = createStyles(theme);
-  const route = useRoute<CourseDetailsRouteProp>();
+  const route = useRoute<any>();
   const navigation = useNavigation<NavigationProp>();
-  const { courseId } = route.params;
+  const { courseId } = route.params || {};
 
   // React Query Fetch
   const { data: course, isLoading: isLoadingCourse } = useCourse(courseId);
   const { data: progress, isLoading: isLoadingProgress } = useCourseProgress(courseId);
+  const { data: rating } = useCourseRating(courseId);
+
+  // Queries para a aba de currículo
+  const { data: lessons = [], isLoading: isLoadingLessons } = useLessons(courseId);
+
+  const isEnrolled = !!progress; // Se tem objeto de progresso, está matriculado
+
+  const [activeTab, setActiveTab] = useState<"about" | "lessons">("about");
+
+  async function handleShare() {
+    if (!course) return;
+    try {
+      const parts = [`Confira a série "${course.title}" no Saber Espírita!`];
+
+      if (course.description) {
+        parts.push(`\nSobre a Série:\n${course.description}`);
+      }
+
+      if (course.learningObjectives && course.learningObjectives.length > 0) {
+        parts.push(
+          `\nObjetivos da Série:\n${course.learningObjectives.map((obj) => `✅ ${obj}`).join("\n")}`
+        );
+      }
+
+      if (typeof course.imageUrl === "string") {
+        parts.push(`\nImagem de Capa: ${course.imageUrl}`);
+      }
+
+      parts.push("\nBaixe o app e comece a estudar agora mesmo:");
+      parts.push(`🤖 Android: ${PLAY_STORE_URL}`);
+      parts.push(`🍎 iOS: ${APP_STORE_URL}`);
+
+      await Share.share({
+        message: parts.join("\n"),
+      });
+    } catch (error) {
+      console.error("Erro ao compartilhar:", error);
+    }
+  }
 
   // Modal de Metodologia
   const bottomSheetRef = useRef<BottomSheetModal>(null);
@@ -51,7 +101,7 @@ export function CourseDetailsScreen() {
     null
   );
 
-  const handleOpenMethodology = () => {
+  function handleOpenMethodology() {
     setMessageConfig({
       type: "info",
       title: "Entenda nossa pedagogia",
@@ -65,10 +115,39 @@ export function CourseDetailsScreen() {
       },
     });
     bottomSheetRef.current?.present();
-  };
+  }
 
-  // Loading unificado: aguarda tanto curso quanto progresso
-  const loading = isLoadingCourse || isLoadingProgress;
+  const isLegacy = course?.status === "LEGACY" || course?.allowNewEnrollments === false;
+
+  useEffect(() => {
+    if (course && !isEnrolled && isLegacy) {
+      setMessageConfig({
+        type: "warning",
+        title: "Edição Encerrada",
+        message:
+          "Esta edição foi encerrada e substituída por uma versão revisada. Recomendamos iniciar a nova jornada de estudos.",
+        primaryButton: {
+          label: "IR PARA NOVA EDIÇÃO",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+            navigation.replace("CourseDetails", { courseId: "COURSE-00008" });
+          },
+        },
+        secondaryButton: {
+          label: "FECHAR",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+          },
+        },
+      });
+      setTimeout(() => {
+        bottomSheetRef.current?.present();
+      }, 500);
+    }
+  }, [course, isEnrolled, navigation]);
+
+  // Loading unificado: aguarda curso, progresso e lições
+  const loading = isLoadingCourse || isLoadingProgress || isLoadingLessons;
 
   // Calcular progresso real
   const completedCount = progress?.completedLessons?.length || 0;
@@ -76,8 +155,6 @@ export function CourseDetailsScreen() {
 
   const userProgress =
     totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
-
-  const isEnrolled = !!progress; // Se tem objeto de progresso, está matriculado
 
   // Dados de certificação
   const hasCertification = course?.certification?.enabled || false;
@@ -94,11 +171,7 @@ export function CourseDetailsScreen() {
   }
 
   function handleStartCourse() {
-    navigation.navigate("CourseCurriculum", { courseId });
-  }
-
-  function handleViewLessons() {
-    navigation.navigate("CourseCurriculum", { courseId });
+    navigation.navigate("CourseCurriculum", { courseId, autoEnroll: true });
   }
 
   if (loading) {
@@ -125,164 +198,266 @@ export function CourseDetailsScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-      <View style={styles.container}>
-        {/* HEADER */}
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-            <ArrowLeft size={24} color={theme.colors.text} />
+    <View style={styles.container}>
+      <HeroHeader
+        imageUrl={course.imageUrl}
+        title={course.title}
+        onBack={handleGoBack}
+        onShare={handleShare}
+      />
+
+      <ContentSheet>
+        {/* Metadados da Série */}
+        <View style={styles.metadataRow}>
+          {/* Aulas */}
+          <View style={styles.metadataItem}>
+            <BookOpen size={12} color={theme.colors.muted} />
+            <Text style={styles.metadataText}>{course.lessonCount} aulas</Text>
+          </View>
+
+          <Text style={styles.metadataSeparator}>•</Text>
+
+          {/* Duração */}
+          <View style={styles.metadataItem}>
+            <Clock size={12} color={theme.colors.muted} />
+            <Text style={styles.metadataText}>{durationText}</Text>
+          </View>
+
+          <Text style={styles.metadataSeparator}>•</Text>
+
+          {/* Nível */}
+          <View style={styles.metadataItem}>
+            <BarChart2 size={12} color={theme.colors.muted} />
+            <Text style={styles.metadataText}>
+              {course.difficultyLevel || "Iniciante"}
+            </Text>
+          </View>
+
+          {/* Média de Avaliação (se houver) */}
+          {(rating ?? course.rating) && (
+            <>
+              <Text style={styles.metadataSeparator}>•</Text>
+              <View style={styles.metadataItem}>
+                <Star size={12} color={theme.colors.muted} fill={theme.colors.muted} />
+                <Text style={styles.metadataText}>
+                  {Number(rating ?? course.rating).toFixed(1)}/5
+                </Text>
+              </View>
+            </>
+          )}
+        </View>
+
+        {/* SELETOR DE ABAS (SOBRE E AULAS) */}
+        <View style={styles.tabContainer}>
+          <TouchableOpacity
+            style={[styles.tabButton, activeTab === "about" && styles.activeTabButton]}
+            onPress={() => setActiveTab("about")}
+          >
+            <Text style={[styles.tabText, activeTab === "about" && styles.activeTabText]}>
+              Sobre
+            </Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle} numberOfLines={1}>
-            {course.title}
-          </Text>
+          <TouchableOpacity
+            style={[styles.tabButton, activeTab === "lessons" && styles.activeTabButton]}
+            onPress={() => setActiveTab("lessons")}
+          >
+            <Text
+              style={[styles.tabText, activeTab === "lessons" && styles.activeTabText]}
+            >
+              Aulas ({course.lessonCount || 0})
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* PROGRESS CARD */}
-          {isEnrolled && (
-            <View style={styles.progressCard}>
-              <View style={styles.progressHeader}>
-                <Text style={styles.progressLabel}>PROGRESSO DA SÉRIE</Text>
-                <Text style={styles.progressValue}>{userProgress}%</Text>
-              </View>
-              <View style={styles.progressBarBg}>
-                <View style={[styles.progressBarFill, { width: `${userProgress}%` }]} />
-              </View>
-              <Text style={styles.progressFooter}>
-                {completedCount} de {totalLessons} aulas concluídas
-              </Text>
-            </View>
-          )}
-
-          {/* DESCRIPTION */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Sobre a Série</Text>
-            <Text style={styles.descriptionText}>
-              {course.description || "Sem descrição disponível."}
-            </Text>
-          </View>
-
-          {/* METHODOLOGY CALLOUT */}
-          <View style={styles.methodologySection}>
-            <Text style={styles.methodologyTitle}>Como vamos estudar</Text>
-            <Text style={styles.methodologyText}>
-              Esta série utiliza uma metodologia ativa de pausas reflexivas.{" "}
-              <Text style={styles.methodologyLink} onPress={handleOpenMethodology}>
-                Saiba mais
-              </Text>
-            </Text>
-          </View>
-
-          {/* LEARNING OBJECTIVES */}
-          {course.learningObjectives && course.learningObjectives.length > 0 && (
+        {/* ABA SOBRE */}
+        {activeTab === "about" && (
+          <View style={{ gap: theme.spacing.md }}>
+            {/* DESCRIPTION */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Objetivos da Série</Text>
-              <View style={styles.objectivesList}>
-                {course.learningObjectives.map((objective, index) => (
-                  <View key={index} style={styles.objectiveItem}>
-                    <View style={styles.objectiveIcon}>
-                      <CheckCircle2 size={18} color={theme.colors.primary} />
-                    </View>
-                    <Text style={styles.objectiveText}>{objective}</Text>
-                  </View>
-                ))}
-              </View>
-            </View>
-          )}
-
-          {/* STATS LIST (2 COLUNAS) */}
-          <View style={styles.statsList}>
-            {/* Aulas */}
-            <View style={styles.statItem}>
-              <View style={styles.iconCircle}>
-                <BookOpen size={16} color={theme.colors.primary} />
-              </View>
-              <Text style={styles.statText}>{course.lessonCount || 0} Aulas</Text>
-            </View>
-
-            {/* Duração */}
-            <View style={styles.statItem}>
-              <View style={styles.iconCircle}>
-                <Clock size={16} color={theme.colors.primary} />
-              </View>
-              <Text style={styles.statText}>{durationText}</Text>
-            </View>
-
-            {/* Nível */}
-            <View style={styles.statItem}>
-              <View style={styles.iconCircle}>
-                <BarChart2 size={16} color={theme.colors.primary} />
-              </View>
-              <Text style={styles.statText}>{course.difficultyLevel || "Iniciante"}</Text>
-            </View>
-
-            {/* Exercícios */}
-            <View style={styles.statItem}>
-              <View style={styles.iconCircle}>
-                <FileText size={16} color={theme.colors.primary} />
-              </View>
-              <Text style={styles.statText}>{exerciseCount} Exercícios</Text>
-            </View>
-          </View>
-
-          {/* REQUISITOS PARA CERTIFICADO */}
-          {hasCertification && (
-            <View style={styles.requirementsCard}>
-              <View style={styles.requirementsHeader}>
-                <Award size={20} color={theme.colors.warning} />
-                <Text style={styles.requirementsTitle}>Emite Certificado</Text>
-              </View>
-              <View style={styles.requirementsList}>
-                <View style={styles.requirementItem}>
-                  <Text style={styles.requirementBullet}>•</Text>
-                  <Text style={styles.requirementText}>
-                    {course.certification.requiredLessonsPercent}% das aulas concluídas
-                  </Text>
-                </View>
-                <View style={styles.requirementItem}>
-                  <Text style={styles.requirementBullet}>•</Text>
-                  <Text style={styles.requirementText}>
-                    {course.certification.requiredExercisesPercent}% dos exercícios com
-                    nota ≥ {course.certification.minimumGrade}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          )}
-        </ScrollView>
-
-        {/* FIXED FOOTER */}
-        <View style={styles.footer}>
-          {isEnrolled ? (
-            <TouchableOpacity style={styles.primaryButton} onPress={handleStartCourse}>
-              <Text style={styles.primaryButtonText}>
-                {userProgress === 100 ? "VER CURRÍCULO" : "CONTINUAR SÉRIE"}
+              <Text style={styles.sectionTitle}>Sobre a Série</Text>
+              <Text style={styles.descriptionText}>
+                {course.description || "Sem descrição disponível."}
               </Text>
-            </TouchableOpacity>
-          ) : (
-            <View style={styles.footerButtons}>
-              <TouchableOpacity
-                style={[styles.primaryButton, styles.flexButton]}
-                onPress={handleStartCourse}
-              >
-                <Text style={styles.primaryButtonText}>INICIAR SÉRIE</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.secondaryButton, styles.flexButton]}
-                onPress={handleViewLessons}
-              >
-                <Text style={styles.secondaryButtonText}>VER AULAS</Text>
-              </TouchableOpacity>
             </View>
-          )}
-        </View>
+
+            {/* METHODOLOGY CALLOUT */}
+            <View style={styles.methodologySection}>
+              <Text style={styles.methodologyTitle}>Como vamos estudar</Text>
+              <Text style={styles.methodologyText}>
+                Esta série utiliza uma metodologia ativa de pausas reflexivas.{" "}
+                <Text style={styles.methodologyLink} onPress={handleOpenMethodology}>
+                  Saiba mais
+                </Text>
+              </Text>
+            </View>
+
+            {/* LEARNING OBJECTIVES */}
+            {course.learningObjectives && course.learningObjectives.length > 0 && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Objetivos da Série</Text>
+                <View style={styles.objectivesList}>
+                  {course.learningObjectives.map((objective, index) => (
+                    <View key={index} style={styles.objectiveItem}>
+                      <View style={styles.objectiveIcon}>
+                        <CheckCircle2 size={18} color={theme.colors.primary} />
+                      </View>
+                      <Text style={styles.objectiveText}>{objective}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
+
+            {/* STATS LIST (2 COLUNAS) */}
+            <View style={styles.statsList}>
+              {/* Aulas */}
+              <View style={styles.statItem}>
+                <View style={styles.iconCircle}>
+                  <BookOpen size={16} color={theme.colors.primary} />
+                </View>
+                <Text style={styles.statText}>{course.lessonCount || 0} Aulas</Text>
+              </View>
+
+              {/* Duração */}
+              <View style={styles.statItem}>
+                <View style={styles.iconCircle}>
+                  <Clock size={16} color={theme.colors.primary} />
+                </View>
+                <Text style={styles.statText}>{durationText}</Text>
+              </View>
+
+              {/* Nível */}
+              <View style={styles.statItem}>
+                <View style={styles.iconCircle}>
+                  <BarChart2 size={16} color={theme.colors.primary} />
+                </View>
+                <Text style={styles.statText}>
+                  {course.difficultyLevel || "Iniciante"}
+                </Text>
+              </View>
+
+              {/* Exercícios */}
+              <View style={styles.statItem}>
+                <View style={styles.iconCircle}>
+                  <FileText size={16} color={theme.colors.primary} />
+                </View>
+                <Text style={styles.statText}>{exerciseCount} Exercícios</Text>
+              </View>
+
+              {/* Fórum */}
+              <View style={styles.statItem}>
+                <View style={styles.iconCircle}>
+                  <MessageCircle size={16} color={theme.colors.primary} />
+                </View>
+                <Text style={styles.statText}>
+                  {course.hasForum ? "Fórum ativo" : "Sem fórum"}
+                </Text>
+              </View>
+
+              {/* Avaliação */}
+              <View style={styles.statItem}>
+                <View style={styles.iconCircle}>
+                  <Star
+                    size={16}
+                    color={theme.colors.primary}
+                    fill={(rating ?? course.rating) ? theme.colors.primary : "none"}
+                  />
+                </View>
+                <Text style={styles.statText}>
+                  {(rating ?? course.rating)
+                    ? `${Number(rating ?? course.rating).toFixed(1)}/5`
+                    : "Seja o primeiro"}
+                </Text>
+              </View>
+            </View>
+
+            {/* REQUISITOS PARA CERTIFICADO */}
+            {hasCertification && (
+              <View style={styles.requirementsCard}>
+                <View style={styles.requirementsHeader}>
+                  <Award size={20} color={theme.colors.warning} />
+                  <Text style={styles.requirementsTitle}>Emite Certificado</Text>
+                </View>
+                <View style={styles.requirementsList}>
+                  <View style={styles.requirementItem}>
+                    <Text style={styles.requirementBullet}>•</Text>
+                    <Text style={styles.requirementText}>
+                      {course.certification.requiredLessonsPercent}% das aulas concluídas
+                    </Text>
+                  </View>
+                  <View style={styles.requirementItem}>
+                    <Text style={styles.requirementBullet}>•</Text>
+                    <Text style={styles.requirementText}>
+                      {course.certification.requiredExercisesPercent}% dos exercícios com
+                      nota ≥ {course.certification.minimumGrade}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            )}
+          </View>
+        )}
+
+        {/* ABA AULAS */}
+        {activeTab === "lessons" && (
+          <View style={styles.objectivesList}>
+            {lessons.map((lesson, index) => (
+              <View key={`${lesson.id}_${index}`} style={styles.objectiveItem}>
+                <View style={styles.objectiveIcon}>
+                  <PlayCircle size={18} color={theme.colors.primary} />
+                </View>
+                <Text style={styles.objectiveText}>
+                  {index + 1}. {lesson.title} ({lesson.durationMinutes} min)
+                </Text>
+              </View>
+            ))}
+            {lessons.length === 0 && (
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: theme.colors.textSecondary,
+                  marginTop: 40,
+                }}
+              >
+                Nenhuma aula encontrada.
+              </Text>
+            )}
+          </View>
+        )}
+      </ContentSheet>
+
+      {/* FIXED FOOTER */}
+      <View
+        style={[
+          styles.footer,
+          { paddingBottom: insets.bottom > 0 ? insets.bottom + 10 : theme.spacing.md },
+        ]}
+      >
+        {isEnrolled ? (
+          <TouchableOpacity style={styles.primaryButton} onPress={handleStartCourse}>
+            <Text style={styles.primaryButtonText}>
+              {userProgress === 100 ? "VER CURRÍCULO" : "CONTINUAR SÉRIE"}
+            </Text>
+          </TouchableOpacity>
+        ) : isLegacy ? (
+          <View style={styles.footerButtons}>
+            <TouchableOpacity
+              style={[styles.primaryButton, styles.flexButton]}
+              onPress={() =>
+                navigation.replace("CourseDetails", { courseId: "COURSE-00008" })
+              }
+            >
+              <Text style={styles.primaryButtonText}>IR PARA NOVA EDIÇÃO</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity style={styles.primaryButton} onPress={handleStartCourse}>
+            <Text style={styles.primaryButtonText}>INICIAR SÉRIE</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
-    </SafeAreaView>
+    </View>
   );
 }

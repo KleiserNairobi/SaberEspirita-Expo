@@ -8,6 +8,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { useOnboardingStore } from "@/stores/onboardingStore";
 import { AuthNavigator } from "./AuthNavigator";
 import { AppNavigator } from "./AppNavigator";
+import { BannedScreen } from "@/pages/auth/banned";
 import { WelcomeScreen } from "@/pages/onboarding/welcome";
 import { logScreenView } from "@/services/analytics/analyticsService";
 
@@ -86,7 +87,7 @@ function getActiveRouteName(state: NavigationState | undefined): string | undefi
 }
 
 export function RootNavigator() {
-  const { user, isGuest, initialized, initializeAuth } = useAuthStore();
+  const { user, isGuest, initialized, initializeAuth, isDeviceBanned } = useAuthStore();
   const { hasSeenWelcome } = useOnboardingStore();
   const routeNameRef = useRef<string | undefined>(undefined);
 
@@ -101,6 +102,17 @@ export function RootNavigator() {
   // Exibir tela de carregamento até inicialização
   if (!initialized) {
     return null; // Ou tela de splash
+  }
+
+  // Intercepta e bloqueia o acesso caso o dispositivo esteja banido na raiz
+  if (isDeviceBanned) {
+    return (
+      <NavigationContainer ref={navigationRef}>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Banned" component={BannedScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
   }
 
   return (

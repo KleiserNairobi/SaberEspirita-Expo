@@ -1,9 +1,13 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+
+import { Text, TouchableOpacity, View } from "react-native";
+
 import { Image } from "expo-image";
-import { BookOpen, Clock, BarChart3 } from "lucide-react-native";
+import { BarChart3, BookOpen, Clock } from "lucide-react-native";
+
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { ICourse } from "@/types/course";
+
 import { createStyles } from "./styles";
 
 interface CourseCardProps {
@@ -26,10 +30,11 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
       ? { uri: course.imageUrl }
       : typeof course.imageUrl === "number"
         ? course.imageUrl
-        : require("@/assets/images/placeholder.png");
+        : require("@/assets/images/placeholder.jpeg");
 
-  // Verificar se o curso está em breve
+  // Verificar se o curso está em breve ou encerrado
   const isComingSoon = course.status === "COMING_SOON";
+  const isLegacy = course.status === "LEGACY" || course.allowNewEnrollments === false;
 
   return (
     <TouchableOpacity
@@ -63,10 +68,20 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
           </Text>
         </View>
 
-        {/* Se COMING_SOON: Badge laranja no lugar dos metadados */}
+        {/* Se COMING_SOON ou LEGACY: Badge no lugar dos metadados */}
         {isComingSoon ? (
           <View style={styles.comingSoonBadgeLarge}>
             <Text style={styles.comingSoonTextLarge}>EM BREVE</Text>
+          </View>
+        ) : isLegacy ? (
+          <View
+            style={[styles.comingSoonBadgeLarge, { backgroundColor: theme.colors.muted }]}
+          >
+            <Text
+              style={[styles.comingSoonTextLarge, { color: theme.colors.background }]}
+            >
+              ENCERRADO
+            </Text>
           </View>
         ) : (
           <>

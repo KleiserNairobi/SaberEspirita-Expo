@@ -28,7 +28,6 @@ export async function logScientificChat(
       yearMonth: getUTCYearMonth(),
       processed: false,
       action: "message_sent",
-      timestamp: serverTimestamp(),
     };
     await addDoc(logsRef, logData);
     if (__DEV__) {
@@ -61,7 +60,6 @@ export async function logEmotionalChat(
       yearMonth: getUTCYearMonth(),
       processed: false,
       action: "message_sent",
-      timestamp: serverTimestamp(),
     };
     await addDoc(logsRef, logData);
     if (__DEV__) {

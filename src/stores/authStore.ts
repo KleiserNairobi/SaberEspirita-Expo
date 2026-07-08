@@ -19,6 +19,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import { auth } from "@/configs/firebase/firebase";
+import { deviceBlockService } from "@/services/firebase/deviceBlockService";
 import * as Storage from "@/utils/Storage";
 
 import { usePreferencesStore } from "./preferencesStore";
@@ -51,6 +52,7 @@ interface AuthState {
   initialized: boolean;
   error: string | null;
   lastSeenUpdate: number | null; // Timestamp da última atualização de atividade
+  isDeviceBanned: boolean;
 
   // Actions
   setUser: (user: User | null) => void;
@@ -67,6 +69,7 @@ interface AuthState {
   sendPasswordResetEmail: (email: string) => Promise<void>;
   sendVerificationEmail: (user: User) => Promise<void>;
   initializeAuth: () => (() => void) | undefined;
+  checkDeviceBanStatus: () => Promise<boolean>;
 }
 
 // Helper para converter User do Firebase para formato serializável
@@ -113,6 +116,7 @@ export const useAuthStore = create<AuthState>()(
       initialized: false,
       error: null,
       lastSeenUpdate: null,
+      isDeviceBanned: false,
 
       setUser: (user) => set({ user }),
       setLastSeenUpdate: (lastSeenUpdate) => set({ lastSeenUpdate }),
@@ -357,6 +361,11 @@ export const useAuthStore = create<AuthState>()(
       initializeAuth: () => {
         console.log("AuthStore: Inicializando listener do Firebase...");
 
+        // Verifica banimento de dispositivo de forma assíncrona
+        get()
+          .checkDeviceBanStatus()
+          .catch(() => {});
+
         // Listener do Firebase para sincronizar estado
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
           console.log(
@@ -377,23 +386,19 @@ export const useAuthStore = create<AuthState>()(
             });
           } else {
             // Firebase retornou null
-            // Verificar se há usuário persistido no MMKV OU se é Guest
-            const { user: currentUser, isGuest } = get();
+            const { isGuest } = get();
 
-            if (currentUser) {
-              console.log(
-                "AuthStore: Firebase null, mas usuário encontrado no MMKV. Mantendo sessão."
-              );
-              // Mantém o usuário do MMKV (persistência offline)
-              set({ initialized: true, loading: false });
-            } else if (isGuest) {
+            if (isGuest) {
               console.log(
                 "AuthStore: Usuário convidado detectado. Mantendo sessão de convidado."
               );
               set({ initialized: true, loading: false });
             } else {
-              // Nenhum usuário e não é guest
-              console.log("AuthStore: Nenhum usuário autenticado");
+              // Se o Firebase real diz que não há usuário e não é convidado,
+              // limpamos o estado fantasma do MMKV para evitar loop de permissão negada.
+              console.log(
+                "AuthStore: Nenhum usuário autenticado no Firebase (limpando estado offline)"
+              );
               set({ user: null, isGuest: false, initialized: true, loading: false });
             }
           }
@@ -401,6 +406,17 @@ export const useAuthStore = create<AuthState>()(
 
         // Retorna função de cleanup
         return unsubscribe;
+      },
+
+      checkDeviceBanStatus: async () => {
+        try {
+          const isBanned = await deviceBlockService.checkDeviceBanStatus();
+          set({ isDeviceBanned: isBanned });
+          return isBanned;
+        } catch (error) {
+          console.error("AuthStore: Erro ao verificar banimento do dispositivo:", error);
+          return false;
+        }
       },
     }),
     {
@@ -411,6 +427,7 @@ export const useAuthStore = create<AuthState>()(
         user: state.user ? userToStoredUser(state.user) : null,
         isGuest: state.isGuest,
         lastSeenUpdate: state.lastSeenUpdate,
+        isDeviceBanned: state.isDeviceBanned,
       }),
       // Após hidratar do MMKV, reconstruir o objeto User
       onRehydrateStorage: () => (state) => {

@@ -2,6 +2,84 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.18] - 2026-07-06
+
+### Adicionado
+
+- **Módulo de Podcasts**: Lançamento da funcionalidade de podcasts no aplicativo, trazendo uma nova aba para visualização de episódios e player de áudio dedicado (`podcast-player`).
+- **Integração com Firebase & Queries**: Criação do serviço `podcastService` integrado ao Firestore e hook `usePodcasts` para sincronização em tempo real de novos episódios.
+- **Estado Global de Áudio**: Implementação da store global `podcastPlayerStore` para controle fluido do player, permitindo navegar pelo app enquanto ouve.
+- **Componente ContentSheet**: Introdução de novo componente reutilizável para exibição elegante de metadados e conteúdos detalhados.
+
+### Alterado
+
+- **HeroHeader Compartilhado**: Refatoração completa e centralização do `HeroHeader` (utilizado nas telas de Detalhes de Curso, Meditação e Podcasts), com otimização no pré-carregamento e priorização de imagens para eliminar telas cinzas vazias.
+- **Unificação dos Players de Áudio**: Sincronização e refatoração arquitetural entre o player de meditações guiadas e o de podcasts para consistência visual e funcional.
+- **Tela de Detalhes de Curso**: Ajustes no layout de ementa, migrando o cabeçalho para o novo `HeroHeader` compartilhado.
+- **Atualização de Builds (v2.0.18 / Build 53)**: Incremento e sincronização das versões de release no `package.json`, `app.json`, `build.gradle` (Android) e arquivos do Xcode/OneSignal (iOS).
+
+### Corrigido
+
+- **Persistência de Device IDs**: Correção de fluxo crítico forçando o registro dos identificadores únicos de segurança do aparelho (`deviceIds`) na inicialização fria do aplicativo.
+- **Estabilidade do Carousel e Cards**: Ajustes de layout, dimensões e pisca-pisca na renderização dos cards de cursos, de áudio ambiente e no componente de carrossel.
+- **Fórum de Lições**: Correção de quebra de layout e melhorias de usabilidade no componente `LessonForum`.
+
+## [2.0.17] - 2026-07-04
+
+### Adicionado
+
+- **Bloqueio por Dispositivo (Banimento na Raiz)**: Implementado sistema de suspensão de acesso de segurança máxima a nível de hardware.
+- **Identificadores Múltiplos**: Captura paralela de `secureDeviceId` (armazenado de forma persistente no Keychain no iOS), `androidId` (Android) e `iosIdfv` (iOS) para validação de banimento e prevenção contra burlas por desinstalação/reinstalação.
+- **Cache Offline (Bypass Protection)**: Mecanismo de persistência local (MMKV) que mantém o bloqueio do aparelho ativo instantaneamente mesmo sem conexão de rede.
+- **Tela de Acesso Suspenso**: Nova interface para dispositivos bloqueados, com suporte integrado a envio de e-mail e exibição de código de referência por meio do componente customizado `BottomSheetMessage`.
+
+### Alterado
+
+- **Termo de Uso**: Atualizado o Termo de Uso para incluir informações sobre bloqueio por dispositivo e penalidades por uso indevido.
+
+## [2.0.16] - 2026-05-30
+
+### Adicionado
+
+- **Avaliação de Cursos**: Passamos a exibir a nota de avaliação média diretamente nos cards de cursos na tela inicial.
+- **Ementa do Curso**: Adicionados novos campos informativos na tela de detalhes do curso, incluindo indicadores do fórum e a nota de avaliação.
+
+### Alterado
+
+- **Transição de Cursos**: Encerramento do curso "Introdução à Doutrina", com redirecionamento de estudo para a nova série "Entendendo o Espiritismo".
+- **UI/UX**: Ajustes gerais na interface de usuário, incluindo a aplicação de transparência no badge de nota dos cards Populares, o que garante melhor contraste e harmonia com imagens de capa variadas.
+
+## [2.0.15] - 2026-05-27
+
+### Alterado
+
+- Atualizações de segurança de rotina nos nossos servidores.
+
+### Corrigido
+
+- Melhorias de estabilidade e correções de bugs internos.
+
+## [2.0.14] - 2026-05-25
+
+### Adicionado
+
+- **Fórum da Aula**: Novo sistema completo de Fórum de Discussão integrado ao player de lições (`LessonForum`), com suporte a comentários, respostas encadeadas e controle de exibição de conteúdo.
+- **Reações no Fórum**: Sistema interativo de reações para os comentários dos alunos (_me_tocou_, _aprendi_algo_, _quero_refletir_, _gratidao_, _luz_), atualizando estatísticas de progresso comunitário do autor e do reagente.
+- **Central de Notificações**: Nova tela de Notificações no aplicativo (`NotificationsScreen`) com paginação e sincronização em tempo real de reações recebidas, respostas em threads seguidas e transmissões gerais da administração (`admin_broadcast`).
+- **Nível da Comunidade & Jornada**: Introdução do progresso de engajamento da comunidade espiritual com modal de evolução de nível (`CommunityLevelUpModal`) e painéis visuais informativos (`JourneyBottomSheet` e `CommunityLevelInfoBottomSheet`).
+- **Privacidade (Exclusão de Conta com Motivo)**: Novo fluxo de exclusão definitiva da conta diretamente na tela de configurações, integrando a coleta de motivos específicos do ecossistema do app e a gravação de logs estruturados de desligamento na coleção `deleted_users_logs` no Firestore.
+
+### Alterado
+
+- **Player de Lição**: Integração do botão flutuante de ações rápidas (`LessonActionsFAB`), facilitando o acesso instantâneo ao Fórum da aula a partir da lição atual.
+- **Currículo do Curso**: Otimização do design da tela de currículo e inclusão de prefetch automático em segundo plano das próximas 3 aulas para otimizar o carregamento.
+- **Cabeçalho de Perfil**: Refatoração do `AccountHeader` para exibição dinâmica e harmoniosa das informações de nível comunitário, barra de progresso de experiência e avatar do usuário.
+
+### Corrigido
+
+- **Sincronização de Notificações**: Correções no fluxo de leitura em lote (`markAllNotificationsRead`) e nos estilos da listagem de notificações.
+- **Ajustes de UI**: Correção de sobreposição de elementos visuais na tela de currículo do curso e alinhamento dos botões flutuantes.
+
 ## [2.0.13] - 2026-04-29
 
 ### Adicionado
