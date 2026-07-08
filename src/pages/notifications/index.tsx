@@ -53,18 +53,7 @@ function getReactionIcon(reactionType: string | null) {
   return Sparkles;
 }
 
-function getAdminBroadcastColor(theme: any): string {
-  return theme.colors.warning || "#F59E0B";
-}
 
-function getReactionColor(reactionType: string | null, theme: any): string {
-  if (reactionType === "me_tocou") return theme.colors.reflection || "#E91E63";
-  if (reactionType === "aprendi_algo") return theme.colors.warning || "#FFB300";
-  if (reactionType === "quero_refletir") return theme.colors.primary || "#1E88E5";
-  if (reactionType === "gratidao") return theme.colors.success || "#43A047";
-  if (reactionType === "luz") return "#9C27B0"; // Cor roxa clássica de Luz espírita/brilhante
-  return theme.colors.textSecondary;
-}
 
 function renderItemText(item: NotificationItem, styles: any) {
   if (item.type === "admin_broadcast") {
@@ -295,12 +284,7 @@ export function NotificationsScreen({ navigation }: Props) {
                   ? getReactionIcon(item.reactionType)
                   : MessageSquare;
 
-              const iconColor =
-                item.type === "admin_broadcast"
-                  ? getAdminBroadcastColor(theme)
-                  : item.type === "forum_reaction_received"
-                  ? getReactionColor(item.reactionType, theme)
-                  : theme.colors.primary;
+              const iconColor = theme.colors.primary;
 
               return (
                 <TouchableOpacity
