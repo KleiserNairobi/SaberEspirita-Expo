@@ -32,7 +32,6 @@ import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types"
 import { ContentSheet } from "@/components/ContentSheet";
 import { HeroHeader } from "@/components/HeroHeader";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
-import { useCourseRating } from "@/hooks/queries/useCourseRating";
 import { useCourse } from "@/hooks/queries/useCourses";
 import { useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -55,7 +54,6 @@ export function CourseDetailsScreen() {
   // React Query Fetch
   const { data: course, isLoading: isLoadingCourse } = useCourse(courseId);
   const { data: progress, isLoading: isLoadingProgress } = useCourseProgress(courseId);
-  const { data: rating } = useCourseRating(courseId);
 
   // Queries para a aba de currículo
   const { data: lessons = [], isLoading: isLoadingLessons } = useLessons(courseId);
@@ -234,13 +232,13 @@ export function CourseDetailsScreen() {
           </View>
 
           {/* Média de Avaliação (se houver) */}
-          {(rating ?? course.rating) && (
+          {(course.averageRating ?? course.rating) && (
             <>
               <Text style={styles.metadataSeparator}>•</Text>
               <View style={styles.metadataItem}>
                 <Star size={12} color={theme.colors.muted} fill={theme.colors.muted} />
                 <Text style={styles.metadataText}>
-                  {Number(rating ?? course.rating).toFixed(1)}/5
+                  {Number(course.averageRating ?? course.rating).toFixed(1)}/5
                 </Text>
               </View>
             </>
@@ -360,12 +358,12 @@ export function CourseDetailsScreen() {
                   <Star
                     size={16}
                     color={theme.colors.primary}
-                    fill={(rating ?? course.rating) ? theme.colors.primary : "none"}
+                    fill={(course.averageRating ?? course.rating) ? theme.colors.primary : "none"}
                   />
                 </View>
                 <Text style={styles.statText}>
-                  {(rating ?? course.rating)
-                    ? `${Number(rating ?? course.rating).toFixed(1)}/5`
+                  {(course.averageRating ?? course.rating)
+                    ? `${Number(course.averageRating ?? course.rating).toFixed(1)}/5`
                     : "Seja o primeiro"}
                 </Text>
               </View>

@@ -2,7 +2,7 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, initializeAuth } from "firebase/auth";
 // @ts-ignore - O Metro Bundler exige o import de 'firebase/auth', mas o TS pode não reconhecer o membro
 import { getReactNativePersistence } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeFirestore, persistentLocalCache } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
 import { getStorage } from "firebase/storage";
 import { mmkvFirebaseStorage } from "@/utils/Storage";
@@ -41,7 +41,9 @@ try {
 export const auth = firebaseAuth;
 
 auth.languageCode = "pt-BR";
-export const db = getFirestore(app);
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({}),
+});
 export const storage = getStorage(app);
 export const functions = getFunctions(app, "us-central1");
 
