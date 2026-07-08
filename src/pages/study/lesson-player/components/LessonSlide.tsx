@@ -35,7 +35,7 @@ export const LessonSlide = memo(
     const styles = createStyles(theme);
 
     const hasLocalGlossary = !!slide.glossary && slide.glossary.length > 0;
-    const termsForInjection = hasLocalGlossary ? [] : glossaryTerms;
+    const termsForInjection: IGlossaryTerm[] = [];
 
     return (
       <View style={styles.container}>
