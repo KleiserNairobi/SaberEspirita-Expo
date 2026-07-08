@@ -20,7 +20,6 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 
-import { useCourseRating } from "@/hooks/queries/useCourseRating";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import type { ICourse, IUserCourseProgress } from "@/types/course";
 
@@ -54,8 +53,7 @@ const CarouselItem = React.memo(function CarouselItem({
 }: CarouselItemProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-  const { data: rating } = useCourseRating(item.id);
-  const finalRating = rating ?? item.rating;
+  const finalRating = item.averageRating ?? item.rating;
 
   const inputRange = [
     (index - 1) * ITEM_SIZE,

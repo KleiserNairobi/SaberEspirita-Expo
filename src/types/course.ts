@@ -23,6 +23,8 @@ export interface ICourse {
     requiredExercisesPercent: number;
   };
   rating?: number;
+  averageRating?: number;
+  ratingCount?: number;
   hasForum?: boolean;
   stats?: {
     exerciseCount: number;

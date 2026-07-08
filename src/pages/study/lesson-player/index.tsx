@@ -33,7 +33,6 @@ import { useForumHasNewComments } from "@/hooks/queries/useLessonForum";
 import { LESSONS_KEYS, useLesson, useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useRateApp } from "@/hooks/useRateApp";
-import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
 import { AppStackParamList } from "@/routers/types";
 import {
   getLevelUpIfAny,
@@ -41,7 +40,7 @@ import {
   setStoredCommunityLevel,
 } from "@/services/community/communityLevelService";
 import { getCommunityProgress } from "@/services/firebase/forumService";
-import { logGlossaryView } from "@/services/firebase/glossaryService";
+import { logGlossaryView, getGlossaryTermById } from "@/services/firebase/glossaryService";
 import { getLessonById } from "@/services/firebase/lessonService";
 import {
   logLessonCompleted,
@@ -74,7 +73,6 @@ export function LessonPlayerScreen() {
   const queryClient = useQueryClient();
 
   // Glossário Contextual
-  const { data: glossaryTerms } = useGlossaryTerms();
   const glossarySheetRef = useRef<BottomSheetModal>(null);
   const [selectedGlossaryTerm, setSelectedGlossaryTerm] = useState<IGlossaryTerm | null>(
     null
@@ -383,18 +381,22 @@ export function LessonPlayerScreen() {
   }, [lesson, navigation, showMessage]);
 
   const handleGlossaryTermPress = useCallback(
-    (termId: string, matchedWord?: string) => {
+    async (termId: string, matchedWord?: string) => {
       const cleanId = termId.trim();
-      let term: IGlossaryTerm | undefined;
+      let term: IGlossaryTerm | undefined | null;
 
       // Prioriza buscar no glossário local da aula atual
       if (currentSlide?.glossary) {
         term = currentSlide.glossary.find((t) => t.id === cleanId);
       }
 
-      // Se não achou na aula, busca no glossário global
-      if (!term && glossaryTerms) {
-        term = glossaryTerms.find((t) => t.id === cleanId);
+      // Se não achou na aula, busca no glossário global sob demanda
+      if (!term) {
+        try {
+          term = await getGlossaryTermById(cleanId);
+        } catch (error) {
+          console.warn("[LessonPlayer] Erro ao buscar termo do glossário sob demanda:", error);
+        }
       }
 
       if (term) {
@@ -422,7 +424,7 @@ export function LessonPlayerScreen() {
         setTimeout(() => bottomSheetRef.current?.present(), 100);
       }
     },
-    [glossaryTerms, currentSlide?.glossary]
+    [currentSlide?.glossary, user?.uid, lesson?.id]
   );
 
   // --- Funções da Toolbar ---
@@ -528,7 +530,7 @@ export function LessonPlayerScreen() {
             fontSize={getFontSize()}
             isLastSlide={index === lesson.slides.length - 1}
             reflectionQuestions={lesson.reflectionQuestions}
-            glossaryTerms={glossaryTerms}
+            glossaryTerms={[]}
             onGlossaryTermPress={handleGlossaryTermPress}
             slideIndex={index}
           />
