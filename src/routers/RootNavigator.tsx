@@ -1,16 +1,18 @@
 import React, { useEffect, useRef } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import type { NavigationState } from "@react-navigation/native";
 
-import { RootStackParamList } from "./types";
-import { useAuthStore } from "@/stores/authStore";
-import { useOnboardingStore } from "@/stores/onboardingStore";
-import { AuthNavigator } from "./AuthNavigator";
-import { AppNavigator } from "./AppNavigator";
+import { NavigationContainer } from "@react-navigation/native";
+import type { NavigationState } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import { BannedScreen } from "@/pages/auth/banned";
 import { WelcomeScreen } from "@/pages/onboarding/welcome";
 import { logScreenView } from "@/services/analytics/analyticsService";
+import { useAuthStore } from "@/stores/authStore";
+import { useOnboardingStore } from "@/stores/onboardingStore";
+
+import { AppNavigator } from "./AppNavigator";
+import { AuthNavigator } from "./AuthNavigator";
+import { RootStackParamList } from "./types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -29,11 +31,15 @@ const SCREEN_NAME_MAP: Record<string, string> = {
   PrayHome: "Ore - Home",
   PrayCategory: "Ore - Categoria",
   Prayer: "Ore - Oração",
+  AllPrayers: "Ore - Todas Orações",
+  PrayerPrep: "Ore - Preparação para Oração",
 
   // Navegadores internos - Meditate
   MeditateHome: "Medite - Home",
   AllReflections: "Medite - Todas Reflexões",
   Reflection: "Medite - Reflexão",
+  AllMeditations: "Medite - Todas Meditações",
+  MeditationPlayer: "Medite - Player de Meditação",
 
   // Navegadores internos - Fix
   FixHome: "Fixe - Home",
@@ -45,6 +51,11 @@ const SCREEN_NAME_MAP: Record<string, string> = {
   TruthOrFalseQuestion: "Fixe - V ou F Questão",
   TruthOrFalseResult: "Fixe - V ou F Resultado",
   TruthOrFalseHistory: "Fixe - V ou F Histórico",
+  DailyQuizHome: "Fixe - Desafio Diário Home",
+  DailyQuiz: "Fixe - Desafio Diário",
+  StandardQuiz: "Fixe - Quiz Padrão",
+  Leaderboard: "Fixe - Ranking",
+  Performance: "Fixe - Desempenho",
 
   // Telas modais/stack do App
   FAQ: "FAQ",
@@ -63,11 +74,14 @@ const SCREEN_NAME_MAP: Record<string, string> = {
   Notifications: "Notificações",
   CourseQuiz: "Quiz do Curso",
   CourseCertificate: "Certificado do Curso",
+  AllPodcasts: "Estude - Todos Podcasts",
+  PodcastPlayer: "Estude - Player de Podcast",
 
   // Auth
   Login: "Login",
   Register: "Registro",
   Welcome: "Boas-vindas",
+  Banned: "Dispositivo Banido",
 };
 
 /**
@@ -123,6 +137,11 @@ export function RootNavigator() {
         const initialRoute = getActiveRouteName(navigationRef.current?.getRootState());
         if (initialRoute) {
           routeNameRef.current = initialRoute;
+          // Mapeia nome técnico para nome amigável
+          // @ts-ignore - SCREEN_NAME_MAP pode não ter todas as chaves
+          const friendlyName = SCREEN_NAME_MAP[initialRoute] || initialRoute;
+          // Logar visualização inicial
+          logScreenView(friendlyName, initialRoute);
         }
       }}
       onStateChange={(state) => {
