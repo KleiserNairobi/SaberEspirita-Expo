@@ -1,21 +1,29 @@
-import {
-  collection,
-  query,
-  orderBy,
-  limit,
-  getDocs,
-  where,
-  doc,
-  getDoc,
-  setDoc,
-} from "firebase/firestore";
+import { collection, limit, orderBy, query } from "firebase/firestore";
+import { doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+
 import { db } from "@/configs/firebase/firebase";
 import { ILeaderboardUser, TimeFilter, TimeFilterEnum } from "@/types/leaderboard";
 
 const USERS_SCORES_COLLECTION = "users_scores";
 
+interface ILeaderboardCache {
+  data: ILeaderboardUser[];
+  timestamp: number;
+}
+
+const leaderboardCache: Record<string, ILeaderboardCache> = {};
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos em milissegundos
+
 export async function getLeaderboard(period: TimeFilter): Promise<ILeaderboardUser[]> {
   try {
+    const nowMs = Date.now();
+    const cached = leaderboardCache[period];
+
+    if (cached && nowMs - cached.timestamp < CACHE_TTL_MS) {
+      console.log(`[Leaderboard] Retornando dados do cache para o período: ${period}`);
+      return cached.data;
+    }
+
     const fieldMap: Record<string, string> = {
       [TimeFilterEnum.WEEK]: "totalThisWeek",
       [TimeFilterEnum.MONTH]: "totalThisMonth",
@@ -27,25 +35,25 @@ export async function getLeaderboard(period: TimeFilter): Promise<ILeaderboardUs
     const q = query(
       collection(db, USERS_SCORES_COLLECTION),
       orderBy(field, "desc"),
-      limit(200) // Increase buffer to account for stale blockers
+      limit(100) // Otimizado de 200 para 100 (contadores antigos limpos pelo backend)
     );
 
     const snapshot = await getDocs(q);
     const now = new Date();
 
-    // Start of Week (Sunday 00:00)
+    // Início da semana (Domingo às 00:00)
     const startOfWeek = new Date(now);
     startOfWeek.setHours(0, 0, 0, 0);
     startOfWeek.setDate(now.getDate() - startOfWeek.getDay());
 
-    // Start of Month (1st 00:00)
+    // Início do mês (Dia 1º às 00:00)
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
     const processedData = snapshot.docs.map((docSnap) => {
       const data = docSnap.data();
       let score = data[field] || 0;
 
-      // Parse lastUpdated with fallback to updatedAt
+      // Analisa lastUpdated com fallback para updatedAt
       let lastUpdated = new Date(0);
       const rawDate = data.lastUpdated || data.updatedAt; // Fallback
 
@@ -63,12 +71,12 @@ export async function getLeaderboard(period: TimeFilter): Promise<ILeaderboardUs
         }
       }
 
-      // Safety check for Invalid Date
+      // Verificação de segurança para data inválida
       if (isNaN(lastUpdated.getTime())) {
         lastUpdated = new Date(0);
       }
 
-      // Check for Staleness
+      // Verifica se as pontuações são de períodos anteriores (camada extra de segurança)
       if (period === TimeFilterEnum.WEEK) {
         if (lastUpdated < startOfWeek) {
           score = 0;
@@ -85,23 +93,37 @@ export async function getLeaderboard(period: TimeFilter): Promise<ILeaderboardUs
         photoURL: data.photoURL || null,
         score: score,
         level: data.level || 0,
-        // Keep raw data for tie-breaking or debug if needed
       };
     });
 
-    // Filter out users with 0 score
+    // Filtra usuários com pontuação maior que 0
     const activeUsers = processedData.filter((user) => user.score > 0);
 
-    // Re-sort because we might have zeroed out some high scores
+    // Reordena porque podemos ter zerado algumas pontuações que estavam obsoletas
     activeUsers.sort((a, b) => b.score - a.score);
 
-    // Assign positions and limit to 100
-    return activeUsers.slice(0, 100).map((user, index) => ({
+    // Atribui as posições no ranking e limita em até 100 usuários
+    const result = activeUsers.slice(0, 100).map((user, index) => ({
       ...user,
       position: index + 1,
     }));
+
+    // Salvar resultado no cache em memória
+    leaderboardCache[period] = {
+      data: result,
+      timestamp: Date.now(),
+    };
+
+    return result;
   } catch (error) {
     console.error("Erro ao buscar leaderboard:", error);
+    // Fallback: se a consulta falhar, tenta retornar o cache anterior mesmo que expirado
+    if (leaderboardCache[period]) {
+      console.log(
+        `[Leaderboard] Retornando cache anterior para ${period} como fallback após falha.`
+      );
+      return leaderboardCache[period].data;
+    }
     return [];
   }
 }
@@ -126,7 +148,7 @@ export async function getUserScore(userId: string): Promise<ILeaderboardUser | n
       };
     }
 
-    // Auto-healing: documento não existe, tentar criar
+    // Autocura: se o documento de scores não existe, tenta criar a partir do perfil
     console.log(
       "getUserScore: Documento users_scores não encontrado. Tentando autocura..."
     );
@@ -151,7 +173,7 @@ export async function getUserScore(userId: string): Promise<ILeaderboardUser | n
         level: 1,
       };
 
-      // Criar documento scores
+      // Criar documento de pontuações
       await setDoc(docRef, newScoreData);
       console.log("getUserScore: Documento users_scores recriado com sucesso.");
 
