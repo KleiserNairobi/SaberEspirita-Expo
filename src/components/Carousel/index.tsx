@@ -121,7 +121,7 @@ const CarouselItem = React.memo(function CarouselItem({
           <View style={styles.overlay} />
 
           {/* BADGE DE AVALIAÇÃO */}
-          {finalRating !== undefined && finalRating !== null && (
+          {finalRating !== undefined && finalRating !== null && finalRating > 0 && (
             <View style={styles.ratingBadge}>
               <Text style={styles.ratingBadgeStar}>★</Text>
               <Text style={styles.ratingBadgeText}>{finalRating.toFixed(1)}</Text>

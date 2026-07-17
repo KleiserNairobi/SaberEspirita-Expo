@@ -76,7 +76,7 @@ export function PerformanceScreen() {
               </View>
             )}
 
-            {/* Ver Ranking Button */}
+            {/* Botão para ver ranking */}
             <TouchableOpacity
               style={styles.rankingButton}
               onPress={() => navigation.navigate("Leaderboard")}
