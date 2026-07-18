@@ -40,6 +40,7 @@ export function QuizResultScreen() {
     userAnswers,
     courseId,
     lessonId,
+    quizId,
   } = route.params;
 
   // ✅ Invalida cache quando é exercício de curso
@@ -130,6 +131,7 @@ export function QuizResultScreen() {
       level,
       userAnswers: userAnswers || [],
       courseId, // ← NOVO: Passa courseId para QuizReview
+      quizId, // ← NOVO
     });
   }
 

@@ -8,6 +8,7 @@ import {
   orderBy,
   query,
   where,
+  getCountFromServer,
 } from "firebase/firestore";
 
 import { db } from "@/configs/firebase/firebase";
@@ -22,6 +23,7 @@ function mapDocToPrayer(doc: any): IPrayer {
     id: doc.id,
     ...data,
     createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : data.createdAt,
+    categories: data.categories || [],
   } as IPrayer;
 }
 
@@ -42,35 +44,10 @@ export async function getPrayerCategories(): Promise<IPrayerCategory[]> {
  * Busca orações de uma categoria específica
  */
 export async function getPrayersByCategory(categoryId: string): Promise<IPrayer[]> {
-  // Buscar links da categoria
-  const linksRef = collection(db, "prayer_category_links");
-  const linksQuery = query(linksRef, where("categoryId", "==", categoryId));
-  const linksSnapshot = await getDocs(linksQuery);
-
-  const prayerIds = linksSnapshot.docs.map((doc) => doc.data().prayerId);
-
-  if (prayerIds.length === 0) {
-    return [];
-  }
-
-  // Buscar orações em lotes de 10 (limite do Firestore para operador 'in')
   const prayersRef = collection(db, "prayers");
-  const chunks: string[][] = [];
-
-  for (let i = 0; i < prayerIds.length; i += 10) {
-    chunks.push(prayerIds.slice(i, i + 10));
-  }
-
-  const prayersPromises = chunks.map(async (chunk) => {
-    const q = query(prayersRef, where(documentId(), "in", chunk));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => mapDocToPrayer(doc));
-  });
-
-  const results = await Promise.all(prayersPromises);
-
-  // Flatten dos resultados
-  return results.flat();
+  const q = query(prayersRef, where("categories", "array-contains", categoryId));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => mapDocToPrayer(doc));
 }
 
 /**
@@ -170,11 +147,15 @@ export async function getTrendingPrayers(
  * Busca a quantidade total de orações de uma categoria
  */
 export async function getCategoryPrayerCount(categoryId: string): Promise<number> {
-  const linksRef = collection(db, "prayer_category_links");
-  const linksQuery = query(linksRef, where("categoryId", "==", categoryId));
-  const snapshot = await getDocs(linksQuery);
-
-  return snapshot.docs.length;
+  try {
+    const prayersRef = collection(db, "prayers");
+    const q = query(prayersRef, where("categories", "array-contains", categoryId));
+    const snapshot = await getCountFromServer(q);
+    return snapshot.data().count;
+  } catch (error) {
+    console.error("Erro ao obter a contagem de preces da categoria:", error);
+    return 0;
+  }
 }
 
 /**
@@ -226,23 +207,11 @@ export async function getAllPrayersWithCategories(): Promise<
   const prayersRef = collection(db, "prayers");
   const prayersSnapshot = await getDocs(prayersRef);
 
-  const prayers = prayersSnapshot.docs.map((doc) => mapDocToPrayer(doc));
-
-  const linksRef = collection(db, "prayer_category_links");
-  const linksSnapshot = await getDocs(linksRef);
-
-  // Map prayerId -> categoryId[]
-  const categoryMap: Record<string, string[]> = {};
-  linksSnapshot.docs.forEach((doc) => {
-    const data = doc.data();
-    if (!categoryMap[data.prayerId]) {
-      categoryMap[data.prayerId] = [];
-    }
-    categoryMap[data.prayerId].push(data.categoryId);
+  return prayersSnapshot.docs.map((doc) => {
+    const prayer = mapDocToPrayer(doc);
+    return {
+      ...prayer,
+      categories: prayer.categories || [],
+    };
   });
-
-  return prayers.map((prayer) => ({
-    ...prayer,
-    categories: categoryMap[prayer.id] || [],
-  }));
 }

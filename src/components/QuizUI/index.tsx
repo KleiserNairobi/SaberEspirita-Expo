@@ -2,8 +2,8 @@ import React, { useCallback, useMemo, useRef, useState } from "react";
 
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
-import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
-import { ArrowLeft } from "lucide-react-native";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView, BottomSheetModal } from "@gorhom/bottom-sheet";
+import { ArrowLeft, Flag } from "lucide-react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button } from "@/components/Button";
@@ -12,6 +12,7 @@ import { QuizProgressBar } from "@/components/QuizProgressBar";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useQuizAudio } from "@/hooks/useQuizAudio";
 import { IQuestion, IQuizAnswer } from "@/types/quiz";
+import { ReportQuestionBottomSheet } from "@/components/ReportQuestionBottomSheet";
 
 import { createStyles } from "./styles";
 
@@ -23,6 +24,7 @@ interface QuizUIProps {
   showStopButton?: boolean;
   isSubmitting?: boolean;
   dynamicTitles?: boolean;
+  quizId?: string;
   onFinish: (answers: IQuizAnswer[]) => void;
   onStop: () => void;
 }
@@ -35,6 +37,7 @@ export function QuizUI({
   showStopButton = true,
   isSubmitting = false,
   dynamicTitles = false,
+  quizId,
   onFinish,
   onStop,
 }: QuizUIProps) {
@@ -43,6 +46,7 @@ export function QuizUI({
   const insets = useSafeAreaInsets();
 
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const reportBottomSheetRef = useRef<BottomSheetModal>(null);
   const scrollViewRef = useRef<ScrollView>(null);
   const snapPoints = useMemo(() => ["40%"], []);
   const selectionLockRef = useRef(false);
@@ -58,6 +62,10 @@ export function QuizUI({
 
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
+
+  function handleOpenReport() {
+    reportBottomSheetRef.current?.present();
+  }
 
   function handleSelectAnswer(index: number) {
     if (isSubmitting) return;
@@ -208,7 +216,7 @@ export function QuizUI({
 
       {/* Botões de Ação */}
       <View style={styles.footer}>
-        {showStopButton && (
+        {showStopButton && selectedAnswer === null && (
           <View style={styles.sheetButton}>
             <Button
               title="Parar"
@@ -218,6 +226,15 @@ export function QuizUI({
               disabled={currentQuestionIndex === 0}
             />
           </View>
+        )}
+        {selectedAnswer !== null && (
+          <TouchableOpacity
+            style={styles.reportButton}
+            onPress={handleOpenReport}
+            activeOpacity={0.7}
+          >
+            <Flag size={20} color={theme.colors.textSecondary} />
+          </TouchableOpacity>
         )}
         <View style={styles.sheetButton}>
           <Button
@@ -305,6 +322,15 @@ export function QuizUI({
           </BottomSheetView>
         </BottomSheet>
       )}
+
+      {/* Reporte de Questão */}
+      <ReportQuestionBottomSheet
+        ref={reportBottomSheetRef}
+        question={currentQuestion}
+        selectedAnswerIndex={selectedAnswer}
+        quizId={quizId}
+        questionIndex={currentQuestionIndex}
+      />
     </SafeAreaView>
   );
 }

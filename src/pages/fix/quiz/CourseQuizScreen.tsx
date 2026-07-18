@@ -154,6 +154,7 @@ export function CourseQuizScreen() {
         courseId,
         lessonId,
         exerciseId,
+        quizId,
       });
     } catch (error) {
       console.error("Erro ao salvar progresso:", error);
@@ -169,6 +170,7 @@ export function CourseQuizScreen() {
         courseId,
         lessonId,
         exerciseId,
+        quizId,
       });
     } finally {
       setIsSubmitting(false);
@@ -241,6 +243,7 @@ export function CourseQuizScreen() {
         questions={quiz.questions}
         showStopButton={false}
         isSubmitting={isSubmitting}
+        quizId={quizId}
         onFinish={handleFinish}
         onStop={handleStop}
       />

@@ -138,6 +138,7 @@ export function StandardQuizScreen() {
         percentage,
         level,
         userAnswers: answers,
+        quizId: quiz.id, // ← NOVO
       });
     } catch (error) {
       console.error("Erro ao salvar progresso:", error);
@@ -150,6 +151,7 @@ export function StandardQuizScreen() {
         percentage: 0,
         level: "Fraco",
         userAnswers: answers,
+        quizId: quiz.id, // ← NOVO
       });
     } finally {
       setIsSubmitting(false);
@@ -200,6 +202,7 @@ export function StandardQuizScreen() {
         questions={quiz.questions}
         showStopButton={true}
         isSubmitting={isSubmitting}
+        quizId={quiz.id}
         onFinish={handleFinish}
         onStop={handleStop}
       />

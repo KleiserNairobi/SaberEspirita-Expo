@@ -330,6 +330,14 @@ export default function AccountScreen() {
                 isFirst
                 isLast
               />
+              <Text
+                style={[
+                  theme.text("xs", "regular", theme.colors.muted),
+                  { paddingHorizontal: 16, marginTop: 8, lineHeight: 16, textAlign: "center" }
+                ]}
+              >
+                Encontrou alguma resposta errada ou problema técnico? Por favor, nos envie um relato pelo suporte antes de apagar sua conta.
+              </Text>
             </SettingsSection>
           )}
 

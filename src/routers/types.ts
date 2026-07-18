@@ -151,6 +151,7 @@ export type FixStackParamList = {
     courseId?: string;
     lessonId?: string;
     exerciseId?: string;
+    quizId?: string; // ← NOVO
   };
   QuizReview: {
     categoryId: string;
@@ -162,6 +163,7 @@ export type FixStackParamList = {
     level: string;
     userAnswers: any[];
     courseId?: string; // Opcional: usado quando é exercício de curso
+    quizId?: string; // ← NOVO
   };
   TruthOrFalseHome: undefined;
   TruthOrFalseQuestion: undefined;

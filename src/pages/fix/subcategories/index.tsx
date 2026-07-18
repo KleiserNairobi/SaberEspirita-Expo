@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { View, SectionList, Text, TouchableOpacity } from "react-native";
+import { View, SectionList, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
@@ -53,6 +53,7 @@ export function SubcategoriesScreen() {
     name: string;
     desc: string;
   } | null>(null);
+  const [retakingSubcategoryId, setRetakingSubcategoryId] = useState<string | null>(null);
 
   // Usar store global para persistir filtro
   const filterType = useQuizFilterStore((state) => state.getFilter(categoryId));
@@ -90,27 +91,34 @@ export function SubcategoriesScreen() {
     const { id: subId, name: subName, desc } = selectedQuiz;
 
     if (user?.uid) {
-      // 1. Remover da lista de completados
-      await removeUserCompletedSubcategory(user.uid, categoryId, subId);
+      setRetakingSubcategoryId(subId);
+      try {
+        // 1. Remover da lista de completados
+        await removeUserCompletedSubcategory(user.uid, categoryId, subId);
 
-      // 2. Remover do histórico e recalcular score
-      const userName = user.displayName || user.email?.split("@")[0] || "Usuário";
-      await removeUserHistory(user.uid, userName, subId);
+        // 2. Remover do histórico e recalcular score
+        const userName = user.displayName || user.email?.split("@")[0] || "Usuário";
+        await removeUserHistory(user.uid, userName, subId);
 
-      // 3. Atualizar cache local para refletir a mudança imediatamente (remover checkmark)
-      await queryClient.invalidateQueries({
-        queryKey: QUIZ_KEYS.userProgress(user.uid),
-      });
+        // 3. Atualizar cache local para refletir a mudança imediatamente (remover checkmark)
+        await queryClient.invalidateQueries({
+          queryKey: QUIZ_KEYS.userProgress(user.uid),
+        });
 
-      // 4. Navegar
-      navigation.navigate("StandardQuiz", {
-        subcategoryId: subId,
-        categoryId,
-        categoryName,
-        subcategoryName: subName,
-        subtitle: desc,
-      });
-      setSelectedQuiz(null);
+        // 4. Navegar
+        navigation.navigate("StandardQuiz", {
+          subcategoryId: subId,
+          categoryId,
+          categoryName,
+          subcategoryName: subName,
+          subtitle: desc,
+        });
+      } catch (error) {
+        console.error("Erro ao reiniciar quiz:", error);
+      } finally {
+        setRetakingSubcategoryId(null);
+        setSelectedQuiz(null);
+      }
     }
   }
 
@@ -141,6 +149,8 @@ export function SubcategoriesScreen() {
   }
 
   function renderSubcategory({ item }: { item: any }) {
+    const isRetakingCard = retakingSubcategoryId === item.id;
+    const isAnyCardRetaking = retakingSubcategoryId !== null;
     return (
       <View style={{ paddingHorizontal: theme.spacing.lg }}>
         <SubcategoryCard
@@ -148,6 +158,8 @@ export function SubcategoriesScreen() {
           subtitle={item.description || ""}
           questionCount={item.questionCount}
           completed={isSubcategoryCompleted(item.id)}
+          loading={isRetakingCard}
+          disabled={isAnyCardRetaking}
           onPress={() =>
             handleSubcategoryPress(item.id, item.name, item.description || "")
           }

@@ -1,15 +1,19 @@
+import React, { forwardRef, useMemo, useState } from "react";
+
+import { Linking, Pressable, Text, TouchableOpacity, View } from "react-native";
+
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
-  BottomSheetTextInput,
   BottomSheetScrollView,
+  BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import React, { forwardRef, useMemo, useState } from "react";
-import { Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button } from "@/components/Button";
 import { useAppTheme } from "@/hooks/useAppTheme";
+
+import { CONTACT_EMAIL } from "../../constants";
 import { createStyles } from "./styles";
 
 interface DeleteAccountBottomSheetProps {
@@ -62,6 +66,12 @@ export const DeleteAccountBottomSheet = forwardRef<
     }
   }
 
+  function handleOpenSupport() {
+    Linking.openURL(
+      `mailto:${CONTACT_EMAIL}?subject=Suporte preventivo antes de excluir conta`
+    );
+  }
+
   function handleCancel() {
     if (isLoading) return;
     setSelectedReason(null);
@@ -94,7 +104,10 @@ export const DeleteAccountBottomSheet = forwardRef<
       keyboardBlurBehavior="restore"
     >
       <BottomSheetScrollView
-        contentContainerStyle={[styles.container, { paddingBottom: Math.max(insets.bottom, 24) }]}
+        contentContainerStyle={[
+          styles.container,
+          { paddingBottom: Math.max(insets.bottom, 24) },
+        ]}
         keyboardShouldPersistTaps="handled"
       >
         <View>
@@ -103,8 +116,40 @@ export const DeleteAccountBottomSheet = forwardRef<
 
         <View style={styles.warningContainer}>
           <Text style={styles.warningText}>
-            Aviso importante: Esta ação é irreversível. Todos os seus dados de progresso, conquistas, posts e conta serão excluídos definitivamente de nossos servidores.
+            Aviso importante: Esta ação é irreversível. Todos os seus dados de progresso,
+            conquistas, posts e conta serão excluídos definitivamente de nossos
+            servidores.
           </Text>
+        </View>
+
+        <View
+          style={{
+            backgroundColor: theme.colors.primary + "15",
+            padding: 14,
+            borderRadius: 12,
+            gap: 6,
+          }}
+        >
+          <Text
+            style={[
+              theme.text("sm", "regular", theme.colors.textSecondary),
+              { lineHeight: 18 },
+            ]}
+          >
+            Encontrou uma resposta incorreta ou problema no app? Nos dê a chance de
+            consertar! Fale com o suporte antes de excluir.
+          </Text>
+          <TouchableOpacity
+            onPress={handleOpenSupport}
+            style={{
+              alignSelf: "flex-start",
+            }}
+            activeOpacity={0.7}
+          >
+            <Text style={theme.text("sm", "semibold", theme.colors.primary)}>
+              Falar com o Suporte
+            </Text>
+          </TouchableOpacity>
         </View>
 
         <Text style={styles.sectionTitle}>Por que deseja excluir sua conta?</Text>
@@ -119,10 +164,14 @@ export const DeleteAccountBottomSheet = forwardRef<
                 onPress={() => setSelectedReason(reason)}
                 disabled={isLoading}
               >
-                <Text style={[styles.optionText, isSelected && styles.optionTextSelected]}>
+                <Text
+                  style={[styles.optionText, isSelected && styles.optionTextSelected]}
+                >
                   {reason}
                 </Text>
-                <View style={[styles.radioCircle, isSelected && styles.radioCircleSelected]}>
+                <View
+                  style={[styles.radioCircle, isSelected && styles.radioCircleSelected]}
+                >
                   {isSelected && <View style={styles.radioDot} />}
                 </View>
               </Pressable>

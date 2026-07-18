@@ -84,5 +84,15 @@ export function createStyles(theme: ITheme) {
     sheetButton: {
       flex: 1,
     },
+    reportButton: {
+      width: 48,
+      height: 48,
+      borderRadius: theme.radius.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "transparent",
+    },
   });
 }

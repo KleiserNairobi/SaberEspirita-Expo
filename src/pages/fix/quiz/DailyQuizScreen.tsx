@@ -140,6 +140,7 @@ export function DailyQuizScreen() {
         percentage,
         level,
         userAnswers: answers,
+        quizId: quiz.id, // ← NOVO
       });
     } catch (error) {
       console.error("Erro ao salvar progresso:", error);
@@ -153,6 +154,7 @@ export function DailyQuizScreen() {
         percentage: 0,
         level: "Fraco",
         userAnswers: answers,
+        quizId: quiz.id, // ← NOVO
       });
     } finally {
       setIsSubmitting(false);
@@ -203,6 +205,7 @@ export function DailyQuizScreen() {
         showStopButton={true}
         isSubmitting={isSubmitting}
         dynamicTitles={true}
+        quizId={quiz.id}
         onFinish={handleFinish}
         onStop={handleStop}
       />

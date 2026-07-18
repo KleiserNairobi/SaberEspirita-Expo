@@ -1,14 +1,16 @@
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Star, CheckCircle2, XCircle, ArrowLeft } from "lucide-react-native";
+import { Star, CheckCircle2, XCircle, ArrowLeft, Flag } from "lucide-react-native";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Button } from "@/components/Button";
 import { FixStackParamList } from "@/routers/types";
 import { IQuizAnswer } from "@/types/quiz";
+import { ReportQuestionBottomSheet } from "@/components/ReportQuestionBottomSheet";
 import { createStyles } from "./styles";
 
 type QuizReviewRouteProp = RouteProp<FixStackParamList, "QuizReview">;
@@ -23,6 +25,11 @@ export function QuizReviewScreen() {
   const route = useRoute<QuizReviewRouteProp>();
   const navigation = useNavigation<any>(); // Usando any para permitir navegação entre stacks (FIXE e APP)
 
+  const reportBottomSheetRef = useRef<BottomSheetModal>(null);
+  const [selectedReportQuestion, setSelectedReportQuestion] = useState<any>(null);
+  const [selectedReportAnswerIndex, setSelectedReportAnswerIndex] = useState<number | null>(null);
+  const [selectedReportQuestionIndex, setSelectedReportQuestionIndex] = useState<number>(-1);
+
   const {
     categoryId,
     categoryName,
@@ -33,10 +40,18 @@ export function QuizReviewScreen() {
     level,
     userAnswers,
     courseId, // ← NOVO: courseId opcional para exercícios de curso
+    quizId, // ← NOVO
   } = route.params;
 
   function handleBack() {
     navigation.goBack();
+  }
+
+  function handleOpenReport(question: any, selectedAnswerIndex: number | null, questionIndex: number) {
+    setSelectedReportQuestion(question);
+    setSelectedReportAnswerIndex(selectedAnswerIndex);
+    setSelectedReportQuestionIndex(questionIndex);
+    reportBottomSheetRef.current?.present();
   }
 
   // Determinar número de estrelas preenchidas
@@ -137,15 +152,35 @@ export function QuizReviewScreen() {
                   {/* Header do Card */}
                   <View style={styles.cardHeader}>
                     <Text style={styles.questionIndex}>Questão {index + 1}</Text>
-                    <View style={[styles.statusBadge, { backgroundColor: badgeBg }]}>
-                      {isCorrect ? (
-                        <CheckCircle2 size={14} color={theme.colors.text} />
-                      ) : (
-                        <XCircle size={14} color={theme.colors.text} />
-                      )}
-                      <Text style={styles.statusText}>
-                        {isCorrect ? "certo" : "errado"}
-                      </Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                      <View style={[styles.statusBadge, { backgroundColor: badgeBg }]}>
+                        {isCorrect ? (
+                          <CheckCircle2 size={14} color={theme.colors.text} />
+                        ) : (
+                          <XCircle size={14} color={theme.colors.text} />
+                        )}
+                        <Text style={styles.statusText}>
+                          {isCorrect ? "certo" : "errado"}
+                        </Text>
+                      </View>
+
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleOpenReport(
+                            {
+                              title: answer.question,
+                              alternatives: answer.alternatives,
+                              correct: answer.correctAnswerIndex,
+                            },
+                            answer.selectedAnswerIndex,
+                            index // ← NOVO
+                          )
+                        }
+                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                        activeOpacity={0.6}
+                      >
+                        <Flag size={18} color={theme.colors.muted} />
+                      </TouchableOpacity>
                     </View>
                   </View>
 
@@ -188,6 +223,14 @@ export function QuizReviewScreen() {
           <Button title="Continuar" onPress={handleContinue} fullWidth />
         </View>
       </View>
+
+      <ReportQuestionBottomSheet
+        ref={reportBottomSheetRef}
+        question={selectedReportQuestion}
+        selectedAnswerIndex={selectedReportAnswerIndex}
+        quizId={quizId}
+        questionIndex={selectedReportQuestionIndex}
+      />
     </SafeAreaView>
   );
 }
