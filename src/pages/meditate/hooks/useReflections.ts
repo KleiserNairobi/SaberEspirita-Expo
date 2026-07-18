@@ -6,6 +6,7 @@ export function useReflections() {
   return useQuery({
     queryKey: ["reflections"],
     queryFn: getAllReflections,
-    staleTime: 1000 * 60 * 60, // 1 hora
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas (textos estáticos)
+    refetchOnMount: false,
   });
 }

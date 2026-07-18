@@ -22,7 +22,6 @@ import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
 import { ReflectionCard } from "../components/ReflectionCard";
 import { useReflections } from "../hooks/useReflections";
-import { useReflectionsByIds } from "../hooks/useReflectionsByIds";
 import { ContentFilterType } from "@/types/prayer";
 import { createStyles } from "./styles";
 import { useQueryClient } from "@tanstack/react-query";
@@ -58,12 +57,9 @@ export default function AllReflectionsScreen() {
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   const reflectionsQuery = useReflections();
-  const favoritesQuery = useReflectionsByIds(isFavoritesPage ? favorites : []);
 
-  const reflections = isFavoritesPage ? favoritesQuery.data : reflectionsQuery.data;
-  const isLoading = isFavoritesPage
-    ? favoritesQuery.isLoading
-    : reflectionsQuery.isLoading;
+  const reflections = reflectionsQuery.data;
+  const isLoading = reflectionsQuery.isLoading;
 
   useEffect(() => {
     if (user?.uid) {
@@ -76,6 +72,11 @@ export default function AllReflectionsScreen() {
     if (!reflections) return [];
 
     let result = [...reflections];
+
+    // Se for a página de favoritos, filtra apenas os favoritados localmente
+    if (isFavoritesPage) {
+      result = result.filter((r) => isFavorite(r.id));
+    }
 
     // Aplicar filtro
     switch (filterType) {
@@ -128,7 +129,7 @@ export default function AllReflectionsScreen() {
     }
 
     return result;
-  }, [reflections, filterType, searchQuery, isFavorite]);
+  }, [reflections, filterType, searchQuery, isFavorite, isFavoritesPage]);
 
   function handleReflectionPress(reflectionId: string) {
     navigation.navigate("Reflection", { id: reflectionId });
