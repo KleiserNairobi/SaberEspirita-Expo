@@ -14,7 +14,6 @@ export function useLessons(courseId: string) {
     enabled: !!courseId,
     staleTime: 1000 * 60 * 60 * 12, // 12 horas
     gcTime: 1000 * 60 * 60 * 24 * 3, // 3 dias
-    refetchOnMount: "always",
     refetchOnReconnect: true,
   });
 }
@@ -26,7 +25,6 @@ export function useLesson(courseId: string, lessonId: string) {
     enabled: !!courseId && !!lessonId,
     staleTime: 1000 * 60 * 60 * 12, // 12 horas
     gcTime: 1000 * 60 * 60 * 24 * 3, // 3 dias
-    refetchOnMount: "always",
     refetchOnReconnect: true,
   });
 }

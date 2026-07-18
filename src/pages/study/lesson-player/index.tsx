@@ -27,6 +27,7 @@ import { ReadingToolbar } from "@/components/ReadingToolbar";
 import {
   COURSE_PROGRESS_KEYS,
   useCourseProgress,
+  useTouchCourseAccess,
 } from "@/hooks/queries/useCourseProgress";
 import { useExercises } from "@/hooks/queries/useExercises";
 import { useForumHasNewComments } from "@/hooks/queries/useLessonForum";
@@ -45,7 +46,6 @@ import { getLessonById } from "@/services/firebase/lessonService";
 import {
   logLessonCompleted,
   markLessonAsCompleted,
-  touchCourseAccess,
 } from "@/services/firebase/progressService";
 import { useAuthStore } from "@/stores/authStore";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
@@ -112,13 +112,14 @@ export function LessonPlayerScreen() {
 
   const { courseId, lessonId } = route.params;
   const { data: courseProgress } = useCourseProgress(courseId);
+  const { mutate: touchAccess } = useTouchCourseAccess();
   const isLessonAlreadyCompleted =
     !!courseProgress?.completedLessons?.includes?.(lessonId);
 
   React.useEffect(() => {
     if (!user?.uid || isGuest) return;
-    touchCourseAccess(courseId, { lessonId, userId: user.uid });
-  }, [courseId, isGuest, lessonId, user?.uid]);
+    touchAccess({ courseId, lessonId, userId: user.uid });
+  }, [courseId, isGuest, lessonId, user?.uid, touchAccess]);
 
   const navigateBackAfterCompletion = useCallback(() => {
     const state = navigation.getState();

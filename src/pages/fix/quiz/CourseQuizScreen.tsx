@@ -136,6 +136,12 @@ export function CourseQuizScreen() {
           queryClient.invalidateQueries({
             queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, courseId),
           });
+          queryClient.invalidateQueries({
+            queryKey: ["allCoursesProgress", user.uid],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["lastAccessedCourse", user.uid],
+          });
         } else {
           console.warn("[CourseQuizScreen] missing courseId or lessonId.");
         }

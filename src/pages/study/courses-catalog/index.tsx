@@ -1,35 +1,28 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useCallback, useRef, useState } from "react";
+
 import {
-  View,
-  Text,
-  SectionList,
-  TouchableOpacity,
   ActivityIndicator,
+  SectionList,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useFocusEffect } from "@react-navigation/native";
 import { useQueryClient } from "@tanstack/react-query";
+import { StatusBar } from "expo-status-bar";
+import { AlertCircle, ArrowLeft, BookOpen, SlidersHorizontal } from "lucide-react-native";
+import { BarChart2, BarChart3, BarChart4, GraduationCap } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import {
-  BookOpen,
-  ArrowLeft,
-  AlertCircle,
-  SlidersHorizontal,
-  GraduationCap,
-  BarChart2,
-  BarChart3,
-  BarChart4,
-} from "lucide-react-native";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-
-import { useAppTheme } from "@/hooks/useAppTheme";
+import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
 import { useCourses } from "@/hooks/queries/useCourses";
-import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
-import { ICourse } from "@/types/course";
-import { ContentFilterType } from "@/types/prayer";
-import { SearchBar } from "@/pages/pray/components/SearchBar";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
+import { SearchBar } from "@/pages/pray/components/SearchBar";
+import { ICourse, IUserCourseProgress } from "@/types/course";
+import { ContentFilterType } from "@/types/prayer";
 
 import { CourseCard } from "./components/CourseCard";
 import { createStyles } from "./styles";
@@ -42,24 +35,22 @@ const SERIES_FILTER_OPTIONS = [
   { id: "AVANCADO" as ContentFilterType, label: "Avançado", icon: BarChart4 },
 ] as const;
 
-// Componente individual para permitir o uso do hook de progresso em cada item
+// Componente individual para exibir cada série espiritual com seu progresso mapeado
 const CatalogCourseItem = React.memo(
   ({
     course,
+    progressData,
     onPress,
     theme,
     styles,
   }: {
     course: ICourse;
+    progressData: IUserCourseProgress | undefined;
     onPress: (course: ICourse, hasProgress: boolean) => void;
     theme: any;
     styles: any;
   }) => {
-    // Busca o progresso específico deste curso
-    const { data: progressData } = useCourseProgress(course.id);
-
     // Calcular progresso real localmente para garantir consistência com a tela de detalhes
-    // (Isso evita depender de campos que possam estar desatualizados no banco)
     const completedCount = progressData?.completedLessons?.length || 0;
     const totalLessons = course.lessonCount || 0;
 
@@ -92,13 +83,13 @@ export function CoursesCatalogScreen({ navigation }: any) {
 
   // React Query Fetch
   const { data: courses = [], isLoading, error } = useCourses();
+  const { data: allProgress = {} } = useAllCoursesProgress();
 
-  // Invalida cache de progresso ao focar na tela para garantir dados atualizados
+  // Invalida o cache de progresso total ao focar na tela
+  // (Muito mais eficiente pois é apenas 1 request Firestore na rede, compartilhado com a Home)
   useFocusEffect(
     useCallback(() => {
-      // Invalida todas as queries que começam com 'courseProgress'
-      // Isso força o refetch do progresso dos cursos exibidos na lista
-      queryClient.invalidateQueries({ queryKey: ["courseProgress"] });
+      queryClient.invalidateQueries({ queryKey: ["allCoursesProgress"] });
     }, [queryClient])
   );
 
@@ -148,9 +139,11 @@ export function CoursesCatalogScreen({ navigation }: any) {
   }
 
   function renderCourse({ item }: { item: ICourse }) {
+    const progressData = allProgress[item.id];
     return (
       <CatalogCourseItem
         course={item}
+        progressData={progressData}
         onPress={handleCoursePress}
         theme={theme}
         styles={styles}
@@ -177,7 +170,8 @@ export function CoursesCatalogScreen({ navigation }: any) {
         <AlertCircle size={64} color={theme.colors.error} />
         <Text style={styles.errorText}>Erro ao carregar séries</Text>
         <Text style={styles.errorSubtext}>
-          Não foi possível buscar as séries espirituais. Verifique sua conexão e tente novamente.
+          Não foi possível buscar as séries espirituais. Verifique sua conexão e tente
+          novamente.
         </Text>
         <TouchableOpacity style={styles.retryButton}>
           <Text style={styles.retryButtonText}>Tentar Novamente</Text>
@@ -211,8 +205,8 @@ export function CoursesCatalogScreen({ navigation }: any) {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
-      <StatusBar 
-        style={theme.isDark ? "light" : "dark"} 
+      <StatusBar
+        style={theme.isDark ? "light" : "dark"}
         translucent={true}
         backgroundColor="transparent"
       />
@@ -277,7 +271,9 @@ export function CoursesCatalogScreen({ navigation }: any) {
                 {/* Linha 2: Título e Subtítulo */}
                 <View style={styles.headerTextContainer}>
                   <Text style={styles.title}>Séries Espirituais</Text>
-                  <Text style={styles.subtitle}>Sua jornada de conhecimento espírita</Text>
+                  <Text style={styles.subtitle}>
+                    Sua jornada de conhecimento espírita
+                  </Text>
                 </View>
               </View>
             </>

@@ -17,7 +17,6 @@ export function useCourses() {
     queryFn: getCourses,
     staleTime: 1000 * 60 * 60 * 24, // 24 horas
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: "always", // Revalida em background
     refetchOnReconnect: true,
   });
 }
@@ -28,7 +27,6 @@ export function useFeaturedCourses() {
     queryFn: getFeaturedCourses,
     staleTime: 1000 * 60 * 60 * 24, // 24 horas
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: "always",
     refetchOnReconnect: true,
   });
 }
@@ -40,7 +38,6 @@ export function useCourse(id: string) {
     enabled: !!id,
     staleTime: 1000 * 60 * 60 * 24, // 24 horas
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: "always",
     refetchOnReconnect: true,
   });
 }

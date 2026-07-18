@@ -6,25 +6,18 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  ArrowLeft,
-  BookOpen,
-  CheckCircle,
-  ChevronRight,
-  CircleAlert,
-  Clock,
-  Info,
-  Lock,
-  PlayCircle,
-  Tag,
-} from "lucide-react-native";
+import { ArrowLeft, BookOpen, CheckCircle, ChevronRight } from "lucide-react-native";
+import { CircleAlert, Clock, Info, Lock, PlayCircle, Tag } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { Button } from "@/components/Button";
 import { CourseFeedbackBottomSheet } from "@/components/CourseFeedbackBottomSheet";
-import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
+import {
+  useCourseProgress,
+  useTouchCourseAccess,
+} from "@/hooks/queries/useCourseProgress";
 import { useCourse } from "@/hooks/queries/useCourses";
 import { useCourseExercises, useExercises } from "@/hooks/queries/useExercises";
 import { LESSONS_KEYS, useLessons } from "@/hooks/queries/useLessons";
@@ -32,7 +25,6 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { saveCourseFeedback } from "@/services/firebase/courseFeedbackService";
 import { getLessonById } from "@/services/firebase/lessonService";
-import { touchCourseAccess } from "@/services/firebase/progressService";
 import { useAuthStore } from "@/stores/authStore";
 import { ILesson } from "@/types/course";
 import { loadBoolean, saveBoolean } from "@/utils/Storage";
@@ -213,6 +205,7 @@ export function CourseCurriculumScreen() {
 
   // ✅ NOVO: QueryClient para prefetch
   const queryClient = useQueryClient();
+  const { mutate: touchAccess } = useTouchCourseAccess();
 
   // ✅ NOVO: Prefetch inteligente das primeiras 3 aulas
   useEffect(() => {
@@ -242,9 +235,9 @@ export function CourseCurriculumScreen() {
     // 2. OU se o usuário já possui um progresso registrado no banco para este curso (já estava matriculado)
     const alreadyEnrolled = !!progress;
     if (autoEnroll || alreadyEnrolled) {
-      touchCourseAccess(courseId, { userId: user.uid });
+      touchAccess({ courseId, userId: user.uid });
     }
-  }, [courseId, isGuest, user?.uid, autoEnroll, progress]);
+  }, [courseId, isGuest, user?.uid, autoEnroll, progress, touchAccess]);
 
   function getLessonStatus(lesson: ILesson, index: number): LessonStatus {
     // Verificar se a aula foi concluída

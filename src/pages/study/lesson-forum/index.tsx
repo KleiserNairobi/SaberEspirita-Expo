@@ -1,17 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import {
-  ActivityIndicator,
-  Animated,
-  Linking,
-  SectionList,
-  Switch,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-
+import { ActivityIndicator, Animated, Linking, SectionList } from "react-native";
+import { Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 import {
   BottomSheetBackdrop,
@@ -20,25 +10,9 @@ import {
 } from "@gorhom/bottom-sheet";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { doc, getDoc } from "firebase/firestore";
-import {
-  ArrowLeft,
-  Brain,
-  ChevronDown,
-  ChevronUp,
-  Compass,
-  EyeOff,
-  HandHeart,
-  Heart,
-  Leaf,
-  Lightbulb,
-  MoreVertical,
-  PenTool,
-  Send,
-  Sparkles,
-  Sprout,
-  TreePalm,
-  X,
-} from "lucide-react-native";
+import { ArrowLeft, Brain, ChevronDown, Compass, EyeOff } from "lucide-react-native";
+import { HandHeart, Heart, Leaf, Lightbulb, X } from "lucide-react-native";
+import { MoreVertical, PenTool, Sparkles, Sprout, TreePalm } from "lucide-react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AppBackground } from "@/components/AppBackground";
@@ -46,6 +20,7 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { CommunityLevelUpModal } from "@/components/CommunityLevelUpModal";
 import { auth, db } from "@/configs/firebase/firebase";
+import { useTouchCourseAccess } from "@/hooks/queries/useCourseProgress";
 import {
   useCommunityProgress,
   useCreateForumComment,
@@ -63,7 +38,6 @@ import {
   getStoredCommunityLevelRaw,
   setStoredCommunityLevel,
 } from "@/services/community/communityLevelService";
-import { touchCourseAccess } from "@/services/firebase/progressService";
 import { useAuthStore } from "@/stores/authStore";
 import { ForumComment, ForumReactionType } from "@/types/forum";
 
@@ -91,6 +65,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
   const insets = useSafeAreaInsets();
   const styles = createStyles(theme);
   const { user, isGuest } = useAuthStore();
+  const { mutate: touchAccess } = useTouchCourseAccess();
   const uid = auth.currentUser?.uid || user?.uid || null;
 
   const { courseId, lessonId, lessonTitle, anchorQuestion, focusTag } = route.params;
@@ -228,10 +203,8 @@ export function LessonForumScreen({ route, navigation }: Props) {
 
   useEffect(() => {
     if (!auth.currentUser?.uid || isGuest) return;
-    void touchCourseAccess(courseId, { lessonId, userId: auth.currentUser.uid }).catch(
-      () => {}
-    );
-  }, [courseId, isGuest, lessonId]);
+    touchAccess({ courseId, lessonId, userId: auth.currentUser.uid });
+  }, [courseId, isGuest, lessonId, touchAccess]);
 
   useEffect(() => {
     if (!user?.uid || isGuest) return;
@@ -312,10 +285,11 @@ export function LessonForumScreen({ route, navigation }: Props) {
         };
       }
 
-      await touchCourseAccess(commentCourseId, {
+      touchAccess({
+        courseId: commentCourseId,
         lessonId,
         userId: auth.currentUser.uid,
-      }).catch(() => {});
+      });
 
       const progressRef = doc(
         db,
@@ -529,10 +503,25 @@ export function LessonForumScreen({ route, navigation }: Props) {
       const content = item.isDeleted ? "Comentário removido pelo autor" : item.content;
 
       return (
-        <View style={[styles.commentCard, item.isDeleted && { backgroundColor: `${theme.colors.error}25` }]}>
+        <View
+          style={[
+            styles.commentCard,
+            item.isDeleted && { backgroundColor: `${theme.colors.error}25` },
+          ]}
+        >
           <View style={{ flexDirection: "row", gap: theme.spacing.md }}>
-            <View style={[styles.avatar, item.isDeleted && { backgroundColor: `${theme.colors.error}15` }]}>
-              <Text style={[styles.avatarText, item.isDeleted && { color: theme.colors.error }]}>
+            <View
+              style={[
+                styles.avatar,
+                item.isDeleted && { backgroundColor: `${theme.colors.error}15` },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.avatarText,
+                  item.isDeleted && { color: theme.colors.error },
+                ]}
+              >
                 {(item.userName || "E").charAt(0).toUpperCase()}
               </Text>
             </View>
@@ -579,32 +568,32 @@ export function LessonForumScreen({ route, navigation }: Props) {
                     borderRadius: theme.radius.sm,
                   }}
                 >
-                {item.userCommunityLevel === "arvore_frondosa" ? (
-                  <TreePalm size={12} color={theme.colors.reflection} />
-                ) : item.userCommunityLevel === "cultivador" ? (
-                  <Leaf size={12} color={theme.colors.primary} />
-                ) : (
-                  <Sprout size={12} color={theme.colors.textSecondary} />
-                )}
-                <Text
-                  style={[
-                    styles.levelTag,
-                    {
-                      marginTop: 0,
-                      fontSize: 10,
-                      fontWeight: "600",
-                      color:
-                        item.userCommunityLevel === "arvore_frondosa"
-                          ? theme.colors.reflection
-                          : item.userCommunityLevel === "cultivador"
-                            ? theme.colors.primary
-                            : theme.colors.textSecondary,
-                    },
-                  ]}
-                >
-                  {getLevelLabel(item.userCommunityLevel)}
-                </Text>
-              </View>
+                  {item.userCommunityLevel === "arvore_frondosa" ? (
+                    <TreePalm size={12} color={theme.colors.reflection} />
+                  ) : item.userCommunityLevel === "cultivador" ? (
+                    <Leaf size={12} color={theme.colors.primary} />
+                  ) : (
+                    <Sprout size={12} color={theme.colors.textSecondary} />
+                  )}
+                  <Text
+                    style={[
+                      styles.levelTag,
+                      {
+                        marginTop: 0,
+                        fontSize: 10,
+                        fontWeight: "600",
+                        color:
+                          item.userCommunityLevel === "arvore_frondosa"
+                            ? theme.colors.reflection
+                            : item.userCommunityLevel === "cultivador"
+                              ? theme.colors.primary
+                              : theme.colors.textSecondary,
+                      },
+                    ]}
+                  >
+                    {getLevelLabel(item.userCommunityLevel)}
+                  </Text>
+                </View>
               )}
 
               <Text
@@ -629,7 +618,13 @@ export function LessonForumScreen({ route, navigation }: Props) {
               {REACTIONS.filter((r) => (displayReactions[r.type] ?? 0) > 0).map((r) => {
                 const Icon = r.Icon;
                 return (
-                  <View key={r.type} style={[styles.reactionCountBadge, item.isDeleted && { backgroundColor: `${theme.colors.error}15` }]}>
+                  <View
+                    key={r.type}
+                    style={[
+                      styles.reactionCountBadge,
+                      item.isDeleted && { backgroundColor: `${theme.colors.error}15` },
+                    ]}
+                  >
                     <Icon size={14} color={theme.colors.textSecondary} />
                     <Text style={styles.reactionCountText}>
                       {displayReactions[r.type]}
@@ -798,13 +793,28 @@ export function LessonForumScreen({ route, navigation }: Props) {
                         paddingVertical: 2,
                       }}
                     >
-                      <View style={{ flexDirection: "row", alignItems: "center", gap: theme.spacing.sm }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: theme.spacing.sm,
+                        }}
+                      >
                         <PenTool size={16} color={theme.colors.primary} />
                         <Text
                           style={
                             isExpanded
-                              ? { ...theme.text("md", "medium"), color: theme.colors.text }
-                              : { ...theme.text("sm", "medium", theme.colors.textSecondary) }
+                              ? {
+                                  ...theme.text("md", "medium"),
+                                  color: theme.colors.text,
+                                }
+                              : {
+                                  ...theme.text(
+                                    "sm",
+                                    "medium",
+                                    theme.colors.textSecondary
+                                  ),
+                                }
                           }
                         >
                           {isExpanded ? "Sua reflexão" : "Compartilhe sua reflexão..."}
@@ -847,7 +857,9 @@ export function LessonForumScreen({ route, navigation }: Props) {
                               <EyeOff size={18} color={theme.colors.primary} />
                             </View>
                             <View style={styles.anonymousTextColumn}>
-                              <Text style={styles.anonymousTitle}>Publicar Anonimamente</Text>
+                              <Text style={styles.anonymousTitle}>
+                                Publicar Anonimamente
+                              </Text>
                               <Text style={styles.anonymousDescription}>
                                 Sua identidade será preservada
                               </Text>
@@ -886,7 +898,10 @@ export function LessonForumScreen({ route, navigation }: Props) {
                           accessibilityLabel="Publicar"
                         >
                           {isCreating ? (
-                            <ActivityIndicator size="small" color={theme.colors.onPrimary} />
+                            <ActivityIndicator
+                              size="small"
+                              color={theme.colors.onPrimary}
+                            />
                           ) : (
                             <>
                               <Sparkles size={16} color={theme.colors.onPrimary} />

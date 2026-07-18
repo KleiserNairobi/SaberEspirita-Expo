@@ -32,6 +32,6 @@ export function useAllCoursesProgress() {
       return progressMap;
     },
     enabled: !!user?.uid,
-    staleTime: 1000 * 60 * 5, // 5 minutos de cache
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas (invalidação manual nas modificações)
   });
 }
