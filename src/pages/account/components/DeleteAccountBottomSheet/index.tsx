@@ -33,13 +33,11 @@ interface FeedbackCardConfig {
   message: string;
   buttonText?: string;
   emailSubject?: string;
-  isDiscreet?: boolean;
 }
 
 const FEEDBACK_CONFIGS: Record<string, FeedbackCardConfig> = {
   "Não utilizo mais o aplicativo": {
     message: "Agradecemos por ter utilizado o Saber Espírita.",
-    isDiscreet: true,
   },
   "Problemas técnicos ou travamentos constantes": {
     message:
@@ -228,16 +226,12 @@ export const DeleteAccountBottomSheet = forwardRef<
           return (
             <View
               style={{
-                backgroundColor: feedbackConfig.isDiscreet
-                  ? "transparent"
-                  : theme.colors.primary + "0D",
-                padding: feedbackConfig.isDiscreet ? 8 : 16,
+                backgroundColor: theme.colors.primary + "0D",
+                padding: 16,
                 borderRadius: 12,
-                borderWidth: feedbackConfig.isDiscreet ? 0 : 1,
-                borderColor: feedbackConfig.isDiscreet
-                  ? "transparent"
-                  : theme.colors.primary + "20",
-                gap: 12,
+                borderWidth: 1,
+                borderColor: theme.colors.primary + "20",
+                gap: feedbackConfig.buttonText ? 12 : 0,
                 marginTop: 4,
               }}
             >
