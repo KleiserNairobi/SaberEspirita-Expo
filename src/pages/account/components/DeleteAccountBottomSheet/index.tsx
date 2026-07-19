@@ -25,9 +25,53 @@ const REASONS = [
   "Problemas técnicos ou travamentos constantes",
   "Achei os conteúdos (aulas, meditações ou orações) pouco relevantes",
   "Não gostei da dinâmica dos quizzes e desafios",
-  "Conteúdo não condizente com a Doutrina Espírita",
+  "Encontrei conteúdo que considero incompatível com a Doutrina Espírita",
   "Outro motivo",
 ];
+
+interface FeedbackCardConfig {
+  message: string;
+  buttonText?: string;
+  emailSubject?: string;
+  isDiscreet?: boolean;
+}
+
+const FEEDBACK_CONFIGS: Record<string, FeedbackCardConfig> = {
+  "Não utilizo mais o aplicativo": {
+    message: "Agradecemos por ter utilizado o Saber Espírita.",
+    isDiscreet: true,
+  },
+  "Problemas técnicos ou travamentos constantes": {
+    message:
+      "Problemas técnicos podem ser resolvidos. Se esse for o motivo da exclusão, fale com o suporte antes de continuar.",
+    buttonText: "Falar com o suporte",
+    emailSubject: "Problemas técnicos ou travamentos constantes antes de excluir conta",
+  },
+  "Encontrei conteúdo que considero incompatível com a Doutrina Espírita": {
+    message:
+      "Se você encontrou algum conteúdo que considere incompatível com a Doutrina Espírita, gostaríamos de analisar o caso. Fale com o suporte antes de excluir sua conta.",
+    buttonText: "Reportar conteúdo",
+    emailSubject: "Conteúdo incompatível com a Doutrina Espírita antes de excluir conta",
+  },
+  "Achei os conteúdos (aulas, meditações ou orações) pouco relevantes": {
+    message:
+      "Seu feedback pode nos ajudar a oferecer conteúdos mais úteis. Se desejar, conte-nos o que sentiu falta.",
+    buttonText: "Enviar sugestão",
+    emailSubject: "Sugestão sobre conteúdos relevantes antes de excluir conta",
+  },
+  "Não gostei da dinâmica dos quizzes e desafios": {
+    message:
+      "Estamos sempre evoluindo a experiência do aplicativo. Conte-nos o que poderia ser melhor.",
+    buttonText: "Enviar sugestão",
+    emailSubject: "Sugestão sobre dinâmica de quizzes antes de excluir conta",
+  },
+  "Outro motivo": {
+    message:
+      "Se desejar compartilhar o motivo da exclusão, nossa equipe ficará feliz em ouvir seu relato.",
+    buttonText: "Falar com o suporte",
+    emailSubject: "Outro motivo de exclusão de conta",
+  },
+};
 
 export const DeleteAccountBottomSheet = forwardRef<
   BottomSheetModal,
@@ -42,6 +86,7 @@ export const DeleteAccountBottomSheet = forwardRef<
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [customReason, setCustomReason] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [clickedSupport, setClickedSupport] = useState(false);
 
   async function handleConfirm() {
     if (!selectedReason) return;
@@ -66,16 +111,25 @@ export const DeleteAccountBottomSheet = forwardRef<
     }
   }
 
-  function handleOpenSupport() {
-    Linking.openURL(
-      `mailto:${CONTACT_EMAIL}?subject=Suporte preventivo antes de excluir conta`
-    );
+  function handleSelectReason(reason: string) {
+    setSelectedReason(reason);
+    setClickedSupport(false);
+  }
+
+  function handleFeedbackAction(config: FeedbackCardConfig) {
+    setClickedSupport(true);
+    if (config.buttonText && config.emailSubject) {
+      Linking.openURL(
+        `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(config.emailSubject)}`
+      );
+    }
   }
 
   function handleCancel() {
     if (isLoading) return;
     setSelectedReason(null);
     setCustomReason("");
+    setClickedSupport(false);
     // @ts-ignore
     ref.current?.dismiss();
   }
@@ -122,36 +176,6 @@ export const DeleteAccountBottomSheet = forwardRef<
           </Text>
         </View>
 
-        <View
-          style={{
-            backgroundColor: theme.colors.primary + "15",
-            padding: 14,
-            borderRadius: 12,
-            gap: 6,
-          }}
-        >
-          <Text
-            style={[
-              theme.text("sm", "regular", theme.colors.textSecondary),
-              { lineHeight: 18 },
-            ]}
-          >
-            Encontrou uma resposta incorreta ou problema no app? Nos dê a chance de
-            consertar! Fale com o suporte antes de excluir.
-          </Text>
-          <TouchableOpacity
-            onPress={handleOpenSupport}
-            style={{
-              alignSelf: "flex-start",
-            }}
-            activeOpacity={0.7}
-          >
-            <Text style={theme.text("sm", "semibold", theme.colors.primary)}>
-              Falar com o Suporte
-            </Text>
-          </TouchableOpacity>
-        </View>
-
         <Text style={styles.sectionTitle}>Por que deseja excluir sua conta?</Text>
 
         <View style={styles.optionsList}>
@@ -161,7 +185,7 @@ export const DeleteAccountBottomSheet = forwardRef<
               <Pressable
                 key={reason}
                 style={[styles.optionCard, isSelected && styles.optionCardSelected]}
-                onPress={() => setSelectedReason(reason)}
+                onPress={() => handleSelectReason(reason)}
                 disabled={isLoading}
               >
                 <Text
@@ -195,6 +219,68 @@ export const DeleteAccountBottomSheet = forwardRef<
             />
           </View>
         )}
+
+        {(() => {
+          if (!selectedReason) return null;
+          const feedbackConfig = FEEDBACK_CONFIGS[selectedReason];
+          if (!feedbackConfig) return null;
+
+          return (
+            <View
+              style={{
+                backgroundColor: feedbackConfig.isDiscreet
+                  ? "transparent"
+                  : theme.colors.primary + "0D",
+                padding: feedbackConfig.isDiscreet ? 8 : 16,
+                borderRadius: 12,
+                borderWidth: feedbackConfig.isDiscreet ? 0 : 1,
+                borderColor: feedbackConfig.isDiscreet
+                  ? "transparent"
+                  : theme.colors.primary + "20",
+                gap: 12,
+                marginTop: 4,
+              }}
+            >
+              <Text
+                style={[
+                  theme.text("sm", "regular", theme.colors.textSecondary),
+                  { lineHeight: 20 },
+                ]}
+              >
+                {feedbackConfig.message}
+              </Text>
+
+              {feedbackConfig.buttonText && (
+                <TouchableOpacity
+                  onPress={() => handleFeedbackAction(feedbackConfig)}
+                  style={{
+                    alignSelf: "flex-start",
+                    backgroundColor: theme.colors.primary,
+                    paddingHorizontal: 16,
+                    paddingVertical: 8,
+                    borderRadius: 8,
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <Text style={theme.text("sm", "semibold", theme.colors.card)}>
+                    {feedbackConfig.buttonText}
+                  </Text>
+                </TouchableOpacity>
+              )}
+
+              {clickedSupport && (
+                <Text
+                  style={[
+                    theme.text("xs", "regular", theme.colors.textSecondary),
+                    { lineHeight: 16, marginTop: 4, fontStyle: "italic" },
+                  ]}
+                >
+                  Caso prefira continuar, a exclusão da conta continuará disponível.
+                </Text>
+              )}
+            </View>
+          );
+        })()}
 
         <View style={styles.actions}>
           <Button
