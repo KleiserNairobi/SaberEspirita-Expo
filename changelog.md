@@ -2,6 +2,26 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.19] - 2026-07-19
+
+### Adicionado
+
+- **Hot-Update via Cloudflare**: Integração com a infraestrutura de hot-update (`hot-updater`) para permitir atualizações over-the-air (OTA) rápidas nas plataformas iOS e Android.
+- **Reporte de Questões**: Novo fluxo que permite aos usuários reportarem erros ou problemas nas questões do quiz por meio do componente `ReportQuestionBottomSheet`.
+- **Canal de Suporte Preventivo**: Adicionado aviso informativo e canal direto de suporte na tela de exclusão de conta para auxiliar o usuário antes da remoção definitiva dos dados.
+
+### Alterado
+
+- **Otimização de Consultas (Firestore)**: Refatoração estrutural de queries nos módulos **Estude** e **Medite** para otimizar a performance e reduzir drasticamente a leitura do banco de dados Firestore.
+- **Padronização de Notificações**: Padronização das cores dos ícones de notificações com o tema primário do aplicativo.
+
+### Corrigido
+
+- **Rotina de Leaderboard**: Ajustes e correções na rotina de atualização e sincronização do placar global.
+- **Ranque de Cursos**: Correção de bug no cálculo e na exibição do ranque de cursos no painel de desempenho do usuário.
+- **Contagem de Orações**: Correções no serviço `prayerService` relacionadas à persistência e incremento de contagem de orações.
+- **Estabilidade no Roteamento do Analytics**: Ajuste de fluxo no `RootNavigator` para melhorar o rastreamento analítico das telas.
+
 ## [2.0.18] - 2026-07-06
 
 ### Adicionado
