@@ -16,7 +16,8 @@
     "postprebuild": "node dev/scripts/patch-android-signature.js",
     "build:apk": "expo prebuild --platform android && cd android && ./gradlew assembleRelease",
     "build:aab": "expo prebuild --platform android && cd android && ./gradlew bundleRelease",
-    "rename:aab": "node dev/scripts/rename-aab.js"
+    "rename:aab": "node dev/scripts/rename-aab.js",
+    "deploy:ota": "hot-updater deploy"
   },
   "dependencies": {
     "@expo-google-fonts/allura": "^0.4.2",
@@ -25,6 +26,7 @@
     "@expo-google-fonts/oswald": "^0.4.2",
     "@expo/vector-icons": "^15.0.3",
     "@gorhom/bottom-sheet": "^5.2.8",
+    "@hot-updater/react-native": "^0.35.4",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-firebase/analytics": "^23.8.6",
     "@react-native-firebase/app": "^23.8.6",
@@ -80,22 +82,27 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
+    "@hot-updater/cloudflare": "^0.35.4",
+    "@hot-updater/expo": "^0.35.4",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/react": "~19.1.0",
     "@typescript-eslint/eslint-plugin": "^8.26.0",
     "@typescript-eslint/parser": "^8.26.0",
     "babel-plugin-transform-remove-console": "^6.9.4",
+    "dotenv": "^17.4.2",
     "eslint": "^9.21.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-native": "^5.0.0",
+    "hot-updater": "^0.35.4",
     "patch-package": "^8.0.1",
     "prettier": "^3.7.4",
     "react-test-renderer": "19.1.0",
     "reactotron-react-native": "^5.1.18",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "wrangler": "^4.112.0"
   },
   "private": true
 }

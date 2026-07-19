@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { Platform } from "react-native";
 
+import { HotUpdater } from "@hot-updater/react-native";
+
 import { Allura_400Regular } from "@expo-google-fonts/allura";
 import {
   BarlowCondensed_300Light,
@@ -102,7 +104,7 @@ function useCheckUpdate(appIsReady: boolean) {
   };
 }
 
-export default function App() {
+function App() {
   const [appIsReady, setAppIsReady] = useState(false);
 
   const [fontsLoaded] = useFonts({
@@ -227,4 +229,11 @@ if (__DEV__) {
 TrackPlayer.registerPlaybackService(() => playbackService);
 
 // Registra o componente raiz com Expo
-registerRootComponent(App);
+const WrappedApp = HotUpdater.wrap({
+  baseURL: "https://saber-espirita-hot-updater-worker.kleiser-nairobi.workers.dev/api/check-update",
+  updateStrategy: "fingerprint",
+})(App);
+
+registerRootComponent(WrappedApp);
+
+export default WrappedApp;

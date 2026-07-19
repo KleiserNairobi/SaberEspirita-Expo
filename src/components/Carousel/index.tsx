@@ -183,7 +183,7 @@ export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
   const scrollX = useSharedValue(0);
   const flatListRef = useRef<Animated.FlatList<any>>(null);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Referência para rastrear o índice atual e garantir previsibilidade no autoscroll
   const initialIndex = Math.floor(MULTIPLIER / 2) * data.length;

@@ -36,6 +36,8 @@ yarn-error.*
 # local env files
 .env
 .env*.local
+.env.hotupdater
+.env.hotupdater*
 
 # typescript
 *.tsbuildinfo
@@ -63,3 +65,6 @@ dev/configs/GoogleService-Info.plist
 dev/configs/saber-espirita-firebase-adminsdk-*.json
 android/app/google-services.json
 ios/SaberEsprita/GoogleService-Info.plist
+# hot-updater
+.hot-updater/output
+.hot-updater/log
