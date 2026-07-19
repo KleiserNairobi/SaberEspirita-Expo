@@ -22,7 +22,7 @@
       "googleServicesFile": "./dev/configs/GoogleService-Info.plist"
     },
     "android": {
-      "versionCode": 54,
+      "versionCode": 55,
       "predictiveBackGestureEnabled": false,
       "package": "app.saberespirita",
       "softwareKeyboardLayoutMode": "pan",
