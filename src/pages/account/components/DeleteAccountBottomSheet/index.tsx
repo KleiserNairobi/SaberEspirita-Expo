@@ -63,12 +63,6 @@ const FEEDBACK_CONFIGS: Record<string, FeedbackCardConfig> = {
     buttonText: "Enviar sugestão",
     emailSubject: "Sugestão sobre dinâmica de quizzes antes de excluir conta",
   },
-  "Outro motivo": {
-    message:
-      "Se desejar compartilhar o motivo da exclusão, nossa equipe ficará feliz em ouvir seu relato.",
-    buttonText: "Falar com o suporte",
-    emailSubject: "Outro motivo de exclusão de conta",
-  },
 };
 
 export const DeleteAccountBottomSheet = forwardRef<
