@@ -1,39 +1,40 @@
 import { useRef, useState } from "react";
+
 import { ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { httpsCallable } from "firebase/functions";
-
 import {
-  Volume2,
   Bell,
   BellRing,
-  Mail,
-  HelpCircle,
   FileText,
+  HelpCircle,
+  Instagram,
+  Mail,
+  Share2,
   Shield,
   Star,
-  Instagram,
-  Share2,
   Trash,
+  Volume2,
 } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AppBackground } from "@/components/AppBackground";
-import { SettingsItem } from "@/components/SettingsItem";
-import { Button } from "@/components/Button";
-import { SettingsSection } from "@/components/SettingsSection";
-import { AccountHeader } from "@/pages/account/components/AccountHeader";
-import { LogoutButton } from "@/pages/account/components/LogoutButton";
-import { APP_VERSION } from "@/pages/account/constants";
-import { createStyles } from "@/pages/account/styles";
-import { useAccountScreen } from "@/pages/account/hooks/useAccountScreen";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
-import { EditProfileBottomSheet } from "@/pages/account/components/EditProfileBottomSheet";
-import { CommunityLevelInfoBottomSheet } from "@/pages/account/components/CommunityLevelInfoBottomSheet";
-import { DeleteAccountBottomSheet } from "@/pages/account/components/DeleteAccountBottomSheet";
+import { Button } from "@/components/Button";
+import { SettingsItem } from "@/components/SettingsItem";
+import { SettingsSection } from "@/components/SettingsSection";
 import { functions } from "@/configs/firebase/firebase";
 import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
+import { AccountHeader } from "@/pages/account/components/AccountHeader";
+import { CommunityLevelInfoBottomSheet } from "@/pages/account/components/CommunityLevelInfoBottomSheet";
+import { DeleteAccountBottomSheet } from "@/pages/account/components/DeleteAccountBottomSheet";
+import { EditProfileBottomSheet } from "@/pages/account/components/EditProfileBottomSheet";
+import { LogoutButton } from "@/pages/account/components/LogoutButton";
+import { APP_VERSION } from "@/pages/account/constants";
+import { useAccountScreen } from "@/pages/account/hooks/useAccountScreen";
+import { createStyles } from "@/pages/account/styles";
 
 export default function AccountScreen() {
   const {
@@ -158,7 +159,9 @@ export default function AccountScreen() {
       }, 2000); // 2 segundos para o usuário conseguir ler o aviso de sucesso antes do logout/redirecionamento
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Não foi possível excluir sua conta agora.";
+        error instanceof Error
+          ? error.message
+          : "Não foi possível excluir sua conta agora.";
       setMessageConfig({
         type: "error",
         title: "Erro ao excluir",
@@ -192,8 +195,8 @@ export default function AccountScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <AccountHeader 
-            displayName={displayName} 
+          <AccountHeader
+            displayName={displayName}
             email={email}
             photoURL={photoURL}
             onEditPress={handleEditProfilePress}
@@ -330,14 +333,6 @@ export default function AccountScreen() {
                 isFirst
                 isLast
               />
-              <Text
-                style={[
-                  theme.text("xs", "regular", theme.colors.muted),
-                  { paddingHorizontal: 16, marginTop: 8, lineHeight: 16, textAlign: "center" }
-                ]}
-              >
-                Encontrou alguma resposta errada ou problema técnico? Por favor, nos envie um relato pelo suporte antes de apagar sua conta.
-              </Text>
             </SettingsSection>
           )}
 
@@ -365,8 +360,8 @@ export default function AccountScreen() {
       </AppBackground>
 
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
-      
-      <EditProfileBottomSheet 
+
+      <EditProfileBottomSheet
         ref={editProfileSheetRef}
         initialName={displayName}
         onSave={handleUpdateName}
@@ -374,9 +369,7 @@ export default function AccountScreen() {
 
       <CommunityLevelInfoBottomSheet
         ref={communityLevelInfoSheetRef}
-        currentLevelId={
-          (communityProgress?.communityLevelId as any) || "sementeiro"
-        }
+        currentLevelId={(communityProgress?.communityLevelId as any) || "sementeiro"}
       />
 
       <DeleteAccountBottomSheet
