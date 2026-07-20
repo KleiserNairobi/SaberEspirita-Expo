@@ -21,7 +21,7 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
 import { ReflectionCard } from "../components/ReflectionCard";
-import { useReflections } from "../hooks/useReflections";
+import { REFLECTION_KEYS, useReflections } from "../hooks/useReflections";
 import { ContentFilterType } from "@/types/prayer";
 import { createStyles } from "./styles";
 import { useQueryClient } from "@tanstack/react-query";
@@ -137,9 +137,9 @@ export default function AllReflectionsScreen() {
 
   function prefetchReflection(reflectionId: string) {
     queryClient.prefetchQuery({
-      queryKey: ["reflection", reflectionId],
+      queryKey: REFLECTION_KEYS.detail(reflectionId),
       queryFn: () => getReflectionById(reflectionId),
-      staleTime: 1000 * 60 * 60, // 1 hora
+      staleTime: 1000 * 60 * 60 * 24, // 24 horas
     });
   }
 

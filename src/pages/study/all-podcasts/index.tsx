@@ -17,7 +17,7 @@ import {
   User,
 } from "lucide-react-native";
 
-import { usePodcasts } from "@/hooks/queries/usePodcasts";
+import { PODCAST_KEYS, usePodcasts } from "@/hooks/queries/usePodcasts";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
@@ -99,9 +99,9 @@ export default function AllPodcastsScreen() {
 
   function prefetchPodcast(id: string, imageUrl?: string) {
     queryClient.prefetchQuery({
-      queryKey: ["podcasts", "detail", id],
+      queryKey: PODCAST_KEYS.detail(id),
       queryFn: () => getPodcastById(id),
-      staleTime: 1000 * 60 * 60, // 1 hora
+      staleTime: 1000 * 60 * 60 * 24, // 24 horas
     });
     if (imageUrl) Image.prefetch(imageUrl);
   }

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { collection, getDocs, query } from "firebase/firestore";
+import { collection, getDocsFromCache, getDocsFromServer } from "firebase/firestore";
 
 import { useAuthStore } from "@/stores/authStore";
 import { db } from "@/configs/firebase/firebase";
@@ -14,7 +14,18 @@ export function useAllCoursesProgress() {
       if (!user?.uid) return {};
 
       const progressRef = collection(db, "users", user.uid, "courseProgress");
-      const snapshot = await getDocs(progressRef);
+      let snapshot;
+
+      try {
+        const cacheSnapshot = await getDocsFromCache(progressRef);
+        if (!cacheSnapshot.empty) {
+          snapshot = cacheSnapshot;
+        } else {
+          snapshot = await getDocsFromServer(progressRef);
+        }
+      } catch {
+        snapshot = await getDocsFromServer(progressRef);
+      }
 
       const progressMap: Record<string, IUserCourseProgress> = {};
 
@@ -33,5 +44,7 @@ export function useAllCoursesProgress() {
     },
     enabled: !!user?.uid,
     staleTime: 1000 * 60 * 60 * 24, // 24 horas (invalidação manual nas modificações)
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    refetchOnMount: false,
   });
 }

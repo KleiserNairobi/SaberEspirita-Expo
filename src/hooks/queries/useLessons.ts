@@ -12,8 +12,9 @@ export function useLessons(courseId: string) {
     queryKey: LESSONS_KEYS.byCourse(courseId),
     queryFn: () => getLessonsByCourseId(courseId),
     enabled: !!courseId,
-    staleTime: 1000 * 60 * 60 * 12, // 12 horas
-    gcTime: 1000 * 60 * 60 * 24 * 3, // 3 dias
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    refetchOnMount: false,
     refetchOnReconnect: true,
   });
 }
@@ -23,8 +24,9 @@ export function useLesson(courseId: string, lessonId: string) {
     queryKey: LESSONS_KEYS.detail(courseId, lessonId),
     queryFn: () => getLessonById(courseId, lessonId),
     enabled: !!courseId && !!lessonId,
-    staleTime: 1000 * 60 * 60 * 12, // 12 horas
-    gcTime: 1000 * 60 * 60 * 24 * 3, // 3 dias
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    refetchOnMount: false,
     refetchOnReconnect: true,
   });
 }

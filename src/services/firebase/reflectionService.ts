@@ -1,11 +1,16 @@
 import {
   collection,
+  doc,
   getDoc,
+  getDocFromCache,
+  getDocFromServer,
   getDocs,
+  getDocsFromCache,
+  getDocsFromServer,
+  limit,
+  orderBy,
   query,
   where,
-  orderBy,
-  doc,
 } from "firebase/firestore";
 
 import { db } from "@/configs/firebase/firebase";
@@ -29,8 +34,22 @@ function mapDocToReflection(doc: any): IReflection {
  */
 export async function getAllReflections(): Promise<IReflection[]> {
   try {
-    const q = query(collection(db, "reflections"), orderBy("createdAt", "desc"));
-    const snapshot = await getDocs(q);
+    const q = query(
+      collection(db, "reflections"),
+      orderBy("createdAt", "desc"),
+      limit(50)
+    );
+
+    try {
+      const cacheSnapshot = await getDocsFromCache(q);
+      if (!cacheSnapshot.empty) {
+        return cacheSnapshot.docs.map(mapDocToReflection);
+      }
+    } catch {
+      // Ignora erro de cache e busca do servidor
+    }
+
+    const snapshot = await getDocsFromServer(q);
     return snapshot.docs.map(mapDocToReflection);
   } catch (error) {
     console.error("Erro ao buscar reflexões:", error);
@@ -46,9 +65,20 @@ export async function getFeaturedReflections(): Promise<IReflection[]> {
     const q = query(
       collection(db, "reflections"),
       where("featured", "==", true),
-      orderBy("createdAt", "desc")
+      orderBy("createdAt", "desc"),
+      limit(5)
     );
-    const snapshot = await getDocs(q);
+
+    try {
+      const cacheSnapshot = await getDocsFromCache(q);
+      if (!cacheSnapshot.empty) {
+        return cacheSnapshot.docs.map(mapDocToReflection);
+      }
+    } catch {
+      // Ignora erro de cache e busca do servidor
+    }
+
+    const snapshot = await getDocsFromServer(q);
     return snapshot.docs.map(mapDocToReflection);
   } catch (error) {
     console.error("Erro ao buscar reflexões em destaque:", error);
@@ -62,7 +92,17 @@ export async function getFeaturedReflections(): Promise<IReflection[]> {
 export async function getReflectionById(id: string): Promise<IReflection | null> {
   try {
     const docRef = doc(db, "reflections", id);
-    const docSnap = await getDoc(docRef);
+
+    try {
+      const cacheSnap = await getDocFromCache(docRef);
+      if (cacheSnap.exists()) {
+        return mapDocToReflection(cacheSnap);
+      }
+    } catch {
+      // Ignora erro de cache e busca do servidor
+    }
+
+    const docSnap = await getDocFromServer(docRef);
 
     if (docSnap.exists()) {
       return mapDocToReflection(docSnap);

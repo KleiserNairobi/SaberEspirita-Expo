@@ -1,16 +1,22 @@
-import { IPodcast } from "@/types/podcast";
 import {
   addDoc,
   collection,
   doc,
   getDoc,
+  getDocFromCache,
+  getDocFromServer,
   getDocs,
+  getDocsFromCache,
+  getDocsFromServer,
   limit,
   orderBy,
   query,
   serverTimestamp,
   where,
 } from "firebase/firestore";
+
+import { IPodcast } from "@/types/podcast";
+
 import { db } from "../../configs/firebase/firebase";
 
 export const PODCASTS_COLLECTION = "podcasts";
@@ -36,9 +42,18 @@ function mapDocToPodcast(doc: any): IPodcast {
 export async function getPodcasts(): Promise<IPodcast[]> {
   try {
     const podcastsRef = collection(db, PODCASTS_COLLECTION);
-    const q = query(podcastsRef, orderBy("title", "asc"));
-    const snapshot = await getDocs(q);
+    const q = query(podcastsRef, orderBy("title", "asc"), limit(50));
 
+    try {
+      const cacheSnapshot = await getDocsFromCache(q);
+      if (!cacheSnapshot.empty) {
+        return cacheSnapshot.docs.map(mapDocToPodcast);
+      }
+    } catch {
+      // Ignora erro de cache e busca do servidor
+    }
+
+    const snapshot = await getDocsFromServer(q);
     return snapshot.docs.map(mapDocToPodcast);
   } catch (error) {
     console.error("Erro ao buscar podcasts:", error);
@@ -50,8 +65,17 @@ export async function getFeaturedPodcasts(): Promise<IPodcast[]> {
   try {
     const podcastsRef = collection(db, PODCASTS_COLLECTION);
     const q = query(podcastsRef, where("featured", "==", true), limit(5));
-    const snapshot = await getDocs(q);
 
+    try {
+      const cacheSnapshot = await getDocsFromCache(q);
+      if (!cacheSnapshot.empty) {
+        return cacheSnapshot.docs.map(mapDocToPodcast);
+      }
+    } catch {
+      // Ignora erro de cache e busca do servidor
+    }
+
+    const snapshot = await getDocsFromServer(q);
     return snapshot.docs.map(mapDocToPodcast);
   } catch (error) {
     console.error("Erro ao buscar podcasts em destaque:", error);
@@ -62,8 +86,17 @@ export async function getFeaturedPodcasts(): Promise<IPodcast[]> {
 export async function getPodcastById(id: string): Promise<IPodcast | null> {
   try {
     const docRef = doc(db, PODCASTS_COLLECTION, id);
-    const docSnap = await getDoc(docRef);
 
+    try {
+      const cacheSnap = await getDocFromCache(docRef);
+      if (cacheSnap.exists()) {
+        return mapDocToPodcast(cacheSnap);
+      }
+    } catch {
+      // Ignora erro de cache e busca do servidor
+    }
+
+    const docSnap = await getDocFromServer(docRef);
     if (docSnap.exists()) {
       return mapDocToPodcast(docSnap);
     }
@@ -97,9 +130,7 @@ export async function logPodcastUsage(params: {
     });
 
     if (__DEV__) {
-      console.log(
-        `[Analytics] Podcast log: ${params.itemId} by ${params.userId}`
-      );
+      console.log(`[Analytics] Podcast log: ${params.itemId} by ${params.userId}`);
     }
   } catch (error) {
     console.error("Erro ao registrar uso do podcast:", error);

@@ -17,7 +17,7 @@ import {
   Timer,
 } from "lucide-react-native";
 
-import { useMeditations } from "@/hooks/queries/useMeditations";
+import { MEDITATION_KEYS, useMeditations } from "@/hooks/queries/useMeditations";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { getMeditationById } from "@/services/firebase/meditationService";
@@ -98,9 +98,9 @@ export default function AllMeditationsScreen() {
 
   function prefetchMeditation(id: string, imageUrl?: string) {
     queryClient.prefetchQuery({
-      queryKey: ["meditations", "detail", id],
+      queryKey: MEDITATION_KEYS.detail(id),
       queryFn: () => getMeditationById(id),
-      staleTime: 1000 * 60 * 60, // 1 hora
+      staleTime: 1000 * 60 * 60 * 24, // 24 horas
     });
     if (imageUrl) Image.prefetch(imageUrl);
   }

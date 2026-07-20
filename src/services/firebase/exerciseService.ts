@@ -1,14 +1,17 @@
-import { collection, query, where, getDocs, limit } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  getDocsFromCache,
+  getDocsFromServer,
+  limit,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "@/configs/firebase/firebase";
 import { IExercise } from "@/types/course";
 
 /**
- * Busca o exercício associado a uma aula
- * @param lessonId - ID da aula
- * @returns O primeiro exercício encontrado ou null
- */
-/**
- * Busca todos os exercícios associados a uma aula
+ * Busca todos os exercícios associados a uma aula com estratégia Cache-First
  * @param lessonId - ID da aula
  * @returns Lista de exercícios encontrados
  */
@@ -16,7 +19,21 @@ export async function getExercisesByLessonId(lessonId: string): Promise<IExercis
   try {
     const exercisesRef = collection(db, "exercises");
     const q = query(exercisesRef, where("lessonId", "==", lessonId));
-    const querySnapshot = await getDocs(q);
+
+    try {
+      const cacheSnapshot = await getDocsFromCache(q);
+      if (!cacheSnapshot.empty) {
+        const exercises: IExercise[] = [];
+        cacheSnapshot.forEach((doc) => {
+          exercises.push({ ...doc.data(), id: doc.id } as IExercise);
+        });
+        return exercises;
+      }
+    } catch {
+      // Ignora erro de cache e busca do servidor
+    }
+
+    const querySnapshot = await getDocsFromServer(q);
 
     const exercises: IExercise[] = [];
     querySnapshot.forEach((doc) => {
@@ -31,7 +48,7 @@ export async function getExercisesByLessonId(lessonId: string): Promise<IExercis
 }
 
 /**
- * Busca todos os exercícios associados a um curso
+ * Busca todos os exercícios associados a um curso com estratégia Cache-First
  * @param courseId - ID do curso
  * @returns Lista de exercícios encontrados
  */
@@ -39,7 +56,21 @@ export async function getExercisesByCourseId(courseId: string): Promise<IExercis
   try {
     const exercisesRef = collection(db, "exercises");
     const q = query(exercisesRef, where("courseId", "==", courseId));
-    const querySnapshot = await getDocs(q);
+
+    try {
+      const cacheSnapshot = await getDocsFromCache(q);
+      if (!cacheSnapshot.empty) {
+        const exercises: IExercise[] = [];
+        cacheSnapshot.forEach((doc) => {
+          exercises.push({ ...doc.data(), id: doc.id } as IExercise);
+        });
+        return exercises;
+      }
+    } catch {
+      // Ignora erro de cache e busca do servidor
+    }
+
+    const querySnapshot = await getDocsFromServer(q);
 
     const exercises: IExercise[] = [];
     querySnapshot.forEach((doc) => {

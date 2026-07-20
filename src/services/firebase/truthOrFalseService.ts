@@ -3,7 +3,11 @@ import {
   collection,
   doc,
   getDoc,
+  getDocFromCache,
+  getDocFromServer,
   getDocs,
+  getDocsFromCache,
+  getDocsFromServer,
   limit,
   orderBy,
   query,
@@ -58,17 +62,14 @@ export class TruthOrFalseService {
   static async getTodayResponse(): Promise<IUserTruthOrFalseResponse | null> {
     const today = getTodayString();
     const userId = useAuthStore.getState().user?.uid;
-
     if (!userId) return null;
 
     try {
-      // 1. Tentar cache local primeiro (rápido)
       const cached = loadString(KEYS.responsePrefix(today));
       if (cached) {
         return JSON.parse(cached);
       }
 
-      // 2. Buscar no Firestore
       const docRef = doc(
         db,
         "users",
@@ -76,11 +77,22 @@ export class TruthOrFalseService {
         "truthOrFalseResponses",
         `${userId}_${today}`
       );
-      const docSnap = await getDoc(docRef);
+
+      try {
+        const cacheSnap = await getDocFromCache(docRef);
+        if (cacheSnap.exists()) {
+          const data = { id: cacheSnap.id, ...cacheSnap.data() } as IUserTruthOrFalseResponse;
+          saveString(KEYS.responsePrefix(today), JSON.stringify(data));
+          return data;
+        }
+      } catch {
+        // Ignora erro de cache e busca no servidor
+      }
+
+      const docSnap = await getDocFromServer(docRef);
 
       if (docSnap.exists()) {
         const data = { id: docSnap.id, ...docSnap.data() } as IUserTruthOrFalseResponse;
-        // Cachear localmente
         saveString(KEYS.responsePrefix(today), JSON.stringify(data));
         return data;
       }

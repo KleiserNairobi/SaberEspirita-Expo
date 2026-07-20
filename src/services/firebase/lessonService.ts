@@ -1,20 +1,43 @@
-import { collection, getDocs, query, orderBy, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocFromCache,
+  getDocFromServer,
+  getDocs,
+  getDocsFromCache,
+  getDocsFromServer,
+  orderBy,
+  query,
+} from "firebase/firestore";
 
 import { db } from "@/configs/firebase/firebase";
 import { ILesson } from "@/types/course";
 
 /**
- * Busca todas as aulas de um curso específico
+ * Busca todas as aulas de um curso específico com estratégia Cache-First
  * @param courseId - ID do curso
  * @returns Lista de aulas ordenada pela ordem
  */
 export async function getLessonsByCourseId(courseId: string): Promise<ILesson[]> {
   try {
-    // Assume que 'lessons' é uma subcoleção de 'courses'
-    // Estrutura: courses/{courseId}/lessons/{lessonId}
     const lessonsRef = collection(db, "courses", courseId, "lessons");
     const q = query(lessonsRef, orderBy("order", "asc"));
-    const querySnapshot = await getDocs(q);
+
+    try {
+      const cacheSnapshot = await getDocsFromCache(q);
+      if (!cacheSnapshot.empty) {
+        const lessons: ILesson[] = [];
+        cacheSnapshot.forEach((doc) => {
+          lessons.push({ ...doc.data(), id: doc.id } as ILesson);
+        });
+        return lessons;
+      }
+    } catch {
+      // Ignora erro de cache e busca do servidor
+    }
+
+    const querySnapshot = await getDocsFromServer(q);
 
     const lessons: ILesson[] = [];
     querySnapshot.forEach((doc) => {
@@ -29,7 +52,7 @@ export async function getLessonsByCourseId(courseId: string): Promise<ILesson[]>
 }
 
 /**
- * Busca uma aula específica por ID
+ * Busca uma aula específica por ID com estratégia Cache-First
  * @param courseId - ID do curso
  * @param lessonId - ID da aula
  * @returns Aula encontrada ou null
@@ -40,7 +63,17 @@ export async function getLessonById(
 ): Promise<ILesson | null> {
   try {
     const lessonRef = doc(db, "courses", courseId, "lessons", lessonId);
-    const lessonSnap = await getDoc(lessonRef);
+
+    try {
+      const cacheSnap = await getDocFromCache(lessonRef);
+      if (cacheSnap.exists()) {
+        return { ...cacheSnap.data(), id: cacheSnap.id } as ILesson;
+      }
+    } catch {
+      // Ignora erro de cache e busca do servidor
+    }
+
+    const lessonSnap = await getDocFromServer(lessonRef);
 
     if (lessonSnap.exists()) {
       return { ...lessonSnap.data(), id: lessonSnap.id } as ILesson;

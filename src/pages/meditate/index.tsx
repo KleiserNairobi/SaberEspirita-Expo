@@ -13,11 +13,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AssistantCard } from "@/components/AssistantCard";
 import { DailyThoughtCard } from "@/components/DailyThoughtCard";
-import { useFeaturedMeditations } from "@/hooks/queries/useMeditations";
+import { MEDITATION_KEYS, useFeaturedMeditations } from "@/hooks/queries/useMeditations";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { MeditateStackParamList } from "@/routers/types";
 import { getMeditationById } from "@/services/firebase/meditationService";
 import { getReflectionById } from "@/services/firebase/reflectionService";
+import { REFLECTION_KEYS } from "./hooks/useReflections";
 import { useAuthStore } from "@/stores/authStore";
 import { useMeditationPlayerStore } from "@/stores/meditationPlayerStore";
 import { useQueryClient } from "@tanstack/react-query";
@@ -56,17 +57,17 @@ export default function MeditateScreen() {
 
   function prefetchReflection(id: string) {
     queryClient.prefetchQuery({
-      queryKey: ["reflection", id],
+      queryKey: REFLECTION_KEYS.detail(id),
       queryFn: () => getReflectionById(id),
-      staleTime: 1000 * 60 * 60, // 1 hora
+      staleTime: 1000 * 60 * 60 * 24, // 24 horas
     });
   }
 
   function prefetchMeditation(id: string, imageUrl?: string) {
     queryClient.prefetchQuery({
-      queryKey: ["meditations", "detail", id],
+      queryKey: MEDITATION_KEYS.detail(id),
       queryFn: () => getMeditationById(id),
-      staleTime: 1000 * 60 * 60,
+      staleTime: 1000 * 60 * 60 * 24, // 24 horas
     });
     if (imageUrl) Image.prefetch(imageUrl);
   }

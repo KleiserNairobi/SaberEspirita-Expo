@@ -13,6 +13,10 @@ export function useExercises(lessonId: string) {
     queryKey: EXERCISES_KEYS.byLesson(lessonId),
     queryFn: () => getExercisesByLessonId(lessonId),
     enabled: !!lessonId,
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    refetchOnMount: false,
+    refetchOnReconnect: true,
   });
 }
 
@@ -21,5 +25,9 @@ export function useCourseExercises(courseId: string) {
     queryKey: ["exercises", "course", courseId],
     queryFn: () => getExercisesByCourseId(courseId),
     enabled: !!courseId,
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    refetchOnMount: false,
+    refetchOnReconnect: true,
   });
 }

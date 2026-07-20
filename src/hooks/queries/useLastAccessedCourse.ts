@@ -2,17 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import {
   collection,
   query,
-  where,
   orderBy,
   limit,
-  getDocs,
-  doc,
-  getDoc,
+  getDocsFromCache,
+  getDocsFromServer,
 } from "firebase/firestore";
 
 import { useAuthStore } from "@/stores/authStore";
 import { db } from "@/configs/firebase/firebase";
 import { ICourse, IUserCourseProgress, ILesson } from "@/types/course";
+import { getCourseById } from "@/services/firebase/courseService";
+import { getLessonById, getLessonsByCourseId } from "@/services/firebase/lessonService";
 
 export interface LastAccessedCourseData {
   course: ICourse;
@@ -31,7 +31,18 @@ export function useLastAccessedCourse() {
       // 1. Buscar o progresso mais recente
       const progressRef = collection(db, "users", user.uid, "courseProgress");
       const q = query(progressRef, orderBy("lastAccessedAt", "desc"), limit(1));
-      const snapshot = await getDocs(q);
+      let snapshot;
+
+      try {
+        const cacheSnap = await getDocsFromCache(q);
+        if (!cacheSnap.empty) {
+          snapshot = cacheSnap;
+        } else {
+          snapshot = await getDocsFromServer(q);
+        }
+      } catch {
+        snapshot = await getDocsFromServer(q);
+      }
 
       if (snapshot.empty) return null;
 
@@ -43,38 +54,20 @@ export function useLastAccessedCourse() {
         completedAt: progressDoc.data().completedAt?.toDate(),
       } as IUserCourseProgress;
 
-      // Se o curso já foi concluído (100%), talvez não queiramos mostrar no "Continuar"
-      // Mas por enquanto vamos mostrar para permitir revisão ou certificado
+      // 2. Buscar detalhes do curso (utiliza serviço Cache-First)
+      const courseData = await getCourseById(progressData.courseId);
+      if (!courseData) return null;
 
-      // 2. Buscar detalhes do curso
-      const courseDoc = await getDoc(doc(db, "courses", progressData.courseId));
-      if (!courseDoc.exists()) return null;
-
-      const courseData = { id: courseDoc.id, ...courseDoc.data() } as ICourse;
-
-      // 3. Buscar a próxima aula (se houver lastLessonId, pegamos a próxima, senão a primeira)
-      // Simplificação: vamos buscar a aula que está marcada como lastLessonId
+      // 3. Buscar a próxima aula
       let nextLesson: ILesson | undefined;
 
       if (progressData.lastLessonId) {
-        // Tenta buscar a aula atual (onde parou)
-        const lessonSnap = await getDoc(doc(db, "lessons", progressData.lastLessonId));
-        if (lessonSnap.exists()) {
-          nextLesson = { id: lessonSnap.id, ...lessonSnap.data() } as ILesson;
-        }
+        const lesson = await getLessonById(progressData.courseId, progressData.lastLessonId);
+        if (lesson) nextLesson = lesson;
       } else {
-        // Se não tem lastLessonId, pega a primeira aula do curso (ordem 1)
-        const lessonsRef = collection(db, "lessons");
-        const lessonsQuery = query(
-          lessonsRef,
-          where("courseId", "==", courseData.id),
-          orderBy("order", "asc"),
-          limit(1)
-        );
-        const lessonsSnap = await getDocs(lessonsQuery);
-        if (!lessonsSnap.empty) {
-          const lessonDoc = lessonsSnap.docs[0];
-          nextLesson = { id: lessonDoc.id, ...lessonDoc.data() } as ILesson;
+        const lessons = await getLessonsByCourseId(progressData.courseId);
+        if (lessons.length > 0) {
+          nextLesson = lessons[0];
         }
       }
 
@@ -86,5 +79,7 @@ export function useLastAccessedCourse() {
     },
     enabled: !!user?.uid,
     staleTime: 1000 * 60 * 60 * 24, // 24 horas (invalidação manual nas modificações)
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    refetchOnMount: false,
   });
 }

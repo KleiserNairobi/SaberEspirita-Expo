@@ -8,20 +8,32 @@ import {
   getGlossaryTermById,
 } from "@/services/firebase/glossaryService";
 
+export const GLOSSARY_KEYS = {
+  all: ["glossary", "v1"] as const,
+  term: (id: string) => ["glossary", "term", id, "v1"] as const,
+  byCategory: (category: string) => ["glossary", "category", category, "v1"] as const,
+};
+
 export function useGlossaryTerms() {
   return useQuery({
-    queryKey: ["glossary", "all"],
+    queryKey: GLOSSARY_KEYS.all,
     queryFn: getAllGlossaryTerms,
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    refetchOnMount: false,
+    refetchOnReconnect: true,
   });
 }
 
 export function useGlossaryTerm(id: string) {
   return useQuery({
-    queryKey: ["glossary", "term", id],
+    queryKey: GLOSSARY_KEYS.term(id),
     queryFn: () => getGlossaryTermById(id),
     enabled: !!id,
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    refetchOnMount: false,
+    refetchOnReconnect: true,
   });
 }
 

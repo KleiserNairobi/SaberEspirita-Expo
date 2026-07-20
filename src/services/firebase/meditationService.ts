@@ -4,7 +4,11 @@ import {
   collection,
   doc,
   getDoc,
+  getDocFromCache,
+  getDocFromServer,
   getDocs,
+  getDocsFromCache,
+  getDocsFromServer,
   limit,
   orderBy,
   query,
@@ -36,9 +40,18 @@ function mapDocToMeditation(doc: any): IMeditation {
 export async function getMeditations(): Promise<IMeditation[]> {
   try {
     const meditationsRef = collection(db, MEDITATIONS_COLLECTION);
-    const q = query(meditationsRef, orderBy("title", "asc"));
-    const snapshot = await getDocs(q);
+    const q = query(meditationsRef, orderBy("title", "asc"), limit(50));
+    
+    try {
+      const cacheSnapshot = await getDocsFromCache(q);
+      if (!cacheSnapshot.empty) {
+        return cacheSnapshot.docs.map(mapDocToMeditation);
+      }
+    } catch {
+      // Ignora erro de cache e busca do servidor
+    }
 
+    const snapshot = await getDocsFromServer(q);
     return snapshot.docs.map(mapDocToMeditation);
   } catch (error) {
     console.error("Erro ao buscar meditações:", error);
@@ -50,8 +63,17 @@ export async function getFeaturedMeditations(): Promise<IMeditation[]> {
   try {
     const meditationsRef = collection(db, MEDITATIONS_COLLECTION);
     const q = query(meditationsRef, where("featured", "==", true), limit(5));
-    const snapshot = await getDocs(q);
+    
+    try {
+      const cacheSnapshot = await getDocsFromCache(q);
+      if (!cacheSnapshot.empty) {
+        return cacheSnapshot.docs.map(mapDocToMeditation);
+      }
+    } catch {
+      // Ignora erro de cache e busca do servidor
+    }
 
+    const snapshot = await getDocsFromServer(q);
     return snapshot.docs.map(mapDocToMeditation);
   } catch (error) {
     console.error("Erro ao buscar meditações em destaque:", error);
@@ -62,8 +84,17 @@ export async function getFeaturedMeditations(): Promise<IMeditation[]> {
 export async function getMeditationById(id: string): Promise<IMeditation | null> {
   try {
     const docRef = doc(db, MEDITATIONS_COLLECTION, id);
-    const docSnap = await getDoc(docRef);
+    
+    try {
+      const cacheSnap = await getDocFromCache(docRef);
+      if (cacheSnap.exists()) {
+        return mapDocToMeditation(cacheSnap);
+      }
+    } catch {
+      // Ignora erro de cache e busca do servidor
+    }
 
+    const docSnap = await getDocFromServer(docRef);
     if (docSnap.exists()) {
       return mapDocToMeditation(docSnap);
     }

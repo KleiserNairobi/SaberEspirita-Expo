@@ -2,7 +2,11 @@ import {
   collection,
   doc,
   getDoc,
+  getDocFromCache,
+  getDocFromServer,
   getDocs,
+  getDocsFromCache,
+  getDocsFromServer,
   query,
   where,
   addDoc,
@@ -13,11 +17,26 @@ import { db } from "@/configs/firebase/firebase";
 import { IGlossaryTerm, GlossaryCategory } from "@/types/glossary";
 
 /**
- * Busca todos os termos do glossário
+ * Busca todos os termos do glossário com estratégia Cache-First
  */
 export async function getAllGlossaryTerms(): Promise<IGlossaryTerm[]> {
   const glossaryRef = collection(db, "glossary");
-  const snapshot = await getDocs(glossaryRef);
+
+  try {
+    const cacheSnapshot = await getDocsFromCache(glossaryRef);
+    if (!cacheSnapshot.empty) {
+      return cacheSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+        updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+      })) as IGlossaryTerm[];
+    }
+  } catch {
+    // Ignora erro de cache e busca do servidor
+  }
+
+  const snapshot = await getDocsFromServer(glossaryRef);
 
   return snapshot.docs.map((doc) => ({
     id: doc.id,
@@ -28,10 +47,26 @@ export async function getAllGlossaryTerms(): Promise<IGlossaryTerm[]> {
 }
 
 /**
- * Busca um termo específico por ID
+ * Busca um termo específico por ID com estratégia Cache-First
  */
 export async function getGlossaryTermById(id: string): Promise<IGlossaryTerm | null> {
-  const termDoc = await getDoc(doc(db, "glossary", id));
+  const termRef = doc(db, "glossary", id);
+
+  try {
+    const cacheDoc = await getDocFromCache(termRef);
+    if (cacheDoc.exists()) {
+      return {
+        id: cacheDoc.id,
+        ...cacheDoc.data(),
+        createdAt: cacheDoc.data().createdAt?.toDate() || new Date(),
+        updatedAt: cacheDoc.data().updatedAt?.toDate() || new Date(),
+      } as IGlossaryTerm;
+    }
+  } catch {
+    // Ignora erro de cache e busca do servidor
+  }
+
+  const termDoc = await getDocFromServer(termRef);
 
   if (!termDoc.exists()) {
     return null;
@@ -46,14 +81,29 @@ export async function getGlossaryTermById(id: string): Promise<IGlossaryTerm | n
 }
 
 /**
- * Busca termos por categoria
+ * Busca termos por categoria com estratégia Cache-First
  */
 export async function getGlossaryTermsByCategory(
   category: GlossaryCategory
 ): Promise<IGlossaryTerm[]> {
   const glossaryRef = collection(db, "glossary");
   const categoryQuery = query(glossaryRef, where("category", "==", category));
-  const snapshot = await getDocs(categoryQuery);
+
+  try {
+    const cacheSnapshot = await getDocsFromCache(categoryQuery);
+    if (!cacheSnapshot.empty) {
+      return cacheSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+        updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+      })) as IGlossaryTerm[];
+    }
+  } catch {
+    // Ignora erro de cache e busca do servidor
+  }
+
+  const snapshot = await getDocsFromServer(categoryQuery);
 
   return snapshot.docs.map((doc) => ({
     id: doc.id,
