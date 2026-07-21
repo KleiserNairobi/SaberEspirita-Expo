@@ -2,6 +2,18 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.19-ota.2] - 2026-07-21 (Hot-Update)
+
+### Alterado
+
+- **Otimização do Progresso de Cursos (Firestore)**: Implementada trava de frequência local (*throttle* de 15 minutos) na função `touchCourseAccess` (`progressService.ts`) para zerar chamadas de rede e gravações de timestamp redundantes no banco de dados durante a navegação entre aulas.
+
+## [2.0.19-ota.1] - 2026-07-20 (Hot-Update)
+
+### Adicionado / Corrigido
+
+- **Primeira Atualização OTA (Hot-Update)**: Deploy inicial via infraestrutura Cloudflare contendo as otimizações de queries nos módulos Estude/Medite e correções operacionais.
+
 ## [2.0.19] - 2026-07-19
 
 ### Adicionado

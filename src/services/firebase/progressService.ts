@@ -41,12 +41,25 @@ export async function logLessonCompleted(params: {
   }
 }
 
+const lastTouchCache = new Map<string, number>();
+const TOUCH_THROTTLE_MS = 15 * 60 * 1000; // 15 minutos de intervalo mínimo entre atualizações de acesso simples
+
 export async function touchCourseAccess(
   courseId: string,
   params?: { lessonId?: string; userId?: string }
 ): Promise<void> {
   const currentUserId = params?.userId || auth.currentUser?.uid;
   if (!currentUserId || currentUserId === "guest") return;
+
+  const cacheKey = `${currentUserId}_${courseId}_${params?.lessonId ?? ""}`;
+  const now = Date.now();
+  const lastTouch = lastTouchCache.get(cacheKey) || 0;
+
+  // Evita chamadas repetidas de rede ao Firestore se o acesso ocorreu a menos de 15 minutos
+  if (now - lastTouch < TOUCH_THROTTLE_MS) {
+    return;
+  }
+  lastTouchCache.set(cacheKey, now);
 
   const progressRef = doc(db, `users/${currentUserId}/courseProgress/${courseId}`);
   const lastAccessedAt = new Date();
