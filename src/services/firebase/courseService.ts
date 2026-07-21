@@ -30,7 +30,7 @@ export async function getCourses(): Promise<ICourse[]> {
       if (!cacheSnapshot.empty) {
         const courses: ICourse[] = [];
         cacheSnapshot.forEach((doc) => {
-          courses.push({ id: doc.id, ...doc.data() } as ICourse);
+          courses.push({ ...doc.data(), id: doc.id } as ICourse);
         });
         return courses;
       }
@@ -42,7 +42,7 @@ export async function getCourses(): Promise<ICourse[]> {
 
     const courses: ICourse[] = [];
     querySnapshot.forEach((doc) => {
-      courses.push({ id: doc.id, ...doc.data() } as ICourse);
+      courses.push({ ...doc.data(), id: doc.id } as ICourse);
     });
 
     return courses;
@@ -58,13 +58,14 @@ export async function getCourses(): Promise<ICourse[]> {
  * @returns Curso encontrado ou null
  */
 export async function getCourseById(courseId: string): Promise<ICourse | null> {
+  if (!courseId) return null;
   try {
     const courseRef = doc(db, "courses", courseId);
 
     try {
       const cacheSnap = await getDocFromCache(courseRef);
       if (cacheSnap.exists()) {
-        return { id: cacheSnap.id, ...cacheSnap.data() } as ICourse;
+        return { ...cacheSnap.data(), id: cacheSnap.id } as ICourse;
       }
     } catch {
       // Ignora erro de cache e busca do servidor
@@ -73,7 +74,19 @@ export async function getCourseById(courseId: string): Promise<ICourse | null> {
     const courseSnap = await getDocFromServer(courseRef);
 
     if (courseSnap.exists()) {
-      return { id: courseSnap.id, ...courseSnap.data() } as ICourse;
+      return { ...courseSnap.data(), id: courseSnap.id } as ICourse;
+    }
+
+    // Fallback de resiliência caso o courseId fornecido seja um alias de campo
+    try {
+      const q = query(collection(db, "courses"), where("id", "==", courseId), limit(1));
+      const querySnap = await getDocsFromServer(q);
+      if (!querySnap.empty) {
+        const d = querySnap.docs[0];
+        return { ...d.data(), id: d.id } as ICourse;
+      }
+    } catch {
+      // Ignora erro de fallback
     }
 
     return null;
@@ -105,7 +118,7 @@ export async function getCoursesByDifficulty(
       if (!cacheSnapshot.empty) {
         const courses: ICourse[] = [];
         cacheSnapshot.forEach((doc) => {
-          courses.push({ id: doc.id, ...doc.data() } as ICourse);
+          courses.push({ ...doc.data(), id: doc.id } as ICourse);
         });
         return courses;
       }
@@ -117,7 +130,7 @@ export async function getCoursesByDifficulty(
 
     const courses: ICourse[] = [];
     querySnapshot.forEach((doc) => {
-      courses.push({ id: doc.id, ...doc.data() } as ICourse);
+      courses.push({ ...doc.data(), id: doc.id } as ICourse);
     });
 
     return courses;
@@ -146,7 +159,7 @@ export async function getFeaturedCourses(): Promise<ICourse[]> {
       if (!cacheSnapshot.empty) {
         const courses: ICourse[] = [];
         cacheSnapshot.forEach((doc) => {
-          courses.push({ id: doc.id, ...doc.data() } as ICourse);
+          courses.push({ ...doc.data(), id: doc.id } as ICourse);
         });
         return courses;
       }
@@ -158,7 +171,7 @@ export async function getFeaturedCourses(): Promise<ICourse[]> {
 
     const courses: ICourse[] = [];
     querySnapshot.forEach((doc) => {
-      courses.push({ id: doc.id, ...doc.data() } as ICourse);
+      courses.push({ ...doc.data(), id: doc.id } as ICourse);
     });
 
     return courses;

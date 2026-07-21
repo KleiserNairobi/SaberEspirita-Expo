@@ -29,15 +29,18 @@ export function useAllCoursesProgress() {
 
       const progressMap: Record<string, IUserCourseProgress> = {};
 
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        progressMap[data.courseId] = {
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const item = {
           ...data,
           startedAt: data.startedAt?.toDate(),
           lastAccessedAt: data.lastAccessedAt?.toDate(),
           completedAt: data.completedAt?.toDate(),
           certificateIssuedAt: data.certificateIssuedAt?.toDate(),
         } as IUserCourseProgress;
+
+        if (docSnap.id) progressMap[docSnap.id] = item;
+        if (data.courseId) progressMap[data.courseId] = item;
       });
 
       return progressMap;

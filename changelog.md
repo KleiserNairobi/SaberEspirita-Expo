@@ -2,6 +2,18 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.19-ota.4] - 2026-07-21 (Hot-Update)
+
+### Corrigido
+
+- **Invalidação Forçada de Cache Persistido (MMKV)**: Incrementado o parâmetro `buster` do `PersistQueryClientProvider` para `"1.0.4"` no `App.tsx`. Força a limpeza e descarte do cache antigo do React Query gravado no MMKV do aparelho ao carregar o pacote OTA, garantindo que as novas queries de cursos sejam re-executadas com a correção de IDs.
+
+## [2.0.19-ota.3] - 2026-07-21 (Hot-Update)
+
+### Corrigido
+
+- **Referência e Navegação de Cursos (Firestore)**: Correção crítica na priorização de resolução do `id` do documento (`{ ...doc.data(), id: doc.id }`) no `courseService.ts` e na indexação de progresso em `useAllCoursesProgress.ts`. Restaurado o status real dos botões do carrossel ("CONTINUAR", "CONCLUÍDO") e corrigido o erro de navegação "Série espiritual não encontrada".
+
 ## [2.0.19-ota.2] - 2026-07-21 (Hot-Update)
 
 ### Alterado

@@ -47,15 +47,18 @@ export function useLastAccessedCourse() {
       if (snapshot.empty) return null;
 
       const progressDoc = snapshot.docs[0];
+      const courseId = (progressDoc.data().courseId as string) || progressDoc.id;
+
       const progressData = {
         ...progressDoc.data(),
+        courseId,
         startedAt: progressDoc.data().startedAt?.toDate(),
         lastAccessedAt: progressDoc.data().lastAccessedAt?.toDate(),
         completedAt: progressDoc.data().completedAt?.toDate(),
       } as IUserCourseProgress;
 
       // 2. Buscar detalhes do curso (utiliza serviço Cache-First)
-      const courseData = await getCourseById(progressData.courseId);
+      const courseData = await getCourseById(courseId);
       if (!courseData) return null;
 
       // 3. Buscar a próxima aula
