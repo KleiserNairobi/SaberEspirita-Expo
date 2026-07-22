@@ -2,6 +2,19 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.19-ota.5] - 2026-07-22 (Hot-Update)
+
+### Alterado
+
+- **Desnormalização de Reações no Fórum (Eliminação de N+1 reads)**: Atualizada a listagem de comentários em `getForumCommentsPage` (`forumService.ts`) para ler o status da reação do usuário atual (`myReaction`) diretamente do campo desnormalizado `userReactions` do documento de comentário. Removida a query síncrona paralela em loop que fazia N consultas extras por paginação.
+- **Desnormalização de Curso no Progresso (`useLastAccessedCourse`)**: Otimizado o hook de último curso acessado para ler o título e dados do curso e aula diretamente do documento de progresso do usuário desnormalizado no Firestore, evitando 2 leituras em cascata no servidor no cold start da tela inicial (com fallback seguro e retroativo se ausente).
+- **Estratégia Cache-First no Progresso (`useCourseProgress`)**: Atualizado para ler o progresso do usuário via `getDocFromCache` com fallback para `getDocFromServer`, além de setar `refetchOnMount: false` e `gcTime` de 7 dias, eliminando leituras repetidas de rede ao navegar entre detalhes, currículo, player de vídeo e certificado.
+- **Otimização de staleTime e refetch nos Hooks do Fórum**:
+  - `useCommunityProgress`: `refetchOnMount: false` e `staleTime: 30 minutos`.
+  - `useForumHasNewComments`: `refetchOnMount: false` e `staleTime: 10 minutos`.
+  - `useLessonForumComments`: `refetchOnMount: false` e `staleTime: 10 minutos`.
+- **Aumento de Limite no Carrossel da Home**: Elevado o limite de exibição de cursos em destaque na home estude de 5 para 20 no `courseService.ts`, permitindo listar a grade completa de cursos cadastrados.
+
 ## [2.0.19-ota.4] - 2026-07-21 (Hot-Update)
 
 ### Corrigido
