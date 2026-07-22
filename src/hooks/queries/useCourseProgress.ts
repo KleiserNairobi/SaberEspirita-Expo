@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/authStore";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDocFromCache, getDocFromServer } from "firebase/firestore";
 import { db } from "@/configs/firebase/firebase";
 import { IUserCourseProgress } from "@/types/course";
 import { touchCourseAccess } from "@/services/firebase/progressService";
@@ -11,7 +11,10 @@ export const COURSE_PROGRESS_KEYS = {
 };
 
 /**
- * Hook para buscar o progresso do usuário em um curso específico
+ * Hook para buscar o progresso do usuário em um curso específico.
+ * Estratégia Cache-First: tenta o cache offline do Firestore antes de ir ao servidor,
+ * evitando leituras redundantes nas 4 telas que usam este hook (CourseDetails,
+ * CourseCurriculum, LessonPlayer, CourseCertificate).
  */
 export function useCourseProgress(courseId: string) {
   const { user } = useAuthStore();
@@ -22,7 +25,15 @@ export function useCourseProgress(courseId: string) {
       if (!user?.uid || !courseId) return null;
 
       const progressRef = doc(db, "users", user.uid, "courseProgress", courseId);
-      const progressSnap = await getDoc(progressRef);
+
+      // Cache-First: tenta o cache offline do Firestore primeiro (0 leituras cobradas)
+      let progressSnap;
+      try {
+        progressSnap = await getDocFromCache(progressRef);
+      } catch {
+        // Cache miss ou indisponível — busca no servidor
+        progressSnap = await getDocFromServer(progressRef);
+      }
 
       if (!progressSnap.exists()) {
         // Usuário ainda não iniciou o curso
@@ -38,7 +49,9 @@ export function useCourseProgress(courseId: string) {
       } as IUserCourseProgress;
     },
     enabled: !!user?.uid && !!courseId,
-    staleTime: 1000 * 60 * 60 * 24, // 24 horas (invalidação manual consistente nas modificações)
+    staleTime: 1000 * 60 * 60 * 24,     // 24 horas (invalidação manual consistente nas modificações)
+    gcTime: 1000 * 60 * 60 * 24 * 7,    // 7 dias — mantém em memória para navegação entre telas
+    refetchOnMount: false,               // evita leitura extra ao remontar (4 telas no fluxo)
   });
 }
 

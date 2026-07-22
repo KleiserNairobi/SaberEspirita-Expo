@@ -234,22 +234,6 @@ export async function getForumCommentsPage(params: {
 
   const docs = snap.docs;
 
-  const myReactions = await Promise.all(
-    docs.map(async (d) => {
-      const reactionRef = doc(
-        db,
-        `lesson_forums/${params.lessonId}/comments/${d.id}/reactions/${params.userId}`
-      );
-      const reactionSnap = await getDoc(reactionRef);
-      const type = reactionSnap.exists()
-        ? (reactionSnap.data().type as ForumReactionType)
-        : null;
-      return { commentId: d.id, type };
-    })
-  );
-
-  const byCommentId = new Map(myReactions.map((r) => [r.commentId, r.type]));
-
   const comments: ForumComment[] = docs.flatMap((d) => {
     const data = d.data() as any;
     if (data?.moderationStatus === "HIDDEN") return [];
@@ -258,6 +242,9 @@ export async function getForumCommentsPage(params: {
     const updatedAt = data.updatedAt?.toDate?.() ?? null;
     const deletedAt = data.deletedAt?.toDate?.() ?? null;
     const userCommunityLevel = normalizeCommunityLevelId(data.userCommunityLevel);
+    
+    // Lê a reação diretamente do campo desnormalizado userReactions do comentário
+    const myReaction = data.userReactions?.[params.userId] ?? null;
 
     return [
       {
@@ -273,7 +260,7 @@ export async function getForumCommentsPage(params: {
         createdAt,
         updatedAt,
         reactions: normalizeReactionCounts(data.reactions),
-        myReaction: byCommentId.get(d.id) ?? null,
+        myReaction,
         isDeleted: !!data.isDeleted,
         deletedAt,
       },

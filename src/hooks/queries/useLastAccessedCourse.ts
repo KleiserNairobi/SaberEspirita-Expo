@@ -57,16 +57,34 @@ export function useLastAccessedCourse() {
         completedAt: progressDoc.data().completedAt?.toDate(),
       } as IUserCourseProgress;
 
-      // 2. Buscar detalhes do curso (utiliza serviço Cache-First)
-      const courseData = await getCourseById(courseId);
+      // 2. Buscar detalhes do curso (tenta desnormalizado primeiro, senão usa fallback)
+      let courseData: ICourse | null = null;
+      if (progressData.courseTitle && typeof progressData.courseLessonCount === "number") {
+        courseData = {
+          id: courseId,
+          title: progressData.courseTitle,
+          lessonCount: progressData.courseLessonCount,
+        } as any;
+      } else {
+        courseData = await getCourseById(courseId);
+      }
+
       if (!courseData) return null;
 
-      // 3. Buscar a próxima aula
+      // 3. Buscar a próxima aula (tenta desnormalizado primeiro, senão usa fallback)
       let nextLesson: ILesson | undefined;
 
       if (progressData.lastLessonId) {
-        const lesson = await getLessonById(progressData.courseId, progressData.lastLessonId);
-        if (lesson) nextLesson = lesson;
+        if (progressData.lastLessonTitle && typeof progressData.lastLessonOrder === "number") {
+          nextLesson = {
+            id: progressData.lastLessonId,
+            title: progressData.lastLessonTitle,
+            order: progressData.lastLessonOrder,
+          } as any;
+        } else {
+          const lesson = await getLessonById(progressData.courseId, progressData.lastLessonId);
+          if (lesson) nextLesson = lesson;
+        }
       } else {
         const lessons = await getLessonsByCourseId(progressData.courseId);
         if (lessons.length > 0) {

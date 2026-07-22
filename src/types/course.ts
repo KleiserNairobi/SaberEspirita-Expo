@@ -103,6 +103,12 @@ export interface IUserCourseProgress {
   startedAt: Date;
   lastAccessedAt: Date;
   completedAt?: Date;
+
+  // Campos Desnormalizados (Prevenção de N+1)
+  courseTitle?: string;
+  courseLessonCount?: number;
+  lastLessonTitle?: string;
+  lastLessonOrder?: number;
 }
 
 export type CourseDifficultyLevel = "Iniciante" | "Intermediário" | "Avançado";

@@ -151,7 +151,7 @@ export async function getFeaturedCourses(): Promise<ICourse[]> {
       coursesRef,
       where("featured", "==", true),
       orderBy("order", "asc"),
-      limit(5)
+      limit(20)
     );
 
     try {
