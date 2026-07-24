@@ -2,6 +2,16 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.19-ota.6] - 2026-07-24 (Hot-Update)
+
+### Alterado
+
+- **Otimização de Leituras no Leaderboard (`useLeaderboard.ts`)**: Adicionados `staleTime: 15 minutos`, `gcTime: 1 hora` e `refetchOnMount: false` na query `useCurrentUserScore()`, eliminando buscas repetidas da pontuação do usuário ao navegar pelas abas do aplicativo.
+- **Estratégia Cache-First em Respostas de V ou F (`truthOrFalseService.ts`)**: Atualizada a função `getAllResponses()` para priorizar leitura do cache local (`getDocsFromCache`) com fallback seguro para o servidor, evitando requisições desnecessárias de todo o histórico do usuário a cada recálculo de estatísticas.
+- **Cache de Orações em Alta (`prayerService.ts`)**: Implementado cache em memória (`trendingPrayersCache`) com TTL de 15 minutos na função `getTrendingPrayers()`, eliminando buscas repetidas de 100 documentos na coleção `prayer_logs` a cada abertura do card.
+- **Refinamento de Invalidações no Progresso (`useCourseProgress.ts`)**: Removida a invalidação global da chave `allCoursesProgress` dentro do mutador `useTouchCourseAccess()`, evitando refetches em massa de todos os progressos do usuário em acessos simples.
+- **Exibição Dinâmica de Versão OTA na Tela Conta (`constants.ts`)**: Atualizado `constants.ts` para ler a versão prioritariamente a partir do `package.json`, garantindo que versões OTA (Hot-Update) sejam exibidas com precisão no rodapé da tela Conta.
+
 ## [2.0.19-ota.5] - 2026-07-22 (Hot-Update)
 
 ### Alterado
@@ -31,7 +41,7 @@ Este documento registra todas as alterações relevantes do projeto a partir da 
 
 ### Alterado
 
-- **Otimização do Progresso de Cursos (Firestore)**: Implementada trava de frequência local (*throttle* de 15 minutos) na função `touchCourseAccess` (`progressService.ts`) para zerar chamadas de rede e gravações de timestamp redundantes no banco de dados durante a navegação entre aulas.
+- **Otimização do Progresso de Cursos (Firestore)**: Implementada trava de frequência local (_throttle_ de 15 minutos) na função `touchCourseAccess` (`progressService.ts`) para zerar chamadas de rede e gravações de timestamp redundantes no banco de dados durante a navegação entre aulas.
 
 ## [2.0.19-ota.1] - 2026-07-20 (Hot-Update)
 
