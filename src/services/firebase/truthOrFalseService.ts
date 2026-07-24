@@ -180,7 +180,18 @@ export class TruthOrFalseService {
 
     try {
       const responsesRef = collection(db, "users", userId, "truthOrFalseResponses");
-      const snapshot = await getDocs(responsesRef);
+      let snapshot;
+
+      try {
+        const cacheSnapshot = await getDocsFromCache(responsesRef);
+        if (!cacheSnapshot.empty) {
+          snapshot = cacheSnapshot;
+        } else {
+          snapshot = await getDocsFromServer(responsesRef);
+        }
+      } catch {
+        snapshot = await getDocsFromServer(responsesRef);
+      }
 
       return snapshot.docs.map((doc) => ({
         id: doc.id,

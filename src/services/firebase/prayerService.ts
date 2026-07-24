@@ -74,13 +74,26 @@ export async function getFeaturedPrayers(): Promise<IPrayer[]> {
   return snapshot.docs.map((doc) => mapDocToPrayer(doc));
 }
 
+interface ITrendingCache {
+  data: IPrayer[];
+  timestamp: number;
+}
+const trendingPrayersCache: Record<string, ITrendingCache> = {};
+const TRENDING_CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutos em milissegundos
+
 /**
  * Busca as orações mais lidas com base no período (day, week, total)
- * Integração real com prayer_logs e prayer_stats
+ * Integração real com prayer_logs e prayer_stats com cache em memória de 15 min
  */
 export async function getTrendingPrayers(
   period: "day" | "week" | "total"
 ): Promise<IPrayer[]> {
+  const nowMs = Date.now();
+  const cached = trendingPrayersCache[period];
+  if (cached && nowMs - cached.timestamp < TRENDING_CACHE_TTL_MS) {
+    return cached.data;
+  }
+
   try {
     let prayerIds: { id: string; count: number }[] = [];
 
@@ -125,7 +138,7 @@ export async function getTrendingPrayers(
     const prayers = await getPrayersByIds(ids);
 
     // Reordena as orações conforme o ranking e anexa o contador
-    return prayerIds
+    const result = prayerIds
       .map((p) => {
         const prayer = prayers.find((item) => item.id === p.id);
         if (prayer) {
@@ -137,7 +150,17 @@ export async function getTrendingPrayers(
         return null;
       })
       .filter((p): p is IPrayer & { displayCount: number } => !!p);
+
+    trendingPrayersCache[period] = {
+      data: result,
+      timestamp: Date.now(),
+    };
+
+    return result;
   } catch (error) {
+    if (trendingPrayersCache[period]) {
+      return trendingPrayersCache[period].data;
+    }
     console.warn("[TrendingService] Erro ao buscar rankings:", error);
     return [];
   }

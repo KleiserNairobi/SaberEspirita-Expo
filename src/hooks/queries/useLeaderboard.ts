@@ -21,5 +21,8 @@ export function useCurrentUserScore() {
       return getUserScore(user.uid);
     },
     enabled: !!user?.uid,
+    staleTime: 1000 * 60 * 15, // 15 minutos (evita refetch constante ao navegar no app)
+    gcTime: 1000 * 60 * 60, // 1 hora em memória
+    refetchOnMount: false,
   });
 }

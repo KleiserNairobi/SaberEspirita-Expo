@@ -78,11 +78,7 @@ export function useTouchCourseAccess() {
         queryClient.invalidateQueries({
           queryKey: ["lastAccessedCourse", userId],
         });
-        // Invalida o progresso de todos os cursos
-        queryClient.invalidateQueries({
-          queryKey: ["allCoursesProgress", userId],
-        });
-        // Invalida o progresso do curso individual modificado
+        // Invalida pontualmente o progresso do curso individual modificado
         queryClient.invalidateQueries({
           queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(userId, courseId),
         });

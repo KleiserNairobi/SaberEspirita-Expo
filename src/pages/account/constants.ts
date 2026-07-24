@@ -1,7 +1,8 @@
 import Constants from "expo-constants";
+import packageJson from "../../../package.json";
 import { PLAY_STORE_URL, APP_STORE_URL } from "@/utils/constants";
 
-export const APP_VERSION = Constants.expoConfig?.version ?? "1.0.0";
+export const APP_VERSION = packageJson.version || Constants.expoConfig?.version || "1.0.0";
 export const CONTACT_EMAIL = "app.saberespirita@gmail.com";
 export const INSTAGRAM_URL = "https://instagram.com/comunidade.saberespirita";
 
