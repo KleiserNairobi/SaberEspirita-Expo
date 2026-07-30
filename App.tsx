@@ -230,8 +230,8 @@ TrackPlayer.registerPlaybackService(() => playbackService);
 
 // Registra o componente raiz com Expo
 const WrappedApp = HotUpdater.wrap({
-  baseURL: "https://saber-espirita-hot-updater-worker.kleiser-nairobi.workers.dev",
-  updateStrategy: "fingerprint",
+  baseURL: "https://saber-espirita-hot-updater-worker.kleiser-nairobi.workers.dev/api/check-update",
+  updateStrategy: "appVersion",
 })(App);
 
 registerRootComponent(WrappedApp);

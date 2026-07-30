@@ -20,7 +20,7 @@
     "build:aab": "expo prebuild --platform android && cd android && ./gradlew bundleRelease",
     "rename:aab": "node dev/scripts/rename-aab.js",
     "predeploy:ota": "npm run validate",
-    "deploy:ota": "hot-updater deploy"
+    "deploy:ota": "hot-updater deploy -f"
   },
   "dependencies": {
     "@expo-google-fonts/allura": "^0.4.2",
