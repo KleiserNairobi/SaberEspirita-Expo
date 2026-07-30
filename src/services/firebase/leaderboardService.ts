@@ -14,6 +14,12 @@ interface ILeaderboardCache {
 const leaderboardCache: Record<string, ILeaderboardCache> = {};
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos em milissegundos
 
+export function clearLeaderboardCache(): void {
+  Object.keys(leaderboardCache).forEach((key) => {
+    delete leaderboardCache[key];
+  });
+}
+
 export async function getLeaderboard(period: TimeFilter): Promise<ILeaderboardUser[]> {
   try {
     const nowMs = Date.now();

@@ -7,7 +7,9 @@ export function useLeaderboard(timeFilter: TimeFilter) {
   return useQuery({
     queryKey: ["leaderboard", timeFilter],
     queryFn: () => getLeaderboard(timeFilter),
-    staleTime: 1000 * 30, // 30 segundos de cache para melhorar consistência
+    staleTime: 1000 * 60 * 15, // 15 minutos de cache (otimização de leituras no Firestore)
+    gcTime: 1000 * 60 * 60, // 1 hora em memória
+    refetchOnMount: false,
   });
 }
 

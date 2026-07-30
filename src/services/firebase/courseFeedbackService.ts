@@ -1,5 +1,6 @@
-import { collection, addDoc, serverTimestamp, query, where, getDocs } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, where, getDocs, limit } from "firebase/firestore";
 import { db } from "@/configs/firebase/firebase";
+import * as Storage from "@/utils/Storage";
 
 export interface CourseFeedback {
   userId: string;
@@ -7,6 +8,13 @@ export interface CourseFeedback {
   rating: number; // 1 a 5
   comment?: string;
 }
+
+interface ICourseRatingCache {
+  rating: number | null;
+  timestamp: number;
+}
+
+const RATING_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hora de TTL
 
 /**
  * Salva a avaliação (estrelas + comentário) de um curso no Firestore.
@@ -18,6 +26,12 @@ export async function saveCourseFeedback(feedback: CourseFeedback): Promise<stri
       ...feedback,
       createdAt: serverTimestamp(),
     });
+
+    // Invalida o cache local da nota deste curso para recarregar atualizado na próxima vez
+    if (feedback.courseId) {
+      Storage.remove(`@course_rating_${feedback.courseId}`);
+    }
+
     return docRef.id;
   } catch (error) {
     console.error("Erro ao salvar feedback do curso:", error);
@@ -28,10 +42,22 @@ export async function saveCourseFeedback(feedback: CourseFeedback): Promise<stri
 }
 
 export async function getCourseAverageRating(courseId: string): Promise<number | null> {
+  if (!courseId) return null;
+
+  const cacheKey = `@course_rating_${courseId}`;
+  const cached = Storage.load<ICourseRatingCache>(cacheKey);
+  const now = Date.now();
+
+  if (cached && now - cached.timestamp < RATING_CACHE_TTL_MS) {
+    console.log(`[CourseFeedbackService] Média do curso ${courseId} via cache MMKV:`, cached.rating);
+    return cached.rating;
+  }
+
   try {
     const q = query(
       collection(db, "course_feedbacks"),
-      where("courseId", "==", courseId)
+      where("courseId", "==", courseId),
+      limit(50)
     );
     const querySnapshot = await getDocs(q);
     const feedbacks: { userId: string; rating: number; createdAtMillis: number }[] = [];
@@ -80,9 +106,18 @@ export async function getCourseAverageRating(courseId: string): Promise<number |
     const ratings = Array.from(uniqueRatingByUserId.values());
     const totalRating = ratings.reduce((sum, r) => sum + r, 0);
 
-    return ratings.length > 0
-      ? Math.floor((totalRating / ratings.length) * 10) / 10
-      : null;
+    const calculatedRating =
+      ratings.length > 0
+        ? Math.floor((totalRating / ratings.length) * 10) / 10
+        : null;
+
+    // Salva a média calculada no MMKV com TTL de 1 hora
+    Storage.save(cacheKey, {
+      rating: calculatedRating,
+      timestamp: Date.now(),
+    });
+
+    return calculatedRating;
   } catch (error) {
     console.error("Erro ao buscar média de avaliação:", error);
     return null;

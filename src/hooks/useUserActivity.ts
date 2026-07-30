@@ -17,6 +17,8 @@ let isFirstExecutionInSession = true;
 export function useUserActivity() {
   const { user, isGuest, lastSeenUpdate, setLastSeenUpdate } = useAuthStore();
   const appState = useRef(AppState.currentState);
+  const lastSeenUpdateRef = useRef(lastSeenUpdate);
+  lastSeenUpdateRef.current = lastSeenUpdate;
 
   // Intervalo de 30 minutos em milissegundos
   const THROTTLE_TIME = 30 * 60 * 1000;
@@ -30,10 +32,10 @@ export function useUserActivity() {
     if (!user) return;
     await StatsService.logDailyVisit(false);
     const now = Date.now();
+    const currentLastSeen = lastSeenUpdateRef.current;
 
     // Se for a primeira inicialização do app na sessão atual, ignoramos o throttle de 30 minutos
-    // para garantir o registro imediato do dispositivo (deviceIds) no Firestore.
-    if (isFirstExecutionInSession || !lastSeenUpdate || now - lastSeenUpdate > THROTTLE_TIME) {
+    if (isFirstExecutionInSession || !currentLastSeen || now - currentLastSeen > THROTTLE_TIME) {
       isFirstExecutionInSession = false;
       try {
         await userService.updateLastSeen(user.uid);
@@ -46,7 +48,7 @@ export function useUserActivity() {
         console.error("[Activity] Erro ao processar atualização de atividade:", error);
       }
     } else {
-      const minutesLeft = Math.ceil((THROTTLE_TIME - (now - lastSeenUpdate)) / 60000);
+      const minutesLeft = Math.ceil((THROTTLE_TIME - (now - currentLastSeen)) / 60000);
     }
   };
 
@@ -70,5 +72,5 @@ export function useUserActivity() {
     return () => {
       subscription.remove();
     };
-  }, [user, isGuest, lastSeenUpdate]);
+  }, [user?.uid, isGuest]);
 }

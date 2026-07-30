@@ -5,6 +5,8 @@ import * as Storage from "@/utils/Storage";
 import { getDeviceIdentifiers } from "@/utils/device";
 
 const LOCAL_BANNED_KEY = "device_is_banned_offline";
+const BAN_CHECK_TIMESTAMP_KEY = "device_ban_check_timestamp";
+const BAN_CHECK_TTL_MS = 60 * 60 * 1000; // 1 hora de TTL para consulta no Firestore
 
 export const deviceBlockService = {
   /**
@@ -20,8 +22,18 @@ export const deviceBlockService = {
       return true;
     }
 
+    // 2. Se a verificação foi realizada nos últimos 60 min e o dispositivo NÃO está banido, usar o cache
+    const lastCheckTimestamp = Storage.load<number>(BAN_CHECK_TIMESTAMP_KEY) || 0;
+    const now = Date.now();
+    if (isBannedOffline === false && now - lastCheckTimestamp < BAN_CHECK_TTL_MS) {
+      console.log(
+        "DeviceBlockService: Checagem de banimento recente (menos de 1h). Skipping Firestore check."
+      );
+      return false;
+    }
+
     try {
-      // 2. Obter identificadores do dispositivo
+      // 3. Obter identificadores do dispositivo
       const { androidId, iosIdfv, secureDeviceId } = await getDeviceIdentifiers();
 
       const idsToCheck = [secureDeviceId, androidId, iosIdfv].filter(Boolean) as string[];
@@ -35,7 +47,7 @@ export const deviceBlockService = {
         idsToCheck
       );
 
-      // 3. Consultar Firestore em paralelo para cada ID
+      // 4. Consultar Firestore em paralelo para cada ID
       const checkPromises = idsToCheck.map((id) => getDoc(doc(db, "banned_devices", id)));
       const snapshots = await Promise.all(checkPromises);
 
@@ -45,14 +57,14 @@ export const deviceBlockService = {
         console.log("DeviceBlockService: Dispositivo banido confirmado pelo Firestore!");
         // Salvar localmente para bloquear mesmo sem rede na próxima vez
         Storage.saveBoolean(LOCAL_BANNED_KEY, true);
+        Storage.remove(BAN_CHECK_TIMESTAMP_KEY);
         return true;
       }
 
       // Se consultou com sucesso e NÃO está banido, garantimos que o cache offline local esteja limpo
-      // (Isso permite que administradores desbanam o aparelho removendo o ID do Firestore)
-      if (isBannedOffline !== false) {
-        Storage.saveBoolean(LOCAL_BANNED_KEY, false);
-      }
+      // e salvamos o timestamp da verificação para valer pelo TTL de 1h
+      Storage.saveBoolean(LOCAL_BANNED_KEY, false);
+      Storage.save(BAN_CHECK_TIMESTAMP_KEY, Date.now());
       return false;
     } catch (error) {
       console.warn(
@@ -70,5 +82,6 @@ export const deviceBlockService = {
    */
   markAsBannedLocal(): void {
     Storage.saveBoolean(LOCAL_BANNED_KEY, true);
+    Storage.remove(BAN_CHECK_TIMESTAMP_KEY);
   },
 };

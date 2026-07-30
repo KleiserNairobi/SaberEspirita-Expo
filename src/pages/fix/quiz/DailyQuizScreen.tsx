@@ -14,8 +14,8 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
 import {
   addUserHistory,
+  incrementUserScore,
   logDailyChallengeAttempt,
-  updateUserScore,
 } from "@/services/firebase/quizService";
 import { useDailyChallenge } from "@/hooks/queries/useDailyChallenge";
 import { IQuizAnswer, IQuizHistory } from "@/types/quiz";
@@ -112,7 +112,7 @@ export function DailyQuizScreen() {
         };
 
         await addUserHistory(userHistory, user.displayName || "Usuário");
-        await updateUserScore(user.uid, user.displayName || "Usuário");
+        await incrementUserScore(user.uid, user.displayName || "Usuário", percentage);
 
         queryClient.invalidateQueries({ queryKey: ["dailyQuizStatus", user.uid] });
         queryClient.invalidateQueries({ queryKey: ["userStreak", user.uid] });

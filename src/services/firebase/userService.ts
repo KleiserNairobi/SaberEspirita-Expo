@@ -13,23 +13,14 @@ export const userService = {
   async updateLastSeen(uid: string) {
     if (!uid) return;
     try {
-      const { androidId, iosIdfv, secureDeviceId } = await getDeviceIdentifiers();
-      
       const userRef = doc(db, "users", uid);
       await updateDoc(userRef, {
         lastSeenAt: serverTimestamp(),
-        notified6Months: false,
-        notified11Months: false,
-        deviceIds: {
-          androidId,
-          iosIdfv,
-          secureDeviceId,
-        },
       });
-      console.log("UserService: Timestamp de atividade e DeviceIDs atualizados.");
+      console.log("UserService: Timestamp de atividade atualizado.");
     } catch (error) {
       // Falha silenciosa para não atrapalhar o fluxo do usuário
-      console.warn("UserService: Erro ao atualizar timestamp de atividade e DeviceIDs:", error);
+      console.warn("UserService: Erro ao atualizar timestamp de atividade:", error);
     }
   },
   async setCourseRemindersPref(uid: string, enabled: boolean) {

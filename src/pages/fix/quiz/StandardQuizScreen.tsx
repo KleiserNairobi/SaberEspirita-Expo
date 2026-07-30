@@ -14,9 +14,9 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
 import {
   addUserHistory,
+  incrementUserScore,
   logQuizAttempt,
   saveUserCompletedSubcategories,
-  updateUserScore,
 } from "@/services/firebase/quizService";
 import { useQuiz, QUIZ_KEYS } from "@/hooks/queries/useQuiz";
 import { IQuizAnswer, IQuizHistory } from "@/types/quiz";
@@ -121,7 +121,7 @@ export function StandardQuizScreen() {
         ];
 
         await Promise.all(promises);
-        await updateUserScore(user.uid, user.displayName || "Usuário");
+        await incrementUserScore(user.uid, user.displayName || "Usuário", percentage);
 
         queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.userProgress(user.uid) });
         queryClient.invalidateQueries({ queryKey: ["leaderboard"] });

@@ -7,6 +7,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  increment,
   query,
   serverTimestamp,
   setDoc,
@@ -15,6 +16,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "@/configs/firebase/firebase";
+import { clearLeaderboardCache } from "@/services/firebase/leaderboardService";
 import {
   ICategory,
   ICategoryProgress,
@@ -434,9 +436,40 @@ export async function updateUserScore(userId: string, userName: string): Promise
     };
 
     await setDoc(userScoreRef, summary);
+    clearLeaderboardCache();
     console.log("Resumo de score atualizado com sucesso!");
   } catch (error) {
     console.error("Erro ao atualizar resumo de score do usuário:", error);
+  }
+}
+
+export async function incrementUserScore(
+  userId: string,
+  userName: string,
+  scoreToAdd: number
+): Promise<void> {
+  try {
+    if (!userId || scoreToAdd <= 0) return;
+
+    const userScoreRef = doc(db, "users_scores", userId);
+
+    await setDoc(
+      userScoreRef,
+      {
+        userId,
+        userName: userName || "Usuário",
+        totalAllTime: increment(scoreToAdd),
+        totalThisMonth: increment(scoreToAdd),
+        totalThisWeek: increment(scoreToAdd),
+        lastUpdated: new Date(),
+      },
+      { merge: true }
+    );
+
+    clearLeaderboardCache();
+    console.log(`[QuizService] Pontuação incrementada em +${scoreToAdd} com sucesso!`);
+  } catch (error) {
+    console.error("Erro ao incrementar resumo de score do usuário:", error);
   }
 }
 
@@ -552,6 +585,45 @@ export async function getDailyChallengeQuestions(): Promise<IQuiz | null> {
 
 // ==================== STREAK ====================
 
+export function calculateStreakFromDates(uniqueDates: string[]): number {
+  if (uniqueDates.length === 0) return 0;
+
+  let streak = 0;
+  const now = new Date();
+  const today = now
+    .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+    .split(" ")[0];
+  const yesterdayDate = new Date(now);
+  yesterdayDate.setDate(now.getDate() - 1);
+  const yesterday = yesterdayDate
+    .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+    .split(" ")[0];
+
+  if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday) {
+    return 0;
+  }
+
+  streak = 1;
+  let lastDate = new Date(uniqueDates[0] + "T12:00:00");
+
+  for (let i = 1; i < uniqueDates.length; i++) {
+    const prevDate = new Date(lastDate);
+    prevDate.setDate(prevDate.getDate() - 1);
+    const expectedDateStr = prevDate
+      .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+      .split(" ")[0];
+
+    if (uniqueDates[i] === expectedDateStr) {
+      streak++;
+      lastDate = prevDate;
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+}
+
 export async function getUserStreak(userId: string): Promise<number> {
   try {
     const historyRef = collection(db, "users_history", userId, "history");
@@ -560,7 +632,6 @@ export async function getUserStreak(userId: string): Promise<number> {
 
     if (snapshot.empty) return 0;
 
-    // Extrair datas de conclusão únicas
     const completedDates = snapshot.docs
       .map((doc) => {
         const data = doc.data() as IQuizHistory;
@@ -570,54 +641,12 @@ export async function getUserStreak(userId: string): Promise<number> {
             : new Date(data.completedAt);
         return date
           .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
-          .split(" ")[0]; // YYYY-MM-DD
+          .split(" ")[0];
       })
-      .sort((a, b) => b.localeCompare(a)); // Decrescente
+      .sort((a, b) => b.localeCompare(a));
 
     const uniqueDates = Array.from(new Set(completedDates));
-
-    if (uniqueDates.length === 0) return 0;
-
-    // Calcular sequência
-    let streak = 0;
-    const now = new Date();
-    const today = now
-      .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
-      .split(" ")[0];
-    const yesterdayDate = new Date(now);
-    yesterdayDate.setDate(now.getDate() - 1);
-    const yesterday = yesterdayDate
-      .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
-      .split(" ")[0];
-
-    // Se não fez hoje nem ontem, streak quebrou
-    if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday) {
-      return 0;
-    }
-
-    // Contar dias consecutivos usando as strings
-    // Já temos as datas únicas e ordenadas descrescentemente (uniqueDates)
-    // A primeira data (uniqueDates[0]) é a âncora (hoje ou ontem)
-
-    streak = 1;
-    let lastDate = new Date(uniqueDates[0] + "T12:00:00"); // Perto do meio-dia para evitar problemas de fuso ao subtrair dias
-
-    for (let i = 1; i < uniqueDates.length; i++) {
-      const prevDate = new Date(lastDate);
-      prevDate.setDate(prevDate.getDate() - 1);
-      const expectedDateStr = prevDate
-        .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
-        .split(" ")[0];
-
-      if (uniqueDates[i] === expectedDateStr) {
-        streak++;
-        lastDate = prevDate;
-      } else {
-        break;
-      }
-    }
-
-    return streak;
+    return calculateStreakFromDates(uniqueDates);
   } catch (error) {
     console.error("Erro ao calcular streak:", error);
     return 0;
@@ -703,8 +732,8 @@ export async function getDailyChallengeStats(
 
     const uniqueDates = Array.from(new Set(completedDates));
 
-    // 5. Streak atual (reutiliza logica existente)
-    const currentStreak = await getUserStreak(userId);
+    // 5. Streak atual (calculado diretamente das datas já consultadas)
+    const currentStreak = calculateStreakFromDates(uniqueDates);
 
     // 6. Maior sequencia historica
     let longestStreak = 0;
