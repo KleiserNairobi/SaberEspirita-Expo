@@ -2,6 +2,20 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.19-ota.7] - 2026-07-30 (Hot-Update)
+
+### Alterado / Otimizado
+
+- **Incremento Atômico de Pontuação (`quizService.ts`)**: Adicionada a função `incrementUserScore()` utilizando `increment()` do Firestore. Pontuação atualizada de forma atômica com 0 leituras de histórico.
+- **Invalidação do Placar Pós-Quiz (`leaderboardService.ts`)**: Implementada a função `clearLeaderboardCache()` acionada automaticamente ao concluir qualquer quiz, garantindo a atualização instantânea do Placar.
+- **Cache de Banimento de Dispositivo (`deviceBlockService.ts`)**: Adicionado cache MMKV de 1 hora para a checagem de dispositivos autorizados, mantendo o bloqueio de aparelhos banidos funcionando de forma instantânea e offline.
+- **Avaliação de Cursos (`courseFeedbackService.ts`)**: Adicionado o limite `.limit(50)` e cache MMKV da média de notas por curso com TTL de 1 hora.
+- **Estabilização de Atividade do Usuário (`useUserActivity.ts`)**: Utilizado `useRef` para `lastSeenUpdate` para impedir a remontagem dos listeners do `AppState`. Otimizado `updateLastSeen` no `userService.ts` para gravar exclusivamente `lastSeenAt`.
+- **Deduplicação do Desafio Diário (`quizService.ts`)**: Extraída a função `calculateStreakFromDates` para reutilizar as datas já consultadas no `getDailyChallengeStats`, reduzindo 1 query por chamada.
+- **Cache de Controle de Versão de Loja (`versionControlService.ts`)**: Adicionado cache em MMKV com TTL de 24 horas para o status de versão e modo de manutenção do app.
+- **Caches de Categorias e Quizzes (`useQuiz.ts`)**: Adicionado `staleTime: 24 horas` para categorias/subcategorias e `staleTime: 15 minutos` em estatísticas e progresso do usuário.
+- **Substituição de Listener Permanente (`useNotifications.ts`)**: Migrado o hook `useHasUnreadNotifications` de `onSnapshot` para React Query `useQuery` com cache de 5 minutos, eliminando conexões em tempo real abertas na raiz do app.
+
 ## [2.0.19-ota.6] - 2026-07-24 (Hot-Update)
 
 ### Alterado
