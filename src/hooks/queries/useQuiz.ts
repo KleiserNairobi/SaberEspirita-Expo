@@ -28,6 +28,9 @@ export function useCategories() {
   return useQuery({
     queryKey: QUIZ_KEYS.categories(),
     queryFn: () => getCategories(),
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em memória
+    refetchOnMount: false,
   });
 }
 
@@ -39,6 +42,9 @@ export function useSubcategories(categoryId: string) {
     queryKey: QUIZ_KEYS.subcategories(categoryId),
     queryFn: () => getSubcategories(categoryId),
     enabled: !!categoryId,
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em memória
+    refetchOnMount: false,
   });
 }
 
@@ -50,6 +56,9 @@ export function useQuiz(subcategoryId: string, enabled = true) {
     queryKey: QUIZ_KEYS.quiz(subcategoryId),
     queryFn: () => getQuiz(subcategoryId),
     enabled: !!subcategoryId && enabled,
+    staleTime: 1000 * 60 * 60, // 1 hora
+    gcTime: 1000 * 60 * 60 * 24, // 24 horas em memória
+    refetchOnMount: false,
   });
 }
 
@@ -61,6 +70,9 @@ export function useUserQuizProgress(userId: string) {
     queryKey: QUIZ_KEYS.userProgress(userId),
     queryFn: () => getUserProgress(userId),
     enabled: !!userId,
+    staleTime: 1000 * 60 * 15, // 15 minutos
+    gcTime: 1000 * 60 * 60, // 1 hora em memória
+    refetchOnMount: false,
   });
 }
 
@@ -72,5 +84,8 @@ export function useUserDetailedStats(userId: string) {
     queryKey: QUIZ_KEYS.detailedStats(userId),
     queryFn: () => getUserDetailedStats(userId),
     enabled: !!userId && userId !== "guest",
+    staleTime: 1000 * 60 * 15, // 15 minutos
+    gcTime: 1000 * 60 * 60, // 1 hora em memória
+    refetchOnMount: false,
   });
 }

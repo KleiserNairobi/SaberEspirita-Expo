@@ -1,8 +1,5 @@
-import { collection, limit, onSnapshot, query, where } from "firebase/firestore";
-import { useEffect, useState } from "react";
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { db } from "@/configs/firebase/firebase";
 import {
   getNotificationsPage,
   hasUnreadNotifications,
@@ -18,31 +15,18 @@ export const NOTIFICATION_KEYS = {
 
 export function useHasUnreadNotifications() {
   const { user, isGuest } = useAuthStore();
-  const [hasUnread, setHasUnread] = useState(false);
 
-  useEffect(() => {
-    if (isGuest || !user?.uid) {
-      setHasUnread(false);
-      return;
-    }
-
-    const ref = collection(db, `users/${user.uid}/notifications`);
-    const q = query(ref, where("readAt", "==", null), limit(1));
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snap) => {
-        setHasUnread(!snap.empty);
-      },
-      (error) => {
-        console.error("[useHasUnreadNotifications] onSnapshot error:", error);
-      }
-    );
-
-    return () => unsubscribe();
-  }, [user?.uid, isGuest]);
-
-  return { data: hasUnread, isLoading: false };
+  return useQuery({
+    queryKey: NOTIFICATION_KEYS.hasUnread(user?.uid || "guest"),
+    queryFn: async () => {
+      if (isGuest || !user?.uid) return false;
+      return hasUnreadNotifications({ userId: user.uid });
+    },
+    enabled: !!user?.uid && !isGuest,
+    staleTime: 1000 * 60 * 5, // 5 minutos de cache
+    gcTime: 1000 * 60 * 60, // 1 hora em memória
+    refetchOnMount: false,
+  });
 }
 
 export function useNotifications() {
@@ -62,8 +46,9 @@ export function useNotifications() {
     enabled: !!user?.uid && !isGuest,
     initialPageParam: null as unknown,
     getNextPageParam: (lastPage) => lastPage.cursor ?? undefined,
-    staleTime: 0,
-    refetchOnMount: "always",
+    staleTime: 1000 * 60 * 5, // 5 minutos de cache
+    gcTime: 1000 * 60 * 60, // 1 hora em memória
+    refetchOnMount: false,
   });
 }
 
