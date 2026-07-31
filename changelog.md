@@ -2,6 +2,14 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.19-ota.8] - 2026-07-31 (Hot-Update)
+
+### Alterado / Otimizado / Corrigido
+
+- **Estratégia de Cache do Módulo de Cursos (`useLessons.ts`, `useCourseProgress.ts`, `useAllCoursesProgress.ts`)**: Ajustado o `staleTime` para 15 minutos com revalidação transparente em background, mantendo a leitura preferencial `Cache-First` (`getDocFromCache` / `getDocsFromCache`) no Firestore (0 leituras cobradas na navegação normal).
+- **Migração do Verdade ou Mentira para React Query (`useTruthOrFalse.ts`, `home/index.tsx`, `question/index.tsx`)**: Criados os hooks `useTruthOrFalseHomeData()` e `useSaveTruthOrFalseResponse()`, substituindo a recarga por `useFocusEffect` + `useState(loading)` por carregamento instantâneo via MMKV sem a exibição de spinners.
+- **Limitação de Leitura de Avaliações (`courseFeedbackService.ts`)**: Ajustada a trava máxima de busca da nota média de cursos para `.limit(30)`, otimizando o consumo de documentos no Firestore.
+
 ## [2.0.19-ota.7] - 2026-07-30 (Hot-Update)
 
 ### Alterado / Otimizado
