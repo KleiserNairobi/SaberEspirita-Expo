@@ -57,7 +57,7 @@ export async function getCourseAverageRating(courseId: string): Promise<number |
     const q = query(
       collection(db, "course_feedbacks"),
       where("courseId", "==", courseId),
-      limit(50)
+      limit(30)
     );
     const querySnapshot = await getDocs(q);
     const feedbacks: { userId: string; rating: number; createdAtMillis: number }[] = [];
