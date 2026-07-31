@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -7,13 +7,13 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowLeft, History } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
-import { TruthOrFalseService } from "@/services/firebase/truthOrFalseService";
+import { useTruthOrFalseHomeData } from "@/hooks/queries/useTruthOrFalse";
 import { truthOrFalseQuestions } from "@/data/truthOrFalseQuestions";
 import { getDayOfYear } from "@/utils/truthOrFalseUtils";
 import { StatsSection } from "@/components/StatsSection";
@@ -27,35 +27,13 @@ export function TruthOrFalseHomeScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<NavigationProp>();
-  const [loading, setLoading] = useState(true);
-  const [hasAnswered, setHasAnswered] = useState(false);
-  const [stats, setStats] = useState(getDefaultStats());
+
+  const { data, isLoading } = useTruthOrFalseHomeData();
+  const hasAnswered = data?.hasAnswered ?? false;
+  const stats = data?.stats ?? getDefaultStats();
 
   const todayQuestion =
     truthOrFalseQuestions[getDayOfYear() % truthOrFalseQuestions.length];
-
-  // Usando useFocusEffect para recarregar os dados sempre que a tela ganhar foco
-  useFocusEffect(
-    React.useCallback(() => {
-      loadData();
-    }, [])
-  );
-
-  async function loadData() {
-    try {
-      setLoading(true);
-      const [answered, userStats] = await Promise.all([
-        TruthOrFalseService.hasRespondedToday(),
-        TruthOrFalseService.getStats(),
-      ]);
-      setHasAnswered(answered);
-      setStats(userStats);
-    } catch (error) {
-      console.error("Erro ao carregar dados:", error);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   function handleDailyChallengePress() {
     navigation.navigate("TruthOrFalseQuestion");
@@ -65,7 +43,7 @@ export function TruthOrFalseHomeScreen() {
     navigation.navigate("TruthOrFalseHistory");
   }
 
-  if (loading) {
+  if (isLoading && !data) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>

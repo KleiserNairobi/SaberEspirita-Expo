@@ -49,9 +49,8 @@ export function useCourseProgress(courseId: string) {
       } as IUserCourseProgress;
     },
     enabled: !!user?.uid && !!courseId,
-    staleTime: 1000 * 60 * 60 * 24,     // 24 horas (invalidação manual consistente nas modificações)
+    staleTime: 1000 * 60 * 15,          // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7,    // 7 dias — mantém em memória para navegação entre telas
-    refetchOnMount: false,               // evita leitura extra ao remontar (4 telas no fluxo)
   });
 }
 
@@ -77,6 +76,10 @@ export function useTouchCourseAccess() {
         // Invalida a query do último curso acessado
         queryClient.invalidateQueries({
           queryKey: ["lastAccessedCourse", userId],
+        });
+        // Invalida o progresso de todos os cursos
+        queryClient.invalidateQueries({
+          queryKey: ["allCoursesProgress", userId],
         });
         // Invalida pontualmente o progresso do curso individual modificado
         queryClient.invalidateQueries({

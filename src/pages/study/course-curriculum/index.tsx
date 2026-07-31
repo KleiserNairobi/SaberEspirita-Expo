@@ -227,14 +227,18 @@ export function CourseCurriculumScreen() {
     );
   }, [lessons, courseId, queryClient]);
 
+  const lastTouchedCourseIdRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (!user?.uid || isGuest) return;
+    if (lastTouchedCourseIdRef.current === courseId) return;
 
     // Só matricula/toca o acesso se:
     // 1. autoEnroll for verdadeiro (veio do botão "Iniciar Série")
     // 2. OU se o usuário já possui um progresso registrado no banco para este curso (já estava matriculado)
     const alreadyEnrolled = !!progress;
     if (autoEnroll || alreadyEnrolled) {
+      lastTouchedCourseIdRef.current = courseId;
       touchAccess({ courseId, userId: user.uid });
     }
   }, [courseId, isGuest, user?.uid, autoEnroll, progress, touchAccess]);

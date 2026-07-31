@@ -116,8 +116,13 @@ export function LessonPlayerScreen() {
   const isLessonAlreadyCompleted =
     !!courseProgress?.completedLessons?.includes?.(lessonId);
 
+  const lastTouchedLessonRef = useRef<string | null>(null);
+
   React.useEffect(() => {
     if (!user?.uid || isGuest) return;
+    const key = `${courseId}_${lessonId}`;
+    if (lastTouchedLessonRef.current === key) return;
+    lastTouchedLessonRef.current = key;
     touchAccess({ courseId, lessonId, userId: user.uid });
   }, [courseId, isGuest, lessonId, user?.uid, touchAccess]);
 

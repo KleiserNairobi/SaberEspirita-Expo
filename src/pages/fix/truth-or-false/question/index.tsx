@@ -21,6 +21,8 @@ import { DifficultyBadge } from "@/components/DifficultyBadge";
 import { AnswerButton } from "@/components/AnswerButton";
 import { createStyles } from "./styles";
 
+import { useSaveTruthOrFalseResponse } from "@/hooks/queries/useTruthOrFalse";
+
 type NavigationProp = NativeStackNavigationProp<FixStackParamList>;
 
 export function TruthOrFalseQuestionScreen() {
@@ -29,7 +31,9 @@ export function TruthOrFalseQuestionScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [loading, setLoading] = useState(true);
   const [hasAnswered, setHasAnswered] = useState(false);
-  const [answering, setAnswering] = useState(false);
+
+  const { mutateAsync: saveResponse, isPending: answering } =
+    useSaveTruthOrFalseResponse();
 
   const todayQuestion =
     truthOrFalseQuestions[getDayOfYear() % truthOrFalseQuestions.length];
@@ -66,11 +70,10 @@ export function TruthOrFalseQuestionScreen() {
     if (answering || hasAnswered) return;
 
     try {
-      setAnswering(true);
       const isCorrect = userAnswer === todayQuestion.correct;
       const responseId = `${getTodayString()}_${todayQuestion.id}`;
 
-      await TruthOrFalseService.saveResponse({
+      await saveResponse({
         id: responseId,
         userId: "", // será preenchido pelo service
         questionId: todayQuestion.id,
@@ -89,8 +92,6 @@ export function TruthOrFalseQuestionScreen() {
       });
     } catch (error) {
       console.error("Erro ao salvar resposta:", error);
-    } finally {
-      setAnswering(false);
     }
   }
 
