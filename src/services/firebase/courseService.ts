@@ -2,11 +2,7 @@ import {
   collection,
   doc,
   getDoc,
-  getDocFromCache,
-  getDocFromServer,
   getDocs,
-  getDocsFromCache,
-  getDocsFromServer,
   limit,
   orderBy,
   query,
@@ -14,7 +10,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "@/configs/firebase/firebase";
-import { ICourse, CourseDifficultyLevel } from "@/types/course";
+import { CourseDifficultyLevel, ICourse } from "@/types/course";
 
 /**
  * Busca todos os cursos disponíveis com estratégia Cache-First
@@ -25,20 +21,7 @@ export async function getCourses(): Promise<ICourse[]> {
     const coursesRef = collection(db, "courses");
     const q = query(coursesRef, orderBy("title", "asc"), limit(50));
 
-    try {
-      const cacheSnapshot = await getDocsFromCache(q);
-      if (!cacheSnapshot.empty) {
-        const courses: ICourse[] = [];
-        cacheSnapshot.forEach((doc) => {
-          courses.push({ ...doc.data(), id: doc.id } as ICourse);
-        });
-        return courses;
-      }
-    } catch {
-      // Ignora erro de cache e busca do servidor
-    }
-
-    const querySnapshot = await getDocsFromServer(q);
+    const querySnapshot = await getDocs(q);
 
     const courses: ICourse[] = [];
     querySnapshot.forEach((doc) => {
@@ -53,7 +36,7 @@ export async function getCourses(): Promise<ICourse[]> {
 }
 
 /**
- * Busca um curso específico por ID com estratégia Cache-First
+ * Busca um curso específico por ID com estratégia resiliente do Firestore
  * @param courseId - ID do curso
  * @returns Curso encontrado ou null
  */
@@ -61,17 +44,7 @@ export async function getCourseById(courseId: string): Promise<ICourse | null> {
   if (!courseId) return null;
   try {
     const courseRef = doc(db, "courses", courseId);
-
-    try {
-      const cacheSnap = await getDocFromCache(courseRef);
-      if (cacheSnap.exists()) {
-        return { ...cacheSnap.data(), id: cacheSnap.id } as ICourse;
-      }
-    } catch {
-      // Ignora erro de cache e busca do servidor
-    }
-
-    const courseSnap = await getDocFromServer(courseRef);
+    const courseSnap = await getDoc(courseRef);
 
     if (courseSnap.exists()) {
       return { ...courseSnap.data(), id: courseSnap.id } as ICourse;
@@ -80,7 +53,7 @@ export async function getCourseById(courseId: string): Promise<ICourse | null> {
     // Fallback de resiliência caso o courseId fornecido seja um alias de campo
     try {
       const q = query(collection(db, "courses"), where("id", "==", courseId), limit(1));
-      const querySnap = await getDocsFromServer(q);
+      const querySnap = await getDocs(q);
       if (!querySnap.empty) {
         const d = querySnap.docs[0];
         return { ...d.data(), id: d.id } as ICourse;
@@ -97,7 +70,7 @@ export async function getCourseById(courseId: string): Promise<ICourse | null> {
 }
 
 /**
- * Busca cursos por nível de dificuldade com estratégia Cache-First
+ * Busca cursos por nível de dificuldade
  * @param level - Nível de dificuldade
  * @returns Lista de cursos filtrada
  */
@@ -113,20 +86,7 @@ export async function getCoursesByDifficulty(
       limit(50)
     );
 
-    try {
-      const cacheSnapshot = await getDocsFromCache(q);
-      if (!cacheSnapshot.empty) {
-        const courses: ICourse[] = [];
-        cacheSnapshot.forEach((doc) => {
-          courses.push({ ...doc.data(), id: doc.id } as ICourse);
-        });
-        return courses;
-      }
-    } catch {
-      // Ignora erro de cache e busca do servidor
-    }
-
-    const querySnapshot = await getDocsFromServer(q);
+    const querySnapshot = await getDocs(q);
 
     const courses: ICourse[] = [];
     querySnapshot.forEach((doc) => {
@@ -141,7 +101,7 @@ export async function getCoursesByDifficulty(
 }
 
 /**
- * Busca cursos em destaque (featured) com estratégia Cache-First
+ * Busca cursos em destaque (featured)
  * @returns Lista de cursos em destaque
  */
 export async function getFeaturedCourses(): Promise<ICourse[]> {
@@ -154,20 +114,7 @@ export async function getFeaturedCourses(): Promise<ICourse[]> {
       limit(20)
     );
 
-    try {
-      const cacheSnapshot = await getDocsFromCache(q);
-      if (!cacheSnapshot.empty) {
-        const courses: ICourse[] = [];
-        cacheSnapshot.forEach((doc) => {
-          courses.push({ ...doc.data(), id: doc.id } as ICourse);
-        });
-        return courses;
-      }
-    } catch {
-      // Ignora erro de cache e busca do servidor
-    }
-
-    const querySnapshot = await getDocsFromServer(q);
+    const querySnapshot = await getDocs(q);
 
     const courses: ICourse[] = [];
     querySnapshot.forEach((doc) => {

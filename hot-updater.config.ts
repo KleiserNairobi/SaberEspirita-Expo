@@ -10,7 +10,7 @@ export default defineConfig({
     outDir: "dist",
     resetCache: true,
   }),
-  updateStrategy: "appVersion",
+  updateStrategy: "fingerprint",
   storage: r2Storage({
     bucketName: process.env.HOT_UPDATER_CLOUDFLARE_R2_BUCKET_NAME!,
     accountId: process.env.HOT_UPDATER_CLOUDFLARE_ACCOUNT_ID!,
