@@ -231,9 +231,9 @@ export function useSetForumReaction() {
       }
     },
     onSuccess: (_data, vars) => {
-      queryClient.invalidateQueries({
-        queryKey: FORUM_KEYS.comments(vars.lessonId, uid || "guest"),
-      });
+      // NÃO invalidamos FORUM_KEYS.comments aqui porque o onMutate já atualizou o cache local otimisticamente.
+      // A Cloud Function trigger 'onForumReactionWritten' é assíncrona e eventualmente consistente.
+      // Se invalidarmos a query imediatamente, o refetch trará o comentário do Firestore ANTES da trigger terminar de gravar 'userReactions', apagando o ícone da UI.
       queryClient.invalidateQueries({
         queryKey: FORUM_KEYS.communityProgress(uid || "guest"),
       });
@@ -302,9 +302,7 @@ export function useRemoveForumReaction() {
       }
     },
     onSuccess: (_data, vars) => {
-      queryClient.invalidateQueries({
-        queryKey: FORUM_KEYS.comments(vars.lessonId, uid || "guest"),
-      });
+      // Mantém o cache otimista sem forçar refetch precoce do Firestore
       queryClient.invalidateQueries({
         queryKey: FORUM_KEYS.communityProgress(uid || "guest"),
       });

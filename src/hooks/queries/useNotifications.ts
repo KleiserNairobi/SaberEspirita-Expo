@@ -23,9 +23,12 @@ export function useHasUnreadNotifications() {
       return hasUnreadNotifications({ userId: user.uid });
     },
     enabled: !!user?.uid && !isGuest,
-    staleTime: 1000 * 60 * 5, // 5 minutos de cache
+    // Stale time de 30s e refetch no mount/focus mantidos especificamente para garantir que o badge de notificações
+    // não lidas seja atualizado em tempo hábil na Home. O custo é mínimo pois a query usa limit(1) no Firestore (máx 1 leitura).
+    staleTime: 1000 * 30, // 30 segundos
     gcTime: 1000 * 60 * 60, // 1 hora em memória
-    refetchOnMount: false,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
 }
 

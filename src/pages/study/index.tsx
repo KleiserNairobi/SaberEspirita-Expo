@@ -3,7 +3,7 @@ import React, { useCallback, useRef, useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Bell, ChevronRight, Leaf, Sprout, TreePalm } from "lucide-react-native";
 import { Feather } from "lucide-react-native";
@@ -41,8 +41,15 @@ export function StudyScreen() {
     null
   );
 
-  const { data: hasUnreadNotifications = false } = useHasUnreadNotifications();
+  const { data: hasUnreadNotifications = false, refetch: refetchUnreadNotifications } =
+    useHasUnreadNotifications();
   const { data: communityProgress } = useCommunityProgress();
+
+  useFocusEffect(
+    useCallback(() => {
+      void refetchUnreadNotifications();
+    }, [refetchUnreadNotifications])
+  );
 
   const handleOpenJourney = useCallback(() => {
     journeySheetRef.current?.present();

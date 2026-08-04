@@ -66,11 +66,12 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
     },
     anchorTitle: {
-      ...theme.text("sm", "semibold", theme.colors.reflection),
+      ...theme.text("md", "semibold", theme.colors.reflection),
       marginBottom: 2,
     },
     anchorQuestionText: {
-      ...theme.text("sm", "regular"),
+      ...theme.text("md", "regular"),
+      lineHeight: 22,
       marginBottom: 8,
       opacity: 0.9,
     },
@@ -85,7 +86,7 @@ export const createStyles = (theme: ITheme) =>
       // marginTop: 6,
     },
     focusText: {
-      ...theme.text("xs", "medium", theme.colors.reflection),
+      ...theme.text("sm", "medium", theme.colors.reflection),
     },
     commentCountPill: {
       alignSelf: "flex-start",
@@ -95,7 +96,7 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: `${theme.colors.reflection}25`,
     },
     commentCountText: {
-      ...theme.text("xs", "medium", theme.colors.reflection),
+      ...theme.text("sm", "medium", theme.colors.reflection),
     },
     anchorFooter: {
       flexDirection: "row",
@@ -120,7 +121,7 @@ export const createStyles = (theme: ITheme) =>
       overflow: "hidden",
     },
     composerTitle: {
-      ...theme.text("md", "medium"),
+      ...theme.text("lg", "medium"),
       color: theme.colors.text,
       marginBottom: theme.spacing.xs,
     },
@@ -135,7 +136,7 @@ export const createStyles = (theme: ITheme) =>
       justifyContent: "space-between",
     },
     forumInput: {
-      ...theme.text("sm", "regular"),
+      ...theme.text("md", "regular"),
       color: theme.colors.text,
       minHeight: 40,
       textAlignVertical: "top",
@@ -235,15 +236,17 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("md", "semibold", theme.colors.primary),
     },
     name: {
-      ...theme.text("md", "medium"),
+      ...theme.text("lg", "medium"),
       color: theme.colors.text,
     },
     meta: {
       ...theme.text("sm", "regular", theme.colors.textSecondary),
+      fontSize: 15,
     },
     levelTag: {
       marginTop: 2,
       ...theme.text("sm", "medium", theme.colors.textSecondary),
+      fontSize: 15,
     },
     commentMenuButton: {
       width: 36,
@@ -253,7 +256,8 @@ export const createStyles = (theme: ITheme) =>
       justifyContent: "center",
     },
     content: {
-      ...theme.text("sm", "regular"),
+      ...theme.text("md", "regular"),
+      lineHeight: 22,
       color: theme.colors.text,
       marginBottom: theme.spacing.md,
     },
@@ -282,10 +286,10 @@ export const createStyles = (theme: ITheme) =>
       borderRadius: theme.radius.sm,
     },
     reactionCountText: {
-      ...theme.text("sm", "medium", theme.colors.textSecondary),
+      ...theme.text("md", "medium", theme.colors.textSecondary),
     },
     reactButton: {
-      ...theme.text("sm", "semibold", theme.colors.primary),
+      ...theme.text("md", "semibold", theme.colors.primary),
     },
     reactionActionButton: {
       backgroundColor: `${theme.colors.primary}25`,
@@ -296,7 +300,7 @@ export const createStyles = (theme: ITheme) =>
       justifyContent: "center",
     },
     reactionActionText: {
-      ...theme.text("sm", "semibold"),
+      ...theme.text("md", "semibold"),
       color: theme.colors.primary,
     },
     loadMore: {
