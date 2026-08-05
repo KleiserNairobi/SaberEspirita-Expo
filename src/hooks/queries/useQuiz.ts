@@ -22,7 +22,11 @@ export const QUIZ_KEYS = {
 // ==================== HOOKS ====================
 
 /**
- * Hook para buscar todas as categorias
+ * Hook para buscar todas as categorias de quizzes.
+ * 
+ * 🛑 Otimização de Custos (Firestore Reads):
+ * - Dados estáticos da aplicação (revisados raramente via Admin).
+ * - Cache-First via MMKV no quizService + staleTime de 24 horas. Zero custo de leitura após aquecimento.
  */
 export function useCategories() {
   return useQuery({
@@ -35,7 +39,10 @@ export function useCategories() {
 }
 
 /**
- * Hook para buscar subcategorias de uma categoria
+ * Hook para buscar subcategorias de uma categoria específica.
+ * 
+ * 🛑 Otimização de Custos (Firestore Reads):
+ * - Conteúdo estático mantido por 24 horas no cache.
  */
 export function useSubcategories(categoryId: string) {
   return useQuery({
@@ -49,7 +56,10 @@ export function useSubcategories(categoryId: string) {
 }
 
 /**
- * Hook para buscar um quiz específico
+ * Hook para buscar um quiz específico por subcategoria.
+ * 
+ * 🛑 Otimização de Custos (Firestore Reads):
+ * - Perguntas do quiz mantidas em memória por 1 hora.
  */
 export function useQuiz(subcategoryId: string, enabled = true) {
   return useQuery({
@@ -63,29 +73,39 @@ export function useQuiz(subcategoryId: string, enabled = true) {
 }
 
 /**
- * Hook para buscar progresso do usuário
+ * Hook para buscar o progresso do usuário por categoria (Home de Fixe).
+ * 
+ * 🛑 Estratégia de Otimização de Custos & Sincronização:
+ * - Sincronizado com `useUserDetailedStats` (5 min em prod, 0 em dev).
+ * - refetchOnMount: true para re-sincronizar barras de progresso da home ao retornar de um quiz.
+ * - Invalidação automática disparada ao salvar resultado em StandardQuiz / DailyQuiz.
  */
 export function useUserQuizProgress(userId: string) {
   return useQuery({
     queryKey: QUIZ_KEYS.userProgress(userId),
     queryFn: () => getUserProgress(userId),
     enabled: !!userId,
-    staleTime: 1000 * 60 * 15, // 15 minutos
-    gcTime: 1000 * 60 * 60, // 1 hora em memória
-    refetchOnMount: false,
+    staleTime: __DEV__ ? 0 : 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 60,
+    refetchOnMount: true,
   });
 }
 
 /**
- * Hook para buscar estatísticas detalhadas do usuário
+ * Hook para buscar estatísticas detalhadas do usuário (Meu Desempenho).
+ * 
+ * 🛑 Estratégia de Otimização de Custos & Sincronização:
+ * - Sincronizado com `useUserQuizProgress` (5 min em prod, 0 em dev).
+ * - refetchOnMount: true para garantir sincronia imediata ao abrir a tela de estatísticas.
+ * - Invalidação automática disparada conjuntamente com `userProgress`.
  */
 export function useUserDetailedStats(userId: string) {
   return useQuery({
     queryKey: QUIZ_KEYS.detailedStats(userId),
     queryFn: () => getUserDetailedStats(userId),
     enabled: !!userId && userId !== "guest",
-    staleTime: 1000 * 60 * 15, // 15 minutos
-    gcTime: 1000 * 60 * 60, // 1 hora em memória
-    refetchOnMount: false,
+    staleTime: __DEV__ ? 0 : 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 60,
+    refetchOnMount: true,
   });
 }

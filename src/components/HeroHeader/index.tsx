@@ -46,9 +46,10 @@ export function HeroHeader({
         placeholder={require("@/assets/images/placeholder.jpeg")}
         placeholderContentFit="cover"
         priority="high"
+        cachePolicy="memory-disk"
         style={styles.coverImage}
         contentFit="cover"
-        transition={200}
+        transition={150}
       />
       <View style={styles.imageOverlay} />
 

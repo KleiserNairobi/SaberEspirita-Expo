@@ -3,6 +3,7 @@ import { View, Text, Image } from "react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { createStyles } from "../styles";
 import { ILeaderboardUser } from "@/types/leaderboard";
+import { formatUserName } from "@/utils/formatName";
 
 interface Props {
   player: ILeaderboardUser;
@@ -12,10 +13,11 @@ export function RankingList({ player }: Props) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
+  const formattedName = formatUserName(player.userName);
   const primaryColorHex = theme.colors.primary.replace("#", "");
-  const avatarUrl =
-    player.photoURL ||
-    `https://ui-avatars.com/api/?background=${primaryColorHex}&color=fff&name=${player.userName}&bold=true&font-size=0.35`;
+  const avatarUrl = `https://ui-avatars.com/api/?background=${primaryColorHex}&color=fff&name=${encodeURIComponent(
+    formattedName
+  )}&bold=true&font-size=0.35`;
 
   return (
     <View style={[styles.listItem, player.isCurrentUser && styles.currentUserItem]}>
@@ -25,9 +27,8 @@ export function RankingList({ player }: Props) {
       <Image source={{ uri: avatarUrl }} style={styles.listAvatar} />
       <View style={styles.listContent}>
         <Text style={styles.listName} numberOfLines={1}>
-          {player.userName}
+          {formattedName}
         </Text>
-        {!!player.level && <Text style={styles.listLevel}>{player.level}</Text>}
       </View>
       <Text style={styles.listScore}>{player.score}</Text>
     </View>

@@ -25,6 +25,7 @@ import { getPodcastById } from "@/services/firebase/podcastService";
 import { usePodcastPlayerStore } from "@/stores/podcastPlayerStore";
 import { ContentFilterType } from "@/types/prayer";
 import { useQueryClient } from "@tanstack/react-query";
+import { prefetchImages } from "@/utils/imagePrefetch";
 import { PodcastCard } from "../components/PodcastCard";
 import { createStyles } from "./styles";
 
@@ -49,6 +50,13 @@ export default function AllPodcastsScreen() {
 
   const { data: podcasts, isLoading } = usePodcasts();
   const setCurrentPodcast = usePodcastPlayerStore((s) => s.setCurrentPodcast);
+
+  // Prefetch automático e deduplicado das capas dos podcasts assim que a lista é obtida
+  React.useEffect(() => {
+    if (podcasts && podcasts.length > 0) {
+      prefetchImages(podcasts.map((p) => p.imageUrl));
+    }
+  }, [podcasts]);
 
   // Filtrar podcasts por texto e seleção do sheet
   const filteredPodcasts = useMemo(() => {
@@ -76,6 +84,18 @@ export default function AllPodcastsScreen() {
       case "ALL":
       default:
         break;
+    }
+
+    // Ordenação padrão em ordem crescente por createdAt (e id como desempate)
+    if (filterType !== "BY_AUTHOR") {
+      result.sort((a, b) => {
+        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        if (timeA !== timeB) {
+          return timeA - timeB;
+        }
+        return a.id.localeCompare(b.id);
+      });
     }
 
     // Busca Textual

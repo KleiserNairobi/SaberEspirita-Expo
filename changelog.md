@@ -2,6 +2,13 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.19-ota.9] - 2026-08-05 (Hot-Update)
+
+### Alterado / Otimizado / Corrigido
+
+- **Otimização e Prefetch de Imagens de Capa (`imagePrefetch.ts`, `HeroHeader`, `Carousel`, `CourseCard`)**: Implementado mecanismo de pré-carregamento automático em lote (`Image.prefetch`) nas listagens de Podcasts, Meditações, Cursos e Home de Estudos, combinado com a política de cache nativo em memória/disco (`cachePolicy="memory-disk"`) nos componentes de capa (`HeroHeader`, `CarouselItem`, `CourseCard`), eliminando a espera de carregamento e a exibição de placeholders ao abrir players ou detalhes.
+- **Utilitário Deduplicador Global (`imagePrefetch.ts`)**: Criado utilitário com `Set` em memória para garantir que nenhuma URL de capa seja solicitada ao Expo Image mais de uma vez por sessão, evitando chamadas repetidas ou re-renders no React.
+
 ## [2.0.19-ota.8] - 2026-07-31 (Hot-Update)
 
 ### Alterado / Otimizado / Corrigido

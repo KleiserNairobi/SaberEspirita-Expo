@@ -38,6 +38,7 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { ILesson } from "@/types/course";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
+import { prefetchImages } from "@/utils/imagePrefetch";
 
 import { createStyles } from "./styles";
 
@@ -54,6 +55,13 @@ export function CourseDetailsScreen() {
   // React Query Fetch
   const { data: course, isLoading: isLoadingCourse } = useCourse(courseId);
   const { data: progress, isLoading: isLoadingProgress } = useCourseProgress(courseId);
+
+  // Prefetch automático e deduplicado da capa do curso ao carregar os detalhes
+  React.useEffect(() => {
+    if (course?.imageUrl) {
+      prefetchImages([course.imageUrl]);
+    }
+  }, [course?.imageUrl]);
 
   // Queries para a aba de currículo
   const { data: lessons = [], isLoading: isLoadingLessons } = useLessons(courseId);

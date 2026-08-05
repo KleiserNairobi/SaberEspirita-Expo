@@ -124,6 +124,7 @@ export function StandardQuizScreen() {
         await incrementUserScore(user.uid, user.displayName || "Usuário", percentage);
 
         queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.userProgress(user.uid) });
+        queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.detailedStats(user.uid) });
         queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
         queryClient.invalidateQueries({ queryKey: ["userScore", user.uid] });
       }

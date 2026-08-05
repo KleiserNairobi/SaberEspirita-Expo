@@ -4,6 +4,7 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { createStyles } from "../styles";
 import { ILeaderboardUser } from "@/types/leaderboard";
 import { Trophy } from "lucide-react-native";
+import { formatUserName } from "@/utils/formatName";
 
 interface Props {
   players: ILeaderboardUser[];
@@ -33,9 +34,10 @@ export function LeaderboardPodium({ players }: Props) {
     const isThird = rank === 3;
 
     const primaryColorHex = theme.colors.primary.replace("#", "");
-    const avatarUrl =
-      player.photoURL ||
-      `https://ui-avatars.com/api/?background=${primaryColorHex}&color=fff&name=${player.userName}&bold=true&font-size=0.35`;
+    const formattedName = formatUserName(player.userName);
+    const avatarUrl = `https://ui-avatars.com/api/?background=${primaryColorHex}&color=fff&name=${encodeURIComponent(
+      formattedName
+    )}&bold=true&font-size=0.35`;
 
     return (
       <View style={[styles.podiumItem, isFirst && styles.podiumFirst]}>
@@ -69,7 +71,7 @@ export function LeaderboardPodium({ players }: Props) {
         {/* Rank & Name below */}
         <Text style={styles.podiumRankText}>{rank}º</Text>
         <Text style={styles.podiumName} numberOfLines={1}>
-          {player.userName.split(" ")[0]}
+          {formattedName.split(" ")[0]}
         </Text>
       </View>
     );

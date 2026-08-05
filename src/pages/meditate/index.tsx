@@ -28,6 +28,7 @@ import { ReflectionCard } from "./components/ReflectionCard";
 import { useFeaturedReflections } from "./hooks/useFeaturedReflections";
 import { createStyles } from "./styles";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
+import { prefetchImages } from "@/utils/imagePrefetch";
 
 type TabType = "REFLECTIONS" | "MEDITATIONS";
 
@@ -52,6 +53,13 @@ export default function MeditateScreen() {
 
   const { data: featuredMeditations, isLoading: meditationsLoading } =
     useFeaturedMeditations();
+
+  // Prefetch automático e deduplicado das capas das meditações assim que a lista é obtida
+  React.useEffect(() => {
+    if (featuredMeditations && featuredMeditations.length > 0) {
+      prefetchImages(featuredMeditations.map((m) => m.imageUrl));
+    }
+  }, [featuredMeditations]);
 
   const queryClient = useQueryClient();
 

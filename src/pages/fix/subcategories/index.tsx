@@ -100,9 +100,15 @@ export function SubcategoriesScreen() {
         const userName = user.displayName || user.email?.split("@")[0] || "Usuário";
         await removeUserHistory(user.uid, userName, subId);
 
-        // 3. Atualizar cache local para refletir a mudança imediatamente (remover checkmark)
+        // 3. Atualizar cache local para refletir a mudança imediatamente (remover checkmark e atualizar estatísticas)
         await queryClient.invalidateQueries({
           queryKey: QUIZ_KEYS.userProgress(user.uid),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: QUIZ_KEYS.detailedStats(user.uid),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ["userScore", user.uid],
         });
 
         // 4. Navegar

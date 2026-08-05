@@ -48,7 +48,9 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
           source={imageSource as any}
           style={styles.courseImage}
           contentFit="cover"
-          transition={200}
+          transition={150}
+          cachePolicy="memory-disk"
+          priority="high"
           placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
         />
         <View style={styles.gradientOverlay} />

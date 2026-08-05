@@ -26,6 +26,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { MeditationCard } from "../components/MeditationCard";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
 import { ContentFilterType } from "@/types/prayer";
+import { prefetchImages } from "@/utils/imagePrefetch";
 import { createStyles } from "./styles"; // Reaproveita os estilos da lista de reflexos
 
 const MEDITATION_FILTER_OPTIONS = [
@@ -48,6 +49,13 @@ export default function AllMeditationsScreen() {
 
   const { data: meditations, isLoading } = useMeditations();
   const setCurrentMeditation = useMeditationPlayerStore((s) => s.setCurrentMeditation);
+
+  // Prefetch automático e deduplicado das capas das meditações assim que a lista é obtida
+  React.useEffect(() => {
+    if (meditations && meditations.length > 0) {
+      prefetchImages(meditations.map((m) => m.imageUrl));
+    }
+  }, [meditations]);
 
   // Filtrar meditações por texto e seleção do sheet
   const filteredMeditations = useMemo(() => {

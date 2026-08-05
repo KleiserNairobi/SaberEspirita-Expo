@@ -8,6 +8,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Bell, ChevronRight, Leaf, Sprout, TreePalm } from "lucide-react-native";
 import { Feather } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Image } from "expo-image";
 
 import { AssistantCard } from "@/components/AssistantCard";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
@@ -21,9 +22,13 @@ import { useFeaturedCourses } from "@/hooks/queries/useCourses";
 import { useLastAccessedCourse } from "@/hooks/queries/useLastAccessedCourse";
 import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
 import { useHasUnreadNotifications } from "@/hooks/queries/useNotifications";
+import { usePodcasts } from "@/hooks/queries/usePodcasts";
+import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { useAuthStore } from "@/stores/authStore";
+import { prefetchImages } from "@/utils/imagePrefetch";
+import { differenceInDays } from "date-fns";
 
 import { createStyles } from "./styles";
 
@@ -88,6 +93,47 @@ export function StudyScreen() {
 
   // Fetching do último curso acessado
   const { data: lastAccessed } = useLastAccessedCourse();
+
+  // Fetching de podcasts e termos do glossário para verificar existência de conteúdo novo (createdAt <= 15 dias)
+  const { data: podcasts = [] } = usePodcasts();
+  const { data: glossaryTerms = [] } = useGlossaryTerms();
+
+  // Prefetch automático e deduplicado das capas dos podcasts e dos cursos Populares
+  React.useEffect(() => {
+    const urlsToPrefetch: (string | number | undefined | null)[] = [];
+    if (podcasts && podcasts.length > 0) {
+      urlsToPrefetch.push(...podcasts.map((p) => p.imageUrl));
+    }
+    if (featuredCourses && featuredCourses.length > 0) {
+      urlsToPrefetch.push(...featuredCourses.map((c) => c.imageUrl));
+    }
+    if (urlsToPrefetch.length > 0) {
+      prefetchImages(urlsToPrefetch);
+    }
+  }, [podcasts, featuredCourses]);
+
+  const hasNewPodcast = React.useMemo(() => {
+    if (!podcasts || podcasts.length === 0) return false;
+    const now = new Date();
+    return podcasts.some((p) => {
+      if (!p.createdAt) return false;
+      const createdDate = p.createdAt instanceof Date ? p.createdAt : new Date(p.createdAt);
+      if (isNaN(createdDate.getTime())) return false;
+      return differenceInDays(now, createdDate) <= 15;
+    });
+  }, [podcasts]);
+
+  const hasNewGlossaryTerm = React.useMemo(() => {
+    if (!glossaryTerms || glossaryTerms.length === 0) return false;
+    const now = new Date();
+    return glossaryTerms.some((term) => {
+      if (!term.createdAt) return false;
+      const createdDate =
+        term.createdAt instanceof Date ? term.createdAt : new Date(term.createdAt);
+      if (isNaN(createdDate.getTime())) return false;
+      return differenceInDays(now, createdDate) <= 15;
+    });
+  }, [glossaryTerms]);
 
   function handleResumePress() {
     if (lastAccessed) {
@@ -242,6 +288,10 @@ export function StudyScreen() {
         contentContainerStyle={styles.contentContainer}
         renderItem={({ item }) => {
           const IconComponent = item.icon;
+          const isItemNew =
+            (item.id === "3" && hasNewPodcast) ||
+            (item.id === "2" && hasNewGlossaryTerm);
+
           return (
             <TouchableOpacity
               style={styles.libraryItem}
@@ -257,7 +307,14 @@ export function StudyScreen() {
                 </Text>
               </View>
 
-              <ChevronRight size={20} color={theme.colors.textSecondary} />
+              <View style={styles.rightGroup}>
+                {isItemNew && (
+                  <View style={styles.statusBadge}>
+                    <Text style={styles.statusText}>Novo</Text>
+                  </View>
+                )}
+                <ChevronRight size={20} color={theme.colors.textSecondary} />
+              </View>
             </TouchableOpacity>
           );
         }}

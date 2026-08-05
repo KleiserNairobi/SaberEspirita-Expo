@@ -3,6 +3,7 @@ import { doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 
 import { db } from "@/configs/firebase/firebase";
 import { ILeaderboardUser, TimeFilter, TimeFilterEnum } from "@/types/leaderboard";
+import { formatUserName } from "@/utils/formatName";
 
 const USERS_SCORES_COLLECTION = "users_scores";
 
@@ -95,7 +96,7 @@ export async function getLeaderboard(period: TimeFilter): Promise<ILeaderboardUs
 
       return {
         userId: data.userId,
-        userName: data.userName || "Usuário", // Fallback para evitar crash
+        userName: formatUserName(data.userName || "Usuário"), // Formatação padronizada de nome
         photoURL: data.photoURL || null,
         score: score,
         level: data.level || 0,
@@ -143,7 +144,7 @@ export async function getUserScore(userId: string): Promise<ILeaderboardUser | n
       const data = docSnap.data();
       return {
         userId: data.userId,
-        userName: data.userName,
+        userName: formatUserName(data.userName),
         photoURL: data.photoURL || undefined,
         score: data.totalAllTime || 0,
         totalAllTime: data.totalAllTime || 0,

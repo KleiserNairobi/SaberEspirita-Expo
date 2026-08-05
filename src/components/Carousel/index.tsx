@@ -114,7 +114,8 @@ const CarouselItem = React.memo(function CarouselItem({
             source={imageSource}
             style={styles.imageView}
             contentFit="cover"
-            transition={200}
+            transition={150}
+            cachePolicy="memory-disk"
             placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
             priority={index <= 2 ? "high" : "normal"}
           />

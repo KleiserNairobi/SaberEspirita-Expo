@@ -18,6 +18,7 @@ import {
   logDailyChallengeAttempt,
 } from "@/services/firebase/quizService";
 import { useDailyChallenge } from "@/hooks/queries/useDailyChallenge";
+import { QUIZ_KEYS } from "@/hooks/queries/useQuiz";
 import { IQuizAnswer, IQuizHistory } from "@/types/quiz";
 
 type DailyQuizNavigationProp = NativeStackNavigationProp<FixStackParamList, "DailyQuiz">;
@@ -114,6 +115,8 @@ export function DailyQuizScreen() {
         await addUserHistory(userHistory, user.displayName || "Usuário");
         await incrementUserScore(user.uid, user.displayName || "Usuário", percentage);
 
+        queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.userProgress(user.uid) });
+        queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.detailedStats(user.uid) });
         queryClient.invalidateQueries({ queryKey: ["dailyQuizStatus", user.uid] });
         queryClient.invalidateQueries({ queryKey: ["userStreak", user.uid] });
         queryClient.invalidateQueries({ queryKey: ["dailyChallengeStats", user.uid] });

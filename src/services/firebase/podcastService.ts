@@ -42,7 +42,7 @@ function mapDocToPodcast(doc: any): IPodcast {
 export async function getPodcasts(): Promise<IPodcast[]> {
   try {
     const podcastsRef = collection(db, PODCASTS_COLLECTION);
-    const q = query(podcastsRef, orderBy("title", "asc"), limit(50));
+    const q = query(podcastsRef, orderBy("createdAt", "asc"), limit(50));
 
     try {
       const cacheSnapshot = await getDocsFromCache(q);

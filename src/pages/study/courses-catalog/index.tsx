@@ -25,6 +25,7 @@ import { ICourse, IUserCourseProgress } from "@/types/course";
 import { ContentFilterType } from "@/types/prayer";
 
 import { CourseCard } from "./components/CourseCard";
+import { prefetchImages } from "@/utils/imagePrefetch";
 import { createStyles } from "./styles";
 
 // Opções de filtro para séries com ícones
@@ -84,6 +85,13 @@ export function CoursesCatalogScreen({ navigation }: any) {
   // React Query Fetch
   const { data: courses = [], isLoading, error } = useCourses();
   const { data: allProgress = {} } = useAllCoursesProgress();
+
+  // Prefetch automático e deduplicado de todas as capas de curso do catálogo
+  React.useEffect(() => {
+    if (courses && courses.length > 0) {
+      prefetchImages(courses.map((c) => c.imageUrl));
+    }
+  }, [courses]);
 
   // Invalida o cache de progresso total ao focar na tela
   // (Muito mais eficiente pois é apenas 1 request Firestore na rede, compartilhado com a Home)

@@ -109,4 +109,22 @@ export const createStyles = (theme: ITheme) =>
     contentContainer: {
       paddingBottom: 200,
     },
+    rightGroup: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.sm,
+    },
+    statusBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 2,
+      paddingHorizontal: 8,
+      borderRadius: theme.radius.sm,
+      backgroundColor: `${theme.colors.success}20`,
+    },
+    statusText: {
+      ...theme.text("xs", "semibold"),
+      color: theme.colors.success,
+      textTransform: "capitalize",
+    },
   });
