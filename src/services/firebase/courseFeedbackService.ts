@@ -1,4 +1,4 @@
-import { collection, addDoc, serverTimestamp, query, where, getDocs, limit } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, where, getDocs, limit, orderBy } from "firebase/firestore";
 import { db } from "@/configs/firebase/firebase";
 import * as Storage from "@/utils/Storage";
 
@@ -57,6 +57,7 @@ export async function getCourseAverageRating(courseId: string): Promise<number |
     const q = query(
       collection(db, "course_feedbacks"),
       where("courseId", "==", courseId),
+      orderBy("createdAt", "desc"),
       limit(30)
     );
     const querySnapshot = await getDocs(q);
