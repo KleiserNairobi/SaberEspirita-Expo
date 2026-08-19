@@ -67,22 +67,22 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 
 ## 📚 Módulo 2: Cursos, Aulas & Conteúdo Didático
 
-- [ ] **2.1 Service de Cursos (`courseApiService.ts`)**:
+- [x] **2.1 Service de Cursos (`courseApiService.ts`)**:
   - `getCourses(params)` ➔ `GET /api/v1/courses` (com filtros por categoria e nível)
   - `getCourseById(courseId)` ➔ `GET /api/v1/courses/{courseId}`
   - `sendCourseFeedback(courseId, data)` ➔ `POST /api/v1/courses/{courseId}/feedbacks`
   - `getCourseFeedbacks(courseId)` ➔ `GET /api/v1/courses/{courseId}/feedbacks`
-- [ ] **2.2 Service de Aulas (`lessonApiService.ts`)**:
+- [x] **2.2 Service de Aulas (`lessonApiService.ts`)**:
   - `getLessonById(lessonId)` ➔ `GET /api/v1/lessons/{lessonId}` (parsing da estrutura de slides em `JSONB`)
   - `getLessonMaterials(lessonId)` ➔ `GET /api/v1/lessons/{lessonId}/materials`
   - `getLessonReflections(lessonId)` ➔ `GET /api/v1/lessons/{lessonId}/reflections`
-- [ ] **2.3 Mapeamento de DTOs e Tipos TypeScript**:
+- [x] **2.3 Mapeamento de DTOs e Tipos TypeScript**:
   - Atualizar interfaces de `Course`, `Lesson`, `Slide`, `SupplementaryMaterial` e `CourseFeedback`.
-- [ ] **2.4 Suporte a Mídias e CDN Cloudflare**:
+- [x] **2.4 Suporte a Mídias e CDN Cloudflare**:
   - Ajustar visualizadores de vídeo, áudio e imagem para carregar via CDN REST (`cdn.saberespirita.app.br`).
-- [ ] **2.5 Atualização dos Hooks do React Query (`useCourses`, `useLesson`)**:
+- [x] **2.5 Atualização dos Hooks do React Query (`useCourses`, `useLesson`)**:
   - Substituir serviços legados do Firestore pelos novos endpoints REST do Spring Boot.
-- [ ] **2.6 Validação da Tela de Curso e Player de Slide**:
+- [x] **2.6 Validação da Tela de Curso e Player de Slide**:
   - Validar navegação de slides, exibição de materiais complementares e envio de nota do curso.
 
 ---

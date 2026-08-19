@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getLessonsByCourseId, getLessonById } from "@/services/firebase/lessonService";
+import { lessonApiService } from "@/services/api/lessonApiService";
+import {
+  getLessonsByCourseId as getLessonsByCourseIdFirestore,
+  getLessonById as getLessonByIdFirestore,
+} from "@/services/firebase/lessonService";
+import { ILesson } from "@/types/course";
 
 export const LESSONS_KEYS = {
   byCourse: (courseId: string) => ["lessons", "course", courseId] as const,
@@ -7,10 +12,30 @@ export const LESSONS_KEYS = {
     ["lessons", "detail", courseId, lessonId] as const,
 };
 
+async function fetchLessonsByCourse(courseId: string): Promise<ILesson[]> {
+  try {
+    const lessons = await lessonApiService.getLessonsByCourseId(courseId);
+    if (lessons && lessons.length > 0) return lessons;
+  } catch (error) {
+    console.warn(`useLessons(${courseId}): Falha na API REST, utilizando fallback do Firestore:`, error);
+  }
+  return await getLessonsByCourseIdFirestore(courseId);
+}
+
+async function fetchLessonById(courseId: string, lessonId: string): Promise<ILesson | null> {
+  try {
+    const lesson = await lessonApiService.getLessonById(lessonId);
+    if (lesson) return lesson;
+  } catch (error) {
+    console.warn(`useLesson(${lessonId}): Falha na API REST, utilizando fallback do Firestore:`, error);
+  }
+  return await getLessonByIdFirestore(courseId, lessonId);
+}
+
 export function useLessons(courseId: string) {
   return useQuery({
     queryKey: LESSONS_KEYS.byCourse(courseId),
-    queryFn: () => getLessonsByCourseId(courseId),
+    queryFn: () => fetchLessonsByCourse(courseId),
     enabled: !!courseId,
     staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
@@ -21,10 +46,11 @@ export function useLessons(courseId: string) {
 export function useLesson(courseId: string, lessonId: string) {
   return useQuery({
     queryKey: LESSONS_KEYS.detail(courseId, lessonId),
-    queryFn: () => getLessonById(courseId, lessonId),
+    queryFn: () => fetchLessonById(courseId, lessonId),
     enabled: !!courseId && !!lessonId,
     staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
     refetchOnReconnect: true,
   });
 }
+
