@@ -13,20 +13,18 @@ export const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Interceptor de Requisições: Injeta Token de Autenticação (JWT / Firebase ID Token)
+// Interceptor de Requisições: Injeta Token de Autenticação (JWT REST / Firebase ID Token)
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     try {
       let token: string | null | undefined = null;
 
-      // 1. Tentar obter ID Token atualizado do Firebase Auth
-      if (auth.currentUser) {
-        token = await auth.currentUser.getIdToken(/* forceRefresh */ false);
-      }
+      // 1. Tentar obter JWT da API REST armazenado no MMKV
+      token = Storage.loadString("jwt_token");
 
-      // 2. Fallback: Tentar obter token armazenado no MMKV (se houver)
-      if (!token) {
-        token = Storage.loadString("jwt_token");
+      // 2. Fallback: Tentar obter ID Token atualizado do Firebase Auth se não houver JWT REST
+      if (!token && auth.currentUser) {
+        token = await auth.currentUser.getIdToken(/* forceRefresh */ false);
       }
 
       if (token && config.headers) {
@@ -42,16 +40,48 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Interceptor de Respostas: Tratamento de Erros Sem Interromper Sessão Permanente
+// Interceptor de Respostas: Tratamento de Erros & Renovação Transparente Sem Interromper Sessão
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
     if (error.response) {
       const status = error.response.status;
       const data = error.response.data;
       console.warn(`[API Client Error ${status}]:`, data || error.message);
 
-      // REGRA INVIOLÁVEL: Erros HTTP 401/403 JAMAIS devem deslogar o usuário ou limpar auth-storage.
+      // Tentar renovar token se receber 401 e houver refresh_token salvo (evitando loop infinito com _retry)
+      if (status === 401 && originalRequest && !originalRequest._retry) {
+        originalRequest._retry = true;
+        const refreshToken = Storage.loadString("refresh_token");
+
+        if (refreshToken) {
+          try {
+            console.log("apiClient: Tentando renovar token JWT expirado via refresh_token...");
+            const refreshResponse = await axios.post<{ token: string; refreshToken?: string }>(
+              `${API_URL}/auth/refresh`,
+              { refreshToken }
+            );
+
+            if (refreshResponse.data?.token) {
+              Storage.saveString("jwt_token", refreshResponse.data.token);
+              if (refreshResponse.data.refreshToken) {
+                Storage.saveString("refresh_token", refreshResponse.data.refreshToken);
+              }
+
+              if (originalRequest.headers) {
+                originalRequest.headers.Authorization = `Bearer ${refreshResponse.data.token}`;
+              }
+              return apiClient(originalRequest);
+            }
+          } catch (refreshErr) {
+            console.warn("apiClient: Falha ao renovar token de acesso silenciosamente:", refreshErr);
+          }
+        }
+      }
+
+      // REGRA INVIOLÁVEL DO APP: Erros HTTP 401/403 JAMAIS devem deslogar o usuário ou limpar auth-storage.
       // O erro é simplesmente rejeitado para ser tratado no componente/hook consumidor.
     } else if (error.request) {
       console.warn("[API Client Network Error]: Sem resposta do servidor. Verifique a conexão.", error.message);
@@ -64,3 +94,4 @@ apiClient.interceptors.response.use(
 );
 
 export default apiClient;
+

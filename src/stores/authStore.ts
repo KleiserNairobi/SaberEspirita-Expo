@@ -19,6 +19,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import { auth } from "@/configs/firebase/firebase";
+import { authApiService } from "@/services/api/authApiService";
 import { deviceBlockService } from "@/services/firebase/deviceBlockService";
 import * as Storage from "@/utils/Storage";
 
@@ -131,6 +132,15 @@ export const useAuthStore = create<AuthState>()(
           console.log("AuthStore: Iniciando login...");
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           console.log("AuthStore: Login bem-sucedido:", userCredential.user.uid);
+
+          // Tentar autenticar / sincronizar no backend REST Spring Boot
+          try {
+            await authApiService.login({ email, password });
+            console.log("AuthStore: Sincronização REST Spring Boot login realizada com sucesso.");
+          } catch (apiError) {
+            console.warn("AuthStore: Falha ao autenticar na API REST (mantendo sessão local):", apiError);
+          }
+
           // Ao logar, desativa modo convidado
           set({ user: userCredential.user, isGuest: false, loading: false });
 
@@ -168,6 +178,19 @@ export const useAuthStore = create<AuthState>()(
             password
           );
           console.log("AuthStore: Conta criada:", userCredential.user.uid);
+
+          // Tentar registrar na API REST Spring Boot
+          try {
+            await authApiService.register({
+              userName: email.split("@")[0] || "Usuário",
+              email,
+              password,
+            });
+            console.log("AuthStore: Cadastro na API REST Spring Boot realizado com sucesso.");
+          } catch (apiError) {
+            console.warn("AuthStore: Falha ao cadastrar na API REST (mantendo conta local):", apiError);
+          }
+
           // Ao criar conta, desativa modo convidado
           set({ user: userCredential.user, isGuest: false, loading: false });
           return userCredential;
@@ -188,6 +211,14 @@ export const useAuthStore = create<AuthState>()(
           if (name && !userCredential.user.displayName) {
             await updateProfile(userCredential.user, { displayName: name });
             await userCredential.user.reload();
+          }
+
+          // Tentar login social na API REST Spring Boot com o idToken da Google
+          try {
+            await authApiService.socialLogin("google", idToken, name);
+            console.log("AuthStore: Login social REST Google realizado com sucesso.");
+          } catch (apiError) {
+            console.warn("AuthStore: Falha no login social REST Google (mantendo sessão local):", apiError);
           }
 
           console.log("AuthStore: Login Google bem-sucedido:", userCredential.user.uid);
@@ -252,6 +283,16 @@ export const useAuthStore = create<AuthState>()(
             await userCredential.user.reload();
           }
 
+          // Tentar login social na API REST Spring Boot com a Apple
+          if (credential.identityToken) {
+            try {
+              await authApiService.socialLogin("apple", credential.identityToken, name);
+              console.log("AuthStore: Login social REST Apple realizado com sucesso.");
+            } catch (apiError) {
+              console.warn("AuthStore: Falha no login social REST Apple (mantendo sessão local):", apiError);
+            }
+          }
+
           console.log("AuthStore: Login Apple bem-sucedido:", userCredential.user.uid);
 
           set({
@@ -303,6 +344,10 @@ export const useAuthStore = create<AuthState>()(
         set({ loading: true, error: null });
         try {
           console.log("AuthStore: Fazendo logout...");
+          // Limpa os tokens da API REST
+          Storage.remove("jwt_token");
+          Storage.remove("refresh_token");
+
           await firebaseSignOut(auth);
           set({ user: null, isGuest: false, loading: false }); // Limpa o estado e reseta o loading!
           // Deslogar do Google (Social)

@@ -2,6 +2,7 @@ import { User, updateProfile } from "firebase/auth";
 import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 
 import { auth, db } from "@/configs/firebase/firebase";
+import { authApiService } from "@/services/api/authApiService";
 import { useAuthStore } from "@/stores/authStore";
 import { getDeviceIdentifiers } from "@/utils/device";
 
@@ -190,7 +191,15 @@ export const userService = {
         }
       }
 
-      // 3. Atualizar a Store global para refletir a mudança na UI imediatamente
+      // 3. Tentar atualizar no Spring Boot REST API
+      try {
+        await authApiService.updateProfile({ userName: newName });
+        console.log("UserService: Nome atualizado com sucesso na API REST Spring Boot.");
+      } catch (apiError) {
+        console.warn("UserService: Falha ao atualizar nome na API REST (mantendo atualização local):", apiError);
+      }
+
+      // 4. Atualizar a Store global para refletir a mudança na UI imediatamente
       // Usamos o objeto user existente mesclado com o novo nome
       useAuthStore.getState().setUser({ ...user, displayName: newName } as User);
 

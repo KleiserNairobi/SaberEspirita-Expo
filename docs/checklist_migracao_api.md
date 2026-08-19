@@ -16,7 +16,7 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 ## 📌 Progresso Geral da Migração
 
 - [x] **Módulo 0: Cliente HTTP & Infraestrutura de Rede** `[5/5]`
-- [ ] **Módulo 1: Autenticação, Usuários & Perfil** `[0/5]`
+- [x] **Módulo 1: Autenticação, Usuários & Perfil** `[5/5]`
 - [ ] **Módulo 2: Cursos, Aulas & Conteúdo Didático** `[0/6]`
 - [ ] **Módulo 3: Exercícios Práticos & Avaliações** `[0/4]`
 - [ ] **Módulo 4: Quizzes & Histórico de Tentativas** `[0/5]`
@@ -47,20 +47,20 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 
 ## 👤 Módulo 1: Autenticação, Usuários & Perfil
 
-- [ ] **1.1 Service de Auth & Perfil (`authApiService.ts`)**:
+- [x] **1.1 Service de Auth & Perfil (`authApiService.ts`)**:
   - `login(credentials)` ➔ `POST /api/v1/auth/login`
   - `register(data)` ➔ `POST /api/v1/auth/register`
   - `getProfile()` ➔ `GET /api/v1/users/me`
   - `updateProfile(data)` ➔ `PUT /api/v1/users/me`
   - `deleteAccount()` ➔ `DELETE /api/v1/users/me`
-- [ ] **1.2 Atualização da `authStore.ts`**:
+- [x] **1.2 Atualização da `authStore.ts`**:
   - Integrar chamadas REST ao fluxo de autenticação social e por email/senha.
   - Garantir a persistência do token e estado do usuário no MMKV (`auth-storage`).
-- [ ] **1.3 Suporte a Perfil Público**:
+- [x] **1.3 Suporte a Perfil Público**:
   - Endpoint `GET /api/v1/users/{userId}` para consulta de perfis na comunidade.
-- [ ] **1.4 Validação de Dispositivos e Domínios Banidos**:
+- [x] **1.4 Validação de Dispositivos e Domínios Banidos**:
   - Tratar respostas de bloqueio (`403 Forbidden`) retornadas pelo filtro de moderação do backend.
-- [ ] **1.5 Validação dos Fluxos de Auth na UI**:
+- [x] **1.5 Validação dos Fluxos de Auth na UI**:
   - Testar login, cadastro, edição de perfil e exclusão voluntária da própria conta.
 
 ---
