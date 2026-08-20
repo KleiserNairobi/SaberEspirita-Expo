@@ -21,7 +21,7 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 - [x] **Módulo 3: Exercícios Práticos & Avaliações** `[4/4]`
 - [x] **Módulo 4: Quizzes & Histórico de Tentativas** `[5/5]`
 - [x] **Módulo 5: Conteúdos Espíritas, Meditações & Orações** `[7/7]`
-- [ ] **Módulo 6: Fórum de Lições & Reações** `[0/4]`
+- [x] **Módulo 6: Fórum de Lições & Reações** `[4/4]`
 - [ ] **Módulo 7: Progresso, Certificados, Favoritos & Notificações** `[0/5]`
 - [ ] **Módulo 8: Estatísticas, Logs & Leaderboard** `[0/4]`
 - [ ] **Módulo 9: Upload de Mídias (Cloudflare R2)** `[0/2]`
@@ -144,16 +144,16 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 
 ## 💬 Módulo 6: Fórum de Lições & Reações
 
-- [ ] **6.1 Service do Fórum (`forumApiService.ts`)**:
+- [x] **6.1 Service do Fórum (`forumApiService.ts`)**:
   - `getComments(lessonId, page)` ➔ `GET /api/v1/forum/lessons/{lessonId}/comments`
   - `postComment(lessonId, data)` ➔ `POST /api/v1/forum/lessons/{lessonId}/comments`
   - `deleteComment(commentId)` ➔ `DELETE /api/v1/forum/comments/{commentId}`
   - `toggleReaction(commentId, type)` ➔ `POST /api/v1/forum/comments/{commentId}/reactions`
-- [ ] **6.2 Paginação & Atualização em Tempo Real (React Query)**:
+- [x] **6.2 Paginação & Atualização em Tempo Real (React Query)**:
   - Configurar `useInfiniteQuery` para rolar comentários paginados de forma fluida.
-- [ ] **6.3 Gestão de Reações (*Me Tocou*, *Aprendi Algo*, etc.)**:
+- [x] **6.3 Gestão de Reações (*Me Tocou*, *Aprendi Algo*, etc.)**:
   - Sincronizar alternância de reações com atualização otimista na UI.
-- [ ] **6.4 Validação do Fórum na UI**:
+- [x] **6.4 Validação do Fórum na UI**:
   - Testar comentários, respostas aninhadas, remoção própria e reações.
 
 ---
@@ -233,3 +233,4 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 | **2026-08-20** | Antigravity AI | Módulo 3 | Implementação de `exerciseApiService.ts`, DTOs de submissão e atualização dos hooks do React Query (`useExercises`). |
 | **2026-08-20** | Antigravity AI | Módulo 4 | Implementação de `quizApiService.ts`, DTOs de submissão/reporte e atualização dos hooks do React Query (`useQuiz`). |
 | **2026-08-20** | Antigravity AI | Módulo 5 | Criação dos serviços REST (`glossaryApiService`, `reflectionApiService`, `meditationApiService`, `podcastApiService`, `prayerApiService`, `ambientAudioApiService`) e atualização de hooks. |
+| **2026-08-20** | Antigravity AI | Módulo 6 | Implementação do `forumApiService.ts`, suporte à paginação infinita e atualização otimista de reações no `useLessonForum.ts`. |

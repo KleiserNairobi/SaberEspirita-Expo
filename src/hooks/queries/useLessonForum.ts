@@ -1,21 +1,15 @@
 import {
+  InfiniteData,
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
 
-import { auth } from "@/configs/firebase/firebase";
 import {
-  createForumComment,
-  getCommunityProgress,
-  getForumCommentsPage,
-  hasNewForumComments,
-  removeForumReaction,
-  setForumLastSeen,
-  setForumReaction,
-  softDeleteForumComment,
-} from "@/services/firebase/forumService";
+  ForumCommentsResponse,
+  forumApiService,
+} from "@/services/api/forumApiService";
 import { useAuthStore } from "@/stores/authStore";
 import { CommunityLevelId, ForumComment, ForumReactionType } from "@/types/forum";
 
@@ -27,81 +21,82 @@ export const FORUM_KEYS = {
     ["forumHasNew", lessonId, userId] as const,
 };
 
+/**
+ * Hook para obter o progresso do usuário na comunidade via API REST.
+ */
 export function useCommunityProgress() {
   const { user, isGuest } = useAuthStore();
-  const uid = auth.currentUser?.uid || user?.uid || null;
 
   return useQuery({
-    queryKey: FORUM_KEYS.communityProgress(uid || "guest"),
+    queryKey: FORUM_KEYS.communityProgress(user?.uid || "guest"),
     queryFn: async () => {
       if (isGuest) return null;
-      if (!uid) return null;
-      return getCommunityProgress(uid);
+      return forumApiService.getCommunityProgress();
     },
-    enabled: !!uid && !isGuest,
-    staleTime: 1000 * 60 * 30, // 30 minutos — reduz leituras desnecessárias ao remontar telas
+    enabled: !!user?.uid && !isGuest,
+    staleTime: 1000 * 60 * 30, // 30 minutos
     refetchOnMount: false,
     refetchOnReconnect: true,
   });
 }
 
+/**
+ * Hook para verificar se existem novos comentários em uma lição.
+ */
 export function useForumHasNewComments(lessonId: string) {
   const { user, isGuest } = useAuthStore();
-  const uid = auth.currentUser?.uid || user?.uid || null;
 
   return useQuery({
-    queryKey: FORUM_KEYS.hasNew(lessonId, uid || "guest"),
+    queryKey: FORUM_KEYS.hasNew(lessonId, user?.uid || "guest"),
     queryFn: async () => {
-      if (isGuest) return false;
-      if (!uid || !lessonId) return false;
-      return hasNewForumComments({ userId: uid, lessonId });
+      if (isGuest || !lessonId) return false;
+      return forumApiService.hasNewComments(lessonId);
     },
-    enabled: !!uid && !isGuest && !!lessonId,
-    staleTime: 1000 * 60 * 10, // 10 minutos — cada chamada custa 2 leituras no Firestore
+    enabled: !!user?.uid && !isGuest && !!lessonId,
+    staleTime: 1000 * 60 * 10,
     refetchOnMount: false,
   });
 }
 
+/**
+ * Hook para buscar comentários paginados de uma lição (suporte a Infinite Scroll).
+ */
 export function useLessonForumComments(courseId: string, lessonId: string) {
   const { user, isGuest } = useAuthStore();
-  const uid = auth.currentUser?.uid || user?.uid || null;
 
   return useInfiniteQuery({
-    queryKey: FORUM_KEYS.comments(lessonId, uid || "guest"),
-    queryFn: async ({ pageParam }) => {
-      if (isGuest) {
-        return { comments: [], cursor: null };
+    queryKey: FORUM_KEYS.comments(lessonId, user?.uid || "guest"),
+    queryFn: async ({ pageParam = 1 }) => {
+      if (isGuest || !lessonId) {
+        return { comments: [], nextPage: null };
       }
-      if (!uid) return { comments: [], cursor: null };
-      return getForumCommentsPage({
-        lessonId,
-        courseId,
-        userId: uid,
-        pageSize: 20,
-        cursor: pageParam ?? undefined,
-      });
+      return forumApiService.getComments(lessonId, pageParam as number, 20);
     },
-    enabled: !!lessonId && !!courseId && !!uid && !isGuest,
-    retry: false,
-    initialPageParam: null as unknown,
-    getNextPageParam: (lastPage) => lastPage.cursor ?? undefined,
-    staleTime: 1000 * 60 * 10, // 10 minutos — mitiga N+1 reads enquanto desnormalização não é implementada
+    enabled: !!lessonId && !isGuest,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
+    staleTime: 1000 * 60 * 10,
     refetchOnMount: false,
   });
 }
 
+/**
+ * Hook de mutação para marcar o fórum da lição como visto.
+ */
 export function useSetForumLastSeen() {
-  const { user, isGuest } = useAuthStore();
+  const { isGuest } = useAuthStore();
 
   return useMutation({
     mutationFn: async (lessonId: string) => {
       if (isGuest) return;
-      if (!user?.uid) throw new Error("User not authenticated");
-      await setForumLastSeen({ userId: user.uid, lessonId });
+      await forumApiService.setLastSeen(lessonId);
     },
   });
 }
 
+/**
+ * Hook de mutação para criar um novo comentário na lição.
+ */
 export function useCreateForumComment() {
   const queryClient = useQueryClient();
   const { user, isGuest } = useAuthStore();
@@ -112,24 +107,17 @@ export function useCreateForumComment() {
       lessonId: string;
       content: string;
       isAnonymous: boolean;
-      userName: string;
-      userAvatar: string | null;
-      userCommunityLevel: CommunityLevelId;
+      userName?: string;
+      userAvatar?: string | null;
+      userCommunityLevel?: CommunityLevelId;
     }) => {
       if (isGuest) throw new Error("guest");
-      if (!user?.uid) throw new Error("User not authenticated");
-      return createForumComment({
-        courseId: params.courseId,
-        lessonId: params.lessonId,
-        userId: user.uid,
-        userName: params.userName,
-        userAvatar: params.userAvatar,
-        userCommunityLevel: params.userCommunityLevel,
+      return forumApiService.postComment(params.lessonId, {
         content: params.content,
         isAnonymous: params.isAnonymous,
       });
     },
-    onSuccess: (_commentId, vars) => {
+    onSuccess: (_, vars) => {
       queryClient.invalidateQueries({
         queryKey: FORUM_KEYS.comments(vars.lessonId, user?.uid || "guest"),
       });
@@ -140,6 +128,9 @@ export function useCreateForumComment() {
   });
 }
 
+/**
+ * Hook de mutação para remover (soft-delete) um comentário.
+ */
 export function useSoftDeleteForumComment() {
   const queryClient = useQueryClient();
   const { user, isGuest } = useAuthStore();
@@ -147,9 +138,9 @@ export function useSoftDeleteForumComment() {
   return useMutation({
     mutationFn: async (params: { lessonId: string; commentId: string }) => {
       if (isGuest) throw new Error("guest");
-      await softDeleteForumComment(params);
+      await forumApiService.deleteComment(params.commentId);
     },
-    onSuccess: (_data, vars) => {
+    onSuccess: (_, vars) => {
       queryClient.invalidateQueries({
         queryKey: FORUM_KEYS.comments(vars.lessonId, user?.uid || "guest"),
       });
@@ -160,10 +151,13 @@ export function useSoftDeleteForumComment() {
   });
 }
 
+/**
+ * Hook de mutação para alterar reação fraterna em um comentário com atualização otimista na UI.
+ */
 export function useSetForumReaction() {
   const queryClient = useQueryClient();
   const { user, isGuest } = useAuthStore();
-  const uid = auth.currentUser?.uid || user?.uid || null;
+  const cacheUid = user?.uid || "guest";
 
   return useMutation({
     mutationFn: async (params: {
@@ -172,30 +166,23 @@ export function useSetForumReaction() {
       type: ForumReactionType;
     }) => {
       if (isGuest) throw new Error("guest");
-      if (!auth.currentUser?.uid) throw new Error("User not authenticated");
-      await setForumReaction({
-        lessonId: params.lessonId,
-        commentId: params.commentId,
-        userId: auth.currentUser.uid,
-        type: params.type,
-      });
+      return forumApiService.toggleReaction(params.commentId, params.type);
     },
     onMutate: async (vars) => {
-      const cacheUid = uid || "guest";
       await queryClient.cancelQueries({
         queryKey: FORUM_KEYS.comments(vars.lessonId, cacheUid),
       });
 
-      const previous = queryClient.getQueryData<any>(
-        FORUM_KEYS.comments(vars.lessonId, cacheUid)
-      );
+      const previous = queryClient.getQueryData<
+        InfiniteData<ForumCommentsResponse>
+      >(FORUM_KEYS.comments(vars.lessonId, cacheUid));
 
-      queryClient.setQueryData<any>(
+      queryClient.setQueryData<InfiniteData<ForumCommentsResponse>>(
         FORUM_KEYS.comments(vars.lessonId, cacheUid),
-        (old: any) => {
+        (old) => {
           if (!old?.pages) return old;
 
-          const nextPages = old.pages.map((page: any) => {
+          const nextPages = old.pages.map((page) => {
             const nextComments = (page.comments ?? []).map((c: ForumComment) => {
               if (c.id !== vars.commentId) return c;
 
@@ -220,58 +207,52 @@ export function useSetForumReaction() {
         }
       );
 
-      return { previous, uid: cacheUid };
+      return { previous };
     },
     onError: (_err, vars, ctx) => {
       if (ctx?.previous) {
         queryClient.setQueryData(
-          FORUM_KEYS.comments(vars.lessonId, ctx.uid),
+          FORUM_KEYS.comments(vars.lessonId, cacheUid),
           ctx.previous
         );
       }
     },
-    onSuccess: (_data, vars) => {
-      // NÃO invalidamos FORUM_KEYS.comments aqui porque o onMutate já atualizou o cache local otimisticamente.
-      // A Cloud Function trigger 'onForumReactionWritten' é assíncrona e eventualmente consistente.
-      // Se invalidarmos a query imediatamente, o refetch trará o comentário do Firestore ANTES da trigger terminar de gravar 'userReactions', apagando o ícone da UI.
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: FORUM_KEYS.communityProgress(uid || "guest"),
+        queryKey: FORUM_KEYS.communityProgress(cacheUid),
       });
     },
   });
 }
 
+/**
+ * Hook de mutação para remover reação em um comentário com atualização otimista na UI.
+ */
 export function useRemoveForumReaction() {
   const queryClient = useQueryClient();
   const { user, isGuest } = useAuthStore();
-  const uid = auth.currentUser?.uid || user?.uid || null;
+  const cacheUid = user?.uid || "guest";
 
   return useMutation({
     mutationFn: async (params: { lessonId: string; commentId: string }) => {
       if (isGuest) throw new Error("guest");
-      if (!auth.currentUser?.uid) throw new Error("User not authenticated");
-      await removeForumReaction({
-        lessonId: params.lessonId,
-        commentId: params.commentId,
-        userId: auth.currentUser.uid,
-      });
+      return forumApiService.removeReaction(params.commentId);
     },
     onMutate: async (vars) => {
-      const cacheUid = uid || "guest";
       await queryClient.cancelQueries({
         queryKey: FORUM_KEYS.comments(vars.lessonId, cacheUid),
       });
 
-      const previous = queryClient.getQueryData<any>(
-        FORUM_KEYS.comments(vars.lessonId, cacheUid)
-      );
+      const previous = queryClient.getQueryData<
+        InfiniteData<ForumCommentsResponse>
+      >(FORUM_KEYS.comments(vars.lessonId, cacheUid));
 
-      queryClient.setQueryData<any>(
+      queryClient.setQueryData<InfiniteData<ForumCommentsResponse>>(
         FORUM_KEYS.comments(vars.lessonId, cacheUid),
-        (old: any) => {
+        (old) => {
           if (!old?.pages) return old;
 
-          const nextPages = old.pages.map((page: any) => {
+          const nextPages = old.pages.map((page) => {
             const nextComments = (page.comments ?? []).map((c: ForumComment) => {
               if (c.id !== vars.commentId) return c;
 
@@ -291,20 +272,19 @@ export function useRemoveForumReaction() {
         }
       );
 
-      return { previous, uid: cacheUid };
+      return { previous };
     },
     onError: (_err, vars, ctx) => {
       if (ctx?.previous) {
         queryClient.setQueryData(
-          FORUM_KEYS.comments(vars.lessonId, ctx.uid),
+          FORUM_KEYS.comments(vars.lessonId, cacheUid),
           ctx.previous
         );
       }
     },
-    onSuccess: (_data, vars) => {
-      // Mantém o cache otimista sem forçar refetch precoce do Firestore
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: FORUM_KEYS.communityProgress(uid || "guest"),
+        queryKey: FORUM_KEYS.communityProgress(cacheUid),
       });
     },
   });
