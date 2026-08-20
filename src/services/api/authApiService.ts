@@ -94,7 +94,7 @@ export const authApiService = {
    */
   async refreshToken(refreshToken: string): Promise<{ token: string; refreshToken?: string }> {
     const response = await apiClient.post<{ token: string; refreshToken?: string }>(
-      "/auth/refresh",
+      "/auth/refresh-token",
       { refreshToken }
     );
     if (response.data?.token) {
@@ -104,6 +104,20 @@ export const authApiService = {
       }
     }
     return response.data;
+  },
+
+  /**
+   * Realiza o encerramento de sessão (logout) no backend e limpa os tokens salvos localmente.
+   */
+  async logout(): Promise<void> {
+    try {
+      await apiClient.post("/auth/logout");
+    } catch {
+      // Ignora falhas de rede durante o logout para assegurar a limpeza do storage local
+    } finally {
+      Storage.remove("jwt_token");
+      Storage.remove("refresh_token");
+    }
   },
 
   /**

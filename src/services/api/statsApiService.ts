@@ -41,4 +41,12 @@ export const statsApiService = {
       totalPrayersCompleted: 0,
     };
   },
+
+  /**
+   * Obtém as estatísticas diárias recentes registradas no aplicativo.
+   */
+  async getDailyStats(): Promise<Record<string, unknown>[]> {
+    const response = await apiClient.get<Record<string, unknown>[] >("/stats/daily");
+    return response.data || [];
+  },
 };

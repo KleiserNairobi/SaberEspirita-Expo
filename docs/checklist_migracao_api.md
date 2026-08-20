@@ -50,6 +50,8 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 - [x] **1.1 Service de Auth & Perfil (`authApiService.ts`)**:
   - `login(credentials)` ➔ `POST /api/v1/auth/login`
   - `register(data)` ➔ `POST /api/v1/auth/register`
+  - `refreshToken(token)` ➔ `POST /api/v1/auth/refresh-token`
+  - `logout()` ➔ `POST /api/v1/auth/logout`
   - `getProfile()` ➔ `GET /api/v1/users/me`
   - `updateProfile(data)` ➔ `PUT /api/v1/users/me`
   - `deleteAccount()` ➔ `DELETE /api/v1/users/me`
@@ -188,6 +190,7 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 - [x] **8.2 Service de Telemetria & Logs (`statsApiService.ts`)**:
   - `logEvent(eventData)` ➔ `POST /api/v1/logs/event`
   - `getGlobalStats()` ➔ `GET /api/v1/stats/global`
+  - `getDailyStats()` ➔ `GET /api/v1/stats/daily`
 - [x] **8.3 Integração com Hooks do React Query (`useLeaderboard`)**:
   - Atualizar abas de ranking semanal, mensal e geral.
 - [x] **8.4 Validação do Ranking e Telemetria**:
@@ -239,3 +242,4 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 | **2026-08-20** | Antigravity AI | Módulo 9 | Implementação de `mediaApiService.ts` para upload multipart/form-data de avatares para o Cloudflare R2 e hook `useMediaUpload.ts`. |
 | **2026-08-20** | Antigravity AI | Módulo 10 | Implementação de `chatApiService.ts` (completions de IA com timeout de 120s e limites) e atualização do hook `useChatLimits.ts`. |
 | **2026-08-20** | Antigravity AI | Módulo 12 | Implementação de `appConfigApiService.ts` (`GET /api/v1/app-config`) e integração com `versionControlService.ts`. Conclusão total da migração para API REST! |
+| **2026-08-20** | Antigravity AI | Módulo 1 & Módulo 8 | Ajuste da rota de refresh token (`/auth/refresh-token`), adição do método `logout()` em `authApiService` e `getDailyStats()` em `statsApiService`. 100% de paridade entre checklists! |
