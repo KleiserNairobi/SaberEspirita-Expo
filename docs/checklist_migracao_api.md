@@ -22,7 +22,7 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 - [x] **Módulo 4: Quizzes & Histórico de Tentativas** `[5/5]`
 - [x] **Módulo 5: Conteúdos Espíritas, Meditações & Orações** `[7/7]`
 - [x] **Módulo 6: Fórum de Lições & Reações** `[4/4]`
-- [ ] **Módulo 7: Progresso, Certificados, Favoritos & Notificações** `[0/5]`
+- [x] **Módulo 7: Progresso, Certificados, Favoritos & Notificações** `[5/5]`
 - [ ] **Módulo 8: Estatísticas, Logs & Leaderboard** `[0/4]`
 - [ ] **Módulo 9: Upload de Mídias (Cloudflare R2)** `[0/2]`
 - [ ] **Módulo 10: Assistentes de IA & Chatbots (DeepSeek API)** `[0/3]`
@@ -160,20 +160,20 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 
 ## 🎓 Módulo 7: Progresso, Certificados, Favoritos & Notificações
 
-- [ ] **7.1 Service de Atividade do Aluno (`userActivityApiService.ts`)**:
+- [x] **7.1 Service de Atividade do Aluno (`userActivityApiService.ts`)**:
   - `getProgress()` ➔ `GET /api/v1/user-activity/courses/progress`
   - `completeLesson(courseId, lessonId)` ➔ `POST /api/v1/user-activity/courses/progress/{courseId}/lessons/{lessonId}/complete`
   - `getCertificates()` ➔ `GET /api/v1/user-activity/courses/certificates`
   - `generateCertificate(courseId)` ➔ `POST /api/v1/user-activity/courses/certificates/generate/{courseId}`
-- [ ] **7.2 Service de Favoritos (`favoritesApiService.ts`)**:
+- [x] **7.2 Service de Favoritos (`favoritesApiService.ts`)**:
   - `togglePrayerFavorite(prayerId)` e `getFavoritePrayers()` ➔ `/api/v1/favorites/prayers`
   - `toggleReflectionFavorite(reflectionId)` e `getFavoriteReflections()` ➔ `/api/v1/favorites/reflections`
-- [ ] **7.3 Jogo Verdadeiro ou Falso (`truthOrFalseApiService.ts`)**:
+- [x] **7.3 Jogo Verdadeiro ou Falso (`truthOrFalseApiService.ts`)**:
   - `getQuestions()` e `submitAnswers()` ➔ `/api/v1/truth-or-false/*`
-- [ ] **7.4 Central de Notificações (`notificationApiService.ts`)**:
+- [x] **7.4 Central de Notificações (`notificationApiService.ts`)**:
   - `getNotifications()` ➔ `GET /api/v1/notifications`
   - `markAsRead(id)` ➔ `PATCH /api/v1/notifications/{id}/read`
-- [ ] **7.5 Validação dos Módulos Interativos**:
+- [x] **7.5 Validação dos Módulos Interativos**:
   - Testar conclusão de curso 100%, geração do PDF do certificado e marcação de favoritos.
 
 ---
@@ -234,3 +234,4 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 | **2026-08-20** | Antigravity AI | Módulo 4 | Implementação de `quizApiService.ts`, DTOs de submissão/reporte e atualização dos hooks do React Query (`useQuiz`). |
 | **2026-08-20** | Antigravity AI | Módulo 5 | Criação dos serviços REST (`glossaryApiService`, `reflectionApiService`, `meditationApiService`, `podcastApiService`, `prayerApiService`, `ambientAudioApiService`) e atualização de hooks. |
 | **2026-08-20** | Antigravity AI | Módulo 6 | Implementação do `forumApiService.ts`, suporte à paginação infinita e atualização otimista de reações no `useLessonForum.ts`. |
+| **2026-08-20** | Antigravity AI | Módulo 7 | Criação dos serviços REST (`userActivityApiService`, `favoritesApiService`, `truthOrFalseApiService`, `notificationApiService`) e atualização de hooks. |

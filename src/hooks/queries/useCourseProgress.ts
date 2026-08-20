@@ -1,56 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { userActivityApiService } from "@/services/api/userActivityApiService";
 import { useAuthStore } from "@/stores/authStore";
-import { doc, getDocFromCache, getDocFromServer } from "firebase/firestore";
-import { db } from "@/configs/firebase/firebase";
-import { IUserCourseProgress } from "@/types/course";
-import { touchCourseAccess } from "@/services/firebase/progressService";
 
 export const COURSE_PROGRESS_KEYS = {
   byUserAndCourse: (userId: string, courseId: string) =>
     ["courseProgress", userId, courseId] as const,
+  all: (userId: string) => ["allCoursesProgress", userId] as const,
 };
 
 /**
- * Hook para buscar o progresso do usuário em um curso específico.
- * Estratégia Cache-First: tenta o cache offline do Firestore antes de ir ao servidor,
- * evitando leituras redundantes nas 4 telas que usam este hook (CourseDetails,
- * CourseCurriculum, LessonPlayer, CourseCertificate).
+ * Hook para buscar o progresso do usuário em um curso específico via API REST.
  */
 export function useCourseProgress(courseId: string) {
   const { user } = useAuthStore();
+  const userId = user?.uid || "";
 
   return useQuery({
-    queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user?.uid || "", courseId),
-    queryFn: async (): Promise<IUserCourseProgress | null> => {
-      if (!user?.uid || !courseId) return null;
-
-      const progressRef = doc(db, "users", user.uid, "courseProgress", courseId);
-
-      // Cache-First: tenta o cache offline do Firestore primeiro (0 leituras cobradas)
-      let progressSnap;
-      try {
-        progressSnap = await getDocFromCache(progressRef);
-      } catch {
-        // Cache miss ou indisponível — busca no servidor
-        progressSnap = await getDocFromServer(progressRef);
-      }
-
-      if (!progressSnap.exists()) {
-        // Usuário ainda não iniciou o curso
-        return null;
-      }
-
-      return {
-        ...progressSnap.data(),
-        startedAt: progressSnap.data().startedAt?.toDate(),
-        lastAccessedAt: progressSnap.data().lastAccessedAt?.toDate(),
-        completedAt: progressSnap.data().completedAt?.toDate(),
-        certificateIssuedAt: progressSnap.data().certificateIssuedAt?.toDate(),
-      } as IUserCourseProgress;
-    },
-    enabled: !!user?.uid && !!courseId,
-    staleTime: 1000 * 60 * 15,          // 15 minutos
-    gcTime: 1000 * 60 * 60 * 24 * 7,    // 7 dias — mantém em memória para navegação entre telas
+    queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(userId, courseId),
+    queryFn: () => userActivityApiService.getCourseProgress(courseId),
+    enabled: !!userId && !!courseId,
+    staleTime: 1000 * 60 * 15, // 15 minutos
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em memória
   });
 }
 
@@ -65,28 +35,54 @@ interface TouchCourseAccessParams {
  */
 export function useTouchCourseAccess() {
   const queryClient = useQueryClient();
+  const { user } = useAuthStore();
+  const userId = user?.uid || "";
 
   return useMutation({
-    mutationFn: async ({ courseId, lessonId, userId }: TouchCourseAccessParams) => {
-      await touchCourseAccess(courseId, { lessonId, userId });
+    mutationFn: async ({ courseId, lessonId }: TouchCourseAccessParams) => {
+      if (lessonId) {
+        return userActivityApiService.completeLesson(courseId, lessonId);
+      }
+      return userActivityApiService.getCourseProgress(courseId);
     },
     onSuccess: (_, variables) => {
-      const { userId, courseId } = variables;
-      if (userId) {
-        // Invalida a query do último curso acessado
+      const targetUserId = variables.userId || userId;
+      if (targetUserId) {
         queryClient.invalidateQueries({
-          queryKey: ["lastAccessedCourse", userId],
+          queryKey: ["lastAccessedCourse", targetUserId],
         });
-        // Invalida o progresso de todos os cursos
         queryClient.invalidateQueries({
-          queryKey: ["allCoursesProgress", userId],
+          queryKey: COURSE_PROGRESS_KEYS.all(targetUserId),
         });
-        // Invalida pontualmente o progresso do curso individual modificado
         queryClient.invalidateQueries({
-          queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(userId, courseId),
+          queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(targetUserId, variables.courseId),
         });
       }
     },
   });
 }
 
+/**
+ * Hook de mutação para marcar uma lição como concluída via API REST.
+ */
+export function useCompleteLesson() {
+  const queryClient = useQueryClient();
+  const { user } = useAuthStore();
+  const userId = user?.uid || "";
+
+  return useMutation({
+    mutationFn: ({ courseId, lessonId }: { courseId: string; lessonId: string }) =>
+      userActivityApiService.completeLesson(courseId, lessonId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(userId, variables.courseId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: COURSE_PROGRESS_KEYS.all(userId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user-activity"],
+      });
+    },
+  });
+}

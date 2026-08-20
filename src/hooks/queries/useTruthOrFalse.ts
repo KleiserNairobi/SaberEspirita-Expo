@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  TruthOrFalseAnswerPayload,
+  truthOrFalseApiService,
+} from "@/services/api/truthOrFalseApiService";
 import { useAuthStore } from "@/stores/authStore";
-import { TruthOrFalseService } from "@/services/firebase/truthOrFalseService";
-import { ITruthOrFalseStats } from "@/types/truthOrFalseStats";
 import { IUserTruthOrFalseResponse } from "@/types/userTruthOrFalseResponse";
 
 export const TRUTH_OR_FALSE_KEYS = {
@@ -9,17 +11,11 @@ export const TRUTH_OR_FALSE_KEYS = {
   stats: (userId: string) => ["truthOrFalse", "stats", userId] as const,
   today: (userId: string) => ["truthOrFalse", "today", userId] as const,
   history: (userId: string) => ["truthOrFalse", "history", userId] as const,
+  questions: () => ["truthOrFalse", "questions"] as const,
 };
 
-export interface TruthOrFalseHomeData {
-  hasAnswered: boolean;
-  todayResponse: IUserTruthOrFalseResponse | null;
-  stats: ITruthOrFalseStats;
-}
-
 /**
- * Hook para buscar os dados principais da home do Verdade ou Mentira
- * (Respondeu hoje + Estatísticas do Usuário)
+ * Hook para buscar os dados principais da home do Verdade ou Mentira.
  */
 export function useTruthOrFalseHomeData() {
   const { user } = useAuthStore();
@@ -27,18 +23,7 @@ export function useTruthOrFalseHomeData() {
 
   return useQuery({
     queryKey: TRUTH_OR_FALSE_KEYS.stats(userId),
-    queryFn: async (): Promise<TruthOrFalseHomeData> => {
-      const [todayResponse, stats] = await Promise.all([
-        TruthOrFalseService.getTodayResponse(),
-        TruthOrFalseService.getStats(),
-      ]);
-
-      return {
-        hasAnswered: todayResponse !== null,
-        todayResponse,
-        stats,
-      };
-    },
+    queryFn: () => truthOrFalseApiService.getHomeData(),
     staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
     enabled: true,
@@ -46,7 +31,7 @@ export function useTruthOrFalseHomeData() {
 }
 
 /**
- * Hook para buscar o histórico de respostas
+ * Hook para buscar o histórico de respostas.
  */
 export function useTruthOrFalseHistory(limitCount = 30) {
   const { user } = useAuthStore();
@@ -54,14 +39,14 @@ export function useTruthOrFalseHistory(limitCount = 30) {
 
   return useQuery({
     queryKey: TRUTH_OR_FALSE_KEYS.history(userId),
-    queryFn: () => TruthOrFalseService.getHistory(limitCount),
+    queryFn: () => truthOrFalseApiService.getHistory(limitCount),
     staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
   });
 }
 
 /**
- * Mutation para salvar a resposta do desafio do dia
+ * Mutation para salvar a resposta do desafio do dia.
  */
 export function useSaveTruthOrFalseResponse() {
   const queryClient = useQueryClient();
@@ -69,16 +54,45 @@ export function useSaveTruthOrFalseResponse() {
   const userId = user?.uid || "guest";
 
   return useMutation({
-    mutationFn: (response: Omit<IUserTruthOrFalseResponse, "date">) =>
-      TruthOrFalseService.saveResponse(response),
+    mutationFn: (payload: Omit<IUserTruthOrFalseResponse, "date">) =>
+      truthOrFalseApiService.saveResponse(payload),
     onSuccess: () => {
-      // Invalida os dados da home do Verdade ou Mentira
       queryClient.invalidateQueries({
         queryKey: TRUTH_OR_FALSE_KEYS.stats(userId),
       });
-      // Invalida o histórico
       queryClient.invalidateQueries({
         queryKey: TRUTH_OR_FALSE_KEYS.history(userId),
+      });
+    },
+  });
+}
+
+/**
+ * Hook para buscar as questões do jogo Verdadeiro ou Falso via API REST.
+ */
+export function useTruthOrFalseQuestions() {
+  return useQuery({
+    queryKey: TRUTH_OR_FALSE_KEYS.questions(),
+    queryFn: () => truthOrFalseApiService.getQuestions(),
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+  });
+}
+
+/**
+ * Mutation para submeter respostas da rodada de Verdadeiro ou Falso via API REST.
+ */
+export function useSubmitTruthOrFalse() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (answers: TruthOrFalseAnswerPayload[]) =>
+      truthOrFalseApiService.submitAnswers(answers),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: TRUTH_OR_FALSE_KEYS.all,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["leaderboard"],
       });
     },
   });

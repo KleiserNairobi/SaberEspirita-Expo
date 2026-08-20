@@ -1,52 +1,33 @@
 import { useQuery } from "@tanstack/react-query";
-import { collection, getDocsFromCache, getDocsFromServer } from "firebase/firestore";
-
+import { userActivityApiService } from "@/services/api/userActivityApiService";
 import { useAuthStore } from "@/stores/authStore";
-import { db } from "@/configs/firebase/firebase";
 import { IUserCourseProgress } from "@/types/course";
 
+/**
+ * Hook para buscar o progresso de todos os cursos do usuário via API REST.
+ */
 export function useAllCoursesProgress() {
   const { user } = useAuthStore();
+  const userId = user?.uid || "";
 
   return useQuery({
-    queryKey: ["allCoursesProgress", user?.uid],
+    queryKey: ["allCoursesProgress", userId],
     queryFn: async (): Promise<Record<string, IUserCourseProgress>> => {
-      if (!user?.uid) return {};
+      if (!userId) return {};
 
-      const progressRef = collection(db, "users", user.uid, "courseProgress");
-      let snapshot;
-
-      try {
-        const cacheSnapshot = await getDocsFromCache(progressRef);
-        if (!cacheSnapshot.empty) {
-          snapshot = cacheSnapshot;
-        } else {
-          snapshot = await getDocsFromServer(progressRef);
-        }
-      } catch {
-        snapshot = await getDocsFromServer(progressRef);
-      }
-
+      const list = await userActivityApiService.getCoursesProgress();
       const progressMap: Record<string, IUserCourseProgress> = {};
 
-      snapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const item = {
-          ...data,
-          startedAt: data.startedAt?.toDate(),
-          lastAccessedAt: data.lastAccessedAt?.toDate(),
-          completedAt: data.completedAt?.toDate(),
-          certificateIssuedAt: data.certificateIssuedAt?.toDate(),
-        } as IUserCourseProgress;
-
-        if (docSnap.id) progressMap[docSnap.id] = item;
-        if (data.courseId) progressMap[data.courseId] = item;
+      list.forEach((item) => {
+        if (item.courseId) {
+          progressMap[item.courseId] = item;
+        }
       });
 
       return progressMap;
     },
-    enabled: !!user?.uid,
+    enabled: !!userId,
     staleTime: 1000 * 60 * 15, // 15 minutos
-    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em memória
   });
 }
