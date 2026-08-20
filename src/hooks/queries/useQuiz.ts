@@ -1,11 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import {
-  getQuiz,
-  getCategories,
-  getSubcategories,
-  getUserProgress,
-  getUserDetailedStats,
-} from "@/services/firebase/quizService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { quizApiService } from "@/services/api/quizApiService";
+import { IQuestionReportPayload, IQuizSubmitPayload } from "@/types/quiz";
 
 // ==================== QUERY KEYS ====================
 
@@ -17,21 +12,18 @@ export const QUIZ_KEYS = {
   quiz: (subcategoryId: string) => [...QUIZ_KEYS.all, "quiz", subcategoryId] as const,
   userProgress: (userId: string) => [...QUIZ_KEYS.all, "progress", userId] as const,
   detailedStats: (userId: string) => [...QUIZ_KEYS.all, "detailed-stats", userId] as const,
+  history: () => [...QUIZ_KEYS.all, "history"] as const,
 };
 
 // ==================== HOOKS ====================
 
 /**
- * Hook para buscar todas as categorias de quizzes.
- * 
- * 🛑 Otimização de Custos (Firestore Reads):
- * - Dados estáticos da aplicação (revisados raramente via Admin).
- * - Cache-First via MMKV no quizService + staleTime de 24 horas. Zero custo de leitura após aquecimento.
+ * Hook para buscar todas as categorias de quizzes via API REST.
  */
 export function useCategories() {
   return useQuery({
     queryKey: QUIZ_KEYS.categories(),
-    queryFn: () => getCategories(),
+    queryFn: () => quizApiService.getCategories(),
     staleTime: 1000 * 60 * 60 * 24, // 24 horas
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em memória
     refetchOnMount: false,
@@ -39,15 +31,12 @@ export function useCategories() {
 }
 
 /**
- * Hook para buscar subcategorias de uma categoria específica.
- * 
- * 🛑 Otimização de Custos (Firestore Reads):
- * - Conteúdo estático mantido por 24 horas no cache.
+ * Hook para buscar subcategorias de uma categoria específica via API REST.
  */
 export function useSubcategories(categoryId: string) {
   return useQuery({
     queryKey: QUIZ_KEYS.subcategories(categoryId),
-    queryFn: () => getSubcategories(categoryId),
+    queryFn: () => quizApiService.getSubcategories(categoryId),
     enabled: !!categoryId,
     staleTime: 1000 * 60 * 60 * 24, // 24 horas
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em memória
@@ -56,16 +45,13 @@ export function useSubcategories(categoryId: string) {
 }
 
 /**
- * Hook para buscar um quiz específico por subcategoria.
- * 
- * 🛑 Otimização de Custos (Firestore Reads):
- * - Perguntas do quiz mantidas em memória por 1 hora.
+ * Hook para buscar um quiz específico por ID/subcategoria via API REST.
  */
-export function useQuiz(subcategoryId: string, enabled = true) {
+export function useQuiz(quizId: string, enabled = true) {
   return useQuery({
-    queryKey: QUIZ_KEYS.quiz(subcategoryId),
-    queryFn: () => getQuiz(subcategoryId),
-    enabled: !!subcategoryId && enabled,
+    queryKey: QUIZ_KEYS.quiz(quizId),
+    queryFn: () => quizApiService.getQuizById(quizId),
+    enabled: !!quizId && enabled,
     staleTime: 1000 * 60 * 60, // 1 hora
     gcTime: 1000 * 60 * 60 * 24, // 24 horas em memória
     refetchOnMount: false,
@@ -73,39 +59,79 @@ export function useQuiz(subcategoryId: string, enabled = true) {
 }
 
 /**
- * Hook para buscar o progresso do usuário por categoria (Home de Fixe).
- * 
- * 🛑 Estratégia de Otimização de Custos & Sincronização:
- * - Sincronizado com `useUserDetailedStats` (5 min em prod, 0 em dev).
- * - refetchOnMount: true para re-sincronizar barras de progresso da home ao retornar de um quiz.
- * - Invalidação automática disparada ao salvar resultado em StandardQuiz / DailyQuiz.
+ * Hook para buscar o progresso do usuário por categoria (Home de Fixe) via API REST.
  */
 export function useUserQuizProgress(userId: string) {
   return useQuery({
     queryKey: QUIZ_KEYS.userProgress(userId),
-    queryFn: () => getUserProgress(userId),
+    queryFn: () => quizApiService.getUserProgress(userId),
     enabled: !!userId,
-    staleTime: __DEV__ ? 0 : 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60,
     refetchOnMount: true,
   });
 }
 
 /**
- * Hook para buscar estatísticas detalhadas do usuário (Meu Desempenho).
- * 
- * 🛑 Estratégia de Otimização de Custos & Sincronização:
- * - Sincronizado com `useUserQuizProgress` (5 min em prod, 0 em dev).
- * - refetchOnMount: true para garantir sincronia imediata ao abrir a tela de estatísticas.
- * - Invalidação automática disparada conjuntamente com `userProgress`.
+ * Hook para buscar estatísticas detalhadas do usuário (Meu Desempenho) via API REST.
  */
 export function useUserDetailedStats(userId: string) {
   return useQuery({
     queryKey: QUIZ_KEYS.detailedStats(userId),
-    queryFn: () => getUserDetailedStats(userId),
+    queryFn: () => quizApiService.getUserDetailedStats(userId),
     enabled: !!userId && userId !== "guest",
-    staleTime: __DEV__ ? 0 : 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60,
     refetchOnMount: true,
+  });
+}
+
+/**
+ * Hook para buscar o histórico de quizzes concluídos do usuário via API REST.
+ */
+export function useQuizHistory() {
+  return useQuery({
+    queryKey: QUIZ_KEYS.history(),
+    queryFn: () => quizApiService.getUserQuizHistory(),
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+}
+
+/**
+ * Hook de mutação para submeter o resultado de um quiz via API REST.
+ * Atualiza sincronizadamente o histórico e o ranking/leaderboard do usuário.
+ */
+export function useSubmitQuiz() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      quizId,
+      payload,
+    }: {
+      quizId: string;
+      payload: IQuizSubmitPayload;
+    }) => quizApiService.submitQuiz(quizId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.history() });
+      queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
+      queryClient.invalidateQueries({ queryKey: ["user-scores"] });
+    },
+  });
+}
+
+/**
+ * Hook de mutação para reportar erro em uma questão via API REST.
+ */
+export function useReportQuestion() {
+  return useMutation({
+    mutationFn: ({
+      questionId,
+      payload,
+    }: {
+      questionId: string;
+      payload: IQuestionReportPayload;
+    }) => quizApiService.reportQuestion(questionId, payload),
   });
 }

@@ -93,3 +93,34 @@ export interface ISubcategory {
   questionCount: number;
   completed?: boolean; // Se o usuário já completou
 }
+
+// Submissão de respostas de quiz
+export interface IQuizSubmitAnswer {
+  questionIndex: number;
+  selectedIndex: number | null;
+}
+
+export interface IQuizSubmitPayload {
+  categoryId?: string;
+  subcategoryId?: string;
+  timeSpentSeconds?: number;
+  answers: IQuizSubmitAnswer[];
+}
+
+export interface IQuizSubmitResult {
+  historyId?: string;
+  quizId: string;
+  score: number;
+  totalQuestions: number;
+  correctAnswers: number;
+  percentage: number;
+  earnedPoints: number;
+  level: "Ótimo" | "Bom" | "Regular" | "Fraco";
+  completedAt: string;
+}
+
+export interface IQuestionReportPayload {
+  reason: string;
+  details?: string;
+}
+

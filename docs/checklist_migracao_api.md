@@ -19,7 +19,7 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 - [x] **Módulo 1: Autenticação, Usuários & Perfil** `[5/5]`
 - [x] **Módulo 2: Cursos, Aulas & Conteúdo Didático** `[6/6]`
 - [x] **Módulo 3: Exercícios Práticos & Avaliações** `[4/4]`
-- [ ] **Módulo 4: Quizzes & Histórico de Tentativas** `[0/5]`
+- [x] **Módulo 4: Quizzes & Histórico de Tentativas** `[5/5]`
 - [ ] **Módulo 5: Conteúdos Espíritas, Meditações & Orações** `[0/7]`
 - [ ] **Módulo 6: Fórum de Lições & Reações** `[0/4]`
 - [ ] **Módulo 7: Progresso, Certificados, Favoritos & Notificações** `[0/5]`
@@ -105,20 +105,20 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 
 ## 🧩 Módulo 4: Quizzes & Histórico de Tentativas
 
-- [ ] **4.1 Service de Quizzes (`quizApiService.ts`)**:
+- [x] **4.1 Service de Quizzes (`quizApiService.ts`)**:
   - `getCategories()` ➔ `GET /api/v1/quizzes/categories`
   - `getQuizzesByCategory(categoryId)` ➔ `GET /api/v1/quizzes/category/{categoryId}`
   - `getQuizById(quizId)` ➔ `GET /api/v1/quizzes/{quizId}` (questões e alternativas em `JSONB`)
   - `submitQuiz(quizId, answers)` ➔ `POST /api/v1/quizzes/{quizId}/submit`
   - `getUserQuizHistory()` ➔ `GET /api/v1/quizzes/history/me`
   - `reportQuestion(questionId, reason)` ➔ `POST /api/v1/quizzes/questions/{questionId}/report`
-- [ ] **4.2 Mapeamento e Parsing de Questões**:
+- [x] **4.2 Mapeamento e Parsing de Questões**:
   - Atualizar tipos TypeScript para paridade com os DTOs do backend.
-- [ ] **4.3 Atualização de Pontuação e Integrador de Scores**:
+- [x] **4.3 Atualização de Pontuação e Integrador de Scores**:
   - Garantir atualização síncrona de pontos em `user_scores` após envio de quizzes com sucesso.
-- [ ] **4.4 Migração dos Hooks do React Query (`useQuizzes`, `useQuizHistory`)**:
+- [x] **4.4 Migração dos Hooks do React Query (`useQuizzes`, `useQuizHistory`)**:
   - Substituir queries diretas ao Firestore pelo `quizApiService.ts`.
-- [ ] **4.5 Validação do Fluxo de Quiz na UI**:
+- [x] **4.5 Validação do Fluxo de Quiz na UI**:
   - Testar listagem de categorias FIXE, execução do quiz, resultado e reporte de erros em questões.
 
 ---
@@ -231,3 +231,4 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 | :--- | :--- | :--- | :--- |
 | **2026-08-19** | Antigravity AI | Todos os Módulos | Criação do documento inicial de checklist e tarefas de migração da API REST no `SaberEspirita-Expo`. |
 | **2026-08-20** | Antigravity AI | Módulo 3 | Implementação de `exerciseApiService.ts`, DTOs de submissão e atualização dos hooks do React Query (`useExercises`). |
+| **2026-08-20** | Antigravity AI | Módulo 4 | Implementação de `quizApiService.ts`, DTOs de submissão/reporte e atualização dos hooks do React Query (`useQuiz`). |
