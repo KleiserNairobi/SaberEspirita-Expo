@@ -23,7 +23,7 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 - [x] **Módulo 5: Conteúdos Espíritas, Meditações & Orações** `[7/7]`
 - [x] **Módulo 6: Fórum de Lições & Reações** `[4/4]`
 - [x] **Módulo 7: Progresso, Certificados, Favoritos & Notificações** `[5/5]`
-- [ ] **Módulo 8: Estatísticas, Logs & Leaderboard** `[0/4]`
+- [x] **Módulo 8: Estatísticas, Logs & Leaderboard** `[4/4]`
 - [ ] **Módulo 9: Upload de Mídias (Cloudflare R2)** `[0/2]`
 - [ ] **Módulo 10: Assistentes de IA & Chatbots (DeepSeek API)** `[0/3]`
 - [ ] **Módulo 12: Configurações Globais & Controle de Versão (AppConfig)** `[0/2]`
@@ -180,17 +180,17 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 
 ## 📈 Módulo 8: Estatísticas, Logs & Leaderboard
 
-- [ ] **8.1 Service do Leaderboard (`leaderboardApiService.ts`)**:
+- [x] **8.1 Service do Leaderboard (`leaderboardApiService.ts`)**:
   - `getWeeklyRanking()` ➔ `GET /api/v1/leaderboard/weekly`
   - `getMonthlyRanking()` ➔ `GET /api/v1/leaderboard/monthly`
   - `getAllTimeRanking()` ➔ `GET /api/v1/leaderboard/all-time`
   - `getMyPosition()` ➔ `GET /api/v1/leaderboard/me`
-- [ ] **8.2 Service de Telemetria & Logs (`statsApiService.ts`)**:
+- [x] **8.2 Service de Telemetria & Logs (`statsApiService.ts`)**:
   - `logEvent(eventData)` ➔ `POST /api/v1/logs/event`
   - `getGlobalStats()` ➔ `GET /api/v1/stats/global`
-- [ ] **8.3 Integração com Hooks do React Query (`useLeaderboard`)**:
+- [x] **8.3 Integração com Hooks do React Query (`useLeaderboard`)**:
   - Atualizar abas de ranking semanal, mensal e geral.
-- [ ] **8.4 Validação do Ranking e Telemetria**:
+- [x] **8.4 Validação do Ranking e Telemetria**:
   - Testar exibição da posição do usuário autenticado no ranking e envio de eventos de auditoria.
 
 ---
@@ -235,3 +235,4 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 | **2026-08-20** | Antigravity AI | Módulo 5 | Criação dos serviços REST (`glossaryApiService`, `reflectionApiService`, `meditationApiService`, `podcastApiService`, `prayerApiService`, `ambientAudioApiService`) e atualização de hooks. |
 | **2026-08-20** | Antigravity AI | Módulo 6 | Implementação do `forumApiService.ts`, suporte à paginação infinita e atualização otimista de reações no `useLessonForum.ts`. |
 | **2026-08-20** | Antigravity AI | Módulo 7 | Criação dos serviços REST (`userActivityApiService`, `favoritesApiService`, `truthOrFalseApiService`, `notificationApiService`) e atualização de hooks. |
+| **2026-08-20** | Antigravity AI | Módulo 8 | Criação dos serviços REST (`leaderboardApiService`, `statsApiService`) e atualização do hook `useLeaderboard.ts`. |
