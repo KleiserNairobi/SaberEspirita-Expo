@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { courseApiService } from "@/services/api/courseApiService";
-import { getCourseAverageRating as getCourseAverageRatingFirestore } from "@/services/firebase/courseFeedbackService";
 
 export const RATING_KEYS = {
   detail: (id: string) => ["courseRating", id] as const,
 };
-
 async function fetchCourseRating(courseId: string): Promise<number | null> {
   try {
     const feedbacks = await courseApiService.getCourseFeedbacks(courseId);
@@ -14,9 +13,9 @@ async function fetchCourseRating(courseId: string): Promise<number | null> {
       return Math.floor((total / feedbacks.length) * 10) / 10;
     }
   } catch (error) {
-    console.warn(`useCourseRating(${courseId}): Falha na API REST, utilizando fallback do Firestore:`, error);
+    console.warn(`useCourseRating(${courseId}): Erro ao buscar avaliacoes:`, error);
   }
-  return await getCourseAverageRatingFirestore(courseId);
+  return 0;
 }
 
 export function useCourseRating(courseId: string) {
@@ -28,4 +27,3 @@ export function useCourseRating(courseId: string) {
     gcTime: 1000 * 60 * 60 * 24, // 24 horas
   });
 }
-

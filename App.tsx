@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import { Platform } from "react-native";
 
-import { HotUpdater } from "@hot-updater/react-native";
-
 import { Allura_400Regular } from "@expo-google-fonts/allura";
 import {
   BarlowCondensed_300Light,
@@ -22,6 +20,7 @@ import {
   useFonts,
 } from "@expo-google-fonts/oswald";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { HotUpdater } from "@hot-updater/react-native";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
@@ -229,7 +228,8 @@ TrackPlayer.registerPlaybackService(() => playbackService);
 
 // Registra o componente raiz com Expo
 const WrappedApp = HotUpdater.wrap({
-  baseURL: "https://saber-espirita-hot-updater-worker.kleiser-nairobi.workers.dev/api/check-update",
+  baseURL:
+    "https://saber-espirita-hot-updater-worker.kleiser-nairobi.workers.dev/api/check-update",
   updateStrategy: "fingerprint",
 })(App);
 

@@ -1,5 +1,12 @@
-import { ChatType, LimitCheckResult } from "@/services/firebase/chatLimitsService";
+import { ChatType } from "@/services/api/chatApiService";
 import * as Storage from "@/utils/Storage";
+
+export interface LimitCheckResult {
+  canSend: boolean;
+  reason?: string;
+  remainingToday?: number;
+  remainingMonth?: number;
+}
 
 const GUEST_LIMITS = {
   messagesPerDayPerChat: 3,

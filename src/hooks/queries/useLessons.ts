@@ -1,9 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { lessonApiService } from "@/services/api/lessonApiService";
-import {
-  getLessonsByCourseId as getLessonsByCourseIdFirestore,
-  getLessonById as getLessonByIdFirestore,
-} from "@/services/firebase/lessonService";
 import { ILesson } from "@/types/course";
 
 export const LESSONS_KEYS = {
@@ -17,19 +14,22 @@ async function fetchLessonsByCourse(courseId: string): Promise<ILesson[]> {
     const lessons = await lessonApiService.getLessonsByCourseId(courseId);
     if (lessons && lessons.length > 0) return lessons;
   } catch (error) {
-    console.warn(`useLessons(${courseId}): Falha na API REST, utilizando fallback do Firestore:`, error);
+    console.warn(`useLessons(${courseId}): Erro ao buscar liçoes:`, error);
   }
-  return await getLessonsByCourseIdFirestore(courseId);
+  return [];
 }
 
-async function fetchLessonById(courseId: string, lessonId: string): Promise<ILesson | null> {
+async function fetchLessonById(
+  courseId: string,
+  lessonId: string
+): Promise<ILesson | null> {
   try {
     const lesson = await lessonApiService.getLessonById(lessonId);
     if (lesson) return lesson;
   } catch (error) {
-    console.warn(`useLesson(${lessonId}): Falha na API REST, utilizando fallback do Firestore:`, error);
+    console.warn(`useLesson(${lessonId}): Erro ao buscar lição:`, error);
   }
-  return await getLessonByIdFirestore(courseId, lessonId);
+  return null;
 }
 
 export function useLessons(courseId: string) {
@@ -53,4 +53,3 @@ export function useLesson(courseId: string, lessonId: string) {
     refetchOnReconnect: true,
   });
 }
-

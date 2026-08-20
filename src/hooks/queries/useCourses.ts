@@ -1,10 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { courseApiService } from "@/services/api/courseApiService";
-import {
-  getCourses as getCoursesFirestore,
-  getFeaturedCourses as getFeaturedCoursesFirestore,
-  getCourseById as getCourseByIdFirestore,
-} from "@/services/firebase/courseService";
 import { ICourse } from "@/types/course";
 
 export const COURSES_KEYS = {
@@ -12,13 +7,12 @@ export const COURSES_KEYS = {
   featured: ["courses", "featured"] as const,
   detail: (id: string) => ["courses", "detail", id] as const,
 };
-
 async function fetchCourses(): Promise<ICourse[]> {
   try {
     return await courseApiService.getCourses();
   } catch (error) {
-    console.warn("useCourses: Falha na API REST, utilizando fallback do Firestore:", error);
-    return await getCoursesFirestore();
+    console.warn("useCourses: Erro ao buscar cursos:", error);
+    return [];
   }
 }
 
@@ -26,8 +20,8 @@ async function fetchFeaturedCourses(): Promise<ICourse[]> {
   try {
     return await courseApiService.getFeaturedCourses();
   } catch (error) {
-    console.warn("useFeaturedCourses: Falha na API REST, utilizando fallback do Firestore:", error);
-    return await getFeaturedCoursesFirestore();
+    console.warn("useFeaturedCourses: Erro ao buscar cursos em destaque:", error);
+    return [];
   }
 }
 
@@ -36,9 +30,9 @@ async function fetchCourseById(id: string): Promise<ICourse | null> {
     const course = await courseApiService.getCourseById(id);
     if (course) return course;
   } catch (error) {
-    console.warn(`useCourse(${id}): Falha na API REST, utilizando fallback do Firestore:`, error);
+    console.warn(`useCourse(${id}): Erro ao buscar curso:`, error);
   }
-  return await getCourseByIdFirestore(id);
+  return null;
 }
 
 export function useCourses() {

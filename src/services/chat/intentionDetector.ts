@@ -98,3 +98,40 @@ export const detectIntention = (userMessage: string): IntentionResult => {
     shouldRespond: true,
   };
 };
+
+/**
+ * Verifica se uma mensagem deve ser bloqueada (saudações e despedidas simples)
+ * para economizar chamadas de API.
+ */
+export function shouldBlockMessage(
+  message: string,
+  chatType: any
+): { blocked: boolean; response?: string } {
+  const intention = detectIntention(message);
+
+  if (intention.type === IntentionType.GREETING) {
+    const isEmotional = chatType === "emotional" || chatType === "EMOTIONAL";
+    const greetingResponse = isEmotional
+      ? `Olá, amigo(a)! 🕊️\n\nSeja muito bem-vindo(a). Estou aqui para oferecer apoio emocional e consolo espiritual.\n\nComo posso ajudar seu coração hoje?`
+      : `Olá! 📚\n\nSeja muito bem-vindo(a). Estou aqui para esclarecer suas dúvidas sobre a Doutrina Espírita.\n\nQual é sua pergunta?`;
+
+    return {
+      blocked: true,
+      response: greetingResponse,
+    };
+  }
+
+  if (intention.type === IntentionType.END_CONVERSATION) {
+    const isEmotional = chatType === "emotional" || chatType === "EMOTIONAL";
+    const farewellResponse = isEmotional
+      ? `Que a paz esteja com você, amigo(a). 🙏\n\nEstarei aqui sempre que precisar de apoio e consolo.\n\nAté breve!`
+      : `Foi um prazer esclarecer suas dúvidas! 📚\n\nQue a luz do conhecimento ilumine seu caminho.\n\nAté a próxima!`;
+
+    return {
+      blocked: true,
+      response: farewellResponse,
+    };
+  }
+
+  return { blocked: false };
+}

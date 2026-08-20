@@ -1,4 +1,3 @@
-import apiClient from "./apiClient";
 import {
   ICategory,
   IQuestionReportPayload,
@@ -9,6 +8,8 @@ import {
   ISubcategory,
   IUserDetailedStats,
 } from "@/types/quiz";
+
+import apiClient from "./apiClient";
 
 export const quizApiService = {
   /**
@@ -49,6 +50,14 @@ export const quizApiService = {
   },
 
   /**
+   * Obtém o quiz diário para o dia atual.
+   */
+  async getDailyQuiz(): Promise<IQuiz | null> {
+    const response = await apiClient.get<IQuiz>("/quizzes/daily");
+    return response.data || null;
+  },
+
+  /**
    * Submete as respostas de um quiz para processamento e atualização de pontuação.
    */
   async submitQuiz(
@@ -74,7 +83,8 @@ export const quizApiService = {
    * Obtém o mapa de subcategorias concluídas pelo usuário agrupadas por categoria.
    */
   async getUserProgress(_userId?: string): Promise<Record<string, string[]>> {
-    const response = await apiClient.get<Record<string, string[]>>("/quizzes/progress/me");
+    const response =
+      await apiClient.get<Record<string, string[]>>("/quizzes/progress/me");
     return response.data || {};
   },
 
@@ -83,13 +93,15 @@ export const quizApiService = {
    */
   async getUserDetailedStats(_userId?: string): Promise<IUserDetailedStats> {
     const response = await apiClient.get<IUserDetailedStats>("/quizzes/stats/me");
-    return response.data || {
-      totalQuestions: 0,
-      accuracyRate: 0,
-      activeDays: 0,
-      bestScore: 0,
-      categoriesProgress: [],
-    };
+    return (
+      response.data || {
+        totalQuestions: 0,
+        accuracyRate: 0,
+        activeDays: 0,
+        bestScore: 0,
+        categoriesProgress: [],
+      }
+    );
   },
 
   /**
