@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-
-import { getFeaturedPrayers } from "@/services/firebase/prayerService";
+import { prayerApiService } from "@/services/api/prayerApiService";
 
 export function useFeaturedPrayers() {
   return useQuery({
     queryKey: ["prayers", "featured"],
-    queryFn: getFeaturedPrayers,
+    queryFn: async () => {
+      const prayers = await prayerApiService.getPrayers();
+      return prayers.filter((p) => p.featured);
+    },
     staleTime: 1000 * 60 * 5, // 5 minutos
     refetchOnWindowFocus: true,
   });

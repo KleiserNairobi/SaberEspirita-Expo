@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-
-import { getPrayerCategories } from "@/services/firebase/prayerService";
+import { prayerApiService } from "@/services/api/prayerApiService";
 
 export function usePrayerCategories() {
   return useQuery({
     queryKey: ["prayerCategories"],
-    queryFn: getPrayerCategories,
+    queryFn: () => prayerApiService.getPrayerCategories(),
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 }

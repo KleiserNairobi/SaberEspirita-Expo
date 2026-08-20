@@ -20,7 +20,7 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 - [x] **Módulo 2: Cursos, Aulas & Conteúdo Didático** `[6/6]`
 - [x] **Módulo 3: Exercícios Práticos & Avaliações** `[4/4]`
 - [x] **Módulo 4: Quizzes & Histórico de Tentativas** `[5/5]`
-- [ ] **Módulo 5: Conteúdos Espíritas, Meditações & Orações** `[0/7]`
+- [x] **Módulo 5: Conteúdos Espíritas, Meditações & Orações** `[7/7]`
 - [ ] **Módulo 6: Fórum de Lições & Reações** `[0/4]`
 - [ ] **Módulo 7: Progresso, Certificados, Favoritos & Notificações** `[0/5]`
 - [ ] **Módulo 8: Estatísticas, Logs & Leaderboard** `[0/4]`
@@ -125,19 +125,19 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 
 ## 📖 Módulo 5: Conteúdos Espíritas, Meditações & Orações
 
-- [ ] **5.1 Glossário Kardequiano (`glossaryApiService.ts`)**:
+- [x] **5.1 Glossário Kardequiano (`glossaryApiService.ts`)**:
   - `GET /api/v1/glossary` e `GET /api/v1/glossary/{id}` (busca por termo e categoria).
-- [ ] **5.2 Reflexões Diárias (`reflectionApiService.ts`)**:
+- [x] **5.2 Reflexões Diárias (`reflectionApiService.ts`)**:
   - `GET /api/v1/reflections/today` e `GET /api/v1/reflections`.
-- [ ] **5.3 Meditações Guiadas (`meditationApiService.ts`)**:
+- [x] **5.3 Meditações Guiadas (`meditationApiService.ts`)**:
   - `GET /api/v1/meditations/categories` e `GET /api/v1/meditations`.
-- [ ] **5.4 Podcasts Espíritas (`podcastApiService.ts`)**:
+- [x] **5.4 Podcasts Espíritas (`podcastApiService.ts`)**:
   - `GET /api/v1/podcasts`.
-- [ ] **5.5 Central de Orações (`prayerApiService.ts`)**:
+- [x] **5.5 Central de Orações (`prayerApiService.ts`)**:
   - `GET /api/v1/prayers/categories`, `GET /api/v1/prayers` e `GET /api/v1/prayers/{id}`.
-- [ ] **5.6 Áudios Ambientes (`ambientAudioApiService.ts`)**:
+- [x] **5.6 Áudios Ambientes (`ambientAudioApiService.ts`)**:
   - `GET /api/v1/ambient-audios`.
-- [ ] **5.7 Atualização dos Players de Áudio (Track Player / Expo Sound)**:
+- [x] **5.7 Atualização dos Players de Áudio (Track Player / Expo Sound)**:
   - Garantir streaming direto das URLs Cloudflare R2 retornadas pelos endpoints da API REST.
 
 ---
@@ -232,3 +232,4 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 | **2026-08-19** | Antigravity AI | Todos os Módulos | Criação do documento inicial de checklist e tarefas de migração da API REST no `SaberEspirita-Expo`. |
 | **2026-08-20** | Antigravity AI | Módulo 3 | Implementação de `exerciseApiService.ts`, DTOs de submissão e atualização dos hooks do React Query (`useExercises`). |
 | **2026-08-20** | Antigravity AI | Módulo 4 | Implementação de `quizApiService.ts`, DTOs de submissão/reporte e atualização dos hooks do React Query (`useQuiz`). |
+| **2026-08-20** | Antigravity AI | Módulo 5 | Criação dos serviços REST (`glossaryApiService`, `reflectionApiService`, `meditationApiService`, `podcastApiService`, `prayerApiService`, `ambientAudioApiService`) e atualização de hooks. |

@@ -1,12 +1,8 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { IGlossaryTerm } from "@/types/glossary";
 import { GlossaryFilterType } from "@/types/glossaryFilter";
-import {
-  getAllGlossaryTerms,
-  getGlossaryTermById,
-} from "@/services/firebase/glossaryService";
+import { glossaryApiService } from "@/services/api/glossaryApiService";
 
 export const GLOSSARY_KEYS = {
   all: ["glossary", "v1"] as const,
@@ -17,7 +13,7 @@ export const GLOSSARY_KEYS = {
 export function useGlossaryTerms() {
   return useQuery({
     queryKey: GLOSSARY_KEYS.all,
-    queryFn: getAllGlossaryTerms,
+    queryFn: () => glossaryApiService.getGlossaryTerms(),
     staleTime: 1000 * 60 * 60 * 24, // 24 horas
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
     refetchOnMount: false,
@@ -28,7 +24,7 @@ export function useGlossaryTerms() {
 export function useGlossaryTerm(id: string) {
   return useQuery({
     queryKey: GLOSSARY_KEYS.term(id),
-    queryFn: () => getGlossaryTermById(id),
+    queryFn: () => glossaryApiService.getGlossaryTermById(id),
     enabled: !!id,
     staleTime: 1000 * 60 * 60 * 24, // 24 horas
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias

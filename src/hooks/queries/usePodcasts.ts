@@ -1,10 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-
-import {
-  getFeaturedPodcasts,
-  getPodcastById,
-  getPodcasts,
-} from "@/services/firebase/podcastService";
+import { podcastApiService } from "@/services/api/podcastApiService";
 
 export const PODCAST_KEYS = {
   all: ["podcasts", "v1"] as const,
@@ -15,7 +10,7 @@ export const PODCAST_KEYS = {
 export function usePodcasts() {
   return useQuery({
     queryKey: PODCAST_KEYS.all,
-    queryFn: getPodcasts,
+    queryFn: () => podcastApiService.getPodcasts(),
     staleTime: 1000 * 60 * 60 * 24, // 24 horas
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
     refetchOnMount: false,
@@ -26,7 +21,10 @@ export function usePodcasts() {
 export function useFeaturedPodcasts() {
   return useQuery({
     queryKey: PODCAST_KEYS.featured,
-    queryFn: getFeaturedPodcasts,
+    queryFn: async () => {
+      const podcasts = await podcastApiService.getPodcasts();
+      return podcasts.filter((p) => p.featured);
+    },
     staleTime: 1000 * 60 * 60 * 24, // 24 horas
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
     refetchOnMount: false,
@@ -37,7 +35,7 @@ export function useFeaturedPodcasts() {
 export function usePodcast(id: string) {
   return useQuery({
     queryKey: PODCAST_KEYS.detail(id),
-    queryFn: () => getPodcastById(id),
+    queryFn: () => podcastApiService.getPodcastById(id),
     enabled: !!id,
     staleTime: 1000 * 60 * 60 * 24, // 24 horas
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
