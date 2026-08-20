@@ -19,7 +19,6 @@ import { TermsAndPrivacy } from "@/components/TermsAndPrivacy";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { createStyles } from "./styles";
-import { userService } from "@/services/firebase/userService";
 
 type RegisterScreenNavigationProp = NativeStackNavigationProp<
   AuthStackParamList,
@@ -99,12 +98,6 @@ export function RegisterScreen() {
 
       if (token) {
         await signInWithGoogle(token, name);
-
-        // Garantir que o usuário e seu score existam no Firestore
-        const currentUser = useAuthStore.getState().user;
-        if (currentUser) {
-          await userService.ensureUserSync(currentUser);
-        }
       }
     } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -130,12 +123,6 @@ export function RegisterScreen() {
     try {
       clearError();
       await signInWithApple();
-
-      // Garantir que o usuário e seu score existam no Firestore
-      const currentUser = useAuthStore.getState().user;
-      if (currentUser) {
-        await userService.ensureUserSync(currentUser);
-      }
     } catch (error: any) {
       if (error?.code !== "ERR_REQUEST_CANCELED") {
         setBottomSheetConfig({

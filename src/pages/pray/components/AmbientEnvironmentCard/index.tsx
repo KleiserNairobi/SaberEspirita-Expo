@@ -16,7 +16,7 @@ import { State, usePlaybackState } from "react-native-track-player";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
 import { useSuggestedContent } from "@/pages/pray/hooks/useSuggestedContent";
-import { downloadAudio } from "@/services/firebase/ambientAudioService";
+import { getCachedAudioUri } from "@/services/audio/audioCacheService";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { useMoodStore } from "@/stores/moodStore";
 import { IAmbientAudio } from "@/types/ambientAudio";
@@ -126,7 +126,7 @@ export function AmbientEnvironmentCard({
         );
 
         // Baixa o áudio em segundo plano
-        const localUri = await downloadAudio(audio.storagePath, audio.fileName);
+        const localUri = await getCachedAudioUri(audio.storagePath, audio.fileName);
         setCurrentTrack(localUri, audio.id);
       } catch (error) {
         Alert.alert("Erro", "Não foi possível carregar este áudio ambiente.");

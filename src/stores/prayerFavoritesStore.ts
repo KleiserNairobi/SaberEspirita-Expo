@@ -3,10 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 
 import { useAuthStore } from "@/stores/authStore";
 import { storage } from "@/utils/Storage";
-import {
-  getUserFavoritePrayers,
-  syncUserFavoritePrayers,
-} from "@/services/firebase/prayerFavoritesService";
+import { favoritesApiService } from "@/services/api/favoritesApiService";
 
 interface PrayerFavoritesState {
   favorites: string[];
@@ -32,8 +29,7 @@ export const usePrayerFavoritesStore = create<PrayerFavoritesState>()(
         set((state) => {
           if (state.favorites.includes(prayerId)) return state;
           const newFavorites = [...state.favorites, prayerId];
-          const uid = useAuthStore.getState().user?.uid;
-          if (uid) syncUserFavoritePrayers(uid, newFavorites);
+          favoritesApiService.togglePrayerFavorite(prayerId).catch(() => {});
           return { favorites: newFavorites };
         });
       },
@@ -41,8 +37,7 @@ export const usePrayerFavoritesStore = create<PrayerFavoritesState>()(
       removeFavorite: (prayerId: string) => {
         set((state) => {
           const newFavorites = state.favorites.filter((id) => id !== prayerId);
-          const uid = useAuthStore.getState().user?.uid;
-          if (uid) syncUserFavoritePrayers(uid, newFavorites);
+          favoritesApiService.togglePrayerFavorite(prayerId).catch(() => {});
           return { favorites: newFavorites };
         });
       },
@@ -60,20 +55,14 @@ export const usePrayerFavoritesStore = create<PrayerFavoritesState>()(
         }
       },
 
-      syncWithFirebase: async (userId: string) => {
+      syncWithFirebase: async (_userId: string) => {
         try {
-          const remoteFavorites = await getUserFavoritePrayers(userId);
+          const remoteFavorites = await favoritesApiService.getFavoritePrayers();
+          const remoteIds = remoteFavorites.filter(Boolean);
           const localFavorites = get().favorites;
           
-          // Merge local and remote
-          const merged = Array.from(new Set([...localFavorites, ...remoteFavorites]));
-          
+          const merged = Array.from(new Set([...localFavorites, ...remoteIds]));
           set({ favorites: merged });
-          
-          // If merged is larger than remote, push updates to Firebase
-          if (merged.length > remoteFavorites.length) {
-            await syncUserFavoritePrayers(userId, merged);
-          }
         } catch (error) {
           console.warn("[prayerFavoritesStore] Erro no sync:", error);
         }

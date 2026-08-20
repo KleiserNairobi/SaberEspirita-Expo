@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { UserMood } from "@/stores/moodStore";
-import { getPrayersByCategory } from "@/services/firebase/prayerService";
+import { prayerApiService } from "@/services/api/prayerApiService";
 import { useAmbientAudios } from "./useAmbientAudios";
 import { PrayerMoment } from "@/types/prayer";
 import { IAmbientAudio } from "@/types/ambientAudio";
@@ -38,7 +38,7 @@ export function useSuggestedContent(mood: UserMood | null) {
   // Busca orações da categoria sugerida
   const { data: prayers, isLoading: isPrayersLoading } = useQuery({
     queryKey: ["prayers", "suggested", categoryId],
-    queryFn: () => getPrayersByCategory(categoryId),
+    queryFn: () => prayerApiService.getPrayers({ categoryId }),
     enabled: !!categoryId,
   });
 

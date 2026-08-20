@@ -20,7 +20,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { EditProfileBottomSheet } from "@/pages/account/components/EditProfileBottomSheet";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { loadBoolean, saveBoolean } from "@/utils/Storage";
-import { userService } from "@/services/firebase/userService";
+import { authApiService } from "@/services/api/authApiService";
 
 const HIDE_HINT_KEY = "@hide_leaderboard_hint";
 
@@ -53,7 +53,7 @@ export function LeaderboardScreen() {
   async function handleUpdateName(newName: string) {
     if (!user) return;
     try {
-      await userService.updateUserName(user, newName);
+      await authApiService.updateProfile({ userName: newName });
       // Opcional: fechar o hint após mudar o nome pela primeira vez
       handleCloseHint();
     } catch (error) {

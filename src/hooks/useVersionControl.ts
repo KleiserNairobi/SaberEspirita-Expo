@@ -4,12 +4,9 @@ import * as Application from "expo-application";
 
 import { compareVersions } from "@/utils/compareVersions";
 import {
-  getVersionControlData,
-  updatePlatformVersion,
-  updateMessages,
-  toggleMaintenanceMode,
+  appConfigApiService,
   VersionControlData,
-} from "@/services/firebase/versionControlService";
+} from "@/services/api/appConfigApiService";
 
 interface VersionCheckResult {
   needUpdate: boolean;
@@ -32,7 +29,7 @@ export function useVersionControl() {
   const fetchVersionData = async () => {
     try {
       setLoading(true);
-      const data = await getVersionControlData();
+      const data = await appConfigApiService.getAppConfig();
 
       if (data) {
         setVersionData(data);
@@ -47,35 +44,8 @@ export function useVersionControl() {
   };
 
   // Atualizar dados de version control
-  const updateVersionData = async (newData: Partial<VersionControlData>) => {
-    try {
-      let result;
-
-      if (newData.ios) {
-        result = await updatePlatformVersion("ios", newData.ios);
-      } else if (newData.android) {
-        result = await updatePlatformVersion("android", newData.android);
-      } else if (newData.message !== undefined) {
-        result = await updateMessages(newData.message);
-      } else if (newData.maintenance_mode !== undefined) {
-        result = await toggleMaintenanceMode(
-          newData.maintenance_mode,
-          newData.maintenance_message
-        );
-      } else {
-        throw new Error("Tipo de atualização não suportado");
-      }
-
-      if (result.success) {
-        await fetchVersionData();
-        return { success: true };
-      } else {
-        throw new Error(result.error);
-      }
-    } catch (err: any) {
-      setError(err.message);
-      return { success: false, error: err.message };
-    }
+  const updateVersionData = async (_newData: Partial<VersionControlData>) => {
+    return { success: false, error: "Operação não suportada no cliente" };
   };
 
   // Verificar se precisa de atualização

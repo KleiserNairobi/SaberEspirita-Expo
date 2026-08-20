@@ -23,8 +23,8 @@ import { useCourseExercises, useExercises } from "@/hooks/queries/useExercises";
 import { LESSONS_KEYS, useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
-import { saveCourseFeedback } from "@/services/firebase/courseFeedbackService";
-import { getLessonById } from "@/services/firebase/lessonService";
+import { courseApiService } from "@/services/api/courseApiService";
+import { lessonApiService } from "@/services/api/lessonApiService";
 import { useAuthStore } from "@/stores/authStore";
 import { ILesson } from "@/types/course";
 import { loadBoolean, saveBoolean } from "@/utils/Storage";
@@ -119,9 +119,7 @@ export function CourseCurriculumScreen() {
   const handleSubmitFeedback = async (rating: number, comment: string) => {
     if (!user?.uid || !courseId) return;
 
-    await saveCourseFeedback({
-      userId: user.uid,
-      courseId,
+    await courseApiService.sendCourseFeedback(courseId, {
       rating,
       comment,
     });
@@ -217,7 +215,7 @@ export function CourseCurriculumScreen() {
     lessonsToPrefetch.forEach((lesson) => {
       queryClient.prefetchQuery({
         queryKey: LESSONS_KEYS.detail(courseId, lesson.id),
-        queryFn: () => getLessonById(courseId, lesson.id),
+        queryFn: () => lessonApiService.getLessonById(lesson.id),
         staleTime: 1000 * 60 * 60 * 12, // 12 horas
       });
     });

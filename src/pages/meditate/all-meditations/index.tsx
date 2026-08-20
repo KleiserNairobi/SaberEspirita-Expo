@@ -20,7 +20,7 @@ import {
 import { MEDITATION_KEYS, useMeditations } from "@/hooks/queries/useMeditations";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
-import { getMeditationById } from "@/services/firebase/meditationService";
+import { meditationApiService } from "@/services/api/meditationApiService";
 import { useMeditationPlayerStore } from "@/stores/meditationPlayerStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { MeditationCard } from "../components/MeditationCard";
@@ -107,7 +107,7 @@ export default function AllMeditationsScreen() {
   function prefetchMeditation(id: string, imageUrl?: string) {
     queryClient.prefetchQuery({
       queryKey: MEDITATION_KEYS.detail(id),
-      queryFn: () => getMeditationById(id),
+      queryFn: () => meditationApiService.getMeditationById(id),
       staleTime: 1000 * 60 * 60 * 24, // 24 horas
     });
     if (imageUrl) Image.prefetch(imageUrl);

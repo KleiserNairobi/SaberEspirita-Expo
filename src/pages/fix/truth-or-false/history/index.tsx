@@ -7,7 +7,7 @@ import { ArrowLeft } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
-import { TruthOrFalseService } from "@/services/firebase/truthOrFalseService";
+import { truthOrFalseApiService } from "@/services/api/truthOrFalseApiService";
 import { truthOrFalseQuestions } from "@/data/truthOrFalseQuestions";
 import { HistoryCard } from "@/components/HistoryCard";
 import { IUserTruthOrFalseResponse } from "@/types/userTruthOrFalseResponse";
@@ -29,7 +29,7 @@ export function TruthOrFalseHistoryScreen() {
   async function loadHistory() {
     try {
       setLoading(true);
-      const data = await TruthOrFalseService.getHistory(50);
+      const data = await truthOrFalseApiService.getHistory(50);
       setHistory(data);
     } catch (error) {
       console.error("Erro ao carregar histórico:", error);

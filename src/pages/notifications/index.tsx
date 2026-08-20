@@ -25,7 +25,7 @@ import {
 } from "@/hooks/queries/useNotifications";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import type { AppStackParamList } from "@/routers/types";
-import { getLessonById } from "@/services/firebase/lessonService";
+import { lessonApiService } from "@/services/api/lessonApiService";
 import { useAuthStore } from "@/stores/authStore";
 import type { NotificationItem } from "@/types/notifications";
 
@@ -157,7 +157,7 @@ export function NotificationsScreen({ navigation }: Props) {
           await markRead(item.id);
         }
 
-        const lesson = await getLessonById(item.courseId, item.lessonId);
+        const lesson = await lessonApiService.getLessonById(item.lessonId);
         if (!lesson) {
           setMessageConfig({
             type: "error",

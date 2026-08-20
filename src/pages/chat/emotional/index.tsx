@@ -23,7 +23,7 @@ import { ChatLimitIndicator } from "@/components/ChatLimitIndicator";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { useAuth } from "@/stores/authStore";
-import { logEmotionalChat } from "@/services/firebase/chatAnalyticsService";
+import { statsApiService } from "@/services/api/statsApiService";
 
 export function EmotionalChatScreen() {
   const { user } = useAuth();
@@ -77,7 +77,12 @@ export function EmotionalChatScreen() {
       await sendMessage(text);
 
       // 4. Log Analytics
-      logEmotionalChat(user?.uid || "guest", text.length, { origin });
+      statsApiService.logEvent({
+        eventName: "emotional_chat_message",
+        category: "chat",
+        label: origin || "direct",
+        value: text.length,
+      });
     },
     [limits, sendMessage, incrementUsage, user, origin]
   );

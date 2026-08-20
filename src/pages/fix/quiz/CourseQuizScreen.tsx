@@ -14,8 +14,8 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
-import { getQuizById, logQuizAttempt } from "@/services/firebase/quizService";
-import { saveExerciseResult } from "@/services/firebase/progressService";
+import { quizApiService } from "@/services/api/quizApiService";
+import { statsApiService } from "@/services/api/statsApiService";
 import { COURSE_PROGRESS_KEYS } from "@/hooks/queries/useCourseProgress";
 import { IQuizAnswer } from "@/types/quiz";
 import { Button } from "@/components/Button";
@@ -49,7 +49,7 @@ export function CourseQuizScreen() {
 
   const { data: quiz, isLoading } = useQuery({
     queryKey: ["quiz", quizId],
-    queryFn: () => getQuizById(quizId!, "lesson_quizzes"),
+    queryFn: () => quizApiService.getQuizById(quizId!),
     enabled: !!quizId,
   });
 
@@ -63,16 +63,11 @@ export function CourseQuizScreen() {
       const totalQuestions = quiz.questions.length;
       const percentage = Math.floor((correctAnswers / totalQuestions) * 100);
 
-      await logQuizAttempt({
-        userId: "guest",
-        quizType: "lesson",
-        quizId: quiz.id,
-        quizTitle: subcategoryName || quiz.id,
-        courseId,
-        lessonId,
-        lessonTitle,
-        score: percentage,
-        passed: percentage >= 70,
+      statsApiService.logEvent({
+        eventName: "quiz_attempt",
+        category: "quiz",
+        label: subcategoryName || quiz.id,
+        metadata: { score: percentage, passed: percentage >= 70 },
       });
 
       setMessageConfig({
@@ -113,26 +108,14 @@ export function CourseQuizScreen() {
       const { user } = useAuthStore.getState();
 
       if (user?.uid) {
-        await logQuizAttempt({
-          userId: user.uid,
-          quizType: "lesson",
-          quizId: quiz.id,
-          quizTitle: subcategoryName || quiz.id,
-          courseId,
-          lessonId,
-          lessonTitle,
-          score: percentage,
-          passed: percentage >= 70,
+        statsApiService.logEvent({
+          eventName: "quiz_completed",
+          category: "quiz",
+          label: subcategoryName || quiz.id,
+          metadata: { score: percentage, passed: percentage >= 70 },
         });
 
-        if (courseId && lessonId) {
-          if (exerciseId) {
-            // Salva apenas o resultado do exercício; a conclusão da AULA é responsabilidade do LessonPlayer
-            await saveExerciseResult(courseId, lessonId, exerciseId, percentage, percentage >= 70, user.uid);
-          } else {
-            console.warn("[CourseQuizScreen] exerciseId não fornecido. O progresso não será salvo detalhadamente.");
-          }
-
+        if (courseId) {
           queryClient.invalidateQueries({
             queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, courseId),
           });
@@ -142,8 +125,6 @@ export function CourseQuizScreen() {
           queryClient.invalidateQueries({
             queryKey: ["lastAccessedCourse", user.uid],
           });
-        } else {
-          console.warn("[CourseQuizScreen] missing courseId or lessonId.");
         }
       }
 

@@ -2,8 +2,8 @@ import { useEffect, useRef } from "react";
 
 import { AppState, AppStateStatus } from "react-native";
 
-import { StatsService } from "@/services/firebase/statsService";
-import { userService } from "@/services/firebase/userService";
+import { statsApiService } from "@/services/api/statsApiService";
+import { authApiService } from "@/services/api/authApiService";
 import { useAuthStore } from "@/stores/authStore";
 import { usePreferencesStore } from "@/stores/preferencesStore";
 
@@ -11,8 +11,8 @@ import { usePreferencesStore } from "@/stores/preferencesStore";
 let isFirstExecutionInSession = true;
 
 /**
- * Hook para monitorar a atividade do usuário e atualizar o lastSeenAt no Firestore.
- * Utiliza um sistema de throttle (30 minutos) para economizar recursos do Firebase.
+ * Hook para monitorar a atividade do usuário e registrar telemetria.
+ * Utiliza um sistema de throttle (30 minutos) para economizar recursos.
  */
 export function useUserActivity() {
   const { user, isGuest, lastSeenUpdate, setLastSeenUpdate } = useAuthStore();
@@ -25,24 +25,19 @@ export function useUserActivity() {
 
   const checkAndUpdateActivity = async () => {
     if (isGuest) {
-      await StatsService.logDailyVisit(true);
+      statsApiService.logEvent({ eventName: "daily_visit", category: "session", label: "guest" });
       return;
     }
 
     if (!user) return;
-    await StatsService.logDailyVisit(false);
+    statsApiService.logEvent({ eventName: "daily_visit", category: "session", label: "user" });
     const now = Date.now();
     const currentLastSeen = lastSeenUpdateRef.current;
 
-    // Se for a primeira inicialização do app na sessão atual, ignoramos o throttle de 30 minutos
     if (isFirstExecutionInSession || !currentLastSeen || now - currentLastSeen > THROTTLE_TIME) {
       isFirstExecutionInSession = false;
       try {
-        await userService.updateLastSeen(user.uid);
-        userService.setCourseRemindersPref(
-          user.uid,
-          usePreferencesStore.getState().courseNotifications
-        );
+        await authApiService.updateProfile({});
         setLastSeenUpdate(now);
       } catch (error) {
         console.error("[Activity] Erro ao processar atualização de atividade:", error);

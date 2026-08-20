@@ -12,12 +12,8 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
-import {
-  addUserHistory,
-  incrementUserScore,
-  logQuizAttempt,
-  saveUserCompletedSubcategories,
-} from "@/services/firebase/quizService";
+import { quizApiService } from "@/services/api/quizApiService";
+import { statsApiService } from "@/services/api/statsApiService";
 import { useQuiz, QUIZ_KEYS } from "@/hooks/queries/useQuiz";
 import { IQuizAnswer, IQuizHistory } from "@/types/quiz";
 
@@ -48,11 +44,10 @@ export function StandardQuizScreen() {
     if (!quiz || isSubmitting) return;
 
     if (useAuthStore.getState().isGuest) {
-      await logQuizAttempt({
-        userId: "guest",
-        quizType: "general",
-        quizId: quiz.id,
-        quizTitle: subcategoryName || quiz.id,
+      statsApiService.logEvent({
+        eventName: "quiz_attempt",
+        category: "quiz",
+        label: subcategoryName || quiz.id,
       });
       setMessageConfig({
         type: "info",
@@ -92,36 +87,14 @@ export function StandardQuizScreen() {
       const { user } = useAuthStore.getState();
 
       if (user?.uid && categoryId && subcategoryId) {
-        await logQuizAttempt({
-          userId: user.uid,
-          quizType: "general",
-          quizId: quiz.id,
-          quizTitle: subcategoryName || quiz.id,
+        await quizApiService.submitQuiz(quiz.id, {
+          categoryId,
+          subcategoryId,
+          answers: answers.map((a, index) => ({
+            questionIndex: index,
+            selectedIndex: a.selectedAnswerIndex,
+          })),
         });
-
-        const userHistory: IQuizHistory = {
-          userId: user.uid,
-          categoryId: categoryId,
-          subcategoryId: subcategoryId,
-          quizId: quiz.id,
-          title: categoryName || "Quiz",
-          subtitle: subtitle || subcategoryName || new Date().toLocaleDateString(),
-          completed: true,
-          score: percentage,
-          totalQuestions,
-          correctAnswers,
-          percentage,
-          level,
-          completedAt: new Date(),
-        };
-
-        const promises: Promise<any>[] = [
-          addUserHistory(userHistory, user.displayName || "Usuário"),
-          saveUserCompletedSubcategories(user.uid, categoryId, subcategoryId)
-        ];
-
-        await Promise.all(promises);
-        await incrementUserScore(user.uid, user.displayName || "Usuário", percentage);
 
         queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.userProgress(user.uid) });
         queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.detailedStats(user.uid) });

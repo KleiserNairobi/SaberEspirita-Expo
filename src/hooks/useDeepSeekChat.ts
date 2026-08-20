@@ -3,9 +3,9 @@ import { Message, ChatMessage, UseChatReturn } from "@/types/chat";
 import {
   detectIntention,
   IntentionType,
-  getChatService,
   shouldBlockMessage,
 } from "@/services/chat";
+import { chatApiService } from "@/services/api/chatApiService";
 import { ChatType } from "@/services/prompt";
 
 /**
@@ -99,22 +99,15 @@ export function useDeepSeekChat(chatType: ChatType = ChatType.EMOTIONAL): UseCha
 
         setMessages((prev) => [...prev, assistantMsg]);
 
-        // Converte histórico anterior para formato da API
-        const apiHistory = toApiMessages(historySnapshot);
+        // Converte o histórico anterior + nova mensagem para o formato da API
+        const apiMessages = [
+          ...toApiMessages(historySnapshot),
+          { role: "user" as const, content: userMessage },
+        ];
 
-        // Chama serviço de chat (via Cloud Function proxy — sem streaming SSE)
-        const chatService = getChatService(chatType);
-
-        await chatService(
-          userMessage,
-          apiHistory,
-          // onChunkReceived — não utilizado com o proxy (resposta chega completa)
-          (_chunk: string) => {},
-          // onComplete — recebe a resposta completa e simula digitação client-side
-          async (fullResponse: string) => {
-            await simulateStreaming(fullResponse, assistantMsg.id);
-          }
-        );
+        // Invoca a API REST Spring Boot diretamente
+        const responseData = await chatApiService.sendMessage(apiMessages, chatType);
+        await simulateStreaming(responseData.response, assistantMsg.id);
       } catch (err) {
         console.error("Erro ao enviar mensagem:", err);
         setError("Desculpe, ocorreu um erro. Tente novamente.");

@@ -11,8 +11,8 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { ReadingToolbar } from "@/components/ReadingToolbar";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { MeditateStackParamList } from "@/routers/types";
-import { logMeditationUsage } from "@/services/firebase/meditationService";
-import { getReflectionById } from "@/services/firebase/reflectionService";
+import { reflectionApiService } from "@/services/api/reflectionApiService";
+import { statsApiService } from "@/services/api/statsApiService";
 import { useAuth } from "@/stores/authStore";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
@@ -46,18 +46,17 @@ export default function ReflectionScreen() {
     isError,
   } = useQuery({
     queryKey: ["reflection", route.params.id],
-    queryFn: () => getReflectionById(route.params.id),
+    queryFn: () => reflectionApiService.getReflectionById(route.params.id),
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
   // Registrar leitura da reflexão
   function handleFinishReading() {
     if (reflection && !hasLogged.current) {
-      logMeditationUsage({
-        userId: user?.uid || "guest",
-        itemId: reflection.id,
-        itemTitle: reflection.title,
-        contentType: "reflection",
+      statsApiService.logEvent({
+        eventName: "reflection_read",
+        category: "reflection",
+        label: reflection.title,
       });
       hasLogged.current = true;
     }

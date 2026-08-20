@@ -20,7 +20,7 @@ import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
 import { usePodcast } from "@/hooks/queries/usePodcasts";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getCachedAudioUri } from "@/services/audio/audioCacheService";
-import { logPodcastUsage } from "@/services/firebase/podcastService";
+import { statsApiService } from "@/services/api/statsApiService";
 import { useAuth } from "@/stores/authStore";
 import { usePodcastPlayerStore } from "@/stores/podcastPlayerStore";
 import { createStyles } from "./styles";
@@ -189,10 +189,10 @@ export default function PodcastPlayerScreen() {
   // --- LOG DE USO (analytics) ---
   useEffect(() => {
     if (isPlaying && podcast && !hasLogged.current) {
-      logPodcastUsage({
-        userId: user?.uid || "guest",
-        itemId: podcast.id,
-        itemTitle: podcast.title,
+      statsApiService.logEvent({
+        eventName: "podcast_play",
+        category: "podcast",
+        label: podcast.title,
       });
       hasLogged.current = true;
     }

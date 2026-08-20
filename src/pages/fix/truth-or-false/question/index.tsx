@@ -14,7 +14,7 @@ import { ArrowLeft, Check, X, HelpCircle, Tag } from "lucide-react-native";
 import { Timestamp } from "firebase/firestore";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
-import { TruthOrFalseService } from "@/services/firebase/truthOrFalseService";
+import { truthOrFalseApiService } from "@/services/api/truthOrFalseApiService";
 import { truthOrFalseQuestions } from "@/data/truthOrFalseQuestions";
 import { getDayOfYear, getTodayString } from "@/utils/truthOrFalseUtils";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
@@ -44,20 +44,17 @@ export function TruthOrFalseQuestionScreen() {
 
   async function checkIfAnswered() {
     try {
-      const answered = await TruthOrFalseService.hasRespondedToday();
-      setHasAnswered(answered);
+      const homeData = await truthOrFalseApiService.getHomeData();
+      setHasAnswered(homeData.hasAnswered);
 
-      if (answered) {
+      if (homeData.hasAnswered && homeData.todayResponse) {
         // Se já respondeu, vai direto para o resultado
-        const response = await TruthOrFalseService.getTodayResponse();
-        if (response) {
-          navigation.replace("TruthOrFalseResult", {
-            userAnswer: response.userAnswer,
-            isCorrect: response.isCorrect,
-            questionId: response.questionId,
-            origin: "home",
-          });
-        }
+        navigation.replace("TruthOrFalseResult", {
+          userAnswer: homeData.todayResponse.userAnswer,
+          isCorrect: homeData.todayResponse.isCorrect,
+          questionId: homeData.todayResponse.questionId,
+          origin: "home",
+        });
       }
     } catch (error) {
       console.error("Erro ao verificar resposta:", error);

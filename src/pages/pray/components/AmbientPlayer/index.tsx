@@ -8,7 +8,7 @@ import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
 import { createStyles } from "./styles";
 import { IAmbientAudio } from "@/types/ambientAudio";
-import { getAudioLocalUri } from "@/services/firebase/ambientAudioService";
+import { getCachedAudioUri } from "@/services/audio/audioCacheService";
 import { useAuth } from "@/stores/authStore";
 
 // Mapeamento de ícones
@@ -62,7 +62,7 @@ export function AmbientPlayer() {
       setDownloadingId(audio.id);
 
       // Baixa o áudio
-      const newLocalUri = await getAudioLocalUri(audio.storagePath);
+      const newLocalUri = await getCachedAudioUri(audio.storagePath, audio.fileName);
 
       // Atualiza o cache do React Query para persistir que agora temos o arquivo localmente
       await queryClient.invalidateQueries({ queryKey: ["ambientAudios"] });

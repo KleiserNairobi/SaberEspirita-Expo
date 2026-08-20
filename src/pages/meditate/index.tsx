@@ -16,8 +16,8 @@ import { DailyThoughtCard } from "@/components/DailyThoughtCard";
 import { MEDITATION_KEYS, useFeaturedMeditations } from "@/hooks/queries/useMeditations";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { MeditateStackParamList } from "@/routers/types";
-import { getMeditationById } from "@/services/firebase/meditationService";
-import { getReflectionById } from "@/services/firebase/reflectionService";
+import { meditationApiService } from "@/services/api/meditationApiService";
+import { reflectionApiService } from "@/services/api/reflectionApiService";
 import { REFLECTION_KEYS } from "./hooks/useReflections";
 import { useAuthStore } from "@/stores/authStore";
 import { useMeditationPlayerStore } from "@/stores/meditationPlayerStore";
@@ -66,7 +66,7 @@ export default function MeditateScreen() {
   function prefetchReflection(id: string) {
     queryClient.prefetchQuery({
       queryKey: REFLECTION_KEYS.detail(id),
-      queryFn: () => getReflectionById(id),
+      queryFn: () => reflectionApiService.getReflectionById(id),
       staleTime: 1000 * 60 * 60 * 24, // 24 horas
     });
   }
@@ -74,7 +74,7 @@ export default function MeditateScreen() {
   function prefetchMeditation(id: string, imageUrl?: string) {
     queryClient.prefetchQuery({
       queryKey: MEDITATION_KEYS.detail(id),
-      queryFn: () => getMeditationById(id),
+      queryFn: () => meditationApiService.getMeditationById(id),
       staleTime: 1000 * 60 * 60 * 24, // 24 horas
     });
     if (imageUrl) Image.prefetch(imageUrl);

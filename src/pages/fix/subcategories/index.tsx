@@ -15,10 +15,6 @@ import {
   useUserQuizProgress,
   QUIZ_KEYS,
 } from "@/hooks/queries/useQuiz";
-import {
-  removeUserCompletedSubcategory,
-  removeUserHistory,
-} from "@/services/firebase/quizService";
 import { useAuthStore } from "@/stores/authStore";
 import { useQuizFilterStore } from "@/stores/quizFilterStore";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
@@ -93,12 +89,6 @@ export function SubcategoriesScreen() {
     if (user?.uid) {
       setRetakingSubcategoryId(subId);
       try {
-        // 1. Remover da lista de completados
-        await removeUserCompletedSubcategory(user.uid, categoryId, subId);
-
-        // 2. Remover do histórico e recalcular score
-        const userName = user.displayName || user.email?.split("@")[0] || "Usuário";
-        await removeUserHistory(user.uid, userName, subId);
 
         // 3. Atualizar cache local para refletir a mudança imediatamente (remover checkmark e atualizar estatísticas)
         await queryClient.invalidateQueries({

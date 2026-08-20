@@ -73,7 +73,7 @@ export function AllPrayersScreen() {
     };
     if (allPrayers) {
       allPrayers.forEach((prayer) => {
-        prayer.categories.forEach((cat) => {
+        (prayer.categories || []).forEach((cat) => {
           if (counts[cat] === undefined) {
             counts[cat] = 0;
           }
@@ -93,7 +93,7 @@ export function AllPrayersScreen() {
         const isNew = prayer.createdAt && differenceInDays(new Date(), prayer.createdAt) <= 15;
         if (isNew) {
           hasNew.ALL = true;
-          prayer.categories.forEach((cat) => {
+          (prayer.categories || []).forEach((cat) => {
             hasNew[cat] = true;
           });
         }
@@ -127,7 +127,7 @@ export function AllPrayersScreen() {
     if (filterType === "FAVORITES") {
       result = result.filter((p) => isFavorite(p.id));
     } else if (filterType !== "ALL") {
-      result = result.filter((p) => p.categories.includes(filterType));
+      result = result.filter((p) => (p.categories || []).includes(filterType));
     }
 
     if (searchQuery.trim()) {

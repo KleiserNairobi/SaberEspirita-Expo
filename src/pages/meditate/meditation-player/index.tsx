@@ -20,7 +20,7 @@ import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
 import { useMeditation } from "@/hooks/queries/useMeditations";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { getCachedAudioUri } from "@/services/audio/audioCacheService";
-import { logMeditationUsage } from "@/services/firebase/meditationService";
+import { statsApiService } from "@/services/api/statsApiService";
 import { useAuth } from "@/stores/authStore";
 import { useMeditationPlayerStore } from "@/stores/meditationPlayerStore";
 import { createStyles } from "./styles";
@@ -199,11 +199,10 @@ export default function MeditationPlayerScreen() {
   // --- LOG DE USO (analytics) ---
   useEffect(() => {
     if (isPlaying && meditation && !hasLogged.current) {
-      logMeditationUsage({
-        userId: user?.uid || "guest",
-        itemId: meditation.id,
-        itemTitle: meditation.title,
-        contentType: "guided_meditation",
+      statsApiService.logEvent({
+        eventName: "meditation_play",
+        category: "meditation",
+        label: meditation.title,
       });
       hasLogged.current = true;
     }

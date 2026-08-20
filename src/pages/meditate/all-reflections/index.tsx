@@ -25,7 +25,7 @@ import { REFLECTION_KEYS, useReflections } from "../hooks/useReflections";
 import { ContentFilterType } from "@/types/prayer";
 import { createStyles } from "./styles";
 import { useQueryClient } from "@tanstack/react-query";
-import { getReflectionById } from "@/services/firebase/reflectionService";
+import { reflectionApiService } from "@/services/api/reflectionApiService";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -138,7 +138,7 @@ export default function AllReflectionsScreen() {
   function prefetchReflection(reflectionId: string) {
     queryClient.prefetchQuery({
       queryKey: REFLECTION_KEYS.detail(reflectionId),
-      queryFn: () => getReflectionById(reflectionId),
+      queryFn: () => reflectionApiService.getReflectionById(reflectionId),
       staleTime: 1000 * 60 * 60 * 24, // 24 horas
     });
   }

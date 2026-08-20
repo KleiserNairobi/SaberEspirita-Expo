@@ -1,5 +1,20 @@
 import apiClient from "./apiClient";
-import { VersionControlData } from "@/services/firebase/versionControlService";
+
+export interface PlatformVersionData {
+  minimum_required_version: string;
+  latest_version: string;
+  critical: boolean;
+  update_url: string;
+}
+
+export interface VersionControlData {
+  ios?: PlatformVersionData;
+  android?: PlatformVersionData;
+  maintenance_mode?: boolean;
+  maintenance_message?: string;
+  message?: string;
+  updated_at?: string;
+}
 
 export const appConfigApiService = {
   /**

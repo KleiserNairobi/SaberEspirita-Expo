@@ -40,13 +40,11 @@ import {
   getStoredCommunityLevelRaw,
   setStoredCommunityLevel,
 } from "@/services/community/communityLevelService";
-import { getCommunityProgress } from "@/services/firebase/forumService";
-import { logGlossaryView, getGlossaryTermById } from "@/services/firebase/glossaryService";
-import { getLessonById } from "@/services/firebase/lessonService";
-import {
-  logLessonCompleted,
-  markLessonAsCompleted,
-} from "@/services/firebase/progressService";
+import { forumApiService } from "@/services/api/forumApiService";
+import { glossaryApiService } from "@/services/api/glossaryApiService";
+import { lessonApiService } from "@/services/api/lessonApiService";
+import { userActivityApiService } from "@/services/api/userActivityApiService";
+import { statsApiService } from "@/services/api/statsApiService";
 import { useAuthStore } from "@/stores/authStore";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { IGlossaryTerm } from "@/types/glossary";
@@ -172,7 +170,7 @@ export function LessonPlayerScreen() {
     if (nextLesson) {
       queryClient.prefetchQuery({
         queryKey: LESSONS_KEYS.detail(courseId, nextLesson.id),
-        queryFn: () => getLessonById(courseId, nextLesson.id),
+        queryFn: () => lessonApiService.getLessonById(nextLesson.id),
         staleTime: 1000 * 60 * 60 * 12, // 12 horas
       });
     }
@@ -227,13 +225,12 @@ export function LessonPlayerScreen() {
       return;
     }
 
-    // Verificar se é convidado
     if (useAuthStore.getState().isGuest) {
-      await logLessonCompleted({
-        userId: "guest",
-        courseId: lesson.courseId,
-        lessonId: lesson.id,
-        lessonTitle: lesson.title,
+      statsApiService.logEvent({
+        eventName: "lesson_completed",
+        category: "course",
+        label: lesson.title,
+        metadata: { courseId: lesson.courseId, lessonId: lesson.id },
       });
       setMessageConfig({
         type: "info",
@@ -264,15 +261,13 @@ export function LessonPlayerScreen() {
     setIsProcessing(true);
 
     try {
-      await markLessonAsCompleted(lesson.courseId, lesson.id, user?.uid);
-      if (user?.uid) {
-        await logLessonCompleted({
-          userId: user.uid,
-          courseId: lesson.courseId,
-          lessonId: lesson.id,
-          lessonTitle: lesson.title,
-        });
-      }
+      await userActivityApiService.completeLesson(lesson.courseId, lesson.id);
+      statsApiService.logEvent({
+        eventName: "lesson_completed",
+        category: "course",
+        label: lesson.title,
+        metadata: { courseId: lesson.courseId, lessonId: lesson.id },
+      });
       incrementLessonsCompletedCount();
 
       if (user?.uid) {
@@ -291,7 +286,7 @@ export function LessonPlayerScreen() {
 
       if (user?.uid) {
         await new Promise((resolve) => setTimeout(resolve, 800));
-        const progress = await getCommunityProgress(user.uid);
+        const progress = await forumApiService.getCommunityProgress();
         if (progress) {
           const raw = getStoredCommunityLevelRaw(user.uid);
           if (raw === null) {
@@ -399,20 +394,18 @@ export function LessonPlayerScreen() {
       // Se não achou na aula, busca no glossário global sob demanda
       if (!term) {
         try {
-          term = await getGlossaryTermById(cleanId);
+          term = (await glossaryApiService.getGlossaryTermById(cleanId)) || undefined;
         } catch (error) {
           console.warn("[LessonPlayer] Erro ao buscar termo do glossário sob demanda:", error);
         }
       }
 
       if (term) {
-        const userId = user?.uid || "guest";
-        logGlossaryView({
-          termId: term.id,
-          termLabel: term.term,
-          userId,
-          origin: "lesson",
-          lessonId: lesson?.id,
+        statsApiService.logEvent({
+          eventName: "glossary_view",
+          category: "glossary",
+          label: term.term,
+          metadata: { origin: "lesson", lessonId: lesson?.id },
         });
         setSelectedGlossaryTerm(term);
         setMatchedGlossaryWord(matchedWord);

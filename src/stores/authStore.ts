@@ -20,7 +20,6 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import { auth } from "@/configs/firebase/firebase";
 import { authApiService } from "@/services/api/authApiService";
-import { deviceBlockService } from "@/services/firebase/deviceBlockService";
 import * as Storage from "@/utils/Storage";
 
 import { usePreferencesStore } from "./preferencesStore";
@@ -454,14 +453,9 @@ export const useAuthStore = create<AuthState>()(
       },
 
       checkDeviceBanStatus: async () => {
-        try {
-          const isBanned = await deviceBlockService.checkDeviceBanStatus();
-          set({ isDeviceBanned: isBanned });
-          return isBanned;
-        } catch (error) {
-          console.error("AuthStore: Erro ao verificar banimento do dispositivo:", error);
-          return false;
-        }
+        // No Spring Boot REST, a moderação de dispositivo é verificada no login (HTTP 403 Forbidden)
+        set({ isDeviceBanned: false });
+        return false;
       },
     }),
     {

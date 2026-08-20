@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-
-import { getPrayersByIds } from "@/services/firebase/prayerService";
+import { prayerApiService } from "@/services/api/prayerApiService";
 
 export function usePrayersByIds(prayerIds: string[]) {
   return useQuery({
     queryKey: ["prayers", "byIds", prayerIds],
-    queryFn: () => getPrayersByIds(prayerIds),
+    queryFn: async () => {
+      const allPrayers = await prayerApiService.getPrayers();
+      return allPrayers.filter((p) => prayerIds.includes(p.id));
+    },
     enabled: prayerIds.length > 0,
     staleTime: 1000 * 60 * 60, // 1 hora
   });

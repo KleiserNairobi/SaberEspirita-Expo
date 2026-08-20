@@ -3,10 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 
 import { useAuthStore } from "@/stores/authStore";
 import { storage } from "@/utils/Storage";
-import {
-  getUserFavoriteReflections,
-  syncUserFavoriteReflections,
-} from "@/services/firebase/reflectionFavoritesService";
+import { favoritesApiService } from "@/services/api/favoritesApiService";
 
 interface ReflectionFavoritesState {
   favorites: string[];
@@ -32,8 +29,7 @@ export const useReflectionFavoritesStore = create<ReflectionFavoritesState>()(
         set((state) => {
           if (state.favorites.includes(reflectionId)) return state;
           const newFavorites = [...state.favorites, reflectionId];
-          const uid = useAuthStore.getState().user?.uid;
-          if (uid) syncUserFavoriteReflections(uid, newFavorites);
+          favoritesApiService.toggleReflectionFavorite(reflectionId).catch(() => {});
           return { favorites: newFavorites };
         });
       },
@@ -41,8 +37,7 @@ export const useReflectionFavoritesStore = create<ReflectionFavoritesState>()(
       removeFavorite: (reflectionId: string) => {
         set((state) => {
           const newFavorites = state.favorites.filter((id) => id !== reflectionId);
-          const uid = useAuthStore.getState().user?.uid;
-          if (uid) syncUserFavoriteReflections(uid, newFavorites);
+          favoritesApiService.toggleReflectionFavorite(reflectionId).catch(() => {});
           return { favorites: newFavorites };
         });
       },
@@ -60,20 +55,14 @@ export const useReflectionFavoritesStore = create<ReflectionFavoritesState>()(
         }
       },
 
-      syncWithFirebase: async (userId: string) => {
+      syncWithFirebase: async (_userId: string) => {
         try {
-          const remoteFavorites = await getUserFavoriteReflections(userId);
+          const remoteFavorites = await favoritesApiService.getFavoriteReflections();
+          const remoteIds = remoteFavorites.filter(Boolean);
           const localFavorites = get().favorites;
           
-          // Merge local and remote
-          const merged = Array.from(new Set([...localFavorites, ...remoteFavorites]));
-          
+          const merged = Array.from(new Set([...localFavorites, ...remoteIds]));
           set({ favorites: merged });
-          
-          // If merged is larger than remote, push updates to Firebase
-          if (merged.length > remoteFavorites.length) {
-            await syncUserFavoriteReflections(userId, merged);
-          }
         } catch (error) {
           console.warn("[reflectionFavoritesStore] Erro no sync:", error);
         }

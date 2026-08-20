@@ -27,7 +27,6 @@ import { TermsAndPrivacy } from "@/components/TermsAndPrivacy";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { createStyles } from "./styles";
-import { userService } from "@/services/firebase/userService";
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, "Login">;
 
@@ -72,14 +71,7 @@ export function LoginScreen() {
       const name = userInfo.data?.user?.name;
 
       if (token) {
-        await signInWithGoogle(token, name);
-
-        // Garantir que o usuário e seu score existam no Firestore
-        const currentUser = useAuthStore.getState().user;
-        if (currentUser) {
-          await userService.ensureUserSync(currentUser);
-        }
-      }
+        await signInWithGoogle(token, name);      }
     } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         return;
@@ -107,12 +99,6 @@ export function LoginScreen() {
     try {
       clearError();
       await signInWithApple();
-
-      // Garantir que o usuário e seu score existam no Firestore
-      const currentUser = useAuthStore.getState().user;
-      if (currentUser) {
-        await userService.ensureUserSync(currentUser);
-      }
     } catch (error: any) {
       if (error?.code !== "ERR_REQUEST_CANCELED") {
         setBottomSheetConfig({
@@ -211,8 +197,6 @@ export function LoginScreen() {
           return;
         }
 
-        // Se verificado, garantir que existe no Firestore usando o serviço centralizado
-        await userService.ensureUserSync(currentUser);
       }
     } catch (err: any) {
       console.error("Login error:", err);

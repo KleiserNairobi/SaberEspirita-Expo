@@ -47,3 +47,18 @@ export async function shareReflection(reflection: IReflection): Promise<void> {
     throw error;
   }
 }
+/**
+ * Compartilha um certificado usando Share nativo do React Native
+ */
+export async function shareCertificate(url: string, courseTitle: string): Promise<void> {
+  try {
+    const message = `Concluí o curso "${courseTitle}" no Saber Espírita!\nConfira meu certificado: ${url}${SHARE_FOOTER}`;
+    await Share.share({
+      message,
+      title: `Certificado - ${courseTitle}`,
+    });
+  } catch (error) {
+    console.error("Erro ao compartilhar certificado:", error);
+    throw error;
+  }
+}

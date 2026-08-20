@@ -11,7 +11,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { createStyles } from "./styles";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { useAuth } from "@/stores/authStore";
-import { logAmbientPlay } from "@/services/firebase/ambientAnalyticsService";
+import { statsApiService } from "@/services/api/statsApiService";
 import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
 
 type NavigationProp = NativeStackNavigationProp<PrayStackParamList, "PrayerPrep">;
@@ -115,8 +115,11 @@ export function PrayerPrepScreen() {
     if (currentAudioId && currentTrack) {
       const activeAudio = audios?.find(a => a.id === currentAudioId);
       if (activeAudio) {
-        const userId = user?.uid || "guest";
-        void logAmbientPlay(userId, activeAudio.title, activeAudio.id);
+        statsApiService.logEvent({
+          eventName: "ambient_play",
+          category: "audio",
+          label: activeAudio.title,
+        });
       }
     }
 

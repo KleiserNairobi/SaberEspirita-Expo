@@ -24,7 +24,7 @@ import { GlossaryFilterType } from "@/types/glossaryFilter";
 import { useFilteredGlossaryTerms, useGlossaryTerms } from "../hooks/useGlossaryTerms";
 import { useGlossaryFavoritesStore } from "@/stores/glossaryFavoritesStore";
 import { useAuth } from "@/stores/authStore";
-import { logGlossaryView } from "@/services/firebase/glossaryService";
+import { statsApiService } from "@/services/api/statsApiService";
 
 import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { GlossaryCard } from "../components/GlossaryCard";
@@ -105,12 +105,11 @@ export function AllTermsScreen() {
   ], [categoryCounts, categoryHasNew]);
 
   function handleTermPress(term: IGlossaryTerm) {
-    const userId = user?.uid || "guest";
-    logGlossaryView({
-      termId: term.id,
-      termLabel: term.term,
-      userId,
-      origin: "menu",
+    statsApiService.logEvent({
+      eventName: "glossary_view",
+      category: "glossary",
+      label: term.term,
+      metadata: { origin: "menu" },
     });
     navigation.navigate("TermDetail", { id: term.id });
   }

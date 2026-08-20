@@ -24,7 +24,7 @@ import { ChatLimitIndicator } from "@/components/ChatLimitIndicator";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { useAuth } from "@/stores/authStore";
-import { logScientificChat } from "@/services/firebase/chatAnalyticsService";
+import { statsApiService } from "@/services/api/statsApiService";
 
 type RouteParams = RouteProp<AppStackParamList, "ScientificChat">;
 
@@ -79,7 +79,13 @@ export function ScientificChatScreen() {
       await sendMessage(text);
 
       // 4. Log Analytics
-      logScientificChat(user?.uid || "guest", text.length, { origin, lessonId });
+      statsApiService.logEvent({
+        eventName: "scientific_chat_message",
+        category: "chat",
+        label: origin || "direct",
+        value: text.length,
+        metadata: lessonId ? { lessonId } : undefined,
+      });
     },
     [limits, sendMessage, incrementUsage, user, origin, lessonId]
   );

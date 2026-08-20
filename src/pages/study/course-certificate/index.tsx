@@ -18,11 +18,8 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
 import { useCourse } from "@/hooks/queries/useCourses";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
-import {
-  generateCertificateLocal,
-  generateCertificateCloud,
-  shareCertificate,
-} from "@/services/firebase/certificateService";
+import { userActivityApiService } from "@/services/api/userActivityApiService";
+import { shareCertificate } from "@/utils/sharing";
 
 import { ActivityIndicator } from "react-native";
 import { Button } from "@/components/Button";
@@ -65,12 +62,9 @@ export function CourseCertificateScreen() {
 
     setIsGenerating(true);
     try {
-      const { uri, certificateNumber: certNum } = await generateCertificateLocal(
-        user.displayName || "Aluno(a)",
-        user.email || "",
-        course,
-        progress
-      );
+      const cert = await userActivityApiService.generateCertificate(course.id);
+      const uri = cert.pdfUrl || "";
+      const certNum = cert.certificateNumber || cert.id;
 
       setCertificateUri(uri);
       setCertificateNumber(certNum);
@@ -117,17 +111,12 @@ export function CourseCertificateScreen() {
 
     setIsGenerating(true);
     try {
-      const result = await generateCertificateCloud(
-        user.displayName || "Aluno(a)",
-        user.email || "",
-        course,
-        progress
-      );
+      const result = await userActivityApiService.generateCertificate(course.id);
 
-      setCertificateUri(result.uri);
-      setCertificateNumber(result.certificateNumber);
-      setValidationCode(result.validationCode);
-      setPdfUrl(result.pdfUrl);
+      setCertificateUri(result.pdfUrl || "");
+      setCertificateNumber(result.certificateNumber || result.id || "");
+      setValidationCode(result.validationCode || "");
+      setPdfUrl(result.pdfUrl || "");
 
       setBottomSheetConfig({
         type: "success",
@@ -136,7 +125,7 @@ export function CourseCertificateScreen() {
           "Seu certificado foi gerado, salvo e está disponível para validação online.",
         primaryButton: {
           label: "Compartilhar",
-          onPress: () => shareCertificate(result.uri, course.title),
+          onPress: () => shareCertificate(result.pdfUrl || "", course.title),
         },
         secondaryButton: {
           label: "Ok",

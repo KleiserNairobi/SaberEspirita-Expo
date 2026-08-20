@@ -12,11 +12,8 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
-import {
-  addUserHistory,
-  incrementUserScore,
-  logDailyChallengeAttempt,
-} from "@/services/firebase/quizService";
+import { quizApiService } from "@/services/api/quizApiService";
+import { statsApiService } from "@/services/api/statsApiService";
 import { useDailyChallenge } from "@/hooks/queries/useDailyChallenge";
 import { QUIZ_KEYS } from "@/hooks/queries/useQuiz";
 import { IQuizAnswer, IQuizHistory } from "@/types/quiz";
@@ -43,10 +40,11 @@ export function DailyQuizScreen() {
         .split(" ")[0];
       const dailySubcategoryId = `DAILY_${today}`;
 
-      await logDailyChallengeAttempt({
-        userId: "guest",
-        challengeId: dailySubcategoryId,
-        date: today,
+      statsApiService.logEvent({
+        eventName: "daily_challenge_attempt",
+        category: "quiz",
+        label: dailySubcategoryId,
+        metadata: { date: today },
       });
 
       setMessageConfig({
@@ -90,30 +88,14 @@ export function DailyQuizScreen() {
         const today = new Date().toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" }).split(" ")[0];
         const dailySubcategoryId = `DAILY_${today}`;
 
-        await logDailyChallengeAttempt({
-          userId: user.uid,
-          challengeId: dailySubcategoryId,
-          date: today,
-        });
-
-        const userHistory: IQuizHistory = {
-          userId: user.uid,
+        await quizApiService.submitQuiz(quiz.id, {
           categoryId: "DAILY",
           subcategoryId: dailySubcategoryId,
-          quizId: quiz.id,
-          title: "Desafio Diário",
-          subtitle: new Date().toLocaleDateString(),
-          completed: true,
-          score: percentage,
-          totalQuestions,
-          correctAnswers,
-          percentage,
-          level,
-          completedAt: new Date(),
-        };
-
-        await addUserHistory(userHistory, user.displayName || "Usuário");
-        await incrementUserScore(user.uid, user.displayName || "Usuário", percentage);
+          answers: answers.map((a, index) => ({
+            questionIndex: index,
+            selectedIndex: a.selectedAnswerIndex,
+          })),
+        });
 
         queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.userProgress(user.uid) });
         queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.detailedStats(user.uid) });

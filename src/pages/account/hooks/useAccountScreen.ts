@@ -14,7 +14,7 @@ import {
   SHARE_MESSAGE,
 } from "../constants";
 import { useRateApp } from "@/hooks/useRateApp";
-import { userService } from "@/services/firebase/userService";
+import { authApiService } from "@/services/api/authApiService";
 
 export function useAccountScreen() {
   const { theme, themeType, setThemeType } = useAppTheme();
@@ -98,7 +98,7 @@ export function useAccountScreen() {
   async function handleUpdateName(newName: string) {
     if (!user) return;
     try {
-      await userService.updateUserName(user, newName);
+      await authApiService.updateProfile({ userName: newName });
     } catch (error) {
       console.error("Erro ao atualizar nome no hook:", error);
       throw error;

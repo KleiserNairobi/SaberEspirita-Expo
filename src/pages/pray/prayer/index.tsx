@@ -11,7 +11,7 @@ import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { usePrayer } from "@/pages/pray/hooks/usePrayer";
 import { useAuth } from "@/stores/authStore";
-import { logPrayerUsage } from "@/services/firebase/prayerUsageService";
+import { statsApiService } from "@/services/api/statsApiService";
 import { createStyles } from "@/pages/pray/prayer/styles";
 import { sharePrayer } from "@/utils/sharing";
 import { useQueryClient } from "@tanstack/react-query";
@@ -100,11 +100,10 @@ export function PrayerScreen() {
   function handleFinishPrayer() {
     // 1. Registra com fidelidade que o usuário concluiu esta prece
     if (prayer && !hasLogged.current) {
-      const userId = user?.uid || "guest";
-      logPrayerUsage({
-        prayerId: prayer.id,
-        prayerTitle: prayer.title,
-        userId,
+      statsApiService.logEvent({
+        eventName: "prayer_completed",
+        category: "prayer",
+        label: prayer.title,
       });
       hasLogged.current = true;
       queryClient.invalidateQueries({ queryKey: ["prayers", "trending"] });

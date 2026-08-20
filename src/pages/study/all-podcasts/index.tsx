@@ -21,7 +21,7 @@ import { PODCAST_KEYS, usePodcasts } from "@/hooks/queries/usePodcasts";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
-import { getPodcastById } from "@/services/firebase/podcastService";
+import { podcastApiService } from "@/services/api/podcastApiService";
 import { usePodcastPlayerStore } from "@/stores/podcastPlayerStore";
 import { ContentFilterType } from "@/types/prayer";
 import { useQueryClient } from "@tanstack/react-query";
@@ -120,7 +120,7 @@ export default function AllPodcastsScreen() {
   function prefetchPodcast(id: string, imageUrl?: string) {
     queryClient.prefetchQuery({
       queryKey: PODCAST_KEYS.detail(id),
-      queryFn: () => getPodcastById(id),
+      queryFn: () => podcastApiService.getPodcastById(id),
       staleTime: 1000 * 60 * 60 * 24, // 24 horas
     });
     if (imageUrl) Image.prefetch(imageUrl);
