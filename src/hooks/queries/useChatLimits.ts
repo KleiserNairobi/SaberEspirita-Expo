@@ -1,23 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-
-import { ChatLimitsService, ChatType } from "@/services/firebase/chatLimitsService";
+import { ChatType, chatApiService } from "@/services/api/chatApiService";
 import { LocalChatLimitsService } from "@/services/local/localChatLimitsService";
 import { useAuthStore } from "@/stores/authStore";
 
-export function useChatLimits(chatType: ChatType) {
+export function useChatLimits(chatType: ChatType = "EMOTIONAL") {
   const { user, isGuest } = useAuthStore();
+  const normalizedType: ChatType =
+    chatType === "doctrinal" || chatType === "scientific" || chatType === "SCIENTIFIC"
+      ? "SCIENTIFIC"
+      : "EMOTIONAL";
 
   return useQuery({
-    queryKey: ["chatLimits", user?.uid || "guest", chatType],
+    queryKey: ["chatLimits", user?.uid || "guest", normalizedType],
     queryFn: async () => {
       if (isGuest) {
-        return LocalChatLimitsService.checkCanSendMessage(chatType);
+        return LocalChatLimitsService.checkCanSendMessage(normalizedType as any);
       }
       if (!user?.uid) return null;
-      return ChatLimitsService.checkCanSendMessage(user.uid, chatType);
+      return chatApiService.getDailyLimits(normalizedType);
     },
     enabled: !!user?.uid || isGuest,
-    staleTime: 30_000, // 30 segundos — dados são invalidados corretamente via invalidateQueries após incrementUsage
+    staleTime: 30_000, // 30 segundos
     refetchOnMount: true,
   });
 }
@@ -28,15 +31,19 @@ export function useIncrementChatUsage() {
 
   return useMutation({
     mutationFn: async (chatType: ChatType) => {
+      const normalizedType: ChatType =
+        chatType === "doctrinal" || chatType === "scientific" || chatType === "SCIENTIFIC"
+          ? "SCIENTIFIC"
+          : "EMOTIONAL";
+
       if (isGuest) {
-        await LocalChatLimitsService.incrementUsage(chatType);
+        await LocalChatLimitsService.incrementUsage(normalizedType as any);
         return;
       }
       if (!user?.uid) throw new Error("User not authenticated");
-      await ChatLimitsService.incrementUsage(user.uid, chatType);
+      await chatApiService.incrementUsage(normalizedType);
     },
     onSuccess: () => {
-      // Invalidar queries para atualizar UI
       queryClient.invalidateQueries({ queryKey: ["chatLimits"] });
       queryClient.invalidateQueries({ queryKey: ["chatStats"] });
     },
@@ -53,7 +60,7 @@ export function useChatStats() {
         return LocalChatLimitsService.getUserStats();
       }
       if (!user?.uid) return null;
-      return ChatLimitsService.getUserStats(user.uid);
+      return chatApiService.getUserStats();
     },
     enabled: !!user?.uid || isGuest,
   });

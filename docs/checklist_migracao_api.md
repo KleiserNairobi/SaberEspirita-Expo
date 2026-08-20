@@ -25,7 +25,7 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 - [x] **Módulo 7: Progresso, Certificados, Favoritos & Notificações** `[5/5]`
 - [x] **Módulo 8: Estatísticas, Logs & Leaderboard** `[4/4]`
 - [x] **Módulo 9: Upload de Mídias (Cloudflare R2)** `[2/2]`
-- [ ] **Módulo 10: Assistentes de IA & Chatbots (DeepSeek API)** `[0/3]`
+- [x] **Módulo 10: Assistentes de IA & Chatbots (DeepSeek API)** `[3/3]`
 - [ ] **Módulo 12: Configurações Globais & Controle de Versão (AppConfig)** `[0/2]`
 
 ---
@@ -206,12 +206,12 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 
 ## 🤖 Módulo 10: Assistentes de IA & Chatbots (DeepSeek API)
 
-- [ ] **10.1 Service dos Chatbots (`chatApiService.ts`)**:
+- [x] **10.1 Service dos Chatbots (`chatApiService.ts`)**:
   - `sendMessage(messages, type)` ➔ `POST /api/v1/chat/completions` (`EMOTIONAL` ou `SCIENTIFIC`)
   - `getDailyLimits()` ➔ `GET /api/v1/chat/limits`
-- [ ] **10.2 Ajustes de Timeout & Resiliência**:
+- [x] **10.2 Ajustes de Timeout & Resiliência**:
   - Configurar tempo de resposta longo (até 120s) para diálogos com os assistentes de IA (*O Guia* e *Sr. Allan Kardec*).
-- [ ] **10.3 Validação dos Chats na UI**:
+- [x] **10.3 Validação dos Chats na UI**:
   - Testar envio de mensagens, recepção da resposta formatada e contagem de cotas diárias de uso.
 
 ---
@@ -237,3 +237,4 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 | **2026-08-20** | Antigravity AI | Módulo 7 | Criação dos serviços REST (`userActivityApiService`, `favoritesApiService`, `truthOrFalseApiService`, `notificationApiService`) e atualização de hooks. |
 | **2026-08-20** | Antigravity AI | Módulo 8 | Criação dos serviços REST (`leaderboardApiService`, `statsApiService`) e atualização do hook `useLeaderboard.ts`. |
 | **2026-08-20** | Antigravity AI | Módulo 9 | Implementação de `mediaApiService.ts` para upload multipart/form-data de avatares para o Cloudflare R2 e hook `useMediaUpload.ts`. |
+| **2026-08-20** | Antigravity AI | Módulo 10 | Implementação de `chatApiService.ts` (completions de IA com timeout de 120s e limites) e atualização do hook `useChatLimits.ts`. |
