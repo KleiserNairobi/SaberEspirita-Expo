@@ -24,7 +24,7 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 - [x] **Módulo 6: Fórum de Lições & Reações** `[4/4]`
 - [x] **Módulo 7: Progresso, Certificados, Favoritos & Notificações** `[5/5]`
 - [x] **Módulo 8: Estatísticas, Logs & Leaderboard** `[4/4]`
-- [ ] **Módulo 9: Upload de Mídias (Cloudflare R2)** `[0/2]`
+- [x] **Módulo 9: Upload de Mídias (Cloudflare R2)** `[2/2]`
 - [ ] **Módulo 10: Assistentes de IA & Chatbots (DeepSeek API)** `[0/3]`
 - [ ] **Módulo 12: Configurações Globais & Controle de Versão (AppConfig)** `[0/2]`
 
@@ -197,9 +197,9 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 
 ## ☁️ Módulo 9: Upload de Mídias (Cloudflare R2)
 
-- [ ] **9.1 Service de Upload de Mídia (`mediaApiService.ts`)**:
+- [x] **9.1 Service de Upload de Mídia (`mediaApiService.ts`)**:
   - `uploadAvatar(file)` ➔ `POST /api/v1/media/upload/avatar` (com `FormData` e `multipart/form-data`)
-- [ ] **9.2 Atualização da Foto de Perfil na UI**:
+- [x] **9.2 Atualização da Foto de Perfil na UI**:
   - Integrar seletor de imagem do Expo à rota de upload do backend Spring Boot com retorno da nova URL pública na CDN.
 
 ---
@@ -236,3 +236,4 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 | **2026-08-20** | Antigravity AI | Módulo 6 | Implementação do `forumApiService.ts`, suporte à paginação infinita e atualização otimista de reações no `useLessonForum.ts`. |
 | **2026-08-20** | Antigravity AI | Módulo 7 | Criação dos serviços REST (`userActivityApiService`, `favoritesApiService`, `truthOrFalseApiService`, `notificationApiService`) e atualização de hooks. |
 | **2026-08-20** | Antigravity AI | Módulo 8 | Criação dos serviços REST (`leaderboardApiService`, `statsApiService`) e atualização do hook `useLeaderboard.ts`. |
+| **2026-08-20** | Antigravity AI | Módulo 9 | Implementação de `mediaApiService.ts` para upload multipart/form-data de avatares para o Cloudflare R2 e hook `useMediaUpload.ts`. |
