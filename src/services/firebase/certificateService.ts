@@ -1,14 +1,14 @@
-import * as Print from "expo-print";
-import * as FileSystem from "expo-file-system";
-import * as Sharing from "expo-sharing";
-import { db, storage } from "@/configs/firebase/firebase";
-import { addDoc, collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import * as Print from "expo-print";
+import * as Sharing from "expo-sharing";
+import { addDoc, collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+
+import { db, storage } from "@/configs/firebase/firebase";
 import {
-  generateCertificateHTML,
   CertificateData,
+  generateCertificateHTML,
 } from "@/templates/certificateTemplate";
 import { ICourse, IUserCourseProgress } from "@/types/course";
 

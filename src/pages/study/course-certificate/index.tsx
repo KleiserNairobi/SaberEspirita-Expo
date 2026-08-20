@@ -48,7 +48,6 @@ export function CourseCertificateScreen() {
   const [certificateUri, setCertificateUri] = useState<string | null>(null);
   const [certificateNumber, setCertificateNumber] = useState<string | null>(null);
   const [validationCode, setValidationCode] = useState<string | null>(null);
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [bottomSheetConfig, setBottomSheetConfig] =
@@ -116,7 +115,6 @@ export function CourseCertificateScreen() {
       setCertificateUri(result.pdfUrl || "");
       setCertificateNumber(result.certificateNumber || result.id || "");
       setValidationCode(result.validationCode || "");
-      setPdfUrl(result.pdfUrl || "");
 
       setBottomSheetConfig({
         type: "success",

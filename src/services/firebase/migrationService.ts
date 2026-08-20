@@ -1,9 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { collection, doc, writeBatch } from "firebase/firestore";
+import { doc, writeBatch } from "firebase/firestore";
+
 import { db } from "@/configs/firebase/firebase";
-import { loadBoolean, saveBoolean, remove } from "@/utils/Storage";
 import { useAuthStore } from "@/stores/authStore";
 import { IUserTruthOrFalseResponse } from "@/types/userTruthOrFalseResponse";
+import { loadBoolean, remove, saveBoolean } from "@/utils/Storage";
 
 // Chaves do AsyncStorage (CLI)
 const OLD_KEYS = {

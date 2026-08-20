@@ -1,26 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ScrollView, Text, TouchableOpacity, View, Animated } from "react-native";
-import { ChevronDown, Compass, Sparkles, ChevronRight } from "lucide-react-native";
+import { ChevronDown, Compass, ChevronRight } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { UserMood, useMoodStore } from "@/stores/moodStore";
-import { useAuthStore } from "@/stores/authStore";
+import { useMoodStore } from "@/stores/moodStore";
 import { useSuggestedContent } from "@/pages/pray/hooks/useSuggestedContent";
 import { AppStackParamList, PrayStackParamList } from "@/routers/types";
 import { createStyles } from "./styles";
-
-const MOOD_TO_NOUN: Record<UserMood, string> = {
-  NORMAL: "harmonia",
-  CALMO: "calma",
-  TRISTE: "consolo",
-  ANSIOSO: "paz",
-  GRATO: "luz",
-  IRRITADO: "equilíbrio",
-  CANSADO: "renovação",
-  DESCONHECIDO: "luz",
-};
 
 export function WelcomingHero() {
   const { theme } = useAppTheme();
@@ -28,11 +16,8 @@ export function WelcomingHero() {
   const navigation =
     useNavigation<NativeStackNavigationProp<AppStackParamList & PrayStackParamList>>();
 
-  const { user } = useAuthStore();
   const { currentMood, lastMood, lastMoodDate } = useMoodStore();
   const { suggestedContent } = useSuggestedContent(currentMood);
-
-  const moodNoun = currentMood ? MOOD_TO_NOUN[currentMood] : "";
 
   // Animações para comportamento retrátil (Padrão LegalSection)
   const [expanded, setExpanded] = useState(false);
@@ -81,7 +66,6 @@ export function WelcomingHero() {
     }
 
     if (lastMood && lastMoodDate) {
-      const lastMoodNoun = MOOD_TO_NOUN[lastMood] || "luz";
       return `Como seu coração está hoje? Identifique seu sentimento abaixo.`;
     }
 
@@ -90,16 +74,6 @@ export function WelcomingHero() {
 
   function handlePrayerPress(prayerId: string) {
     navigation.navigate("PrayerPrep", { id: prayerId });
-  }
-
-  function handleAIChatPress() {
-    const moodContext = currentMood
-      ? `Estou me sentindo ${currentMood.toLowerCase()}.`
-      : "";
-    navigation.navigate("EmotionalChat", {
-      initialMessage: `Olá. ${moodContext} Poderia me ajudar com uma oração personalizada para o meu momento?`,
-      origin: "ore",
-    });
   }
 
   // Card Retrátil: Se não houve escolha, mostramos apenas o acolhimento inicial

@@ -1,8 +1,6 @@
 import { useState, useCallback } from "react";
 import { Message, ChatMessage, UseChatReturn } from "@/types/chat";
 import {
-  detectIntention,
-  IntentionType,
   shouldBlockMessage,
 } from "@/services/chat";
 import { chatApiService } from "@/services/api/chatApiService";

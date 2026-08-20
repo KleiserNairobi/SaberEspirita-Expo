@@ -14,13 +14,11 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Mail, Lock, Eye, EyeOff, Key, UserPlus } from "lucide-react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Svg, { Path } from "react-native-svg";
-import { doc, getDoc, setDoc } from "firebase/firestore";
 import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 import { useEffect } from "react";
 
 import { useAuthStore } from "@/stores/authStore";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { db } from "@/configs/firebase/firebase";
 import type { AuthStackParamList } from "@/routers/types";
 import { Button } from "@/components/Button";
 import { TermsAndPrivacy } from "@/components/TermsAndPrivacy";
@@ -36,7 +34,6 @@ export function LoginScreen() {
   const {
     signIn,
     loading,
-    error,
     clearError,
     loginAsGuest,
     signInWithGoogle,

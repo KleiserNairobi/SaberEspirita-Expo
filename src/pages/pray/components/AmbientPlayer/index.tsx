@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
-import { Music, Waves, Moon, Play, Pause, Download } from "lucide-react-native";
+import { Music, Waves, Moon, Play, Pause } from "lucide-react-native";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -9,7 +9,6 @@ import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
 import { createStyles } from "./styles";
 import { IAmbientAudio } from "@/types/ambientAudio";
 import { getCachedAudioUri } from "@/services/audio/audioCacheService";
-import { useAuth } from "@/stores/authStore";
 
 // Mapeamento de ícones
 const ICON_MAP = {
@@ -22,7 +21,6 @@ export function AmbientPlayer() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const queryClient = useQueryClient();
-  const { user } = useAuth();
 
   const { isPlaying, currentTrack, setPlaying, setCurrentTrack } =
     useAmbientPlayerStore();

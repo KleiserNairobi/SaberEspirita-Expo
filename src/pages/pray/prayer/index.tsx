@@ -10,7 +10,6 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { usePrayer } from "@/pages/pray/hooks/usePrayer";
-import { useAuth } from "@/stores/authStore";
 import { statsApiService } from "@/services/api/statsApiService";
 import { createStyles } from "@/pages/pray/prayer/styles";
 import { sharePrayer } from "@/utils/sharing";
@@ -28,7 +27,6 @@ export function PrayerScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<PrayStackParamList>>();
   const route = useRoute<RouteProp<PrayStackParamList, "Prayer">>();
   const { id } = route.params;
-  const { user, isGuest } = useAuth();
 
   const hasLogged = useRef(false);
   const [isNarrating, setIsNarrating] = useState(false);

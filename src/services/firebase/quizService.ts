@@ -333,7 +333,7 @@ export async function saveUserCompletedSubcategories(
 
 export async function addUserHistory(
   history: IQuizHistory,
-  userName: string
+  _userName: string
 ): Promise<void> {
   try {
     const userHistoryRef = doc(

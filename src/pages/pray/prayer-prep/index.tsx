@@ -5,12 +5,11 @@ import { PrayStackParamList } from "@/routers/types";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowLeft, Play, Sparkles } from "lucide-react-native";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { ActivityIndicator, Animated, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { createStyles } from "./styles";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
-import { useAuth } from "@/stores/authStore";
 import { statsApiService } from "@/services/api/statsApiService";
 import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
 
@@ -26,7 +25,6 @@ export function PrayerPrepScreen() {
   const { id } = route.params;
   const { data: prayer, isLoading } = usePrayer(id);
   const { isDownloading, currentTrack, currentAudioId, setPlaying, setCurrentTrack } = useAmbientPlayerStore();
-  const { user } = useAuth();
   const { data: audios } = useAmbientAudios();
 
   // Extermina o som caso o usuário desista na Preparação e volte pra Home/Lista

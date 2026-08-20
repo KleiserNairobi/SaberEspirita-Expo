@@ -1,38 +1,14 @@
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-
-import {
-  Heart,
-  Sunrise,
-  Moon,
-  HeartPulse,
-  Users,
-  HandHeart,
-  BookOpen,
-  Sparkles,
-  Flame,
-} from "lucide-react-native";
+import { Heart } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { IPrayer, PrayerMoment } from "@/types/prayer";
+import { IPrayer } from "@/types/prayer";
 import { createStyles } from "./styles";
-
-// Mapeamento de ícones para cada momento (mesmo do /Pray/index.tsx)
-const MOMENT_ICONS = {
-  "AO-ACORDAR": Sunrise,
-  "AO-DORMIR": Moon,
-  DIARIO: BookOpen,
-  "POR-ANIMO": HeartPulse,
-  "POR-ALGUEM": Users,
-  "POR-CURA": Heart,
-  "POR-GRATIDAO": Sparkles,
-  "POR-PAZ": HandHeart,
-  REUNIOES: Flame,
-} as const;
 
 interface PrayerListItemProps {
   prayer: IPrayer;
-  categoryId: string;
+  categoryId?: string;
   isFavorite: boolean;
   onToggleFavorite: () => void;
   onPress: () => void;
@@ -40,16 +16,12 @@ interface PrayerListItemProps {
 
 export function PrayerListItem({
   prayer,
-  categoryId,
   isFavorite,
   onToggleFavorite,
   onPress,
 }: PrayerListItemProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-
-  // Obter o ícone da categoria
-  const IconComponent = MOMENT_ICONS[categoryId as PrayerMoment] || BookOpen;
 
   // Construir texto de metadados (author e/ou source)
   function getMetadataText() {

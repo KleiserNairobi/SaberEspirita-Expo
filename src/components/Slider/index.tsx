@@ -1,16 +1,17 @@
-import { ImageSliderType } from "@/data/SliderData";
-import { Dimensions, View } from "react-native";
+import { View } from "react-native";
+
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from "react-native-reanimated";
+
+import { ImageSliderType } from "@/data/SliderData";
+
 import { SliderItem } from "../SliderItem";
 
 type Props = {
   itemList: ImageSliderType[];
 };
-
-const { width } = Dimensions.get("window");
 
 export function Slider({ itemList }: Props) {
   const scrollX = useSharedValue(0);
@@ -30,6 +31,8 @@ export function Slider({ itemList }: Props) {
           <SliderItem item={item} index={index} scrollX={scrollX} />
         )}
         horizontal
+        onScroll={onScrollHandler}
+        scrollEventThrottle={16}
       />
     </View>
   );

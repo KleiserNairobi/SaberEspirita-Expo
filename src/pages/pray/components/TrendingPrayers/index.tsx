@@ -17,7 +17,7 @@ export function TrendingPrayers() {
   const [expanded, setExpanded] = useState(false);
   const [period, setPeriod] = useState<TrendingPeriod>("day");
   
-  const { data: prayers, isLoading, isFetching } = useTrendingPrayers(period);
+  const { data: prayers, isLoading } = useTrendingPrayers(period);
 
   // Animações para comportamento retrátil
   const animatedHeight = useRef(new Animated.Value(0)).current;

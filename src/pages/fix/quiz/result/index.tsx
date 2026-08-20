@@ -1,18 +1,19 @@
-import { View, Text, ScrollView, Image } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
+import { useEffect } from "react";
+
+import { Image, ScrollView, Text, View } from "react-native";
+
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { useAuthStore } from "@/stores/authStore";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { Button } from "@/components/Button";
+import { COURSE_PROGRESS_KEYS } from "@/hooks/queries/useCourseProgress";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { AppStackParamList, FixStackParamList } from "@/routers/types";
+import { useAuthStore } from "@/stores/authStore";
+
 import { createStyles } from "./styles";
-import { FixStackParamList, AppStackParamList } from "@/routers/types";
-import {
-  useCourseProgress,
-  COURSE_PROGRESS_KEYS,
-} from "@/hooks/queries/useCourseProgress";
-import { useEffect } from "react";
 
 type QuizResultRouteProp = RouteProp<FixStackParamList, "QuizResult">;
 type QuizResultNavigationProp = NativeStackNavigationProp<

@@ -1,23 +1,21 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Star, CheckCircle2, XCircle, ArrowLeft, Flag } from "lucide-react-native";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import React, { useRef, useState } from "react";
 
-import { useAppTheme } from "@/hooks/useAppTheme";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { ArrowLeft, CheckCircle2, Flag, Star, XCircle } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { Button } from "@/components/Button";
+import { ReportQuestionBottomSheet } from "@/components/ReportQuestionBottomSheet";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
 import { IQuizAnswer } from "@/types/quiz";
-import { ReportQuestionBottomSheet } from "@/components/ReportQuestionBottomSheet";
+
 import { createStyles } from "./styles";
 
 type QuizReviewRouteProp = RouteProp<FixStackParamList, "QuizReview">;
-type QuizReviewNavigationProp = NativeStackNavigationProp<
-  FixStackParamList,
-  "QuizReview"
->;
 
 export function QuizReviewScreen() {
   const { theme } = useAppTheme();
@@ -27,12 +25,14 @@ export function QuizReviewScreen() {
 
   const reportBottomSheetRef = useRef<BottomSheetModal>(null);
   const [selectedReportQuestion, setSelectedReportQuestion] = useState<any>(null);
-  const [selectedReportAnswerIndex, setSelectedReportAnswerIndex] = useState<number | null>(null);
-  const [selectedReportQuestionIndex, setSelectedReportQuestionIndex] = useState<number>(-1);
+  const [selectedReportAnswerIndex, setSelectedReportAnswerIndex] = useState<
+    number | null
+  >(null);
+  const [selectedReportQuestionIndex, setSelectedReportQuestionIndex] =
+    useState<number>(-1);
 
   const {
     categoryId,
-    categoryName,
     subcategoryName,
     subtitle,
     totalQuestions,
@@ -47,7 +47,11 @@ export function QuizReviewScreen() {
     navigation.goBack();
   }
 
-  function handleOpenReport(question: any, selectedAnswerIndex: number | null, questionIndex: number) {
+  function handleOpenReport(
+    question: any,
+    selectedAnswerIndex: number | null,
+    questionIndex: number
+  ) {
     setSelectedReportQuestion(question);
     setSelectedReportAnswerIndex(selectedAnswerIndex);
     setSelectedReportQuestionIndex(questionIndex);

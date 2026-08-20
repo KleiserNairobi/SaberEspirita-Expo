@@ -1,28 +1,33 @@
 import React, { useRef, useState } from "react";
-import { ActivityIndicator, Text, View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { StatusBar } from "expo-status-bar";
-import { BookOpen, Leaf, ArrowLeft } from "lucide-react-native";
+import { ArrowLeft, BookOpen, Leaf } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { FixStackParamList } from "@/routers/types";
-import { QuizUI } from "@/components/QuizUI";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { Button } from "@/components/Button";
+import { QuizUI } from "@/components/QuizUI";
+import { ITheme } from "@/configs/theme/types";
+import { COURSE_PROGRESS_KEYS } from "@/hooks/queries/useCourseProgress";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { useAuthStore } from "@/stores/authStore";
+import { FixStackParamList } from "@/routers/types";
 import { quizApiService } from "@/services/api/quizApiService";
 import { statsApiService } from "@/services/api/statsApiService";
-import { COURSE_PROGRESS_KEYS } from "@/hooks/queries/useCourseProgress";
+import { useAuthStore } from "@/stores/authStore";
 import { IQuizAnswer } from "@/types/quiz";
-import { Button } from "@/components/Button";
-import { ITheme } from "@/configs/theme/types";
 
 type CourseQuizRouteProp = RouteProp<FixStackParamList, "CourseQuiz">;
-type CourseQuizNavigationProp = NativeStackNavigationProp<FixStackParamList, "CourseQuiz">;
+type CourseQuizNavigationProp = NativeStackNavigationProp<
+  FixStackParamList,
+  "CourseQuiz"
+>;
 
 export function CourseQuizScreen() {
   const route = useRoute<CourseQuizRouteProp>();
@@ -38,13 +43,14 @@ export function CourseQuizScreen() {
     subtitle,
     courseId,
     lessonId,
-    lessonTitle,
     quizId,
     exerciseId,
   } = route.params;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(null);
+  const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
+    null
+  );
   const guestSheetRef = useRef<BottomSheetModal>(null);
 
   const { data: quiz, isLoading } = useQuery({
@@ -73,7 +79,8 @@ export function CourseQuizScreen() {
       setMessageConfig({
         type: "info",
         title: "Modo Visitante",
-        message: "Seu progresso não será salvo pois você está navegando como visitante. Crie uma conta para registrar suas conquistas!",
+        message:
+          "Seu progresso não será salvo pois você está navegando como visitante. Crie uma conta para registrar suas conquistas!",
         primaryButton: {
           label: "Criar Conta",
           onPress: () => {
@@ -96,7 +103,9 @@ export function CourseQuizScreen() {
 
     try {
       setIsSubmitting(true);
-      const correctAnswers = answers.filter((a) => a.selectedAnswerIndex === a.correctAnswerIndex).length;
+      const correctAnswers = answers.filter(
+        (a) => a.selectedAnswerIndex === a.correctAnswerIndex
+      ).length;
       const totalQuestions = quiz.questions.length;
       const percentage = Math.floor((correctAnswers / totalQuestions) * 100);
 
@@ -173,26 +182,23 @@ export function CourseQuizScreen() {
     const bgIconColor = errorColor + "15";
 
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
         <StatusBar style={theme.isDark ? "light" : "dark"} />
         <View style={styles.errorContainer}>
           <View style={styles.card}>
-            <Leaf
-              size={140}
-              color={theme.colors.primary}
-              style={styles.bgLeaf}
-            />
+            <Leaf size={140} color={theme.colors.primary} style={styles.bgLeaf} />
 
             <View style={[styles.iconWrapper, { backgroundColor: bgIconColor }]}>
               <BookOpen size={36} color={errorColor} />
             </View>
 
-            <Text style={styles.title}>
-              Exercício não encontrado
-            </Text>
+            <Text style={styles.title}>Exercício não encontrado</Text>
 
             <Text style={styles.description}>
-              Não foi possível carregar as questões deste exercício. Por favor, retorne à tela anterior e tente novamente.
+              Não foi possível carregar as questões deste exercício. Por favor, retorne à
+              tela anterior e tente novamente.
             </Text>
 
             <Button
@@ -210,10 +216,17 @@ export function CourseQuizScreen() {
 
   if (isLoading || !quiz) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text style={[styles.loadingText, { color: theme.colors.textSecondary, marginTop: 16 }]}>
+          <Text
+            style={[
+              styles.loadingText,
+              { color: theme.colors.textSecondary, marginTop: 16 },
+            ]}
+          >
             Carregando exercício...
           </Text>
         </View>

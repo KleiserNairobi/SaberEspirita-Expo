@@ -13,7 +13,6 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { MeditateStackParamList } from "@/routers/types";
 import { reflectionApiService } from "@/services/api/reflectionApiService";
 import { statsApiService } from "@/services/api/statsApiService";
-import { useAuth } from "@/stores/authStore";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
 import { shareReflection } from "@/utils/sharing";
@@ -28,7 +27,6 @@ export default function ReflectionScreen() {
   const styles = createStyles(theme);
   const route = useRoute<ReflectionScreenRouteProp>();
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
-  const { user } = useAuth();
   const insets = useSafeAreaInsets();
 
   const [isNarrating, setIsNarrating] = useState(false);

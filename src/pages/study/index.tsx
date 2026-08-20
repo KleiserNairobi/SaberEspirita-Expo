@@ -5,10 +5,10 @@ import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { differenceInDays } from "date-fns";
 import { Bell, ChevronRight, Leaf, Sprout, TreePalm } from "lucide-react-native";
 import { Feather } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Image } from "expo-image";
 
 import { AssistantCard } from "@/components/AssistantCard";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
@@ -23,12 +23,11 @@ import { useLastAccessedCourse } from "@/hooks/queries/useLastAccessedCourse";
 import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
 import { useHasUnreadNotifications } from "@/hooks/queries/useNotifications";
 import { usePodcasts } from "@/hooks/queries/usePodcasts";
-import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
 import { AppStackParamList } from "@/routers/types";
 import { useAuthStore } from "@/stores/authStore";
 import { prefetchImages } from "@/utils/imagePrefetch";
-import { differenceInDays } from "date-fns";
 
 import { createStyles } from "./styles";
 
@@ -86,7 +85,7 @@ export function StudyScreen() {
   }, [isGuest, navigation]);
 
   // Fetching de cursos populares via React Query
-  const { data: featuredCourses = [], isLoading: loadingFeatured } = useFeaturedCourses();
+  const { data: featuredCourses = [] } = useFeaturedCourses();
 
   // Fetching de todos os progressos para o Carrossel Inteligente
   const { data: allProgress = {} } = useAllCoursesProgress();
@@ -117,7 +116,8 @@ export function StudyScreen() {
     const now = new Date();
     return podcasts.some((p) => {
       if (!p.createdAt) return false;
-      const createdDate = p.createdAt instanceof Date ? p.createdAt : new Date(p.createdAt);
+      const createdDate =
+        p.createdAt instanceof Date ? p.createdAt : new Date(p.createdAt);
       if (isNaN(createdDate.getTime())) return false;
       return differenceInDays(now, createdDate) <= 15;
     });
@@ -289,8 +289,7 @@ export function StudyScreen() {
         renderItem={({ item }) => {
           const IconComponent = item.icon;
           const isItemNew =
-            (item.id === "3" && hasNewPodcast) ||
-            (item.id === "2" && hasNewGlossaryTerm);
+            (item.id === "3" && hasNewPodcast) || (item.id === "2" && hasNewGlossaryTerm);
 
           return (
             <TouchableOpacity

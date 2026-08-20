@@ -1,4 +1,5 @@
-import { StyleSheet, Platform } from "react-native";
+import { StyleSheet } from "react-native";
+
 import { ITheme } from "@/configs/theme/types";
 
 export function createStyles(theme: ITheme) {

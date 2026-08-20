@@ -1,11 +1,14 @@
 import React, { forwardRef, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+
+import { Text, TouchableOpacity, View } from "react-native";
+
 import { BottomSheetModal, BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { Star } from "lucide-react-native";
 
-import { useAppTheme } from "@/hooks/useAppTheme";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { useAppTheme } from "@/hooks/useAppTheme";
+
 import { createStyles } from "./styles";
 
 interface CourseFeedbackBottomSheetProps {
@@ -18,7 +21,7 @@ interface CourseFeedbackBottomSheetProps {
 export const CourseFeedbackBottomSheet = forwardRef<
   BottomSheetModal,
   CourseFeedbackBottomSheetProps
->(({ courseId, courseTitle, onDismiss, onSubmit }, ref) => {
+>(({ courseTitle, onDismiss, onSubmit }, ref) => {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
@@ -49,8 +52,6 @@ export const CourseFeedbackBottomSheet = forwardRef<
       setIsSubmitting(false);
     }
   };
-
-  const isButtonDisabled = rating === 0 || isSubmitting;
 
   const config: BottomSheetMessageConfig = {
     type: "question",

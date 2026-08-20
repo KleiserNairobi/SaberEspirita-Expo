@@ -1,27 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+
 import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ArrowLeft, Check, X, HelpCircle, Tag } from "lucide-react-native";
-
 import { Timestamp } from "firebase/firestore";
+import { ArrowLeft, Check, HelpCircle, X } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { AnswerButton } from "@/components/AnswerButton";
+import { truthOrFalseQuestions } from "@/data/truthOrFalseQuestions";
+import { useSaveTruthOrFalseResponse } from "@/hooks/queries/useTruthOrFalse";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
 import { truthOrFalseApiService } from "@/services/api/truthOrFalseApiService";
-import { truthOrFalseQuestions } from "@/data/truthOrFalseQuestions";
 import { getDayOfYear, getTodayString } from "@/utils/truthOrFalseUtils";
-import { DifficultyBadge } from "@/components/DifficultyBadge";
-import { AnswerButton } from "@/components/AnswerButton";
-import { createStyles } from "./styles";
 
-import { useSaveTruthOrFalseResponse } from "@/hooks/queries/useTruthOrFalse";
+import { createStyles } from "./styles";
 
 type NavigationProp = NativeStackNavigationProp<FixStackParamList>;
 

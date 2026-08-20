@@ -1,9 +1,7 @@
 import {
   collection,
-  getDocs,
   getDocsFromCache,
   getDocsFromServer,
-  limit,
   query,
   where,
 } from "firebase/firestore";

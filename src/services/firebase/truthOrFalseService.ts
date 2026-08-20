@@ -2,7 +2,6 @@ import {
   addDoc,
   collection,
   doc,
-  getDoc,
   getDocFromCache,
   getDocFromServer,
   getDocs,
@@ -15,7 +14,6 @@ import {
   setDoc,
   updateDoc,
   where,
-  writeBatch,
 } from "firebase/firestore";
 
 import { db } from "@/configs/firebase/firebase";

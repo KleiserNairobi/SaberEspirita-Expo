@@ -19,7 +19,7 @@ import {
   useTouchCourseAccess,
 } from "@/hooks/queries/useCourseProgress";
 import { useCourse } from "@/hooks/queries/useCourses";
-import { useCourseExercises, useExercises } from "@/hooks/queries/useExercises";
+import { useCourseExercises } from "@/hooks/queries/useExercises";
 import { LESSONS_KEYS, useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
@@ -241,7 +241,7 @@ export function CourseCurriculumScreen() {
     }
   }, [courseId, isGuest, user?.uid, autoEnroll, progress, touchAccess]);
 
-  function getLessonStatus(lesson: ILesson, index: number): LessonStatus {
+  function getLessonStatus(lesson: ILesson, _index: number): LessonStatus {
     // Verificar se a aula foi concluída
     if (progress?.completedLessons.includes(lesson.id)) {
       return LessonStatus.COMPLETED;

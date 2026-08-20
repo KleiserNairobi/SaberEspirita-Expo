@@ -1,15 +1,15 @@
 import {
   addDoc,
+  arrayUnion,
   collection,
   doc,
   getDoc,
   serverTimestamp,
   setDoc,
   updateDoc,
-  arrayUnion,
-  arrayRemove,
 } from "firebase/firestore";
-import { db, auth } from "@/configs/firebase/firebase";
+
+import { auth, db } from "@/configs/firebase/firebase";
 
 function getUTCYearMonth(date: Date = new Date()): string {
   const y = date.getUTCFullYear();
@@ -121,7 +121,6 @@ export async function markLessonAsCompleted(
   );
 }
 
-
 /**
  * Salva resultado de exercício e atualiza progresso
  */
@@ -190,7 +189,11 @@ export async function saveExerciseResult(
       attempts: updatedAttempts,
       bestScore,
       passed: passed || existingResult.passed,
-      ...(passed ? { completedAt: new Date() } : existingResult.completedAt ? { completedAt: existingResult.completedAt } : {}),
+      ...(passed
+        ? { completedAt: new Date() }
+        : existingResult.completedAt
+          ? { completedAt: existingResult.completedAt }
+          : {}),
     };
   } else {
     // Criar novo resultado

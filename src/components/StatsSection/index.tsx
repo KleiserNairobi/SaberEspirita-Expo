@@ -1,5 +1,4 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import { Flame, Trophy, Target, TrendingUp } from "lucide-react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { StatCard } from "../StatCard";

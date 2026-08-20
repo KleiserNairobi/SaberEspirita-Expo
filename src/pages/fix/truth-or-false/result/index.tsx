@@ -1,17 +1,19 @@
 import React from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ArrowLeft, Home, HelpCircle, Tag } from "lucide-react-native";
-import { StatusBar } from "expo-status-bar";
 
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StatusBar } from "expo-status-bar";
+import { ArrowLeft, HelpCircle } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { Button } from "@/components/Button";
+import { ResultFeedback } from "@/components/ResultFeedback";
+import { truthOrFalseQuestions } from "@/data/truthOrFalseQuestions";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
-import { truthOrFalseQuestions } from "@/data/truthOrFalseQuestions";
-import { ResultFeedback } from "@/components/ResultFeedback";
-import { DifficultyBadge } from "@/components/DifficultyBadge";
-import { Button } from "@/components/Button";
+
 // TODO: Imports comentados temporariamente (funcionalidade "Salvar para Revisar")
 // import { BookmarkPlus, BookmarkCheck } from "lucide-react-native";
 // import { Alert } from "react-native";
@@ -27,7 +29,7 @@ export function TruthOrFalseResultScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RoutePropType>();
 
-  const { userAnswer, isCorrect, questionId, origin } = route.params;
+  const { userAnswer, isCorrect, questionId } = route.params;
   const question = truthOrFalseQuestions.find((q) => q.id === questionId);
 
   // ...

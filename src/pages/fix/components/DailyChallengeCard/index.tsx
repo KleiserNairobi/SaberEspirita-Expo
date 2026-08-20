@@ -1,15 +1,16 @@
-import {
-  useDailyChallengeStatus,
-  useUserStreak,
-} from "@/hooks/queries/useDailyChallenge";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { FixStackParamList } from "@/routers/types";
-import { useAuthStore } from "@/stores/authStore";
+import React from "react";
+
+import { Text, TouchableOpacity, View } from "react-native";
+
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowRight, CheckCircle, Trophy } from "lucide-react-native";
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+
+import { useDailyChallengeStatus } from "@/hooks/queries/useDailyChallenge";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { FixStackParamList } from "@/routers/types";
+import { useAuthStore } from "@/stores/authStore";
+
 import { createStyles } from "./styles";
 
 interface DailyChallengeCardProps {
@@ -23,7 +24,6 @@ export function DailyChallengeCard({ onPress }: DailyChallengeCardProps) {
   const user = useAuthStore((s) => s.user);
 
   const { data: isCompleted } = useDailyChallengeStatus(user?.uid);
-  const { data: streak } = useUserStreak(user?.uid);
 
   function handlePress() {
     if (onPress) {

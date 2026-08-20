@@ -178,9 +178,7 @@ const CarouselItem = React.memo(function CarouselItem({
 });
 
 export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
-  const { theme } = useAppTheme();
   const isFocused = useIsFocused();
-  const styles = createStyles(theme);
   const scrollX = useSharedValue(0);
   const flatListRef = useRef<Animated.FlatList<any>>(null);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);

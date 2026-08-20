@@ -1,16 +1,16 @@
-import { useCurrentUserScore } from "@/hooks/queries/useLeaderboard";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { FixStackParamList } from "@/routers/types";
+import React from "react";
+
+import { Text, TouchableOpacity, View } from "react-native";
+
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Calendar, Crown, LucideIcon, TrendingUp } from "lucide-react-native";
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { createStyles } from "./styles";
 
-interface ProgressSummaryProps {
-  totalCorrect: number;
-}
+import { useCurrentUserScore } from "@/hooks/queries/useLeaderboard";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { FixStackParamList } from "@/routers/types";
+
+import { createStyles } from "./styles";
 
 interface StatsCardProps {
   icon: LucideIcon;
@@ -35,7 +35,7 @@ function StatsCard({ icon: Icon, value, label, iconColor, iconBg }: StatsCardPro
   );
 }
 
-export function ProgressSummary({ totalCorrect }: ProgressSummaryProps) {
+export function ProgressSummary() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<NativeStackNavigationProp<FixStackParamList>>();

@@ -8,7 +8,6 @@ import { Allura_400Regular } from "@expo-google-fonts/allura";
 import {
   BarlowCondensed_300Light,
   BarlowCondensed_400Regular,
-  BarlowCondensed_400Regular_Italic,
   BarlowCondensed_500Medium,
   BarlowCondensed_600SemiBold,
   BarlowCondensed_700Bold,
@@ -75,7 +74,7 @@ const queryClient = new QueryClient({
 });
 
 function useCheckUpdate(appIsReady: boolean) {
-  const { versionData, loading, error, checkVersion } = useVersionControl();
+  const { versionData, loading, checkVersion } = useVersionControl();
   const { modalVisible, modalConfig, showModal, hideModal } = useUpdateModal();
   const [hasChecked, setHasChecked] = useState(false);
 

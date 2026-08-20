@@ -1,25 +1,28 @@
 import { useRef, useState } from "react";
-import { View, SectionList, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ArrowLeft, BookOpen, SlidersHorizontal } from "lucide-react-native";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { FixStackParamList } from "@/routers/types";
+import { SectionList, Text, TouchableOpacity, View } from "react-native";
+
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
+import { StatusBar } from "expo-status-bar";
+import { ArrowLeft, BookOpen, SlidersHorizontal } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import {
+  QUIZ_KEYS,
   useSubcategories,
   useUserQuizProgress,
-  QUIZ_KEYS,
 } from "@/hooks/queries/useQuiz";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { SearchBar } from "@/pages/pray/components/SearchBar";
+import { FixStackParamList } from "@/routers/types";
 import { useAuthStore } from "@/stores/authStore";
 import { useQuizFilterStore } from "@/stores/quizFilterStore";
-import { SearchBar } from "@/pages/pray/components/SearchBar";
-import { SubcategoryCard } from "./components/SubcategoryCard";
+
 import { QuizRetakeBottomSheet } from "./components/QuizRetakeBottomSheet";
+import { SubcategoryCard } from "./components/SubcategoryCard";
 import {
   SubcategoryFilterBottomSheet,
   SubcategoryFilterType,
@@ -56,7 +59,7 @@ export function SubcategoriesScreen() {
   const setGlobalFilter = useQuizFilterStore((state) => state.setFilter);
 
   const { user } = useAuthStore();
-  const { data: subcategories, isLoading } = useSubcategories(categoryId);
+  const { data: subcategories } = useSubcategories(categoryId);
   const { data: userProgress } = useUserQuizProgress(user?.uid || "");
 
   // Wrapper para setFilter manter a assinatura
@@ -89,7 +92,6 @@ export function SubcategoriesScreen() {
     if (user?.uid) {
       setRetakingSubcategoryId(subId);
       try {
-
         // 3. Atualizar cache local para refletir a mudança imediatamente (remover checkmark e atualizar estatísticas)
         await queryClient.invalidateQueries({
           queryKey: QUIZ_KEYS.userProgress(user.uid),

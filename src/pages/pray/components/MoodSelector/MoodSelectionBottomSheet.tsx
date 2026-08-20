@@ -5,9 +5,8 @@ import {
   BottomSheetModal,
   BottomSheetBackdrop,
   BottomSheetView,
-  BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { RotateCcw, Sparkles } from "lucide-react-native";
+import { RotateCcw } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useMoodStore } from "@/stores/moodStore";
@@ -15,7 +14,7 @@ import { MOODS } from "./constants";
 import { createStyles } from "./styles";
 
 export const MoodSelectionBottomSheet = forwardRef<BottomSheetModal>(
-  function MoodSelectionBottomSheet(props, ref) {
+  function MoodSelectionBottomSheet(_props, ref) {
     const { theme } = useAppTheme();
     const { currentMood, setMood } = useMoodStore();
     const insets = useSafeAreaInsets();

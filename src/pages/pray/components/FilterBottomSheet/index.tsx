@@ -2,15 +2,15 @@ import React, { forwardRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import BottomSheet, {
+import {
   BottomSheetBackdrop,
   BottomSheetView,
   BottomSheetModal,
 } from "@gorhom/bottom-sheet";
-import { BookOpen, Heart, Sparkles, User, RotateCcw, Tag } from "lucide-react-native";
+import { BookOpen, Heart, Sparkles, User, RotateCcw } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { PrayerFilterType, ContentFilterType } from "@/types/prayer";
+import { ContentFilterType } from "@/types/prayer";
 import { createStyles } from "@/pages/pray/components/FilterBottomSheet/styles";
 
 interface FilterBottomSheetProps {

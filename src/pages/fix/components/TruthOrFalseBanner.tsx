@@ -1,11 +1,13 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+
+import { Text, TouchableOpacity, View } from "react-native";
+
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { FixStackParamList } from "@/routers/types";
+import { ChevronRight, HelpCircle } from "lucide-react-native";
+
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { HelpCircle, ChevronRight } from "lucide-react-native";
-import { StyleSheet } from "react-native";
+import { FixStackParamList } from "@/routers/types";
 
 export function TruthOrFalseBanner() {
   const { theme } = useAppTheme();

@@ -1,13 +1,4 @@
-import {
-  BadgeQuestionMark,
-  BookA,
-  ClipboardCheck,
-  GraduationCap,
-  HandHeart,
-  LucideIcon,
-  MessageCircleQuestion,
-  Mic,
-} from "lucide-react-native";
+import { BookA, LucideIcon, Mic } from "lucide-react-native";
 
 export type Biblioteca = {
   id: string;

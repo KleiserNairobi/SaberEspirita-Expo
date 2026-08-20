@@ -27,7 +27,6 @@ export const LessonSlide = memo(
     fontSize,
     isLastSlide,
     reflectionQuestions,
-    glossaryTerms,
     onGlossaryTermPress,
     slideIndex,
   }: LessonSlideProps) => {

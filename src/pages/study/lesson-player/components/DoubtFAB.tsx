@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { StyleSheet, Animated, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Animated, TouchableOpacity } from "react-native";
 import { MessageSquare } from "lucide-react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { ITheme } from "@/configs/theme/types";

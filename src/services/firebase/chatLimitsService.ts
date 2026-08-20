@@ -1,11 +1,11 @@
 import {
+  Timestamp,
   doc,
   getDoc,
+  increment,
+  serverTimestamp,
   setDoc,
   updateDoc,
-  serverTimestamp,
-  Timestamp,
-  increment,
 } from "firebase/firestore";
 
 import { db } from "@/configs/firebase/firebase";
@@ -132,9 +132,6 @@ export class ChatLimitsService {
    */
   static async incrementUsage(userId: string, chatType: ChatType): Promise<void> {
     const limitsRef = doc(db, "chatLimits", userId);
-    const now = new Date();
-    const today = this.getLocalDateString();
-    const thisMonth = today.substring(0, 7);
     const dailyKey = chatType === "emotional" ? "dailyEmotional" : "dailyScientific";
 
     try {
@@ -143,7 +140,7 @@ export class ChatLimitsService {
       await updateDoc(limitsRef, {
         [`${dailyKey}.count`]: increment(1),
         "monthlyTotal.count": increment(1),
-        lastMessageAt: Timestamp.fromDate(now),
+        lastMessageAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
     } catch {
@@ -175,7 +172,6 @@ export class ChatLimitsService {
       updatedAt: serverTimestamp(),
     });
   }
-
 
   /**
    * Inicializa documento de limites para novo usuário

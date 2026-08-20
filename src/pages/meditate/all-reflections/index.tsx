@@ -1,33 +1,41 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
-import { ActivityIndicator, SectionList, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+
+import {
+  ActivityIndicator,
+  SectionList,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { MeditateStackParamList } from "@/routers/types";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
   BookHeart,
-  SlidersHorizontal,
   BookOpen,
   Heart,
-  User,
+  SlidersHorizontal,
   Sparkles,
   Tag,
+  User,
 } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
+import { SearchBar } from "@/pages/pray/components/SearchBar";
+import { MeditateStackParamList } from "@/routers/types";
+import { reflectionApiService } from "@/services/api/reflectionApiService";
+import { useAuthStore } from "@/stores/authStore";
+import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
+import { ContentFilterType } from "@/types/prayer";
+
 import { ReflectionCard } from "../components/ReflectionCard";
 import { REFLECTION_KEYS, useReflections } from "../hooks/useReflections";
-import { ContentFilterType } from "@/types/prayer";
 import { createStyles } from "./styles";
-import { useQueryClient } from "@tanstack/react-query";
-import { reflectionApiService } from "@/services/api/reflectionApiService";
-import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
-import { useAuthStore } from "@/stores/authStore";
 
 // Opções de filtro específicas para reflexões
 const REFLECTION_FILTER_OPTIONS = [
@@ -48,7 +56,6 @@ export default function AllReflectionsScreen() {
   const { user } = useAuthStore();
 
   const isFavorite = useReflectionFavoritesStore((state) => state.isFavorite);
-  const favorites = useReflectionFavoritesStore((state) => state.favorites);
   const syncWithFirebase = useReflectionFavoritesStore((state) => state.syncWithFirebase);
   const isFavoritesPage = id === "FAVORITES";
 
@@ -247,7 +254,9 @@ export default function AllReflectionsScreen() {
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <View style={[styles.emptyContainer, { paddingHorizontal: theme.spacing.lg }]}>
+            <View
+              style={[styles.emptyContainer, { paddingHorizontal: theme.spacing.lg }]}
+            >
               <Text style={styles.emptyText}>
                 {searchQuery
                   ? "Nenhuma reflexão encontrada"

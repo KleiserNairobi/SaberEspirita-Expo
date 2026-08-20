@@ -1,4 +1,3 @@
-import { ContentFilterType } from "@/types/prayer";
 // Tipos para navegação type-safe
 export type RootStackParamList = {
   Auth: undefined;

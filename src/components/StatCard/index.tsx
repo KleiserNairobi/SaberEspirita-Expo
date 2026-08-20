@@ -1,7 +1,11 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+
+import { Text, TouchableOpacity, View } from "react-native";
+
 import { LucideIcon } from "lucide-react-native";
+
 import { useAppTheme } from "@/hooks/useAppTheme";
+
 import { createStyles } from "./styles";
 
 interface StatCardProps {
@@ -16,13 +20,11 @@ export function StatCard({
   icon: Icon,
   label,
   value,
-  variant = "primary",
+  variant: _variant = "primary",
   onPress,
 }: StatCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-
-  const isPrimary = variant === "primary";
 
   const containerStyle = [
     styles.container,

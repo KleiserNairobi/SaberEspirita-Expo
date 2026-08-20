@@ -1,33 +1,47 @@
-import React, { useState, useMemo } from "react";
-import { View, SectionList, Text, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import { useNavigation, useRoute, RouteProp, useFocusEffect } from "@react-navigation/native";
+import React, { useMemo, useState } from "react";
+
+import {
+  ActivityIndicator,
+  ScrollView,
+  SectionList,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import {
+  RouteProp,
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { differenceInDays } from "date-fns";
+import { StatusBar } from "expo-status-bar";
 import {
   ArrowLeft,
-  LayoutGrid,
-  Heart,
-  Sunrise,
-  Moon,
   BookOpen,
-  HeartPulse,
-  Users,
-  HandHeart,
-  Sparkles,
   Flame,
+  HandHeart,
+  Heart,
+  HeartPulse,
+  LayoutGrid,
+  Moon,
+  Sparkles,
+  Sunrise,
+  Users,
 } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { PrayerCard } from "@/pages/pray/components/PrayerCard";
+import { SearchBar } from "@/pages/pray/components/SearchBar";
+import { useAllPrayersWithCategories } from "@/pages/pray/hooks/useAllPrayersWithCategories";
 import { PrayStackParamList } from "@/routers/types";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
-import { differenceInDays } from "date-fns";
-import { PRAYER_MOMENTS, PrayerMoment, IPrayer } from "@/types/prayer";
+import { PRAYER_MOMENTS, PrayerMoment } from "@/types/prayer";
 
-import { SearchBar } from "@/pages/pray/components/SearchBar";
-import { PrayerCard } from "@/pages/pray/components/PrayerCard";
-import { useAllPrayersWithCategories } from "@/pages/pray/hooks/useAllPrayersWithCategories";
 import { createStyles } from "./styles";
 
 type NavigationProp = NativeStackNavigationProp<PrayStackParamList, "AllPrayers">;
@@ -90,7 +104,8 @@ export function AllPrayersScreen() {
     };
     if (allPrayers) {
       allPrayers.forEach((prayer) => {
-        const isNew = prayer.createdAt && differenceInDays(new Date(), prayer.createdAt) <= 15;
+        const isNew =
+          prayer.createdAt && differenceInDays(new Date(), prayer.createdAt) <= 15;
         if (isNew) {
           hasNew.ALL = true;
           (prayer.categories || []).forEach((cat) => {
@@ -104,10 +119,22 @@ export function AllPrayersScreen() {
 
   const CATEGORIES = useMemo(() => {
     const baseCats = [
-      { type: "ALL", label: "Todas", icon: LayoutGrid, count: categoryCounts.ALL, hasNew: categoryHasNew.ALL },
-      { type: "FAVORITES", label: "Favoritas", icon: Heart, count: categoryCounts.FAVORITES, hasNew: false },
+      {
+        type: "ALL",
+        label: "Todas",
+        icon: LayoutGrid,
+        count: categoryCounts.ALL,
+        hasNew: categoryHasNew.ALL,
+      },
+      {
+        type: "FAVORITES",
+        label: "Favoritas",
+        icon: Heart,
+        count: categoryCounts.FAVORITES,
+        hasNew: false,
+      },
     ];
-    
+
     const momentCats = Object.entries(PRAYER_MOMENTS).map(([key, { label }]) => ({
       type: key,
       label,
@@ -206,8 +233,12 @@ export function AllPrayersScreen() {
               >
                 {CATEGORIES.map((cat) => {
                   const isSelected = filterType === cat.type;
-                  const cardBg = isSelected ? theme.colors.primary + "10" : theme.colors.card;
-                  const cardBorder = isSelected ? theme.colors.primary : theme.colors.border;
+                  const cardBg = isSelected
+                    ? theme.colors.primary + "10"
+                    : theme.colors.card;
+                  const cardBorder = isSelected
+                    ? theme.colors.primary
+                    : theme.colors.border;
 
                   return (
                     <TouchableOpacity

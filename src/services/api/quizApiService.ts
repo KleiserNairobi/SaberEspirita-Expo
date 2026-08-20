@@ -1,7 +1,6 @@
 import apiClient from "./apiClient";
 import {
   ICategory,
-  ICategoryProgress,
   IQuestionReportPayload,
   IQuiz,
   IQuizHistory,
@@ -74,7 +73,7 @@ export const quizApiService = {
   /**
    * Obtém o mapa de subcategorias concluídas pelo usuário agrupadas por categoria.
    */
-  async getUserProgress(userId?: string): Promise<Record<string, string[]>> {
+  async getUserProgress(_userId?: string): Promise<Record<string, string[]>> {
     const response = await apiClient.get<Record<string, string[]>>("/quizzes/progress/me");
     return response.data || {};
   },
@@ -82,7 +81,7 @@ export const quizApiService = {
   /**
    * Obtém as estatísticas detalhadas de desempenho do usuário.
    */
-  async getUserDetailedStats(userId?: string): Promise<IUserDetailedStats> {
+  async getUserDetailedStats(_userId?: string): Promise<IUserDetailedStats> {
     const response = await apiClient.get<IUserDetailedStats>("/quizzes/stats/me");
     return response.data || {
       totalQuestions: 0,

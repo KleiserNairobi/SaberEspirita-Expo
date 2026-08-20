@@ -1,10 +1,12 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+
+import { Image, Text, View } from "react-native";
+
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { createStyles } from "../styles";
 import { ILeaderboardUser } from "@/types/leaderboard";
-import { Trophy } from "lucide-react-native";
 import { formatUserName } from "@/utils/formatName";
+
+import { createStyles } from "../styles";
 
 interface Props {
   players: ILeaderboardUser[];

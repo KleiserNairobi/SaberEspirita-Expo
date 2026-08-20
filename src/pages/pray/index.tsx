@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  ActivityIndicator,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -19,7 +18,6 @@ import { WelcomingHero } from "@/pages/pray/components/WelcomingHero";
 import { AIChatCard } from "@/pages/pray/components/AIChatCard";
 import { TrendingPrayers } from "@/pages/pray/components/TrendingPrayers";
 import { createStyles } from "@/pages/pray/styles";
-import { PrayerCard } from "@/pages/pray/components/PrayerCard";
 import { useAuth } from "@/stores/authStore";
 import { useMoodStore } from "@/stores/moodStore";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
@@ -51,10 +49,6 @@ export default function PrayScreen() {
       setCurrentTrack(null);
     }, [clearMood, setPlaying, setCurrentTrack])
   );
-
-  function handlePrayerPress(prayerId: string) {
-    navigation.navigate("PrayerPrep", { id: prayerId });
-  }
 
   function handleAIChatPress() {
     const moodContext = currentMood

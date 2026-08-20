@@ -1,24 +1,35 @@
 import React, { useRef, useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { FixStackParamList } from "@/routers/types";
-import { QuizUI } from "@/components/QuizUI";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { QuizUI } from "@/components/QuizUI";
+import { QUIZ_KEYS, useQuiz } from "@/hooks/queries/useQuiz";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { useAuthStore } from "@/stores/authStore";
+import { FixStackParamList } from "@/routers/types";
 import { quizApiService } from "@/services/api/quizApiService";
 import { statsApiService } from "@/services/api/statsApiService";
-import { useQuiz, QUIZ_KEYS } from "@/hooks/queries/useQuiz";
-import { IQuizAnswer, IQuizHistory } from "@/types/quiz";
+import { useAuthStore } from "@/stores/authStore";
+import { IQuizAnswer } from "@/types/quiz";
 
 type StandardQuizRouteProp = RouteProp<FixStackParamList, "StandardQuiz">;
-type StandardQuizNavigationProp = NativeStackNavigationProp<FixStackParamList, "StandardQuiz">;
+type StandardQuizNavigationProp = NativeStackNavigationProp<
+  FixStackParamList,
+  "StandardQuiz"
+>;
 
 export function StandardQuizScreen() {
   const route = useRoute<StandardQuizRouteProp>();
@@ -26,16 +37,13 @@ export function StandardQuizScreen() {
   const queryClient = useQueryClient();
   const { theme } = useAppTheme();
 
-  const {
-    subcategoryId,
-    categoryId,
-    categoryName,
-    subcategoryName,
-    subtitle,
-  } = route.params;
+  const { subcategoryId, categoryId, categoryName, subcategoryName, subtitle } =
+    route.params;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(null);
+  const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
+    null
+  );
   const guestSheetRef = useRef<BottomSheetModal>(null);
 
   const { data: quiz, isLoading } = useQuiz(subcategoryId || "", true);
@@ -52,7 +60,8 @@ export function StandardQuizScreen() {
       setMessageConfig({
         type: "info",
         title: "Modo Visitante",
-        message: "Seu progresso não será salvo pois você está navegando como visitante. Crie uma conta para registrar suas conquistas!",
+        message:
+          "Seu progresso não será salvo pois você está navegando como visitante. Crie uma conta para registrar suas conquistas!",
         primaryButton: {
           label: "Criar Conta",
           onPress: () => {
@@ -75,7 +84,9 @@ export function StandardQuizScreen() {
 
     try {
       setIsSubmitting(true);
-      const correctAnswers = answers.filter((a) => a.selectedAnswerIndex === a.correctAnswerIndex).length;
+      const correctAnswers = answers.filter(
+        (a) => a.selectedAnswerIndex === a.correctAnswerIndex
+      ).length;
       const totalQuestions = quiz.questions.length;
       const percentage = Math.floor((correctAnswers / totalQuestions) * 100);
 
@@ -138,16 +149,30 @@ export function StandardQuizScreen() {
 
   if (!isLoading && !quiz) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
         <View style={styles.loadingContainer}>
-          <Text style={[styles.loadingText, { color: theme.colors.error || "#FF6B6B", marginBottom: 16 }]}>
+          <Text
+            style={[
+              styles.loadingText,
+              { color: theme.colors.error || "#FF6B6B", marginBottom: 16 },
+            ]}
+          >
             Quiz não encontrado.
           </Text>
-          <Text style={[styles.loadingText, { fontSize: 14, marginBottom: 24, color: theme.colors.textSecondary }]}>
+          <Text
+            style={[
+              styles.loadingText,
+              { fontSize: 14, marginBottom: 24, color: theme.colors.textSecondary },
+            ]}
+          >
             Não foi possível carregar as questões deste quiz.
           </Text>
           <TouchableOpacity onPress={handleStop}>
-            <Text style={{ color: theme.colors.primary, fontWeight: "600" }}>← Voltar</Text>
+            <Text style={{ color: theme.colors.primary, fontWeight: "600" }}>
+              ← Voltar
+            </Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -156,10 +181,17 @@ export function StandardQuizScreen() {
 
   if (isLoading || !quiz) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text style={[styles.loadingText, { color: theme.colors.textSecondary, marginTop: 16 }]}>
+          <Text
+            style={[
+              styles.loadingText,
+              { color: theme.colors.textSecondary, marginTop: 16 },
+            ]}
+          >
             Carregando quiz...
           </Text>
         </View>

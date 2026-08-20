@@ -1,21 +1,23 @@
+import React, { forwardRef, useMemo, useState } from "react";
+
+import { Pressable, Text, View } from "react-native";
+
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
-  BottomSheetTextInput,
   BottomSheetScrollView,
-  BottomSheetView,
+  BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import React, { forwardRef, useMemo, useState } from "react";
-import { Text, View, Pressable } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { AlertTriangle, CheckCircle } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button } from "@/components/Button";
+import { db } from "@/configs/firebase/firebase";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
-import { db } from "@/configs/firebase/firebase";
 import { IQuestion } from "@/types/quiz";
+
 import { createStyles } from "./styles";
 
 interface ReportQuestionBottomSheetProps {
@@ -35,7 +37,10 @@ const REPORT_REASONS = [
 export const ReportQuestionBottomSheet = forwardRef<
   BottomSheetModal,
   ReportQuestionBottomSheetProps
->(function ReportQuestionBottomSheet({ question, selectedAnswerIndex = null, quizId = "", questionIndex = -1 }, ref) {
+>(function ReportQuestionBottomSheet(
+  { question, selectedAnswerIndex = null, quizId = "", questionIndex = -1 },
+  ref
+) {
   const { theme } = useAppTheme();
   const insets = useSafeAreaInsets();
   const styles = createStyles(theme);
@@ -71,7 +76,8 @@ export const ReportQuestionBottomSheet = forwardRef<
       selectedAnswerIndex: selectedAnswerIndex ?? -1,
       reasonId: selectedReason,
       reasonText,
-      comment: selectedReason === "outro" || customComment.trim() ? customComment.trim() : null,
+      comment:
+        selectedReason === "outro" || customComment.trim() ? customComment.trim() : null,
       createdAt: serverTimestamp(),
     };
 
@@ -119,7 +125,10 @@ export const ReportQuestionBottomSheet = forwardRef<
       keyboardBlurBehavior="restore"
     >
       <BottomSheetScrollView
-        contentContainerStyle={[styles.container, { paddingBottom: Math.max(insets.bottom, 24) }]}
+        contentContainerStyle={[
+          styles.container,
+          { paddingBottom: Math.max(insets.bottom, 24) },
+        ]}
         keyboardShouldPersistTaps="handled"
       >
         {isSuccess ? (
@@ -127,19 +136,23 @@ export const ReportQuestionBottomSheet = forwardRef<
             <CheckCircle size={64} color={theme.colors.success} />
             <Text style={styles.successTitle}>Relato enviado!</Text>
             <Text style={styles.successSubtitle}>
-              Muito obrigado por nos ajudar. Analisaremos esta questão e faremos as correções necessárias em breve.
+              Muito obrigado por nos ajudar. Analisaremos esta questão e faremos as
+              correções necessárias em breve.
             </Text>
             <View style={{ width: "100%", marginTop: 12 }}>
-              <Button
-                title="Fechar"
-                onPress={handleClose}
-                fullWidth
-              />
+              <Button title="Fechar" onPress={handleClose} fullWidth />
             </View>
           </View>
         ) : (
           <>
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+              }}
+            >
               <AlertTriangle size={24} color={theme.colors.warning} />
               <Text style={styles.title}>Reportar Questão</Text>
             </View>
@@ -156,10 +169,17 @@ export const ReportQuestionBottomSheet = forwardRef<
                     onPress={() => setSelectedReason(reason.id)}
                     disabled={isLoading}
                   >
-                    <Text style={[styles.optionText, isSelected && styles.optionTextSelected]}>
+                    <Text
+                      style={[styles.optionText, isSelected && styles.optionTextSelected]}
+                    >
                       {reason.text}
                     </Text>
-                    <View style={[styles.radioCircle, isSelected && styles.radioCircleSelected]}>
+                    <View
+                      style={[
+                        styles.radioCircle,
+                        isSelected && styles.radioCircleSelected,
+                      ]}
+                    >
                       {isSelected && <View style={styles.radioDot} />}
                     </View>
                   </Pressable>
@@ -170,7 +190,9 @@ export const ReportQuestionBottomSheet = forwardRef<
             {(selectedReason === "outro" || selectedReason !== null) && (
               <View style={styles.inputContainer}>
                 <Text style={styles.label}>
-                  {selectedReason === "outro" ? "Escreva o motivo (obrigatório)" : "Adicione detalhes (opcional)"}
+                  {selectedReason === "outro"
+                    ? "Escreva o motivo (obrigatório)"
+                    : "Adicione detalhes (opcional)"}
                 </Text>
                 <BottomSheetTextInput
                   style={styles.input}
@@ -203,7 +225,10 @@ export const ReportQuestionBottomSheet = forwardRef<
                 title="Enviar Relatório"
                 onPress={handleSendReport}
                 loading={isLoading}
-                disabled={isSubmitDisabled || (selectedReason === "outro" && !customComment.trim())}
+                disabled={
+                  isSubmitDisabled ||
+                  (selectedReason === "outro" && !customComment.trim())
+                }
                 fullWidth
               />
             </View>

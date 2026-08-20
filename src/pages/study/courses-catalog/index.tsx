@@ -43,13 +43,11 @@ const CatalogCourseItem = React.memo(
     progressData,
     onPress,
     theme,
-    styles,
   }: {
     course: ICourse;
     progressData: IUserCourseProgress | undefined;
     onPress: (course: ICourse, hasProgress: boolean) => void;
     theme: any;
-    styles: any;
   }) => {
     // Calcular progresso real localmente para garantir consistência com a tela de detalhes
     const completedCount = progressData?.completedLessons?.length || 0;
@@ -154,7 +152,6 @@ export function CoursesCatalogScreen({ navigation }: any) {
         progressData={progressData}
         onPress={handleCoursePress}
         theme={theme}
-        styles={styles}
       />
     );
   }

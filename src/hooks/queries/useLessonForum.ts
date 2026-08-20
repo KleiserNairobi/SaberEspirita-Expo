@@ -6,10 +6,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
-import {
-  ForumCommentsResponse,
-  forumApiService,
-} from "@/services/api/forumApiService";
+import { ForumCommentsResponse, forumApiService } from "@/services/api/forumApiService";
 import { useAuthStore } from "@/stores/authStore";
 import { CommunityLevelId, ForumComment, ForumReactionType } from "@/types/forum";
 
@@ -61,7 +58,7 @@ export function useForumHasNewComments(lessonId: string) {
 /**
  * Hook para buscar comentários paginados de uma lição (suporte a Infinite Scroll).
  */
-export function useLessonForumComments(courseId: string, lessonId: string) {
+export function useLessonForumComments(_courseId: string, lessonId: string) {
   const { user, isGuest } = useAuthStore();
 
   return useInfiniteQuery({
@@ -173,9 +170,9 @@ export function useSetForumReaction() {
         queryKey: FORUM_KEYS.comments(vars.lessonId, cacheUid),
       });
 
-      const previous = queryClient.getQueryData<
-        InfiniteData<ForumCommentsResponse>
-      >(FORUM_KEYS.comments(vars.lessonId, cacheUid));
+      const previous = queryClient.getQueryData<InfiniteData<ForumCommentsResponse>>(
+        FORUM_KEYS.comments(vars.lessonId, cacheUid)
+      );
 
       queryClient.setQueryData<InfiniteData<ForumCommentsResponse>>(
         FORUM_KEYS.comments(vars.lessonId, cacheUid),
@@ -243,9 +240,9 @@ export function useRemoveForumReaction() {
         queryKey: FORUM_KEYS.comments(vars.lessonId, cacheUid),
       });
 
-      const previous = queryClient.getQueryData<
-        InfiniteData<ForumCommentsResponse>
-      >(FORUM_KEYS.comments(vars.lessonId, cacheUid));
+      const previous = queryClient.getQueryData<InfiniteData<ForumCommentsResponse>>(
+        FORUM_KEYS.comments(vars.lessonId, cacheUid)
+      );
 
       queryClient.setQueryData<InfiniteData<ForumCommentsResponse>>(
         FORUM_KEYS.comments(vars.lessonId, cacheUid),

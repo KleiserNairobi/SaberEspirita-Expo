@@ -70,7 +70,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
 
   const { courseId, lessonId, lessonTitle, anchorQuestion, focusTag } = route.params;
 
-  const { data: lesson, isLoading: isLoadingLesson } = useLesson(courseId, lessonId);
+  const { data: lesson } = useLesson(courseId, lessonId);
 
   const displayAnchorQuestion =
     anchorQuestion || lesson?.forumPrompt || "Reflexão da Aula";

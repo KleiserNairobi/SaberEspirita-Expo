@@ -3,19 +3,12 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import {
   Smile,
-  CloudRain,
-  Activity,
-  Heart,
-  Flame,
-  Moon,
-  Sparkles,
-  Sun,
   ChevronDown,
 } from "lucide-react-native";
 import { MOODS } from "./constants";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { UserMood, useMoodStore } from "@/stores/moodStore";
+import { useMoodStore } from "@/stores/moodStore";
 import { MoodSelectionBottomSheet } from "./MoodSelectionBottomSheet";
 import { createStyles } from "./styles";
 

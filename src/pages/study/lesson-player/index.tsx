@@ -147,7 +147,7 @@ export function LessonPlayerScreen() {
   const { data: hasNewForum } = useForumHasNewComments(lessonId);
 
   // Fetch dos exercícios associados
-  const { data: exercises, isLoading: isLoadingExercises } = useExercises(lessonId);
+  const { isLoading: isLoadingExercises } = useExercises(lessonId);
 
   // Loading unificado
   const isLoading = isLoadingLesson || isLoadingExercises;

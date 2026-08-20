@@ -1,22 +1,30 @@
 import React, { useRef, useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { FixStackParamList } from "@/routers/types";
-import { QuizUI } from "@/components/QuizUI";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { useAuthStore } from "@/stores/authStore";
-import { quizApiService } from "@/services/api/quizApiService";
-import { statsApiService } from "@/services/api/statsApiService";
+import { QuizUI } from "@/components/QuizUI";
 import { useDailyChallenge } from "@/hooks/queries/useDailyChallenge";
 import { QUIZ_KEYS } from "@/hooks/queries/useQuiz";
-import { IQuizAnswer, IQuizHistory } from "@/types/quiz";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { FixStackParamList } from "@/routers/types";
+import { quizApiService } from "@/services/api/quizApiService";
+import { statsApiService } from "@/services/api/statsApiService";
+import { useAuthStore } from "@/stores/authStore";
+import { IQuizAnswer } from "@/types/quiz";
 
 type DailyQuizNavigationProp = NativeStackNavigationProp<FixStackParamList, "DailyQuiz">;
 
@@ -26,7 +34,9 @@ export function DailyQuizScreen() {
   const { theme } = useAppTheme();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(null);
+  const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
+    null
+  );
   const guestSheetRef = useRef<BottomSheetModal>(null);
 
   const { data: quiz, isLoading } = useDailyChallenge(true);
@@ -50,7 +60,8 @@ export function DailyQuizScreen() {
       setMessageConfig({
         type: "info",
         title: "Modo Visitante",
-        message: "Seu progresso não será salvo pois você está navegando como visitante. Crie uma conta para registrar suas conquistas!",
+        message:
+          "Seu progresso não será salvo pois você está navegando como visitante. Crie uma conta para registrar suas conquistas!",
         primaryButton: {
           label: "Criar Conta",
           onPress: () => {
@@ -73,7 +84,9 @@ export function DailyQuizScreen() {
 
     try {
       setIsSubmitting(true);
-      const correctAnswers = answers.filter((a) => a.selectedAnswerIndex === a.correctAnswerIndex).length;
+      const correctAnswers = answers.filter(
+        (a) => a.selectedAnswerIndex === a.correctAnswerIndex
+      ).length;
       const totalQuestions = quiz.questions.length;
       const percentage = Math.floor((correctAnswers / totalQuestions) * 100);
 
@@ -85,7 +98,9 @@ export function DailyQuizScreen() {
       const { user } = useAuthStore.getState();
 
       if (user?.uid) {
-        const today = new Date().toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" }).split(" ")[0];
+        const today = new Date()
+          .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+          .split(" ")[0];
         const dailySubcategoryId = `DAILY_${today}`;
 
         await quizApiService.submitQuiz(quiz.id, {
@@ -152,16 +167,30 @@ export function DailyQuizScreen() {
 
   if (!isLoading && !quiz) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
         <View style={styles.loadingContainer}>
-          <Text style={[styles.loadingText, { color: theme.colors.error || "#FF6B6B", marginBottom: 16 }]}>
+          <Text
+            style={[
+              styles.loadingText,
+              { color: theme.colors.error || "#FF6B6B", marginBottom: 16 },
+            ]}
+          >
             Quiz não encontrado.
           </Text>
-          <Text style={[styles.loadingText, { fontSize: 14, marginBottom: 24, color: theme.colors.textSecondary }]}>
+          <Text
+            style={[
+              styles.loadingText,
+              { fontSize: 14, marginBottom: 24, color: theme.colors.textSecondary },
+            ]}
+          >
             Não foi possível carregar as questões deste quiz.
           </Text>
           <TouchableOpacity onPress={handleStop}>
-            <Text style={{ color: theme.colors.primary, fontWeight: "600" }}>← Voltar</Text>
+            <Text style={{ color: theme.colors.primary, fontWeight: "600" }}>
+              ← Voltar
+            </Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -170,10 +199,17 @@ export function DailyQuizScreen() {
 
   if (isLoading || !quiz) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text style={[styles.loadingText, { color: theme.colors.textSecondary, marginTop: 16 }]}>
+          <Text
+            style={[
+              styles.loadingText,
+              { color: theme.colors.textSecondary, marginTop: 16 },
+            ]}
+          >
             Carregando desafio diário...
           </Text>
         </View>

@@ -21,7 +21,6 @@ interface SlideContentProps {
 export function SlideContent({
   title,
   content,
-  imagePrompt,
   fontSize = 16,
   slideType,
   glossaryTerms = [],
@@ -184,17 +183,17 @@ export function SlideContent({
           return false;
         }}
         rules={{
-          body: (node, children, parent, styles) => (
+          body: (node, children, _parent, styles) => (
             <View key={`${slideIndex}_${node.key}`} style={styles.body}>
               {children}
             </View>
           ),
-          paragraph: (node, children, parent, styles) => (
+          paragraph: (node, children, _parent, styles) => (
             <Text key={`${slideIndex}_${node.key}`} style={styles.paragraph}>
               {children}
             </Text>
           ),
-          link: (node, children, parent, styles, onLinkPress) => {
+          link: (node, children, _parent, styles, onLinkPress) => {
             const href = node.attributes.href || "";
             if (href.startsWith("glossary://")) {
               return (

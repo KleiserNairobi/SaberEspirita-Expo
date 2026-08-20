@@ -1,9 +1,12 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { Play, Check, RotateCw } from "lucide-react-native";
+
+import { Text, TouchableOpacity, View } from "react-native";
+
+import { Check, Play } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { ICourse, ILesson, IUserCourseProgress } from "@/types/course";
+
 import { createStyles } from "./styles";
 
 interface ResumeCardProps {

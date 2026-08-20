@@ -1,10 +1,8 @@
 import {
   collection,
   doc,
-  getDoc,
   getDocFromCache,
   getDocFromServer,
-  getDocs,
   getDocsFromCache,
   getDocsFromServer,
   limit,
@@ -113,4 +111,3 @@ export async function getReflectionById(id: string): Promise<IReflection | null>
     return null;
   }
 }
-

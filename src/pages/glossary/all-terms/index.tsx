@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { View, SectionList, Text, TouchableOpacity, ScrollView, ActivityIndicator, Platform } from "react-native";
+import { View, SectionList, Text, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
@@ -23,7 +23,6 @@ import { IGlossaryTerm } from "@/types/glossary";
 import { GlossaryFilterType } from "@/types/glossaryFilter";
 import { useFilteredGlossaryTerms, useGlossaryTerms } from "../hooks/useGlossaryTerms";
 import { useGlossaryFavoritesStore } from "@/stores/glossaryFavoritesStore";
-import { useAuth } from "@/stores/authStore";
 import { statsApiService } from "@/services/api/statsApiService";
 
 import { SearchBar } from "@/pages/pray/components/SearchBar";
@@ -37,7 +36,6 @@ export function AllTermsScreen() {
   const styles = createStyles(theme);
   const navigation = useNavigation<NavigationProp>();
 
-  const { user } = useAuth();
   const { data: allTerms, isLoading } = useGlossaryTerms();
 
   const [searchQuery, setSearchQuery] = useState("");

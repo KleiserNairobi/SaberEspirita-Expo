@@ -1,14 +1,15 @@
-import React from "react";
-import { ScrollView, TouchableOpacity, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { HelpCircle, ArrowLeft } from "lucide-react-native";
+import { ScrollView, Text, TouchableOpacity } from "react-native";
+
 import { useNavigation } from "@react-navigation/native";
+import { ArrowLeft, HelpCircle } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AppBackground } from "@/components/AppBackground";
 import { LegalHeader } from "@/components/LegalHeader";
 import { LegalSection } from "@/components/LegalSection";
-import { FAQ_DATA } from "./constants";
 import { useAppTheme } from "@/hooks/useAppTheme";
+
+import { FAQ_DATA } from "./constants";
 
 export function FAQScreen() {
   const { theme } = useAppTheme();

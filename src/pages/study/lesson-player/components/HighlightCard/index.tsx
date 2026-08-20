@@ -1,13 +1,16 @@
 import React from "react";
-import { View, Text } from "react-native";
-import Markdown from "react-native-markdown-display";
+
+import { Text, View } from "react-native";
+import { Linking } from "react-native";
+
 import { Lightbulb } from "lucide-react-native";
+import Markdown from "react-native-markdown-display";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { IGlossaryTerm } from "@/types/glossary";
 import { injectGlossaryLinks } from "@/utils/glossaryParser";
+
 import { createStyles } from "./styles";
-import { Linking } from "react-native";
 
 interface HighlightCardProps {
   highlights: Array<{
@@ -101,12 +104,15 @@ export function HighlightCard({
                 return false;
               }}
               rules={{
-                paragraph: (node, children, parent, styles) => (
-                  <Text key={`${slideIndex}_highlight_${index}_${node.key}`} style={styles.paragraph}>
+                paragraph: (node, children, _parent, styles) => (
+                  <Text
+                    key={`${slideIndex}_highlight_${index}_${node.key}`}
+                    style={styles.paragraph}
+                  >
                     {children}
                   </Text>
                 ),
-                link: (node, children, parent, styles, onLinkPress) => {
+                link: (node, children, _parent, styles, onLinkPress) => {
                   const href = node.attributes.href || "";
                   if (href.startsWith("glossary://")) {
                     return (

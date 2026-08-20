@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Award, BookOpen, Pencil, Lightbulb } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { Button } from "@/components/Button";
 import { createStyles } from "./styles";
 
 interface ProgressSummaryCardProps {
@@ -15,7 +14,7 @@ interface ProgressSummaryCardProps {
   totalExercises: number;
   completedExercises: number;
   certificateEligible: boolean;
-  hasCertificate?: boolean; // Prop opcional, default true para retrocompatibilidade se necessário
+  hasCertificate?: boolean; // Prop opcional
   onRateCourse?: () => void; // Ação de clique
   onOpenMethodology?: () => void; // Ação para abrir pop-up de metodologia
 }
@@ -29,7 +28,6 @@ export function ProgressSummaryCard({
   totalExercises,
   completedExercises,
   certificateEligible,
-  hasCertificate = true,
   onRateCourse,
   onOpenMethodology,
 }: ProgressSummaryCardProps) {

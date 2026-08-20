@@ -1,13 +1,18 @@
+import React, { useMemo } from "react";
+
+import { FlatList, Text, View } from "react-native";
+
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { useCategories, useUserQuizProgress } from "@/hooks/queries/useQuiz";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
 import { useAuthStore } from "@/stores/authStore";
-import { ICategory } from "@/types/quiz";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useMemo } from "react";
-import { FlatList, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+
 import { CategoryCard } from "./components/CategoryCard";
 import { DailyChallengeBanner } from "./components/DailyChallengeBanner";
 import { ProgressSummary } from "./components/ProgressSummary";
@@ -15,11 +20,7 @@ import { TruthOrFalseBanner } from "./components/TruthOrFalseBanner";
 import { CATEGORY_IMAGES } from "./constants/categoryImages";
 import { createStyles } from "./styles";
 
-type ICategoryWithProgress = ICategory & { progress: number };
 type FixHomeNavigationProp = NativeStackNavigationProp<FixStackParamList, "FixHome">;
-
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function FixHomeScreen() {
   const { theme } = useAppTheme();
@@ -39,23 +40,8 @@ export default function FixHomeScreen() {
   // Combine padding
   const paddingBottom = tabBarHeight + insets.bottom + theme.spacing.lg;
 
-  const { data: categories, isLoading } = useCategories();
+  const { data: categories } = useCategories();
   const { data: userProgress } = useUserQuizProgress(user?.uid || "");
-
-  // Calcular estatísticas gerais
-  const totalCompletedStats = useMemo(() => {
-    if (!userProgress) return { totalCompleted: 0 };
-
-    // userProgress é um objeto { [categoryId]: [subcategoryId, ...] }
-    // Precisamos contar o total de subcategorias completadas em todas as categorias
-    let count = 0;
-    Object.values(userProgress).forEach((subs: any) => {
-      if (Array.isArray(subs)) {
-        count += subs.length;
-      }
-    });
-    return { totalCompleted: count };
-  }, [userProgress]);
 
   // Calcular progresso por categoria
   const categoriesWithProgress = useMemo(() => {
@@ -103,7 +89,7 @@ export default function FixHomeScreen() {
         </View>
 
         {/* Meu Progresso Section */}
-        <ProgressSummary totalCorrect={totalCompletedStats.totalCompleted} />
+        <ProgressSummary />
 
         {/* Título da Seção */}
         <View style={styles.section}>

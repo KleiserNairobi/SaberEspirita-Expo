@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 import { ITheme } from "@/configs/theme/types";
 
-export const createStyles = (theme: ITheme) =>
+export const createStyles = (_theme: ITheme) =>
   StyleSheet.create({
     container: {
       marginHorizontal: 20,

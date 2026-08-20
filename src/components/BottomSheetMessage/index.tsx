@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo } from "react";
+import React, { forwardRef } from "react";
 import { View, Text } from "react-native";
 import {
   BottomSheetModal,

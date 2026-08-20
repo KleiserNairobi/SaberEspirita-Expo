@@ -10,25 +10,17 @@ import {
 } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { ChevronDown, Moon, Music, Pause, Play, Waves } from "lucide-react-native";
+import { ChevronDown, Music, Pause, Play, Waves } from "lucide-react-native";
 import { State, usePlaybackState } from "react-native-track-player";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
-import { useSuggestedContent } from "@/pages/pray/hooks/useSuggestedContent";
 import { getCachedAudioUri } from "@/services/audio/audioCacheService";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
-import { useMoodStore } from "@/stores/moodStore";
 import { IAmbientAudio } from "@/types/ambientAudio";
 
 import { AmbientSelectionBottomSheet } from "./AmbientSelectionBottomSheet";
 import { createStyles } from "./styles";
-
-const ICON_MAP = {
-  music: Music,
-  waves: Waves,
-  moon: Moon,
-} as const;
 
 // Mapeamento amigável (User pediu que venha do Firebase, mas enquanto não alteramos
 // a estrutura do DB, usamos este mapeamento para a "Desconstrução da Playlist")
@@ -56,8 +48,6 @@ export function AmbientEnvironmentCard({
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  const { currentMood } = useMoodStore();
-  const { suggestedContent } = useSuggestedContent(currentMood);
   const { data: audios, isLoading } = useAmbientAudios();
 
   const {

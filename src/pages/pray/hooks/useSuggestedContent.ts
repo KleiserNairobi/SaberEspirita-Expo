@@ -4,7 +4,6 @@ import { UserMood } from "@/stores/moodStore";
 import { prayerApiService } from "@/services/api/prayerApiService";
 import { useAmbientAudios } from "./useAmbientAudios";
 import { PrayerMoment } from "@/types/prayer";
-import { IAmbientAudio } from "@/types/ambientAudio";
 
 // Mapeamento de Humor ⮕ Categoria de Oração (Firebase ID)
 const MOOD_TO_CATEGORY: Record<UserMood, PrayerMoment> = {

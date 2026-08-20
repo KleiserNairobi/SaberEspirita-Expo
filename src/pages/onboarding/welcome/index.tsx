@@ -1,20 +1,13 @@
 import React from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useOnboardingStore } from "@/stores/onboardingStore";
 import { createStyles } from "./styles";
-import { RootStackParamList } from "@/routers/types";
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export function WelcomeScreen() {
   const { theme, resolvedThemeType } = useAppTheme();
   const { markWelcomeAsSeen } = useOnboardingStore();
-  const navigation = useNavigation<NavigationProp>();
   const styles = createStyles(theme);
 
   // Selecionar imagem baseada no tema

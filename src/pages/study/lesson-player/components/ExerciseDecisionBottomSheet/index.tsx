@@ -20,7 +20,7 @@ interface ExerciseDecisionBottomSheetProps {
 export const ExerciseDecisionBottomSheet = forwardRef<
   BottomSheetModal,
   ExerciseDecisionBottomSheetProps
->(({ lessonTitle, onPressNow, onPressLater }, ref) => {
+>(({ onPressNow, onPressLater }, ref) => {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const snapPoints = useMemo(() => ["60%"], []);

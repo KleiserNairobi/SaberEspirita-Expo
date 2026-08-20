@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { GlossaryStackParamList } from "@/routers/types";
-import { ArrowLeft, MessageCircle } from "lucide-react-native";
+import { MessageCircle } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useGlossaryFavoritesStore } from "@/stores/glossaryFavoritesStore";

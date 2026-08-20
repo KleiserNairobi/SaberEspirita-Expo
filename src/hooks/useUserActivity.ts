@@ -2,10 +2,9 @@ import { useEffect, useRef } from "react";
 
 import { AppState, AppStateStatus } from "react-native";
 
-import { statsApiService } from "@/services/api/statsApiService";
 import { authApiService } from "@/services/api/authApiService";
+import { statsApiService } from "@/services/api/statsApiService";
 import { useAuthStore } from "@/stores/authStore";
-import { usePreferencesStore } from "@/stores/preferencesStore";
 
 // Controla a primeira execução do hook por inicialização de sessão em memória
 let isFirstExecutionInSession = true;
@@ -25,16 +24,28 @@ export function useUserActivity() {
 
   const checkAndUpdateActivity = async () => {
     if (isGuest) {
-      statsApiService.logEvent({ eventName: "daily_visit", category: "session", label: "guest" });
+      statsApiService.logEvent({
+        eventName: "daily_visit",
+        category: "session",
+        label: "guest",
+      });
       return;
     }
 
     if (!user) return;
-    statsApiService.logEvent({ eventName: "daily_visit", category: "session", label: "user" });
+    statsApiService.logEvent({
+      eventName: "daily_visit",
+      category: "session",
+      label: "user",
+    });
     const now = Date.now();
     const currentLastSeen = lastSeenUpdateRef.current;
 
-    if (isFirstExecutionInSession || !currentLastSeen || now - currentLastSeen > THROTTLE_TIME) {
+    if (
+      isFirstExecutionInSession ||
+      !currentLastSeen ||
+      now - currentLastSeen > THROTTLE_TIME
+    ) {
       isFirstExecutionInSession = false;
       try {
         await authApiService.updateProfile({});
@@ -42,8 +53,6 @@ export function useUserActivity() {
       } catch (error) {
         console.error("[Activity] Erro ao processar atualização de atividade:", error);
       }
-    } else {
-      const minutesLeft = Math.ceil((THROTTLE_TIME - (now - currentLastSeen)) / 60000);
     }
   };
 

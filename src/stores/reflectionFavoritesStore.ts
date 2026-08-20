@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-import { useAuthStore } from "@/stores/authStore";
 import { storage } from "@/utils/Storage";
 import { favoritesApiService } from "@/services/api/favoritesApiService";
 
