@@ -3,10 +3,10 @@ import { ChatType, chatApiService } from "@/services/api/chatApiService";
 import { LocalChatLimitsService } from "@/services/local/localChatLimitsService";
 import { useAuthStore } from "@/stores/authStore";
 
-export function useChatLimits(chatType: ChatType = "EMOTIONAL") {
+export function useChatLimits(chatType: string = "EMOTIONAL") {
   const { user, isGuest } = useAuthStore();
-  const normalizedType: ChatType =
-    chatType === "doctrinal" || chatType === "scientific" || chatType === "SCIENTIFIC"
+  const normalizedType =
+    String(chatType).toLowerCase().includes("scientific") || String(chatType).toLowerCase().includes("doctrinal")
       ? "SCIENTIFIC"
       : "EMOTIONAL";
 
@@ -17,7 +17,7 @@ export function useChatLimits(chatType: ChatType = "EMOTIONAL") {
         return LocalChatLimitsService.checkCanSendMessage(normalizedType as any);
       }
       if (!user?.uid) return null;
-      return chatApiService.getDailyLimits(normalizedType);
+      return chatApiService.getDailyLimits(normalizedType as any);
     },
     enabled: !!user?.uid || isGuest,
     staleTime: 30_000, // 30 segundos
@@ -30,9 +30,9 @@ export function useIncrementChatUsage() {
   const { user, isGuest } = useAuthStore();
 
   return useMutation({
-    mutationFn: async (chatType: ChatType) => {
-      const normalizedType: ChatType =
-        chatType === "doctrinal" || chatType === "scientific" || chatType === "SCIENTIFIC"
+    mutationFn: async (chatType: string) => {
+      const normalizedType =
+        String(chatType).toLowerCase().includes("scientific") || String(chatType).toLowerCase().includes("doctrinal")
           ? "SCIENTIFIC"
           : "EMOTIONAL";
 
@@ -41,7 +41,7 @@ export function useIncrementChatUsage() {
         return;
       }
       if (!user?.uid) throw new Error("User not authenticated");
-      await chatApiService.incrementUsage(normalizedType);
+      await chatApiService.incrementUsage(normalizedType as any);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chatLimits"] });

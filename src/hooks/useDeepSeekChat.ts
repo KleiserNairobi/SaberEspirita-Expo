@@ -1,10 +1,9 @@
 import { useState, useCallback } from "react";
-import { Message, ChatMessage, UseChatReturn } from "@/types/chat";
+import { Message, ChatMessage, UseChatReturn, ChatType } from "@/types/chat";
 import {
   shouldBlockMessage,
 } from "@/services/chat";
 import { chatApiService } from "@/services/api/chatApiService";
-import { ChatType } from "@/services/prompt";
 
 /**
  * Converte o array de mensagens da UI (Message[]) para o formato da API (ChatMessage[]).
@@ -22,7 +21,7 @@ function toApiMessages(messages: Message[]): ChatMessage[] {
 /**
  * Hook principal para gerenciar chat com DeepSeek
  */
-export function useDeepSeekChat(chatType: ChatType = ChatType.EMOTIONAL): UseChatReturn {
+export function useDeepSeekChat(chatType: ChatType | "emotional" | "scientific" = ChatType.EMOTIONAL): UseChatReturn {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -104,7 +103,7 @@ export function useDeepSeekChat(chatType: ChatType = ChatType.EMOTIONAL): UseCha
         ];
 
         // Invoca a API REST Spring Boot diretamente
-        const responseData = await chatApiService.sendMessage(apiMessages, chatType);
+        const responseData = await chatApiService.sendMessage(apiMessages, chatType as any);
         await simulateStreaming(responseData.response, assistantMsg.id);
       } catch (err) {
         console.error("Erro ao enviar mensagem:", err);

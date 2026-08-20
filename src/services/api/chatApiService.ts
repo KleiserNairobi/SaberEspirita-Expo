@@ -1,7 +1,7 @@
 import apiClient from "./apiClient";
-import { ChatMessage } from "@/types/chat";
+import { ChatMessage, ChatType } from "@/types/chat";
 
-export type ChatType = "EMOTIONAL" | "SCIENTIFIC" | "emotional" | "scientific" | "doctrinal";
+export { ChatType };
 
 export interface ChatCompletionResponse {
   id?: string;
@@ -38,12 +38,12 @@ export const chatApiService = {
    */
   async sendMessage(
     messages: ChatMessage[],
-    type: ChatType = "EMOTIONAL"
+    type: ChatType = ChatType.EMOTIONAL
   ): Promise<ChatCompletionResponse> {
     const response = await apiClient.post<ChatCompletionResponse>(
       "/chat/completions",
       {
-        type: type === "scientific" || type === "doctrinal" ? "SCIENTIFIC" : "EMOTIONAL",
+        type: type === ChatType.SCIENTIFIC ? "SCIENTIFIC" : "EMOTIONAL",
         messages,
       },
       {

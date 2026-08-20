@@ -2,6 +2,11 @@
  * Tipos e interfaces para o sistema de chat
  */
 
+export enum ChatType {
+  EMOTIONAL = "emotional",
+  SCIENTIFIC = "scientific",
+}
+
 /**
  * Mensagem individual exibida na UI
  */

@@ -7,8 +7,7 @@ import { Compass } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useDeepSeekChat } from "@/hooks/useDeepSeekChat";
-import { ChatType } from "@/services/prompt";
-import { Message } from "@/types/chat";
+import { Message, ChatType } from "@/types/chat";
 
 import { ChatHeader } from "../components/ChatHeader";
 import { MessageBubble } from "../components/MessageBubble";
