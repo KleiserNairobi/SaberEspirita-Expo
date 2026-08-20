@@ -26,7 +26,7 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 - [x] **Módulo 8: Estatísticas, Logs & Leaderboard** `[4/4]`
 - [x] **Módulo 9: Upload de Mídias (Cloudflare R2)** `[2/2]`
 - [x] **Módulo 10: Assistentes de IA & Chatbots (DeepSeek API)** `[3/3]`
-- [ ] **Módulo 12: Configurações Globais & Controle de Versão (AppConfig)** `[0/2]`
+- [x] **Módulo 12: Configurações Globais & Controle de Versão (AppConfig)** `[2/2]`
 
 ---
 
@@ -218,9 +218,9 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 
 ## ⚙️ Módulo 12: Configurações Globais & Controle de Versão (AppConfig)
 
-- [ ] **12.1 Service de Configuração Global (`appConfigApiService.ts`)**:
+- [x] **12.1 Service de Configuração Global (`appConfigApiService.ts`)**:
   - `getAppConfig()` ➔ `GET /api/v1/app-config` (público / permitAll, chamado no boot do Expo)
-- [ ] **12.2 Verificação de Versão Mínima & Modo Manutenção**:
+- [x] **12.2 Verificação de Versão Mínima & Modo Manutenção**:
   - Atualizar `versionControlService.ts` para verificar `minimum_required_version` e `maintenance_mode` retornados pelo Spring Boot.
 
 ---
@@ -238,3 +238,4 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 | **2026-08-20** | Antigravity AI | Módulo 8 | Criação dos serviços REST (`leaderboardApiService`, `statsApiService`) e atualização do hook `useLeaderboard.ts`. |
 | **2026-08-20** | Antigravity AI | Módulo 9 | Implementação de `mediaApiService.ts` para upload multipart/form-data de avatares para o Cloudflare R2 e hook `useMediaUpload.ts`. |
 | **2026-08-20** | Antigravity AI | Módulo 10 | Implementação de `chatApiService.ts` (completions de IA com timeout de 120s e limites) e atualização do hook `useChatLimits.ts`. |
+| **2026-08-20** | Antigravity AI | Módulo 12 | Implementação de `appConfigApiService.ts` (`GET /api/v1/app-config`) e integração com `versionControlService.ts`. Conclusão total da migração para API REST! |

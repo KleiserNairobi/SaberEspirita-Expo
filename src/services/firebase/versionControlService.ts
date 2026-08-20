@@ -1,5 +1,7 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
+
 import { db } from "@/configs/firebase/firebase";
+import { appConfigApiService } from "@/services/api/appConfigApiService";
 import * as Storage from "@/utils/Storage";
 
 const VERSION_CONTROL_DOC = "version_control";
@@ -29,24 +31,33 @@ interface IVersionControlCache {
 }
 
 /**
- * Busca dados de controle de versão do Firestore com cache MMKV de 24 horas
+ * Busca dados de controle de versão da API REST (com cache MMKV de 24 horas e fallback)
  */
-export async function getVersionControlData(forceRefresh = false): Promise<VersionControlData | null> {
+export async function getVersionControlData(
+  forceRefresh = false
+): Promise<VersionControlData | null> {
   const now = Date.now();
   if (!forceRefresh) {
     const cached = Storage.load<IVersionControlCache>(VERSION_CONTROL_CACHE_KEY);
     if (cached && now - cached.timestamp < VERSION_CONTROL_CACHE_TTL_MS) {
-      console.log("VersionControlService: Retornando dados via cache MMKV (24h).");
       return cached.data;
     }
   }
 
   try {
+    const apiData = await appConfigApiService.getAppConfig();
+    if (apiData) {
+      Storage.save(VERSION_CONTROL_CACHE_KEY, {
+        data: apiData,
+        timestamp: now,
+      });
+      return apiData;
+    }
+
     const docRef = doc(db, APP_SETTINGS_COLLECTION, VERSION_CONTROL_DOC);
     const docSnap = await getDoc(docRef);
 
     if (!docSnap.exists()) {
-      console.warn("Documento de version control não encontrado");
       return null;
     }
 
@@ -59,15 +70,9 @@ export async function getVersionControlData(forceRefresh = false): Promise<Versi
   } catch (error: any) {
     const cached = Storage.load<IVersionControlCache>(VERSION_CONTROL_CACHE_KEY);
     if (cached) {
-      console.log("VersionControlService: Erro na rede. Retornando cache como fallback.");
       return cached.data;
     }
-
-    if (error?.code === "permission-denied") {
-      return null;
-    }
-    console.error("Erro ao buscar dados de version control:", error);
-    throw error;
+    return null;
   }
 }
 
