@@ -176,6 +176,29 @@ export interface IExerciseAttempt {
   timeSpent: number;
 }
 
+export interface ISubmitExerciseAnswer {
+  questionId?: string;
+  essayAnswer?: string;
+  selectedOptionIds?: string[];
+  selectedTrueFalse?: Record<string, boolean>;
+}
+
+export interface ISubmitExercisePayload {
+  answers: ISubmitExerciseAnswer[];
+  timeSpentSeconds?: number;
+}
+
+export interface IExerciseSubmissionResult {
+  attemptId?: string;
+  exerciseId: string;
+  score: number;
+  passed: boolean;
+  attemptNumber: number;
+  feedback?: string;
+  answersSummary?: unknown;
+  submittedAt: string;
+}
+
 // ✅ NOVO - Material Complementar
 export interface ISupplementaryMaterial {
   id: string;

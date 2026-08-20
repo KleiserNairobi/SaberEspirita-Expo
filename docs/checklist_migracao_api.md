@@ -17,8 +17,8 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 
 - [x] **Módulo 0: Cliente HTTP & Infraestrutura de Rede** `[5/5]`
 - [x] **Módulo 1: Autenticação, Usuários & Perfil** `[5/5]`
-- [ ] **Módulo 2: Cursos, Aulas & Conteúdo Didático** `[0/6]`
-- [ ] **Módulo 3: Exercícios Práticos & Avaliações** `[0/4]`
+- [x] **Módulo 2: Cursos, Aulas & Conteúdo Didático** `[6/6]`
+- [x] **Módulo 3: Exercícios Práticos & Avaliações** `[4/4]`
 - [ ] **Módulo 4: Quizzes & Histórico de Tentativas** `[0/5]`
 - [ ] **Módulo 5: Conteúdos Espíritas, Meditações & Orações** `[0/7]`
 - [ ] **Módulo 6: Fórum de Lições & Reações** `[0/4]`
@@ -89,16 +89,16 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 
 ## ✍️ Módulo 3: Exercícios Práticos & Avaliações
 
-- [ ] **3.1 Service de Exercícios (`exerciseApiService.ts`)**:
+- [x] **3.1 Service de Exercícios (`exerciseApiService.ts`)**:
   - `getExercisesByLesson(lessonId)` ➔ `GET /api/v1/exercises/lesson/{lessonId}`
   - `getExerciseDetails(exerciseId)` ➔ `GET /api/v1/exercises/{exerciseId}`
   - `submitExercise(exerciseId, answers)` ➔ `POST /api/v1/exercises/{exerciseId}/submit`
   - `getExerciseAttempts(exerciseId)` ➔ `GET /api/v1/exercises/{exerciseId}/attempts`
-- [ ] **3.2 Mapeamento de Respostas Dissertativas**:
+- [x] **3.2 Mapeamento de Respostas Dissertativas**:
   - Adaptar DTOs do app para enviar respostas estruturadas ao backend.
-- [ ] **3.3 Atualização dos Hooks do React Query (`useExercises`)**:
+- [x] **3.3 Atualização dos Hooks do React Query (`useExercises`)**:
   - Conectar submissão e cálculo de nota de corte ao Spring Boot.
-- [ ] **3.4 Validação de Avaliações na UI**:
+- [x] **3.4 Validação de Avaliações na UI**:
   - Testar envio de exercícios, exibição de feedback/nota e consulta do histórico de tentativas.
 
 ---
@@ -230,3 +230,4 @@ Este documento contém o planejamento completo e detalhado de todas as tarefas n
 | Data | Responsável | Módulo Afetado | Descrição das Alterações |
 | :--- | :--- | :--- | :--- |
 | **2026-08-19** | Antigravity AI | Todos os Módulos | Criação do documento inicial de checklist e tarefas de migração da API REST no `SaberEspirita-Expo`. |
+| **2026-08-20** | Antigravity AI | Módulo 3 | Implementação de `exerciseApiService.ts`, DTOs de submissão e atualização dos hooks do React Query (`useExercises`). |
