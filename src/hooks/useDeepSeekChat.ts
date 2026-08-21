@@ -27,9 +27,10 @@ export function useDeepSeekChat(chatType: ChatType | "emotional" | "scientific" 
   const [error, setError] = useState<string | null>(null);
 
   /**
-   * Simula streaming palavra por palavra para respostas locais (saudações, despedidas)
+   * Simula streaming palavra por palavra para respostas locais (saudações, despedidas) ou fallback
    */
-  const simulateStreaming = useCallback(async (text: string, messageId: string) => {
+  const simulateStreaming = useCallback(async (text: string = "", messageId: string) => {
+    if (!text) return;
     const words = text.split(" ");
     let accumulated = "";
 
@@ -102,9 +103,27 @@ export function useDeepSeekChat(chatType: ChatType | "emotional" | "scientific" 
           { role: "user" as const, content: userMessage },
         ];
 
-        // Invoca a API REST Spring Boot diretamente
-        const responseData = await chatApiService.sendMessage(apiMessages, chatType as any);
-        await simulateStreaming(responseData.response, assistantMsg.id);
+        // Invoca a API REST Spring Boot com suporte a streaming SSE via fetch
+        try {
+          let accumulatedText = "";
+          await chatApiService.sendMessageStream(
+            apiMessages,
+            chatType as any,
+            (chunk) => {
+              accumulatedText += chunk;
+              setMessages((prev) =>
+                prev.map((msg) =>
+                  msg.id === assistantMsg.id ? { ...msg, text: accumulatedText } : msg
+                )
+              );
+            }
+          );
+        } catch (streamErr) {
+          console.warn("Falha no chat stream SSE, executando fallback síncrono:", streamErr);
+          const responseData = await chatApiService.sendMessage(apiMessages, chatType as any);
+          const replyText = responseData.content || responseData.response || "";
+          await simulateStreaming(replyText, assistantMsg.id);
+        }
       } catch (err) {
         console.error("Erro ao enviar mensagem:", err);
         setError("Desculpe, ocorreu um erro. Tente novamente.");

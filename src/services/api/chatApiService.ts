@@ -7,7 +7,8 @@ export { ChatType };
 export interface ChatCompletionResponse {
   id?: string;
   response: string;
-  role: "assistant";
+  content?: string;
+  role?: "assistant";
   usage?: {
     promptTokens: number;
     completionTokens: number;
@@ -46,7 +47,7 @@ export const chatApiService = {
       ? "scientific"
       : "emotional";
 
-    const response = await apiClient.post<ChatCompletionResponse>(
+    const response = await apiClient.post<any>(
       "/chat/completions",
       {
         chatType,
@@ -56,7 +57,15 @@ export const chatApiService = {
         timeout: 120000, // 120s timeout estendido para IA
       }
     );
-    return response.data;
+
+    const data = response.data || {};
+    const text = data.content || data.response || "";
+    return {
+      ...data,
+      content: text,
+      response: text,
+      role: "assistant",
+    };
   },
 
   /**
