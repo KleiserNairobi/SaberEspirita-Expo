@@ -69,7 +69,8 @@ export const chatApiService = {
   },
 
   /**
-   * Envia mensagens utilizando o endpoint de Streaming SSE (/chat/stream) via fetch com parser de eventos SSE.
+   * Envia mensagens utilizando o endpoint de Streaming SSE (/chat/stream) via XMLHttpRequest (onprogress)
+   * garantindo que os fragmentos de texto sejam exibidos em tempo real no React Native/Expo à medida que chegam do backend.
    */
   async sendMessageStream(
     messages: ChatMessage[],
@@ -82,76 +83,81 @@ export const chatApiService = {
       : "emotional";
 
     const token = Storage.loadString("jwt_token") || Storage.loadString("refresh_token");
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-      "Accept": "text/event-stream, application/json",
-    };
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-
     const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
-    const response = await fetch(`${API_URL}/chat/stream`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        chatType,
-        messages,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => "");
-      throw new Error(`Erro no chat stream (${response.status}): ${errorText || response.statusText}`);
-    }
-
-    let fullText = "";
-    let buffer = "";
-
-    const processBuffer = (flush = false) => {
-      const lines = buffer.split(/\r?\n/);
-      if (!flush) {
-        buffer = lines.pop() || "";
-      } else {
-        buffer = "";
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", `${API_URL}/chat/stream`);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.setRequestHeader("Accept", "text/event-stream, application/json");
+      if (token) {
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`);
       }
 
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (trimmed.startsWith("data:")) {
-          const jsonStr = trimmed.slice(5).trim();
-          if (!jsonStr) continue;
-          try {
-            const parsed = JSON.parse(jsonStr);
-            if (parsed.content) {
-              fullText += parsed.content;
-              if (onChunk) onChunk(parsed.content);
+      let fullText = "";
+      let buffer = "";
+      let lastIndex = 0;
+
+      const processBuffer = (flush = false) => {
+        const lines = buffer.split(/\r?\n/);
+        if (!flush) {
+          buffer = lines.pop() || "";
+        } else {
+          buffer = "";
+        }
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (trimmed.startsWith("data:")) {
+            const jsonStr = trimmed.slice(5).trim();
+            if (!jsonStr) continue;
+            try {
+              const parsed = JSON.parse(jsonStr);
+              if (parsed.content) {
+                fullText += parsed.content;
+                if (onChunk) onChunk(parsed.content);
+              }
+            } catch {
+              // Ignora se não for JSON válido
             }
-          } catch {
-            // Ignora se não for JSON válido
           }
         }
-      }
-    };
+      };
 
-    if (response.body && typeof (response.body as any).getReader === "function") {
-      const reader = (response.body as any).getReader();
-      const decoder = new TextDecoder();
+      xhr.onprogress = () => {
+        const currentText = xhr.responseText || "";
+        if (currentText.length > lastIndex) {
+          const newChunk = currentText.substring(lastIndex);
+          lastIndex = currentText.length;
+          buffer += newChunk;
+          processBuffer(false);
+        }
+      };
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        processBuffer(false);
-      }
-      processBuffer(true);
-    } else {
-      buffer = await response.text();
-      processBuffer(true);
-    }
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          const currentText = xhr.responseText || "";
+          if (currentText.length > lastIndex) {
+            buffer += currentText.substring(lastIndex);
+          }
+          processBuffer(true);
+          resolve(fullText);
+        } else {
+          reject(new Error(`Erro no chat stream (status ${xhr.status}): ${xhr.responseText}`));
+        }
+      };
 
-    return fullText;
+      xhr.onerror = () => {
+        reject(new Error("Erro de rede ao conectar ao stream de chat"));
+      };
+
+      xhr.ontimeout = () => {
+        reject(new Error("Timeout ao aguardar resposta do stream de chat"));
+      };
+
+      xhr.timeout = 120000; // 120s timeout
+      xhr.send(JSON.stringify({ chatType, messages }));
+    });
   },
 
   /**
