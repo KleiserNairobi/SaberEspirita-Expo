@@ -3,6 +3,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { ICourse, IUserCourseProgress, ILesson } from "@/types/course";
 import { courseApiService } from "@/services/api/courseApiService";
 import { lessonApiService } from "@/services/api/lessonApiService";
+import { userActivityApiService } from "@/services/api/userActivityApiService";
 
 export interface LastAccessedCourseData {
   course: ICourse;
@@ -22,18 +23,52 @@ export function useLastAccessedCourse() {
         const courses = await courseApiService.getCourses();
         if (!courses || courses.length === 0) return null;
 
-        const firstCourse = courses[0];
-        const lessons = await lessonApiService.getLessonsByCourseId(firstCourse.id);
+        // Buscar histórico de progresso do usuário via API REST
+        const progresses = await userActivityApiService.getCoursesProgress();
+        
+        let targetCourse = courses[0];
+        let targetProgress: IUserCourseProgress | null = null;
+
+        if (progresses && progresses.length > 0) {
+          const sortedProgresses = [...progresses].sort((a, b) => {
+            const dateA = a.lastAccessedAt ? new Date(a.lastAccessedAt).getTime() : 0;
+            const dateB = b.lastAccessedAt ? new Date(b.lastAccessedAt).getTime() : 0;
+            return dateB - dateA;
+          });
+
+          const latestProgress = sortedProgresses[0];
+          const foundCourse = courses.find((c) => c.id === latestProgress.courseId);
+          if (foundCourse) {
+            targetCourse = foundCourse;
+            targetProgress = latestProgress;
+          }
+        }
+
+        if (!targetProgress) {
+          targetProgress = {
+            userId: user.uid,
+            courseId: targetCourse.id,
+            completedLessons: [],
+            exerciseResults: [],
+            certificateEligible: false,
+            certificateIssued: false,
+            startedAt: new Date(),
+            lastAccessedAt: new Date(),
+          };
+        }
+
+        const lessons = await lessonApiService.getLessonsByCourseId(targetCourse.id);
+        const completedIds = targetProgress.completedLessons || [];
+
+        let nextLesson = lessons.find((l) => !completedIds.includes(l.id));
+        if (!nextLesson && lessons.length > 0) {
+          nextLesson = lessons[lessons.length - 1];
+        }
 
         return {
-          course: firstCourse,
-          progress: {
-            courseId: firstCourse.id,
-            completedLessons: [],
-            completedExercises: [],
-            updatedAt: new Date().toISOString(),
-          } as any,
-          nextLesson: lessons[0],
+          course: targetCourse,
+          progress: targetProgress,
+          nextLesson: nextLesson || lessons[0],
         };
       } catch (error) {
         console.warn("useLastAccessedCourse: erro ao carregar via REST API:", error);

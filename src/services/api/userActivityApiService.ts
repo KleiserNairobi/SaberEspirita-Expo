@@ -3,6 +3,29 @@ import { resolveCdnUrl } from "./courseApiService";
 import { ICertificate, IUserCourseProgress } from "@/types/course";
 import * as Storage from "@/utils/Storage";
 
+function parseArray(val: any): string[] {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  if (typeof val === "string") {
+    if (val.startsWith("[") && val.endsWith("]")) {
+      try {
+        const parsed = JSON.parse(val);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {}
+    }
+    return val.split(",").map((s) => s.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+function normalizeProgress(raw: any): IUserCourseProgress {
+  if (!raw) return raw;
+  return {
+    ...raw,
+    completedLessons: parseArray(raw.completedLessons),
+  };
+}
+
 export const userActivityApiService = {
   /**
    * Obtém o progresso de todos os cursos inscritos pelo usuário.
@@ -10,10 +33,11 @@ export const userActivityApiService = {
   async getCoursesProgress(): Promise<IUserCourseProgress[]> {
     if (!Storage.loadString("jwt_token")) return [];
     try {
-      const response = await apiClient.get<IUserCourseProgress[]>(
+      const response = await apiClient.get<any[]>(
         "/user-activity/courses/progress"
       );
-      return response.data || [];
+      const list = response.data || [];
+      return list.map(normalizeProgress);
     } catch {
       return [];
     }
@@ -25,10 +49,11 @@ export const userActivityApiService = {
   async getCourseProgress(courseId: string): Promise<IUserCourseProgress | null> {
     if (!courseId || !Storage.loadString("jwt_token")) return null;
     try {
-      const response = await apiClient.get<IUserCourseProgress>(
+      const response = await apiClient.get<any>(
         `/user-activity/courses/progress/${courseId}`
       );
-      return response.data || null;
+      if (!response.data) return null;
+      return normalizeProgress(response.data);
     } catch {
       return null;
     }
@@ -41,10 +66,10 @@ export const userActivityApiService = {
     courseId: string,
     lessonId: string
   ): Promise<IUserCourseProgress> {
-    const response = await apiClient.post<IUserCourseProgress>(
+    const response = await apiClient.post<any>(
       `/user-activity/courses/progress/${courseId}/lessons/${lessonId}/complete`
     );
-    return response.data;
+    return normalizeProgress(response.data);
   },
 
   /**

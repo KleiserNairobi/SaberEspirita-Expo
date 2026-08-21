@@ -21,13 +21,25 @@ export function ResumeCard({ course, progress, nextLesson, onPress }: ResumeCard
   const styles = createStyles(theme);
 
   // Calcular porcentagem de progresso do curso (baseado em aulas concluídas / total de aulas)
-  // Fallback seguro se lessonCount for 0
+  const totalLessons = course.lessonCount || (course as any).lessonsCount || 0;
+  const completedCount = progress?.completedLessons ? progress.completedLessons.length : 0;
+
   const completionPercent =
-    course.lessonCount > 0
-      ? (progress.completedLessons.length / course.lessonCount) * 100
-      : 0;
+    totalLessons > 0
+      ? (completedCount / totalLessons) * 100
+      : (progress as any)?.progressPercentage ?? 0;
 
   const displayPercent = Math.min(Math.round(completionPercent), 100);
+  const lessonOrder = nextLesson
+    ? (nextLesson as any).order ?? (nextLesson as any).orderIndex ?? 1
+    : 1;
+
+  const lessonTitleText =
+    displayPercent === 100
+      ? "Curso Concluído! Parabéns."
+      : nextLesson
+      ? `Aula ${lessonOrder}: ${nextLesson.title}`
+      : "Continuar Curso";
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
@@ -42,11 +54,7 @@ export function ResumeCard({ course, progress, nextLesson, onPress }: ResumeCard
             {course.title}
           </Text>
           <Text style={styles.lessonTitle} numberOfLines={1}>
-            {displayPercent === 100
-              ? "Curso Concluído! Parabéns."
-              : nextLesson
-                ? `Aula ${nextLesson.order}: ${nextLesson.title}`
-                : "Continuar Curso"}
+            {lessonTitleText}
           </Text>
         </View>
 
