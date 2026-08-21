@@ -5,6 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import { BookOpen } from "lucide-react-native";
 import { useRoute, RouteProp } from "@react-navigation/native";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useDeepSeekChat } from "@/hooks/useDeepSeekChat";
 import { Message, ChatType } from "@/types/chat";
@@ -33,6 +34,7 @@ export function ScientificChatScreen() {
   const styles = createStyles(theme);
   const flatListRef = useRef<FlatList>(null);
   const route = useRoute<RouteParams>();
+  const queryClient = useQueryClient();
 
   const { initialMessage, origin, lessonId } = route.params || {};
 
@@ -77,7 +79,10 @@ export function ScientificChatScreen() {
       // 3. Enviar mensagem
       await sendMessage(text);
 
-      // 4. Log Analytics
+      // 4. Invalida cache de limites para atualizar os contadores de mensagem restante na UI
+      queryClient.invalidateQueries({ queryKey: ["chatLimits"] });
+
+      // 5. Log Analytics
       statsApiService.logEvent({
         eventName: "scientific_chat_message",
         category: "chat",
@@ -86,7 +91,7 @@ export function ScientificChatScreen() {
         metadata: lessonId ? { lessonId } : undefined,
       });
     },
-    [limits, sendMessage, incrementUsage, user, origin, lessonId]
+    [limits, sendMessage, incrementUsage, queryClient, user, origin, lessonId]
   );
 
   // Ref de controle para garantir que a mensagem inicial seja enviada exatamente uma vez

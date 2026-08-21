@@ -56,46 +56,72 @@ export const chatApiService = {
   /**
    * Obtém as cotas e limites diários de mensagens de chat do usuário.
    */
-  async getDailyLimits(type?: ChatType): Promise<ChatDailyLimitsResponse> {
-    const response = await apiClient.get<ChatDailyLimitsResponse>("/chat/limits", {
-      params: { type },
-    });
+  async getDailyLimits(type?: ChatType | string): Promise<ChatDailyLimitsResponse> {
+    const response = await apiClient.get<any>("/chat/limits");
     const data = response.data;
     if (!data) {
       return {
         canSend: true,
         messagesSentToday: 0,
-        dailyLimit: 20,
-        remainingMessages: 20,
-        remainingToday: 20,
-        remainingMonth: 600,
+        dailyLimit: 10,
+        remainingMessages: 10,
+        remainingToday: 10,
+        remainingMonth: 300,
       };
     }
+
+    const typeStr = String(type || "").toLowerCase();
+    const isScientific = typeStr.includes("scientific") || typeStr.includes("doctrinal");
+
+    const messagesSentToday = isScientific
+      ? (data.dailyScientificCount ?? 0)
+      : (data.dailyEmotionalCount ?? 0);
+
+    const dailyLimit = data.dailyMaxLimit ?? 10;
+
+    const remaining = isScientific
+      ? (data.remainingScientific ?? Math.max(0, dailyLimit - messagesSentToday))
+      : (data.remainingEmotional ?? Math.max(0, dailyLimit - messagesSentToday));
+
+    const canSend = remaining > 0;
+
     return {
-      ...data,
-      remainingToday: data.remainingToday ?? data.remainingMessages ?? 20,
-      remainingMonth: data.remainingMonth ?? 600,
+      canSend,
+      reason: canSend
+        ? undefined
+        : `Você atingiu o limite diário de ${dailyLimit} mensagens para este assistente.\nPara continuar conversando, retorne amanhã!`,
+      messagesSentToday,
+      dailyLimit,
+      remainingMessages: remaining,
+      remainingToday: remaining,
+      remainingMonth: remaining * 30,
+      resetsAt: data.lastResetAt,
     };
   },
 
   /**
    * Incrementa o contador de mensagens enviadas.
+   * No backend Spring Boot, o incremento é realizado automaticamente ao processar o chat (/chat/completions).
    */
-  async incrementUsage(type: ChatType): Promise<void> {
-    await apiClient.post("/chat/limits/increment", { type });
+  async incrementUsage(type?: ChatType | string): Promise<void> {
+    return Promise.resolve();
   },
 
   /**
    * Obtém as estatísticas consolidadas de uso dos assistentes pelo usuário.
    */
   async getUserStats(): Promise<ChatUserStatsResponse> {
-    const response = await apiClient.get<ChatUserStatsResponse>("/chat/stats");
-    return (
-      response.data || {
-        emotionalMessagesSent: 0,
-        scientificMessagesSent: 0,
-        totalMessagesSent: 0,
-      }
-    );
+    try {
+      const response = await apiClient.get<ChatUserStatsResponse>("/chat/stats");
+      if (response.data) return response.data;
+    } catch (e) {
+      // Fallback seguro se o endpoint /chat/stats não responder
+    }
+    const limits = await this.getDailyLimits();
+    return {
+      emotionalMessagesSent: limits.messagesSentToday,
+      scientificMessagesSent: limits.messagesSentToday,
+      totalMessagesSent: limits.messagesSentToday,
+    };
   },
 };

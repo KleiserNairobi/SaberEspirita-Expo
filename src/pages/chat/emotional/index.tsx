@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Compass } from "lucide-react-native";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useDeepSeekChat } from "@/hooks/useDeepSeekChat";
 import { Message, ChatType } from "@/types/chat";
@@ -29,6 +30,7 @@ export function EmotionalChatScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const flatListRef = useRef<FlatList>(null);
+  const queryClient = useQueryClient();
 
   const { messages, isLoading, error, sendMessage, clearChat } = useDeepSeekChat(
     ChatType.EMOTIONAL
@@ -75,7 +77,10 @@ export function EmotionalChatScreen() {
       // 3. Enviar mensagem
       await sendMessage(text);
 
-      // 4. Log Analytics
+      // 4. Invalida cache de limites para atualizar os contadores na UI
+      queryClient.invalidateQueries({ queryKey: ["chatLimits"] });
+
+      // 5. Log Analytics
       statsApiService.logEvent({
         eventName: "emotional_chat_message",
         category: "chat",
@@ -83,7 +88,7 @@ export function EmotionalChatScreen() {
         value: text.length,
       });
     },
-    [limits, sendMessage, incrementUsage, user, origin]
+    [limits, sendMessage, incrementUsage, queryClient, user, origin]
   );
 
   // Ref de controle para garantir que a mensagem inicial seja enviada exatamente uma vez
