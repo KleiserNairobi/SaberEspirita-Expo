@@ -22,7 +22,11 @@ export const statsApiService = {
    */
   async logEvent(eventData: LogEventPayload): Promise<void> {
     try {
-      await apiClient.post("/logs/event", eventData);
+      await apiClient.post("/logs/event", {
+        logType: eventData.eventName || eventData.category || "visit",
+        userId: null,
+        payload: JSON.stringify(eventData),
+      });
     } catch {
       // Ignora falhas de envio de telemetria em background
     }
