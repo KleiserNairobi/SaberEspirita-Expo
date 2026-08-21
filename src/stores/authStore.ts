@@ -403,53 +403,47 @@ export const useAuthStore = create<AuthState>()(
       },
 
       initializeAuth: () => {
-        console.log("AuthStore: Inicializando listener do Firebase...");
+        console.log("AuthStore: Inicializando sessão (PostgreSQL/MMKV)...");
 
         // Verifica banimento de dispositivo de forma assíncrona
         get()
           .checkDeviceBanStatus()
           .catch(() => {});
 
-        // Listener do Firebase para sincronizar estado
-        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-          console.log(
-            "AuthStore: Estado do Firebase:",
-            firebaseUser ? `Usuário logado (${firebaseUser.uid})` : "Sem usuário"
-          );
+        const { user, isGuest } = get();
+        console.log(
+          "AuthStore: Estado da sessão:",
+          user ? `Usuário logado (${user.uid})` : isGuest ? "Convidado" : "Sem usuário"
+        );
 
-          if (firebaseUser) {
-            // Recarregar status para garantir que emailVerified esteja atualizado
-            await firebaseUser.reload().catch(() => {});
+        set({ initialized: true, loading: false });
 
-            // Firebase retornou usuário autenticado - Desativa guest
-            set({
-              user: firebaseUser,
-              isGuest: false,
-              initialized: true,
-              loading: false,
+        // Sincronizar perfil atualizado do backend PostgreSQL em segundo plano (se houver token JWT e usuário logado)
+        const jwtToken = Storage.loadString("jwt_token");
+        if (jwtToken && user) {
+          authApiService
+            .getProfile()
+            .then((profile) => {
+              if (profile) {
+                set((state) => ({
+                  user: state.user
+                    ? {
+                        ...state.user,
+                        displayName: profile.userName || state.user.displayName,
+                        email: profile.email || state.user.email,
+                        photoURL: profile.photoURL || state.user.photoURL,
+                      }
+                    : null,
+                }));
+              }
+            })
+            .catch(() => {
+              // Mantém a sessão offline ativa via MMKV em conformidade com as regras do app
+              console.log("AuthStore: Mantendo sessão ativa via MMKV (offline)");
             });
-          } else {
-            // Firebase retornou null
-            const { isGuest } = get();
+        }
 
-            if (isGuest) {
-              console.log(
-                "AuthStore: Usuário convidado detectado. Mantendo sessão de convidado."
-              );
-              set({ initialized: true, loading: false });
-            } else {
-              // Se o Firebase real diz que não há usuário e não é convidado,
-              // limpamos o estado fantasma do MMKV para evitar loop de permissão negada.
-              console.log(
-                "AuthStore: Nenhum usuário autenticado no Firebase (limpando estado offline)"
-              );
-              set({ user: null, isGuest: false, initialized: true, loading: false });
-            }
-          }
-        });
-
-        // Retorna função de cleanup
-        return unsubscribe;
+        return () => {};
       },
 
       checkDeviceBanStatus: async () => {

@@ -13,25 +13,18 @@ export const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Interceptor de Requisições: Injeta Token de Autenticação (JWT REST / Firebase ID Token)
+// Interceptor de Requisições: Injeta Token JWT da API REST PostgreSQL
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     try {
-      let token: string | null | undefined = null;
-
-      // 1. Tentar obter JWT da API REST armazenado no MMKV
-      token = Storage.loadString("jwt_token");
-
-      // 2. Fallback: Tentar obter ID Token atualizado do Firebase Auth se não houver JWT REST
-      if (!token && auth.currentUser) {
-        token = await auth.currentUser.getIdToken(/* forceRefresh */ false);
-      }
+      // Obter token JWT armazenado no MMKV
+      const token = Storage.loadString("jwt_token");
 
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
     } catch (error) {
-      console.warn("apiClient: Falha ao obter token para requisição:", error);
+      console.warn("apiClient: Falha ao obter token JWT para a requisição:", error);
     }
     return config;
   },
