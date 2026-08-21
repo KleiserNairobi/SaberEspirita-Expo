@@ -1,27 +1,37 @@
 import apiClient from "./apiClient";
 import { resolveCdnUrl } from "./courseApiService";
 import { ICertificate, IUserCourseProgress } from "@/types/course";
+import * as Storage from "@/utils/Storage";
 
 export const userActivityApiService = {
   /**
    * Obtém o progresso de todos os cursos inscritos pelo usuário.
    */
   async getCoursesProgress(): Promise<IUserCourseProgress[]> {
-    const response = await apiClient.get<IUserCourseProgress[]>(
-      "/user-activity/courses/progress"
-    );
-    return response.data || [];
+    if (!Storage.loadString("jwt_token")) return [];
+    try {
+      const response = await apiClient.get<IUserCourseProgress[]>(
+        "/user-activity/courses/progress"
+      );
+      return response.data || [];
+    } catch {
+      return [];
+    }
   },
 
   /**
    * Obtém o progresso de um curso específico.
    */
   async getCourseProgress(courseId: string): Promise<IUserCourseProgress | null> {
-    if (!courseId) return null;
-    const response = await apiClient.get<IUserCourseProgress>(
-      `/user-activity/courses/progress/${courseId}`
-    );
-    return response.data || null;
+    if (!courseId || !Storage.loadString("jwt_token")) return null;
+    try {
+      const response = await apiClient.get<IUserCourseProgress>(
+        `/user-activity/courses/progress/${courseId}`
+      );
+      return response.data || null;
+    } catch {
+      return null;
+    }
   },
 
   /**

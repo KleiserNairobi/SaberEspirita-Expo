@@ -1,5 +1,6 @@
 import apiClient from "./apiClient";
 import { NotificationItem } from "@/types/notifications";
+import * as Storage from "@/utils/Storage";
 
 export interface NotificationsResponse {
   items: NotificationItem[];
@@ -14,13 +15,20 @@ export const notificationApiService = {
     page: number = 1,
     limit: number = 30
   ): Promise<NotificationsResponse> {
-    const response = await apiClient.get<NotificationsResponse>("/notifications", {
-      params: { page, limit },
-    });
-    if (Array.isArray(response.data)) {
-      return { items: response.data, nextPage: null };
+    if (!Storage.loadString("jwt_token")) {
+      return { items: [], nextPage: null };
     }
-    return response.data || { items: [], nextPage: null };
+    try {
+      const response = await apiClient.get<NotificationsResponse>("/notifications", {
+        params: { page, limit },
+      });
+      if (Array.isArray(response.data)) {
+        return { items: response.data, nextPage: null };
+      }
+      return response.data || { items: [], nextPage: null };
+    } catch {
+      return { items: [], nextPage: null };
+    }
   },
 
   /**
