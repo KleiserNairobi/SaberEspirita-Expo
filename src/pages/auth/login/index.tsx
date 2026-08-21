@@ -155,7 +155,7 @@ export function LoginScreen() {
       const currentUser = useAuthStore.getState().user;
 
       if (currentUser) {
-        await currentUser.reload();
+        await currentUser.reload?.();
 
         if (!currentUser.emailVerified) {
           await useAuthStore.getState().signOut();

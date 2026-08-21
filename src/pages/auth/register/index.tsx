@@ -14,7 +14,6 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { updateProfile } from "firebase/auth";
 import { Eye, EyeOff, Lock, Mail, User } from "lucide-react-native";
 import Svg, { Path } from "react-native-svg";
 
@@ -153,24 +152,14 @@ export function RegisterScreen() {
 
     try {
       clearError();
-      const userCredential = await signUp(email.trim(), password);
+      const res = await signUp(email.trim(), password);
 
-      if (userCredential?.user) {
-        await updateProfile(userCredential.user, {
-          displayName: fullName.trim(),
-        });
-
-        // Enviar email de verificação
-        await useAuthStore.getState().sendVerificationEmail(userCredential.user);
-
-        // Deslogar para impedir acesso imediato
-        await useAuthStore.getState().signOut();
-
+      if (res?.user) {
         // Exibir mensagem de sucesso
         setBottomSheetConfig({
           type: "success",
           title: "Conta Criada!",
-          message: `Enviamos um e-mail de verificação para\n ${email}.\n\nPor favor, verifique sua caixa de entrada (e spam) e clique no link para ativar sua conta.`,
+          message: `Sua conta foi criada com sucesso com o e-mail\n ${email}.`,
           primaryButton: {
             label: "Ir para Login",
             onPress: () => {

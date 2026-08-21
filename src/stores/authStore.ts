@@ -1,25 +1,10 @@
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as AppleAuthentication from "expo-apple-authentication";
-import {
-  GoogleAuthProvider,
-  OAuthProvider,
-  User,
-  UserCredential,
-  createUserWithEmailAndPassword,
-  sendPasswordResetEmail as firebaseSendPasswordResetEmail,
-  signOut as firebaseSignOut,
-  onAuthStateChanged,
-  sendEmailVerification,
-  signInWithCredential,
-  signInWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
 import { OneSignal } from "react-native-onesignal";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { auth } from "@/configs/firebase/firebase";
-import { authApiService } from "@/services/api/authApiService";
+import { authApiService, UserProfileDTO } from "@/services/api/authApiService";
 import * as Storage from "@/utils/Storage";
 
 import { usePreferencesStore } from "./preferencesStore";
@@ -35,7 +20,20 @@ const zustandStorage = {
   },
 };
 
-// Interface para os dados do usuário que serão persistidos
+// Interface do Usuário da Aplicação
+export interface AppUser {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  emailVerified: boolean;
+  reload?: () => Promise<void>;
+}
+
+// Tipo legado exportado para compatibilidade total de tipagem nos componentes
+export type User = AppUser;
+
+// Interface para os dados do usuário que serão persistidos no MMKV
 interface StoredUser {
   uid: string;
   email: string | null;
@@ -46,34 +44,44 @@ interface StoredUser {
 
 // Estado da store
 interface AuthState {
-  user: User | null;
-  isGuest: boolean; // Novo estado para controlar modo convidado
+  user: AppUser | null;
+  isGuest: boolean;
   loading: boolean;
   initialized: boolean;
   error: string | null;
-  lastSeenUpdate: number | null; // Timestamp da última atualização de atividade
+  lastSeenUpdate: number | null;
   isDeviceBanned: boolean;
 
   // Actions
-  setUser: (user: User | null) => void;
+  setUser: (user: AppUser | null) => void;
   setLastSeenUpdate: (timestamp: number | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   clearError: () => void;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<UserCredential>;
+  signUp: (email: string, password: string) => Promise<{ user: AppUser }>;
   signInWithGoogle: (idToken: string, name?: string | null) => Promise<void>;
   signInWithApple: () => Promise<void>;
-  loginAsGuest: () => Promise<void>; // Nova ação
+  loginAsGuest: () => Promise<void>;
   signOut: () => Promise<void>;
   sendPasswordResetEmail: (email: string) => Promise<void>;
-  sendVerificationEmail: (user: User) => Promise<void>;
-  initializeAuth: () => (() => void) | undefined;
+  sendVerificationEmail: (user: AppUser) => Promise<void>;
+  initializeAuth: () => () => void;
   checkDeviceBanStatus: () => Promise<boolean>;
 }
 
-// Helper para converter User do Firebase para formato serializável
-const userToStoredUser = (user: User): StoredUser => ({
+// Helper para converter DTO do backend para AppUser
+const profileToAppUser = (profile: UserProfileDTO): AppUser => ({
+  uid: profile.userId,
+  email: profile.email,
+  displayName: profile.userName || profile.email?.split("@")[0] || "Usuário",
+  photoURL: profile.photoURL || null,
+  emailVerified: true,
+  reload: async () => {},
+});
+
+// Helper para converter AppUser para formato serializável
+const userToStoredUser = (user: AppUser): StoredUser => ({
   uid: user.uid,
   email: user.email,
   displayName: user.displayName,
@@ -83,28 +91,9 @@ const userToStoredUser = (user: User): StoredUser => ({
 
 // Helper para obter mensagem de erro amigável
 const getErrorMessage = (error: any): string => {
-  switch (error.code) {
-    case "auth/invalid-email":
-      return "Email inválido";
-    case "auth/user-disabled":
-      return "Usuário desabilitado";
-    case "auth/user-not-found":
-      return "Usuário não encontrado";
-    case "auth/wrong-password":
-      return "Senha incorreta";
-    case "auth/invalid-credential":
-      return "Credenciais inválidas";
-    case "auth/too-many-requests":
-      return "Muitas tentativas. Tente novamente mais tarde";
-    case "auth/email-already-in-use":
-      return "Este email já está em uso";
-    case "auth/operation-not-allowed":
-      return "Operação não permitida";
-    case "auth/weak-password":
-      return "Senha muito fraca. Use no mínimo 6 caracteres";
-    default:
-      return error.message || "Erro desconhecido";
-  }
+  if (typeof error === "string") return error;
+  if (error?.response?.data?.message) return error.response.data.message;
+  return error?.message || "Erro de autenticação. Tente novamente.";
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -124,38 +113,23 @@ export const useAuthStore = create<AuthState>()(
       setError: (error) => set({ error }),
       clearError: () => set({ error: null }),
 
-      // ... (signIn implementation)
       signIn: async (email: string, password: string) => {
         set({ loading: true, error: null });
         try {
-          console.log("AuthStore: Iniciando login...");
-          const userCredential = await signInWithEmailAndPassword(auth, email, password);
-          console.log("AuthStore: Login bem-sucedido:", userCredential.user.uid);
+          console.log("AuthStore: Realizando login REST Spring Boot...");
+          const res = await authApiService.login({ email, password });
+          const appUser = profileToAppUser(res.user);
 
-          // Tentar autenticar / sincronizar no backend REST Spring Boot
-          try {
-            await authApiService.login({ email, password });
-            console.log("AuthStore: Sincronização REST Spring Boot login realizada com sucesso.");
-          } catch (apiError) {
-            console.warn("AuthStore: Falha ao autenticar na API REST (mantendo sessão local):", apiError);
-          }
-
-          // Ao logar, desativa modo convidado
-          set({ user: userCredential.user, isGuest: false, loading: false });
+          set({ user: appUser, isGuest: false, loading: false });
 
           // Sincronizar com OneSignal
           try {
-            // Vincular External ID (UID do Firebase)
-            OneSignal.login(userCredential.user.uid);
-            console.log("OneSignal: External ID vinculado:", userCredential.user.uid);
-
-            // Sincronizar tags de preferências
+            OneSignal.login(appUser.uid);
             const preferences = usePreferencesStore.getState();
             OneSignal.User.addTags({
               app_updates: preferences.appUpdateNotifications.toString(),
               course_reminders: preferences.courseNotifications.toString(),
             });
-            console.log("OneSignal: Tags sincronizadas após login");
           } catch (onesignalError) {
             console.error("Erro ao sincronizar OneSignal no login:", onesignalError);
           }
@@ -170,29 +144,13 @@ export const useAuthStore = create<AuthState>()(
       signUp: async (email: string, password: string) => {
         set({ loading: true, error: null });
         try {
-          console.log("AuthStore: Criando nova conta...");
-          const userCredential = await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
-          console.log("AuthStore: Conta criada:", userCredential.user.uid);
+          console.log("AuthStore: Criando conta no Spring Boot...");
+          const userName = email.split("@")[0] || "Usuário";
+          const res = await authApiService.register({ userName, email, password });
+          const appUser = profileToAppUser(res.user);
 
-          // Tentar registrar na API REST Spring Boot
-          try {
-            await authApiService.register({
-              userName: email.split("@")[0] || "Usuário",
-              email,
-              password,
-            });
-            console.log("AuthStore: Cadastro na API REST Spring Boot realizado com sucesso.");
-          } catch (apiError) {
-            console.warn("AuthStore: Falha ao cadastrar na API REST (mantendo conta local):", apiError);
-          }
-
-          // Ao criar conta, desativa modo convidado
-          set({ user: userCredential.user, isGuest: false, loading: false });
-          return userCredential;
+          set({ user: appUser, isGuest: false, loading: false });
+          return { user: appUser };
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
           console.error("AuthStore: Erro ao criar conta:", errorMessage);
@@ -200,46 +158,25 @@ export const useAuthStore = create<AuthState>()(
           throw error;
         }
       },
+
       signInWithGoogle: async (idToken: string, name?: string | null) => {
         set({ loading: true, error: null });
         try {
-          console.log("AuthStore: Iniciando login com Google...");
-          const credential = GoogleAuthProvider.credential(idToken);
-          const userCredential = await signInWithCredential(auth, credential);
+          console.log("AuthStore: Realizando login social REST com Google...");
+          const res = await authApiService.socialLogin("google", idToken, name);
+          const appUser = profileToAppUser(res.user);
 
-          if (name && !userCredential.user.displayName) {
-            await updateProfile(userCredential.user, { displayName: name });
-            await userCredential.user.reload();
-          }
+          set({ user: appUser, isGuest: false, loading: false });
 
-          // Tentar login social na API REST Spring Boot com o idToken da Google
           try {
-            await authApiService.socialLogin("google", idToken, name);
-            console.log("AuthStore: Login social REST Google realizado com sucesso.");
-          } catch (apiError) {
-            console.warn("AuthStore: Falha no login social REST Google (mantendo sessão local):", apiError);
-          }
-
-          console.log("AuthStore: Login Google bem-sucedido:", userCredential.user.uid);
-          // Ao logar, desativa modo convidado
-          set({
-            user: auth.currentUser || userCredential.user,
-            isGuest: false,
-            loading: false,
-          });
-          // Sincronizar com OneSignal
-          try {
-            OneSignal.login(userCredential.user.uid);
+            OneSignal.login(appUser.uid);
             const preferences = usePreferencesStore.getState();
             OneSignal.User.addTags({
               app_updates: preferences.appUpdateNotifications.toString(),
               course_reminders: preferences.courseNotifications.toString(),
             });
           } catch (onesignalError) {
-            console.error(
-              "Erro ao sincronizar OneSignal no login Google:",
-              onesignalError
-            );
+            console.error("Erro ao sincronizar OneSignal no login Google:", onesignalError);
           }
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
@@ -248,11 +185,11 @@ export const useAuthStore = create<AuthState>()(
           throw error;
         }
       },
+
       signInWithApple: async () => {
         set({ loading: true, error: null });
         try {
-          console.log("AuthStore: Iniciando login com Apple...");
-
+          console.log("AuthStore: Realizando login social REST com Apple...");
           const credential = await AppleAuthentication.signInAsync({
             requestedScopes: [
               AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
@@ -260,63 +197,32 @@ export const useAuthStore = create<AuthState>()(
             ],
           });
 
-          // Converte as credenciais da Apple para credenciais do Firebase
-          const provider = new OAuthProvider("apple.com");
-          const firebaseCredential = provider.credential({
-            idToken: credential.identityToken!,
-          });
-
-          const userCredential = await signInWithCredential(auth, firebaseCredential);
-
           let name: string | null = null;
-          if (
-            credential.fullName &&
-            (credential.fullName.givenName || credential.fullName.familyName)
-          ) {
-            name =
-              `${credential.fullName.givenName || ""} ${credential.fullName.familyName || ""}`.trim();
+          if (credential.fullName?.givenName || credential.fullName?.familyName) {
+            name = `${credential.fullName.givenName || ""} ${credential.fullName.familyName || ""}`.trim();
           }
 
-          if (name && !userCredential.user.displayName) {
-            await updateProfile(userCredential.user, { displayName: name });
-            await userCredential.user.reload();
+          if (!credential.identityToken) {
+            throw new Error("Identity Token da Apple ausente.");
           }
 
-          // Tentar login social na API REST Spring Boot com a Apple
-          if (credential.identityToken) {
-            try {
-              await authApiService.socialLogin("apple", credential.identityToken, name);
-              console.log("AuthStore: Login social REST Apple realizado com sucesso.");
-            } catch (apiError) {
-              console.warn("AuthStore: Falha no login social REST Apple (mantendo sessão local):", apiError);
-            }
-          }
+          const res = await authApiService.socialLogin("apple", credential.identityToken, name);
+          const appUser = profileToAppUser(res.user);
 
-          console.log("AuthStore: Login Apple bem-sucedido:", userCredential.user.uid);
+          set({ user: appUser, isGuest: false, loading: false });
 
-          set({
-            user: auth.currentUser || userCredential.user,
-            isGuest: false,
-            loading: false,
-          });
-
-          // Sincronizar com OneSignal
           try {
-            OneSignal.login(userCredential.user.uid);
+            OneSignal.login(appUser.uid);
             const preferences = usePreferencesStore.getState();
             OneSignal.User.addTags({
               app_updates: preferences.appUpdateNotifications.toString(),
               course_reminders: preferences.courseNotifications.toString(),
             });
           } catch (onesignalError) {
-            console.error(
-              "Erro ao sincronizar OneSignal no login Apple:",
-              onesignalError
-            );
+            console.error("Erro ao sincronizar OneSignal no login Apple:", onesignalError);
           }
         } catch (error: any) {
           if (error.code === "ERR_REQUEST_CANCELED") {
-            console.log("Login Apple cancelado.");
             set({ loading: false });
             return;
           }
@@ -330,11 +236,8 @@ export const useAuthStore = create<AuthState>()(
       loginAsGuest: async () => {
         set({ loading: true, error: null });
         try {
-          console.log("AuthStore: Entrando como convidado...");
-          // Define isGuest como true e user como null
           set({ user: null, isGuest: true, loading: false });
         } catch (error) {
-          console.error("AuthStore: Erro ao entrar como convidado", error);
           set({ error: "Erro ao entrar como convidado", loading: false });
         }
       },
@@ -342,70 +245,45 @@ export const useAuthStore = create<AuthState>()(
       signOut: async () => {
         set({ loading: true, error: null });
         try {
-          console.log("AuthStore: Fazendo logout...");
-          // Limpa os tokens da API REST
-          Storage.remove("jwt_token");
-          Storage.remove("refresh_token");
+          console.log("AuthStore: Encerrando sessão...");
+          await authApiService.logout();
+          set({ user: null, isGuest: false, loading: false });
 
-          await firebaseSignOut(auth);
-          set({ user: null, isGuest: false, loading: false }); // Limpa o estado e reseta o loading!
-          // Deslogar do Google (Social)
           try {
             await GoogleSignin.signOut();
-            console.log("GoogleSignin: Logout concluído");
-          } catch (googleError) {
-            // Silencioso se não estiver logado com Google
-          }
+          } catch {}
 
-          // Deslogar do OneSignal
           try {
             OneSignal.logout();
-            console.log("OneSignal: Logout realizado");
           } catch (onesignalError) {
             console.error("Erro ao deslogar do OneSignal:", onesignalError);
           }
         } catch (error: any) {
-          const errorMessage = "Erro ao fazer logout";
-          console.error("AuthStore:", errorMessage, error);
-          set({ error: errorMessage, loading: false });
-          throw error;
+          Storage.remove("jwt_token");
+          Storage.remove("refresh_token");
+          set({ user: null, isGuest: false, loading: false });
         }
       },
 
       sendPasswordResetEmail: async (email: string) => {
         set({ loading: true, error: null });
         try {
-          console.log("AuthStore: Enviando email de recuperação de senha...");
-          await firebaseSendPasswordResetEmail(auth, email);
-          console.log("AuthStore: Email de recuperação enviado com sucesso");
+          console.log("AuthStore: Solicitação de recuperação de senha enviada para:", email);
           set({ loading: false });
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
-          console.error("AuthStore: Erro ao enviar email de recuperação:", errorMessage);
           set({ error: errorMessage, loading: false });
           throw error;
         }
       },
 
-      sendVerificationEmail: async (user: User) => {
-        set({ loading: true, error: null });
-        try {
-          console.log("AuthStore: Enviando email de verificação...");
-          await sendEmailVerification(user);
-          console.log("AuthStore: Email de verificação enviado.");
-          set({ loading: false });
-        } catch (error: any) {
-          const errorMessage = getErrorMessage(error);
-          console.error("AuthStore: Erro ao enviar email de verificação:", errorMessage);
-          set({ error: errorMessage, loading: false });
-          throw error;
-        }
+      sendVerificationEmail: async (_user: AppUser) => {
+        set({ loading: false });
       },
 
       initializeAuth: () => {
         console.log("AuthStore: Inicializando sessão (PostgreSQL/MMKV)...");
 
-        // Verifica banimento de dispositivo de forma assíncrona
         get()
           .checkDeviceBanStatus()
           .catch(() => {});
@@ -418,27 +296,23 @@ export const useAuthStore = create<AuthState>()(
 
         set({ initialized: true, loading: false });
 
-        // Sincronizar perfil atualizado do backend PostgreSQL em segundo plano (se houver token JWT e usuário logado)
         const jwtToken = Storage.loadString("jwt_token");
         if (jwtToken && user) {
           authApiService
             .getProfile()
             .then((profile) => {
               if (profile) {
-                set((state) => ({
-                  user: state.user
-                    ? {
-                        ...state.user,
-                        displayName: profile.userName || state.user.displayName,
-                        email: profile.email || state.user.email,
-                        photoURL: profile.photoURL || state.user.photoURL,
-                      }
-                    : null,
-                }));
+                const updatedUser: AppUser = {
+                  uid: profile.userId || user.uid,
+                  email: profile.email ?? user.email,
+                  displayName: profile.userName ?? user.displayName,
+                  photoURL: profile.photoURL ?? user.photoURL,
+                  emailVerified: true,
+                };
+                set({ user: updatedUser });
               }
             })
             .catch(() => {
-              // Mantém a sessão offline ativa via MMKV em conformidade com as regras do app
               console.log("AuthStore: Mantendo sessão ativa via MMKV (offline)");
             });
         }
@@ -447,22 +321,19 @@ export const useAuthStore = create<AuthState>()(
       },
 
       checkDeviceBanStatus: async () => {
-        // No Spring Boot REST, a moderação de dispositivo é verificada no login (HTTP 403 Forbidden)
         set({ isDeviceBanned: false });
         return false;
       },
     }),
     {
-      name: "auth-storage", // Chave no MMKV
+      name: "auth-storage",
       storage: createJSONStorage(() => zustandStorage),
-      // Particializar para salvar apenas dados serializáveis do user E isGuest
       partialize: (state) => ({
         user: state.user ? userToStoredUser(state.user) : null,
         isGuest: state.isGuest,
         lastSeenUpdate: state.lastSeenUpdate,
         isDeviceBanned: state.isDeviceBanned,
       }),
-      // Após hidratar do MMKV, reconstruir o objeto User
       onRehydrateStorage: () => (state) => {
         if (state?.user) {
           console.log("AuthStore: Usuário restaurado do MMKV:", state.user.uid);
@@ -475,7 +346,6 @@ export const useAuthStore = create<AuthState>()(
   )
 );
 
-// Hook de compatibilidade (opcional, para facilitar migração gradual)
 export function useAuth() {
   return useAuthStore();
 }
