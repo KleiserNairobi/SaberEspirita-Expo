@@ -69,7 +69,7 @@ export const chatApiService = {
   },
 
   /**
-   * Envia mensagens utilizando o endpoint de Streaming SSE (/chat/stream) via fetch.
+   * Envia mensagens utilizando o endpoint de Streaming SSE (/chat/stream) via fetch com parser de eventos SSE.
    */
   async sendMessageStream(
     messages: ChatMessage[],
@@ -84,7 +84,7 @@ export const chatApiService = {
     const token = Storage.loadString("jwt_token") || Storage.loadString("refresh_token");
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
-      "Accept": "text/event-stream",
+      "Accept": "text/event-stream, application/json",
     };
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
@@ -106,24 +106,52 @@ export const chatApiService = {
       throw new Error(`Erro no chat stream (${response.status}): ${errorText || response.statusText}`);
     }
 
+    let fullText = "";
+    let buffer = "";
+
+    const processBuffer = (flush = false) => {
+      const lines = buffer.split(/\r?\n/);
+      if (!flush) {
+        buffer = lines.pop() || "";
+      } else {
+        buffer = "";
+      }
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith("data:")) {
+          const jsonStr = trimmed.slice(5).trim();
+          if (!jsonStr) continue;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            if (parsed.content) {
+              fullText += parsed.content;
+              if (onChunk) onChunk(parsed.content);
+            }
+          } catch {
+            // Ignora se não for JSON válido
+          }
+        }
+      }
+    };
+
     if (response.body && typeof (response.body as any).getReader === "function") {
       const reader = (response.body as any).getReader();
       const decoder = new TextDecoder();
-      let fullText = "";
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        fullText += chunk;
-        if (onChunk) onChunk(chunk);
+        buffer += decoder.decode(value, { stream: true });
+        processBuffer(false);
       }
-      return fullText;
+      processBuffer(true);
     } else {
-      const fullText = await response.text();
-      if (onChunk) onChunk(fullText);
-      return fullText;
+      buffer = await response.text();
+      processBuffer(true);
     }
+
+    return fullText;
   },
 
   /**
