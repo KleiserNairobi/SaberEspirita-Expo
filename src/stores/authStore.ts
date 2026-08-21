@@ -296,11 +296,31 @@ export const useAuthStore = create<AuthState>()(
 
         set({ initialized: true, loading: false });
 
-        const jwtToken = Storage.loadString("jwt_token");
-        if (jwtToken && user) {
-          authApiService
-            .getProfile()
-            .then((profile) => {
+        if (user?.uid && !isGuest) {
+          const jwtToken = Storage.loadString("jwt_token");
+          const refreshToken = Storage.loadString("refresh_token");
+
+          const ensureTokenAndFetchProfile = async () => {
+            let activeToken = jwtToken;
+
+            // Se não houver jwt_token no MMKV, gera/renova o token JWT no boot
+            if (!activeToken) {
+              const tokenToUse = refreshToken || user.uid;
+              try {
+                console.log("AuthStore: Obtendo token JWT do Spring Boot para a sessão ativa...");
+                const res = await authApiService.refreshToken(tokenToUse);
+                if (res?.token) {
+                  activeToken = res.token;
+                  console.log("AuthStore: Token JWT do Spring Boot obtido e salvo no MMKV com sucesso.");
+                }
+              } catch (err) {
+                console.warn("AuthStore: Falha ao obter token JWT inicial:", err);
+              }
+            }
+
+            // Busca o perfil atualizado do usuário via GET /users/me
+            try {
+              const profile = await authApiService.getProfile();
               if (profile) {
                 const updatedUser: AppUser = {
                   uid: profile.userId || user.uid,
@@ -310,11 +330,14 @@ export const useAuthStore = create<AuthState>()(
                   emailVerified: true,
                 };
                 set({ user: updatedUser });
+                console.log("AuthStore: Perfil sincronizado via GET /users/me com sucesso.");
               }
-            })
-            .catch(() => {
-              console.log("AuthStore: Mantendo sessão ativa via MMKV (offline)");
-            });
+            } catch (err) {
+              console.warn("AuthStore: Erro ao buscar perfil (mantendo sessão ativa offline):", err);
+            }
+          };
+
+          ensureTokenAndFetchProfile();
         }
 
         return () => {};
