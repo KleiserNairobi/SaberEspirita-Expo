@@ -56,12 +56,19 @@ export function useFilteredGlossaryTerms(
       const query = searchQuery.toLowerCase();
 
       // Busca em termo, definição e sinônimos
-      filtered = filtered.filter(
-        (term) =>
-          term.term.toLowerCase().includes(query) ||
-          term.definition.toLowerCase().includes(query) ||
-          term.synonyms?.some((syn) => syn.toLowerCase().includes(query))
-      );
+      filtered = filtered.filter((term) => {
+        const termMatch = term.term?.toLowerCase().includes(query) ?? false;
+        const defMatch = term.definition?.toLowerCase().includes(query) ?? false;
+        const syns = Array.isArray(term.synonyms)
+          ? term.synonyms
+          : typeof term.synonyms === "string"
+          ? [term.synonyms]
+          : [];
+        const synMatch = syns.some((syn) =>
+          typeof syn === "string" ? syn.toLowerCase().includes(query) : false
+        );
+        return termMatch || defMatch || synMatch;
+      });
     }
 
     // Ordenação alfabética

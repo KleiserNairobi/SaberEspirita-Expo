@@ -16,7 +16,12 @@ export function injectGlossaryLinks(markdownText: string, terms: IGlossaryTerm[]
 
   terms.forEach(term => {
     // Lista o título original e seus eventuais sinônimos
-    const variations = [term.term, ...(term.synonyms || [])];
+    const synList = Array.isArray(term.synonyms)
+      ? term.synonyms
+      : typeof term.synonyms === "string"
+      ? [term.synonyms]
+      : [];
+    const variations = [term.term, ...synList];
     
     variations.forEach(variation => {
       const cleanVar = variation.trim().toLowerCase();
