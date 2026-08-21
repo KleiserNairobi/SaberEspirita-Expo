@@ -44,17 +44,17 @@ apiClient.interceptors.response.use(
       const data = error.response.data;
       console.warn(`[API Client Error ${status}]:`, data || error.message);
 
-      // Tentar renovar token se receber 401 e houver refresh_token salvo (evitando loop infinito com _retry)
-      if (status === 401 && originalRequest && !originalRequest._retry) {
+      // Tentar renovar token se receber 401 ou 403 e houver refresh_token salvo (evitando loop infinito com _retry)
+      if ((status === 401 || status === 403) && originalRequest && !originalRequest._retry) {
         originalRequest._retry = true;
         const refreshToken = Storage.loadString("refresh_token");
 
         if (refreshToken) {
           try {
-            console.log("apiClient: Tentando renovar token JWT expirado via refresh_token...");
+            console.log("apiClient: Tentando renovar token JWT expirado via refresh-token...");
             const refreshResponse = await axios.post<{ token: string; refreshToken?: string }>(
-              `${API_URL}/auth/refresh`,
-              { refreshToken }
+              `${API_URL}/auth/refresh-token`,
+              { token: refreshToken }
             );
 
             if (refreshResponse.data?.token) {

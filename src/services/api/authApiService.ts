@@ -95,7 +95,7 @@ export const authApiService = {
   async refreshToken(refreshToken: string): Promise<{ token: string; refreshToken?: string }> {
     const response = await apiClient.post<{ token: string; refreshToken?: string }>(
       "/auth/refresh-token",
-      { refreshToken }
+      { token: refreshToken }
     );
     if (response.data?.token) {
       Storage.saveString("jwt_token", response.data.token);

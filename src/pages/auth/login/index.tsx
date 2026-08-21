@@ -1,4 +1,6 @@
 import { useRef, useState } from "react";
+import { useEffect } from "react";
+
 import {
   KeyboardAvoidingView,
   Platform,
@@ -8,22 +10,23 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { FontAwesome } from "@expo/vector-icons";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Mail, Lock, Eye, EyeOff, Key, UserPlus } from "lucide-react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import { Eye, EyeOff, Key, Lock, Mail, UserPlus } from "lucide-react-native";
 import Svg, { Path } from "react-native-svg";
-import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
-import { useEffect } from "react";
 
-import { useAuthStore } from "@/stores/authStore";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import type { AuthStackParamList } from "@/routers/types";
-import { Button } from "@/components/Button";
-import { TermsAndPrivacy } from "@/components/TermsAndPrivacy";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { Button } from "@/components/Button";
+import { TermsAndPrivacy } from "@/components/TermsAndPrivacy";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import type { AuthStackParamList } from "@/routers/types";
+import { useAuthStore } from "@/stores/authStore";
+
 import { createStyles } from "./styles";
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, "Login">;
@@ -31,14 +34,8 @@ type LoginScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, "
 export function LoginScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-  const {
-    signIn,
-    loading,
-    clearError,
-    loginAsGuest,
-    signInWithGoogle,
-    signInWithApple,
-  } = useAuthStore();
+  const { signIn, loading, clearError, loginAsGuest, signInWithGoogle, signInWithApple } =
+    useAuthStore();
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -68,7 +65,8 @@ export function LoginScreen() {
       const name = userInfo.data?.user?.name;
 
       if (token) {
-        await signInWithGoogle(token, name);      }
+        await signInWithGoogle(token, name);
+      }
     } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         return;
@@ -193,7 +191,6 @@ export function LoginScreen() {
           }, 100);
           return;
         }
-
       }
     } catch (err: any) {
       console.error("Login error:", err);

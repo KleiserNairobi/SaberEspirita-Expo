@@ -47,12 +47,7 @@ export function useUserActivity() {
       now - currentLastSeen > THROTTLE_TIME
     ) {
       isFirstExecutionInSession = false;
-      try {
-        await authApiService.updateProfile({});
-        setLastSeenUpdate(now);
-      } catch (error) {
-        console.error("[Activity] Erro ao processar atualização de atividade:", error);
-      }
+      setLastSeenUpdate(now);
     }
   };
 
