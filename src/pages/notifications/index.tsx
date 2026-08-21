@@ -134,11 +134,16 @@ export function NotificationsScreen({ navigation }: Props) {
       if (isGuest) return;
       if (!user?.uid) return;
 
-      // admin_broadcast: sem destino de navegação — só marca como lida
+      // Marca como lida no backend imediatamente ao clicar se ainda não foi lida
+      const isAlreadyRead = item.isRead ?? !!item.readAt;
+      if (!isAlreadyRead) {
+        await markRead(item.id).catch((err) => {
+          console.warn("Erro ao marcar notificação como lida:", err);
+        });
+      }
+
+      // admin_broadcast: sem destino de navegação
       if (item.type === "admin_broadcast") {
-        if (!item.readAt) {
-          await markRead(item.id).catch(() => {});
-        }
         return;
       }
 
@@ -153,10 +158,6 @@ export function NotificationsScreen({ navigation }: Props) {
       }
 
       try {
-        if (!item.readAt) {
-          await markRead(item.id);
-        }
-
         const lesson = await lessonApiService.getLessonById(item.lessonId);
         if (!lesson) {
           setMessageConfig({
@@ -276,7 +277,7 @@ export function NotificationsScreen({ navigation }: Props) {
             onRefresh={() => refetch()}
             ListEmptyComponent={<Text style={styles.emptyText}>{emptyLabel}</Text>}
             renderItem={({ item }) => {
-              const isUnread = !item.readAt;
+              const isUnread = !(item.isRead ?? !!item.readAt);
               const IconComponent =
                 item.type === "admin_broadcast"
                   ? Megaphone

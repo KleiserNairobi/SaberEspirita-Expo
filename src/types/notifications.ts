@@ -16,6 +16,7 @@ export interface NotificationItem {
   reactionType: ForumReactionType | null;
   createdAt: Date | null;
   readAt: Date | null;
+  isRead?: boolean;
   fromUserName?: string | null;
   lessonTitle?: string | null;
   /** Usado por admin_broadcast: título da notificação */

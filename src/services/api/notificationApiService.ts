@@ -19,13 +19,22 @@ export const notificationApiService = {
       return { items: [], nextPage: null };
     }
     try {
-      const response = await apiClient.get<NotificationsResponse>("/notifications", {
+      const response = await apiClient.get<any>("/notifications", {
         params: { page, limit },
       });
-      if (Array.isArray(response.data)) {
-        return { items: response.data, nextPage: null };
+      const data = response.data;
+      if (Array.isArray(data)) {
+        return { items: data, nextPage: null };
       }
-      return response.data || { items: [], nextPage: null };
+      if (data && Array.isArray(data.content)) {
+        const isLast = data.last ?? true;
+        const currentPage = (data.number ?? 0) + 1;
+        return {
+          items: data.content,
+          nextPage: isLast ? null : currentPage + 1,
+        };
+      }
+      return data || { items: [], nextPage: null };
     } catch {
       return { items: [], nextPage: null };
     }

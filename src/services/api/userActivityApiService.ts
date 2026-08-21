@@ -7,13 +7,30 @@ function parseArray(val: any): string[] {
   if (!val) return [];
   if (Array.isArray(val)) return val;
   if (typeof val === "string") {
-    if (val.startsWith("[") && val.endsWith("]")) {
+    const trimmed = val.trim();
+    if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
       try {
-        const parsed = JSON.parse(val);
+        const parsed = JSON.parse(trimmed);
         if (Array.isArray(parsed)) return parsed;
       } catch {}
     }
-    return val.split(",").map((s) => s.trim()).filter(Boolean);
+    return trimmed.split(",").map((s) => s.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+export function parseExerciseResults(raw: any): any[] {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  if (typeof raw === "string" && raw.trim().length > 0) {
+    const trimmed = raw.trim();
+    if (trimmed.startsWith("[")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {}
+    }
+    return trimmed.split(",").map((s) => s.trim()).filter(Boolean).map((id) => ({ exerciseId: id, passed: true }));
   }
   return [];
 }
@@ -23,6 +40,7 @@ function normalizeProgress(raw: any): IUserCourseProgress {
   return {
     ...raw,
     completedLessons: parseArray(raw.completedLessons),
+    exerciseResults: parseExerciseResults(raw.exerciseResults),
   };
 }
 

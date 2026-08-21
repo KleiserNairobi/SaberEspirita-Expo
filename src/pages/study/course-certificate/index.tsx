@@ -18,7 +18,7 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
 import { useCourse } from "@/hooks/queries/useCourses";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
-import { userActivityApiService } from "@/services/api/userActivityApiService";
+import { userActivityApiService, parseExerciseResults } from "@/services/api/userActivityApiService";
 import { shareCertificate } from "@/utils/sharing";
 
 import { ActivityIndicator } from "react-native";
@@ -245,8 +245,8 @@ export function CourseCertificateScreen() {
         <View style={styles.infoCard}>
           <Text style={styles.infoTitle}>{course.title}</Text>
           <Text style={styles.infoText}>
-            Você concluiu {progress.completedLessons.length} aulas e{" "}
-            {progress.exerciseResults.filter((r) => r.passed).length} exercícios.
+            Você concluiu {progress?.completedLessons?.length || 0} aulas e{" "}
+            {parseExerciseResults(progress?.exerciseResults).filter((r: any) => r && r.passed).length} exercícios.
           </Text>
         </View>
 

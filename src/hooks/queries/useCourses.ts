@@ -62,6 +62,7 @@ export function useCourse(id: string) {
     enabled: !!id,
     staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    refetchOnMount: true,
     refetchOnReconnect: true,
   });
 }

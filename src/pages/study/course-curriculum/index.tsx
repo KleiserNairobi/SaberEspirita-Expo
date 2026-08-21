@@ -25,6 +25,7 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { courseApiService } from "@/services/api/courseApiService";
 import { lessonApiService } from "@/services/api/lessonApiService";
+import { parseExerciseResults } from "@/services/api/userActivityApiService";
 import { useAuthStore } from "@/stores/authStore";
 import { ILesson } from "@/types/course";
 import { loadBoolean, saveBoolean } from "@/utils/Storage";
@@ -79,8 +80,9 @@ export function CourseCurriculumScreen() {
       ? course.stats.exerciseCount
       : allExercises.length;
 
+  const exerciseResultsList = parseExerciseResults(progress?.exerciseResults);
   const completedExercises =
-    progress?.exerciseResults?.filter((r) => r.passed).length || 0;
+    exerciseResultsList.filter((r: any) => r && r.passed).length || 0;
 
   // ✅ CORREÇÃO: Calcular porcentagem dinamicamente para evitar dados estaleiros
   const exercisesProgress =
@@ -228,18 +230,14 @@ export function CourseCurriculumScreen() {
   const lastTouchedCourseIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!user?.uid || isGuest) return;
+    if (!user?.uid || isGuest || !courseId) return;
     if (lastTouchedCourseIdRef.current === courseId) return;
 
-    // Só matricula/toca o acesso se:
-    // 1. autoEnroll for verdadeiro (veio do botão "Iniciar Série")
-    // 2. OU se o usuário já possui um progresso registrado no banco para este curso (já estava matriculado)
-    const alreadyEnrolled = !!progress;
-    if (autoEnroll || alreadyEnrolled) {
+    if (autoEnroll) {
       lastTouchedCourseIdRef.current = courseId;
       touchAccess({ courseId, userId: user.uid });
     }
-  }, [courseId, isGuest, user?.uid, autoEnroll, progress, touchAccess]);
+  }, [courseId, isGuest, user?.uid, autoEnroll, touchAccess]);
 
   function getLessonStatus(lesson: ILesson, _index: number): LessonStatus {
     // Verificar se a aula foi concluída
@@ -349,8 +347,9 @@ export function CourseCurriculumScreen() {
   ) => {
     const { isLessonUnavailable, isComingSoon } = opts;
     // 1. Verificar progresso do exercício
-    const exerciseResult = progress?.exerciseResults?.find(
-      (r) => r.exerciseId === exercise.id
+    const exerciseResultList = parseExerciseResults(progress?.exerciseResults);
+    const exerciseResult = exerciseResultList.find(
+      (r: any) => r && (r.exerciseId === exercise.id || r.id === exercise.id)
     );
     const isCompleted = !!exerciseResult?.passed;
     const isFailed = !!(exerciseResult && !exerciseResult.passed);

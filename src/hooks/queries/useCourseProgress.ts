@@ -19,8 +19,9 @@ export function useCourseProgress(courseId: string) {
     queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(userId, courseId),
     queryFn: () => userActivityApiService.getCourseProgress(courseId),
     enabled: !!userId && !!courseId,
-    staleTime: 1000 * 60 * 15, // 15 minutos
+    staleTime: 1000 * 60 * 5, // 5 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em memória
+    refetchOnMount: true,
   });
 }
 
@@ -31,7 +32,7 @@ interface TouchCourseAccessParams {
 }
 
 /**
- * Hook mutador para registrar acesso a um curso, garantindo invalidação de cache
+ * Hook mutador para registrar acesso a um curso/aula.
  */
 export function useTouchCourseAccess() {
   const queryClient = useQueryClient();
@@ -43,16 +44,13 @@ export function useTouchCourseAccess() {
       if (lessonId) {
         return userActivityApiService.completeLesson(courseId, lessonId);
       }
-      return userActivityApiService.getCourseProgress(courseId);
+      return null;
     },
     onSuccess: (_, variables) => {
       const targetUserId = variables.userId || userId;
       if (targetUserId) {
         queryClient.invalidateQueries({
           queryKey: ["lastAccessedCourse", targetUserId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: COURSE_PROGRESS_KEYS.all(targetUserId),
         });
         queryClient.invalidateQueries({
           queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(targetUserId, variables.courseId),

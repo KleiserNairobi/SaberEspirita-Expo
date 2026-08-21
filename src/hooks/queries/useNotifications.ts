@@ -19,7 +19,7 @@ export function useHasUnreadNotifications() {
     queryFn: async () => {
       if (isGuest || !user?.uid) return false;
       const res = await notificationApiService.getNotifications(1, 10);
-      return res.items.some((n) => !n.readAt);
+      return res.items.some((n) => !(n.isRead ?? !!n.readAt));
     },
     enabled: !!user?.uid && !isGuest,
     staleTime: 1000 * 30, // 30 segundos
