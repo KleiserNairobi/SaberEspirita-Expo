@@ -141,6 +141,18 @@ export function AllTermsScreen() {
 
 
 
+  const renderSectionHeader = React.useCallback(() => (
+    <View style={styles.stickyHeader}>
+      <View style={styles.searchContainer}>
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="Buscar termo..."
+        />
+      </View>
+    </View>
+  ), [searchQuery, styles.stickyHeader, styles.searchContainer]);
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} />
@@ -171,15 +183,6 @@ export function AllTermsScreen() {
                   <Text style={styles.title}>Glossário Espírita</Text>
                   <Text style={styles.subtitle}>Dicionário de termos</Text>
                 </View>
-              </View>
-
-              {/* Barra de Busca */}
-              <View style={styles.searchContainer}>
-                <SearchBar
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  placeholder="Buscar termo..."
-                />
               </View>
 
               {/* Linha 3: Carrossel de Categorias */}
@@ -219,6 +222,7 @@ export function AllTermsScreen() {
               </ScrollView>
             </>
           }
+          renderSectionHeader={renderSectionHeader}
           contentContainerStyle={styles.list}
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}
