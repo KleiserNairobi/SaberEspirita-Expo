@@ -41,24 +41,23 @@ export function useFilteredGlossaryTerms(
   const { data: allTerms } = useGlossaryTerms();
 
   const filteredTerms = useMemo(() => {
-    let filtered = allTerms || [];
+    if (!allTerms || allTerms.length === 0) return [];
+
+    let filtered = allTerms;
 
     // Aplicar filtro de categoria ou favoritos
     if (filterType === "FAVORITES") {
       filtered = filtered.filter((term) => favoriteIds.includes(term.id));
     } else if (filterType !== "ALL") {
-      // É uma categoria específica
       filtered = filtered.filter((term) => term.category === filterType);
     }
 
-    // Filtro de busca (Search Query) atua dentro do que sobrou do filtro principal
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-
-      // Busca em termo, definição e sinônimos
+    // Filtro de busca (Search Query)
+    const query = searchQuery.trim().toLowerCase();
+    if (query) {
       filtered = filtered.filter((term) => {
-        const termMatch = term.term?.toLowerCase().includes(query) ?? false;
-        const defMatch = term.definition?.toLowerCase().includes(query) ?? false;
+        const termMatch = term.term ? term.term.toLowerCase().includes(query) : false;
+        const defMatch = term.definition ? term.definition.toLowerCase().includes(query) : false;
         const syns = Array.isArray(term.synonyms)
           ? term.synonyms
           : typeof term.synonyms === "string"
@@ -71,8 +70,8 @@ export function useFilteredGlossaryTerms(
       });
     }
 
-    // Ordenação alfabética
-    return filtered.sort((a, b) => a.term.localeCompare(b.term, "pt-BR"));
+    // Ordenação alfabética em cópia do array
+    return [...filtered].sort((a, b) => (a.term || "").localeCompare(b.term || "", "pt-BR"));
   }, [allTerms, searchQuery, filterType, favoriteIds]);
 
   return filteredTerms;

@@ -173,6 +173,15 @@ export function AllTermsScreen() {
                 </View>
               </View>
 
+              {/* Barra de Busca */}
+              <View style={styles.searchContainer}>
+                <SearchBar
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  placeholder="Buscar termo..."
+                />
+              </View>
+
               {/* Linha 3: Carrossel de Categorias */}
               <ScrollView
                 horizontal
@@ -210,17 +219,6 @@ export function AllTermsScreen() {
               </ScrollView>
             </>
           }
-          renderSectionHeader={() => (
-            <View style={styles.stickyHeader}>
-              <View style={styles.searchContainer}>
-                <SearchBar
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  placeholder="Buscar termo..."
-                />
-              </View>
-            </View>
-          )}
           contentContainerStyle={styles.list}
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}
