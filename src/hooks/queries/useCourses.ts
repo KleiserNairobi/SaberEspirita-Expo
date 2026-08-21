@@ -60,9 +60,9 @@ export function useCourse(id: string) {
     queryKey: COURSES_KEYS.detail(id),
     queryFn: () => fetchCourseById(id),
     enabled: !!id,
-    staleTime: 1000 * 60 * 15, // 15 minutos
+    staleTime: 1000 * 60 * 1, // 1 minuto
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: true,
+    refetchOnMount: "always",
     refetchOnReconnect: true,
   });
 }
