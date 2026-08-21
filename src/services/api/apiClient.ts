@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
-import { auth } from "@/configs/firebase/firebase";
+
 import * as Storage from "@/utils/Storage";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:8080/api/v1";
@@ -40,7 +40,9 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
 
     if (error.response) {
       const status = error.response.status;
@@ -48,19 +50,26 @@ apiClient.interceptors.response.use(
       console.warn(`[API Client Error ${status}]:`, data || error.message);
 
       // Tentar renovar token se receber 401 ou 403 e houver token/refresh_token salvo (evitando loop infinito com _retry)
-      if ((status === 401 || status === 403) && originalRequest && !originalRequest._retry) {
+      if (
+        (status === 401 || status === 403) &&
+        originalRequest &&
+        !originalRequest._retry
+      ) {
         originalRequest._retry = true;
-        const refreshToken = Storage.loadString("refresh_token") || Storage.loadString("jwt_token");
+        const refreshToken =
+          Storage.loadString("refresh_token") || Storage.loadString("jwt_token");
 
         if (refreshToken) {
           try {
             console.log("apiClient: Renovando token JWT via /auth/refresh-token...");
-            const refreshResponse = await axios.post<{ token?: string; accessToken?: string; refreshToken?: string }>(
-              `${API_URL}/auth/refresh-token`,
-              { token: refreshToken }
-            );
+            const refreshResponse = await axios.post<{
+              token?: string;
+              accessToken?: string;
+              refreshToken?: string;
+            }>(`${API_URL}/auth/refresh-token`, { token: refreshToken });
 
-            const newToken = refreshResponse.data?.accessToken || refreshResponse.data?.token;
+            const newToken =
+              refreshResponse.data?.accessToken || refreshResponse.data?.token;
 
             if (newToken) {
               Storage.saveString("jwt_token", newToken);
@@ -74,7 +83,10 @@ apiClient.interceptors.response.use(
               return apiClient(originalRequest);
             }
           } catch (refreshErr) {
-            console.warn("apiClient: Falha ao renovar token de acesso silenciosamente:", refreshErr);
+            console.warn(
+              "apiClient: Falha ao renovar token de acesso silenciosamente:",
+              refreshErr
+            );
           }
         }
       }
@@ -82,7 +94,10 @@ apiClient.interceptors.response.use(
       // REGRA INVIOLÁVEL DO APP: Erros HTTP 401/403 JAMAIS devem deslogar o usuário ou limpar auth-storage.
       // O erro é simplesmente rejeitado para ser tratado no componente/hook consumidor.
     } else if (error.request) {
-      console.warn("[API Client Network Error]: Sem resposta do servidor. Verifique a conexão.", error.message);
+      console.warn(
+        "[API Client Network Error]: Sem resposta do servidor. Verifique a conexão.",
+        error.message
+      );
     } else {
       console.warn("[API Client Error]:", error.message);
     }
@@ -92,4 +107,3 @@ apiClient.interceptors.response.use(
 );
 
 export default apiClient;
-

@@ -1,5 +1,6 @@
 import apiClient from "./apiClient";
 import { ChatMessage, ChatType } from "@/types/chat";
+import * as Storage from "@/utils/Storage";
 
 export { ChatType };
 
@@ -38,12 +39,17 @@ export const chatApiService = {
    */
   async sendMessage(
     messages: ChatMessage[],
-    type: ChatType = ChatType.EMOTIONAL
+    type: ChatType | string = ChatType.EMOTIONAL
   ): Promise<ChatCompletionResponse> {
+    const typeStr = String(type || "").toLowerCase();
+    const chatType = typeStr.includes("scientific") || typeStr.includes("doctrinal")
+      ? "scientific"
+      : "emotional";
+
     const response = await apiClient.post<ChatCompletionResponse>(
       "/chat/completions",
       {
-        type: type === ChatType.SCIENTIFIC ? "SCIENTIFIC" : "EMOTIONAL",
+        chatType,
         messages,
       },
       {
@@ -51,6 +57,64 @@ export const chatApiService = {
       }
     );
     return response.data;
+  },
+
+  /**
+   * Envia mensagens utilizando o endpoint de Streaming SSE (/chat/stream) via fetch.
+   */
+  async sendMessageStream(
+    messages: ChatMessage[],
+    type: ChatType | string = ChatType.EMOTIONAL,
+    onChunk?: (chunk: string) => void
+  ): Promise<string> {
+    const typeStr = String(type || "").toLowerCase();
+    const chatType = typeStr.includes("scientific") || typeStr.includes("doctrinal")
+      ? "scientific"
+      : "emotional";
+
+    const token = Storage.loadString("jwt_token") || Storage.loadString("refresh_token");
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      "Accept": "text/event-stream",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+
+    const response = await fetch(`${API_URL}/chat/stream`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        chatType,
+        messages,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => "");
+      throw new Error(`Erro no chat stream (${response.status}): ${errorText || response.statusText}`);
+    }
+
+    if (response.body && typeof (response.body as any).getReader === "function") {
+      const reader = (response.body as any).getReader();
+      const decoder = new TextDecoder();
+      let fullText = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        fullText += chunk;
+        if (onChunk) onChunk(chunk);
+      }
+      return fullText;
+    } else {
+      const fullText = await response.text();
+      if (onChunk) onChunk(fullText);
+      return fullText;
+    }
   },
 
   /**
