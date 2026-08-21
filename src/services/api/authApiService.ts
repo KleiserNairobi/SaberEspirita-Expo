@@ -28,9 +28,13 @@ export interface UserProfileDTO {
 }
 
 export interface AuthResponseDTO {
-  token: string;
+  token?: string;
+  accessToken?: string;
   refreshToken?: string;
-  user: UserProfileDTO;
+  userId?: string;
+  email?: string;
+  displayName?: string;
+  user?: UserProfileDTO;
 }
 
 export interface UpdateProfileDTO {
@@ -44,8 +48,9 @@ export const authApiService = {
    */
   async login(credentials: AuthLoginDTO): Promise<AuthResponseDTO> {
     const response = await apiClient.post<AuthResponseDTO>("/auth/login", credentials);
-    if (response.data?.token) {
-      Storage.saveString("jwt_token", response.data.token);
+    const jwt = response.data?.accessToken || response.data?.token;
+    if (jwt) {
+      Storage.saveString("jwt_token", jwt);
       if (response.data.refreshToken) {
         Storage.saveString("refresh_token", response.data.refreshToken);
       }
@@ -58,8 +63,9 @@ export const authApiService = {
    */
   async register(data: AuthRegisterDTO): Promise<AuthResponseDTO> {
     const response = await apiClient.post<AuthResponseDTO>("/auth/register", data);
-    if (response.data?.token) {
-      Storage.saveString("jwt_token", response.data.token);
+    const jwt = response.data?.accessToken || response.data?.token;
+    if (jwt) {
+      Storage.saveString("jwt_token", jwt);
       if (response.data.refreshToken) {
         Storage.saveString("refresh_token", response.data.refreshToken);
       }
@@ -80,8 +86,9 @@ export const authApiService = {
       idToken,
       name,
     });
-    if (response.data?.token) {
-      Storage.saveString("jwt_token", response.data.token);
+    const jwt = response.data?.accessToken || response.data?.token;
+    if (jwt) {
+      Storage.saveString("jwt_token", jwt);
       if (response.data.refreshToken) {
         Storage.saveString("refresh_token", response.data.refreshToken);
       }
@@ -92,13 +99,14 @@ export const authApiService = {
   /**
    * Renova o token de acesso (JWT) expirado utilizando o refreshToken salvo.
    */
-  async refreshToken(refreshToken: string): Promise<{ token: string; refreshToken?: string }> {
-    const response = await apiClient.post<{ token: string; refreshToken?: string }>(
+  async refreshToken(refreshToken: string): Promise<AuthResponseDTO> {
+    const response = await apiClient.post<AuthResponseDTO>(
       "/auth/refresh-token",
       { token: refreshToken }
     );
-    if (response.data?.token) {
-      Storage.saveString("jwt_token", response.data.token);
+    const jwt = response.data?.accessToken || response.data?.token;
+    if (jwt) {
+      Storage.saveString("jwt_token", jwt);
       if (response.data.refreshToken) {
         Storage.saveString("refresh_token", response.data.refreshToken);
       }

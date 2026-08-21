@@ -71,11 +71,11 @@ interface AuthState {
 }
 
 // Helper para converter DTO do backend para AppUser
-const profileToAppUser = (profile: UserProfileDTO): AppUser => ({
-  uid: profile.userId,
-  email: profile.email,
-  displayName: profile.userName || profile.email?.split("@")[0] || "Usuário",
-  photoURL: profile.photoURL || null,
+const profileToAppUser = (profile?: UserProfileDTO | null, fallbackId?: string, fallbackEmail?: string, fallbackName?: string): AppUser => ({
+  uid: profile?.userId || fallbackId || "user_" + Date.now(),
+  email: profile?.email ?? fallbackEmail ?? null,
+  displayName: profile?.userName || fallbackName || profile?.email?.split("@")[0] || fallbackEmail?.split("@")[0] || "Usuário",
+  photoURL: profile?.photoURL || null,
   emailVerified: true,
   reload: async () => {},
 });
@@ -118,7 +118,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           console.log("AuthStore: Realizando login REST Spring Boot...");
           const res = await authApiService.login({ email, password });
-          const appUser = profileToAppUser(res.user);
+          const appUser = profileToAppUser(res.user, res.userId, res.email, res.displayName);
 
           set({ user: appUser, isGuest: false, loading: false });
 
@@ -147,7 +147,7 @@ export const useAuthStore = create<AuthState>()(
           console.log("AuthStore: Criando conta no Spring Boot...");
           const userName = email.split("@")[0] || "Usuário";
           const res = await authApiService.register({ userName, email, password });
-          const appUser = profileToAppUser(res.user);
+          const appUser = profileToAppUser(res.user, res.userId, res.email, res.displayName);
 
           set({ user: appUser, isGuest: false, loading: false });
           return { user: appUser };
@@ -164,7 +164,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           console.log("AuthStore: Realizando login social REST com Google...");
           const res = await authApiService.socialLogin("google", idToken, name);
-          const appUser = profileToAppUser(res.user);
+          const appUser = profileToAppUser(res.user, res.userId, res.email, res.displayName);
 
           set({ user: appUser, isGuest: false, loading: false });
 
@@ -207,7 +207,7 @@ export const useAuthStore = create<AuthState>()(
           }
 
           const res = await authApiService.socialLogin("apple", credential.identityToken, name);
-          const appUser = profileToAppUser(res.user);
+          const appUser = profileToAppUser(res.user, res.userId, res.email, res.displayName);
 
           set({ user: appUser, isGuest: false, loading: false });
 
@@ -309,8 +309,9 @@ export const useAuthStore = create<AuthState>()(
               try {
                 console.log("AuthStore: Obtendo token JWT do Spring Boot para a sessão ativa...");
                 const res = await authApiService.refreshToken(tokenToUse);
-                if (res?.token) {
-                  activeToken = res.token;
+                const newToken = res?.accessToken || res?.token;
+                if (newToken) {
+                  activeToken = newToken;
                   console.log("AuthStore: Token JWT do Spring Boot obtido e salvo no MMKV com sucesso.");
                 }
               } catch (err) {

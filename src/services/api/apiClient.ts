@@ -55,19 +55,21 @@ apiClient.interceptors.response.use(
         if (refreshToken) {
           try {
             console.log("apiClient: Renovando token JWT via /auth/refresh-token...");
-            const refreshResponse = await axios.post<{ token: string; refreshToken?: string }>(
+            const refreshResponse = await axios.post<{ token?: string; accessToken?: string; refreshToken?: string }>(
               `${API_URL}/auth/refresh-token`,
               { token: refreshToken }
             );
 
-            if (refreshResponse.data?.token) {
-              Storage.saveString("jwt_token", refreshResponse.data.token);
+            const newToken = refreshResponse.data?.accessToken || refreshResponse.data?.token;
+
+            if (newToken) {
+              Storage.saveString("jwt_token", newToken);
               if (refreshResponse.data.refreshToken) {
                 Storage.saveString("refresh_token", refreshResponse.data.refreshToken);
               }
 
               if (originalRequest.headers) {
-                originalRequest.headers.Authorization = `Bearer ${refreshResponse.data.token}`;
+                originalRequest.headers.Authorization = `Bearer ${newToken}`;
               }
               return apiClient(originalRequest);
             }
