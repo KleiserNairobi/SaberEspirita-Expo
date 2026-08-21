@@ -67,13 +67,13 @@ export const courseApiService = {
    */
   async getCourseById(courseId: string): Promise<ICourse | null> {
     if (!courseId) return null;
-    const response = await apiClient.get<ICourse>(`/courses/${courseId}`);
+    const response = await apiClient.get<any>(`/courses/${courseId}`);
     if (!response.data) return null;
 
-    const course = response.data;
+    const rawCourse = response.data.course ? response.data.course : response.data;
     return {
-      ...course,
-      imageUrl: typeof course.imageUrl === "string" ? resolveCdnUrl(course.imageUrl) : course.imageUrl,
+      ...rawCourse,
+      imageUrl: typeof rawCourse.imageUrl === "string" ? resolveCdnUrl(rawCourse.imageUrl) : rawCourse.imageUrl,
     };
   },
 
