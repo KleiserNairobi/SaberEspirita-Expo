@@ -328,22 +328,9 @@ export const quizApiService = {
 
   /**
    * Obtém o mapa de subcategorias concluídas pelo usuário agrupadas por categoria.
+   * Deriva os dados a partir do histórico real do usuário para evitar requisições a rotas inexistentes.
    */
   async getUserProgress(_userId?: string): Promise<Record<string, string[]>> {
-    const endpoints = ["/quizzes/progress/me", "/quizzes/progress"];
-    for (const endpoint of endpoints) {
-      try {
-        const response = await apiClient.get<any>(endpoint);
-        const data = response.data;
-        if (data && typeof data === "object" && !Array.isArray(data)) {
-          return data.progress || data.categoriesProgress || data;
-        }
-      } catch (e) {
-        // Tentar próximo endpoint silenciosamente
-      }
-    }
-
-    // Fallback silencioso: Construir mapa de subcategorias concluídas através do histórico
     try {
       const history = await this.getUserQuizHistory();
       if (Array.isArray(history) && history.length > 0) {
@@ -360,46 +347,65 @@ export const quizApiService = {
         return map;
       }
     } catch (e) {
-      // Ignorar fallback se falhar
+      console.warn("quizApiService: Erro ao obter progresso do usuário via histórico:", e);
     }
-
     return {};
   },
 
   /**
-   * Obtém as estatísticas detalhadas de desempenho do usuário.
+   * Obtém as estatísticas detalhadas de desempenho do usuário calculadas a partir do histórico real.
    */
   async getUserDetailedStats(_userId?: string): Promise<IUserDetailedStats> {
-    const defaultStats: IUserDetailedStats = {
+    try {
+      const history = await this.getUserQuizHistory();
+      if (Array.isArray(history) && history.length > 0) {
+        const completedItems = history.filter((h) => h.completed);
+        const totalQuestions = completedItems.reduce(
+          (acc, item) => acc + (item.totalQuestions || 0),
+          0
+        );
+        const totalScorePct = completedItems.reduce(
+          (acc, item) => acc + (item.percentage || item.score || 0),
+          0
+        );
+        const accuracyRate =
+          completedItems.length > 0
+            ? Math.round(totalScorePct / completedItems.length)
+            : 0;
+
+        const uniqueDays = new Set(
+          completedItems
+            .map((item) => {
+              if (!item.completedAt) return null;
+              return new Date(item.completedAt).toISOString().split("T")[0];
+            })
+            .filter(Boolean)
+        );
+
+        const bestScore = completedItems.reduce(
+          (max, item) => Math.max(max, item.percentage || item.score || 0),
+          0
+        );
+
+        return {
+          totalQuestions,
+          accuracyRate,
+          activeDays: uniqueDays.size,
+          bestScore,
+          categoriesProgress: [],
+        };
+      }
+    } catch (e) {
+      console.warn("quizApiService: Erro ao calcular estatísticas do usuário via histórico:", e);
+    }
+
+    return {
       totalQuestions: 0,
       accuracyRate: 0,
       activeDays: 0,
       bestScore: 0,
       categoriesProgress: [],
     };
-
-    const endpoints = ["/quizzes/stats/me", "/quizzes/stats", "/stats/quizzes/me"];
-
-    for (const endpoint of endpoints) {
-      try {
-        const response = await apiClient.get<any>(endpoint);
-        if (response.data) {
-          const d = response.data;
-          return {
-            totalQuestions: d.totalQuestions ?? d.total_questions ?? 0,
-            accuracyRate: d.accuracyRate ?? d.accuracy_rate ?? 0,
-            activeDays: d.activeDays ?? d.active_days ?? d.streak ?? 0,
-            bestScore: d.bestScore ?? d.best_score ?? 0,
-            categoriesProgress: d.categoriesProgress ?? d.categories_progress ?? [],
-          };
-        }
-      } catch (e) {
-        // Tentar o próximo endpoint silenciosamente
-      }
-    }
-
-    console.warn("quizApiService: Nenhum endpoint de estatísticas respondeu, usando fallback seguro.");
-    return defaultStats;
   },
 
   /**
