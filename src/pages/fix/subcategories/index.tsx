@@ -68,8 +68,23 @@ export function SubcategoriesScreen() {
   };
 
   function isSubcategoryCompleted(subcategoryId: string) {
-    if (!userProgress?.[categoryId]) return false;
-    return userProgress[categoryId].includes(subcategoryId);
+    if (!userProgress) return false;
+    const catKeys = [
+      categoryId,
+      categoryName,
+      categoryId?.toLowerCase(),
+      categoryName?.toLowerCase(),
+      categoryName?.toUpperCase(),
+      categoryName?.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
+    ].filter(Boolean) as string[];
+
+    for (const key of catKeys) {
+      const list = userProgress[key];
+      if (Array.isArray(list) && list.includes(subcategoryId)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // Filtrar subcategorias por busca e status

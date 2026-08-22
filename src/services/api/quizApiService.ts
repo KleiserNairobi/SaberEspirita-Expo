@@ -189,12 +189,39 @@ export const quizApiService = {
       const response = await apiClient.get<any>("/quizzes/categories");
       const data = response.data;
       if (!data) return [];
-      if (Array.isArray(data)) return data;
-      if (Array.isArray(data.categories)) return data.categories;
-      if (Array.isArray(data.content)) return data.content;
-      if (Array.isArray(data.items)) return data.items;
-      if (Array.isArray(data.data)) return data.data;
-      return [];
+      const rawList = Array.isArray(data)
+        ? data
+        : Array.isArray(data.categories)
+        ? data.categories
+        : Array.isArray(data.content)
+        ? data.content
+        : Array.isArray(data.items)
+        ? data.items
+        : Array.isArray(data.data)
+        ? data.data
+        : [];
+
+      return rawList.map((cat: any) => {
+        const questionCount =
+          cat.questionCount ?? cat.totalQuestions ?? cat.question_count ?? cat.questions_count ?? 0;
+        const subcategoryCount =
+          (cat.subcategoryCount ??
+            cat.subcategoriesCount ??
+            cat.totalSubcategories ??
+            cat.subcategories_count ??
+            cat.total_subcategories ??
+            (Array.isArray(cat.subcategories) ? cat.subcategories.length : 0)) ||
+          (questionCount > 0 ? Math.max(1, Math.round(questionCount / 15)) : 10);
+
+        return {
+          ...cat,
+          id: String(cat.id || cat.categoryId || ""),
+          name: cat.name || cat.title || "",
+          questionCount,
+          subcategoryCount,
+          icon: cat.icon || "",
+        };
+      });
     } catch (error) {
       console.warn("quizApiService: Erro ao buscar categorias:", error);
       return [];
@@ -430,10 +457,21 @@ export const quizApiService = {
         const map: Record<string, string[]> = {};
         for (const item of history) {
           if (item.completed && item.subcategoryId) {
-            const key = item.categoryId || item.title || "general";
-            if (!map[key]) map[key] = [];
-            if (!map[key].includes(item.subcategoryId)) {
-              map[key].push(item.subcategoryId);
+            const keys = [
+              item.categoryId,
+              item.categoryId?.toLowerCase(),
+              item.categoryId?.toUpperCase(),
+              item.title,
+              item.title?.toLowerCase(),
+              item.title?.toUpperCase(),
+              item.title?.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
+            ].filter(Boolean) as string[];
+
+            for (const key of keys) {
+              if (!map[key]) map[key] = [];
+              if (!map[key].includes(item.subcategoryId)) {
+                map[key].push(item.subcategoryId);
+              }
             }
           }
         }
