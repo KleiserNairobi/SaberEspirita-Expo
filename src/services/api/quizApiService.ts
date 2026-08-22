@@ -330,18 +330,40 @@ export const quizApiService = {
    * Obtém o mapa de subcategorias concluídas pelo usuário agrupadas por categoria.
    */
   async getUserProgress(_userId?: string): Promise<Record<string, string[]>> {
-    try {
-      const response = await apiClient.get<any>("/quizzes/progress/me");
-      const data = response.data;
-      if (!data) return {};
-      if (typeof data === "object" && !Array.isArray(data)) {
-        return data.progress || data.categoriesProgress || data;
+    const endpoints = ["/quizzes/progress/me", "/quizzes/progress"];
+    for (const endpoint of endpoints) {
+      try {
+        const response = await apiClient.get<any>(endpoint);
+        const data = response.data;
+        if (data && typeof data === "object" && !Array.isArray(data)) {
+          return data.progress || data.categoriesProgress || data;
+        }
+      } catch (e) {
+        // Tentar próximo endpoint silenciosamente
       }
-      return {};
-    } catch (error) {
-      console.warn("quizApiService: Erro ao buscar progresso do usuário:", error);
-      return {};
     }
+
+    // Fallback silencioso: Construir mapa de subcategorias concluídas através do histórico
+    try {
+      const history = await this.getUserQuizHistory();
+      if (Array.isArray(history) && history.length > 0) {
+        const map: Record<string, string[]> = {};
+        for (const item of history) {
+          if (item.completed && item.subcategoryId) {
+            const key = item.categoryId || item.title || "general";
+            if (!map[key]) map[key] = [];
+            if (!map[key].includes(item.subcategoryId)) {
+              map[key].push(item.subcategoryId);
+            }
+          }
+        }
+        return map;
+      }
+    } catch (e) {
+      // Ignorar fallback se falhar
+    }
+
+    return {};
   },
 
   /**
