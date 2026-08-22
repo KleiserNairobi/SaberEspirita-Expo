@@ -1,14 +1,15 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
 import { FlatList, Text, View } from "react-native";
 
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useQueryClient } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useCategories, useUserQuizProgress } from "@/hooks/queries/useQuiz";
+import { QUIZ_KEYS, useCategories, useUserQuizProgress } from "@/hooks/queries/useQuiz";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
 import { useAuthStore } from "@/stores/authStore";
@@ -28,6 +29,7 @@ export default function FixHomeScreen() {
   const navigation = useNavigation<FixHomeNavigationProp>();
   const user = useAuthStore((s) => s.user);
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
 
   // Try to get tab height, fallback to 0 if not in tab nav (though it is)
   let tabBarHeight = 0;
@@ -40,8 +42,21 @@ export default function FixHomeScreen() {
   // Combine padding
   const paddingBottom = tabBarHeight + insets.bottom + theme.spacing.lg;
 
-  const { data: categories } = useCategories();
-  const { data: userProgress } = useUserQuizProgress(user?.uid || "");
+  const { data: categories, refetch: refetchCategories } = useCategories();
+  const { data: userProgress, refetch: refetchUserProgress } = useUserQuizProgress(
+    user?.uid || ""
+  );
+
+  // Recarregar dados ao alternar de aba / ganhar foco
+  useFocusEffect(
+    useCallback(() => {
+      void refetchCategories();
+      if (user?.uid) {
+        void refetchUserProgress();
+        void queryClient.invalidateQueries({ queryKey: ["userScore", user.uid] });
+      }
+    }, [refetchCategories, refetchUserProgress, queryClient, user?.uid])
+  );
 
   // Calcular progresso por categoria
   const categoriesWithProgress = useMemo(() => {
