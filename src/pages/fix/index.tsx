@@ -9,7 +9,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { QUIZ_KEYS, useCategories, useUserQuizProgress } from "@/hooks/queries/useQuiz";
+import {
+  QUIZ_KEYS,
+  useCategories,
+  useQuizHistory,
+  useUserDetailedStats,
+  useUserQuizProgress,
+} from "@/hooks/queries/useQuiz";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
 import { useAuthStore } from "@/stores/authStore";
@@ -46,6 +52,10 @@ export default function FixHomeScreen() {
   const { data: userProgress, refetch: refetchUserProgress } = useUserQuizProgress(
     user?.uid || ""
   );
+  const { data: quizHistory, refetch: refetchQuizHistory } = useQuizHistory();
+  const { data: detailedStats, refetch: refetchStats } = useUserDetailedStats(
+    user?.uid || ""
+  );
 
   // Recarregar dados ao alternar de aba / ganhar foco
   useFocusEffect(
@@ -53,29 +63,95 @@ export default function FixHomeScreen() {
       void refetchCategories();
       if (user?.uid) {
         void refetchUserProgress();
+        void refetchQuizHistory();
+        void refetchStats();
         void queryClient.invalidateQueries({ queryKey: ["userScore", user.uid] });
       }
-    }, [refetchCategories, refetchUserProgress, queryClient, user?.uid])
+    }, [
+      refetchCategories,
+      refetchUserProgress,
+      refetchQuizHistory,
+      refetchStats,
+      queryClient,
+      user?.uid,
+    ])
   );
 
-  // Calcular progresso por categoria
+  // Calcular progresso por categoria com suporte a múltiplas fontes
   const categoriesWithProgress = useMemo(() => {
-    if (!categories || !userProgress) return categories;
+    if (!categories) return [];
 
     return categories.map((category) => {
-      const completedSubcategories = userProgress[category.id] || [];
+      const catKeyNormalized = category.name
+        .toUpperCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+
+      let completedSubcategories: string[] = [];
+
+      // 1. Tentar mapa do userProgress
+      if (userProgress && typeof userProgress === "object") {
+        completedSubcategories =
+          userProgress[category.id] ||
+          userProgress[category.name] ||
+          userProgress[catKeyNormalized] ||
+          userProgress[category.id.toLowerCase()] ||
+          userProgress[category.name.toLowerCase()] ||
+          [];
+      }
+
+      // 2. Se o userProgress não retornou itens, tentar cruzar com o quizHistory
+      if (
+        completedSubcategories.length === 0 &&
+        Array.isArray(quizHistory) &&
+        quizHistory.length > 0
+      ) {
+        const historyCompleted = quizHistory
+          .filter((h) => {
+            const hCatId = h.categoryId?.toString().toLowerCase();
+            const hTitle = h.title?.toString().toLowerCase();
+            const cId = category.id?.toString().toLowerCase();
+            const cName = category.name?.toString().toLowerCase();
+            return (
+              h.completed &&
+              (hCatId === cId || hTitle === cName || hTitle?.includes(cName || ""))
+            );
+          })
+          .map((h) => h.subcategoryId)
+          .filter(Boolean);
+
+        completedSubcategories = Array.from(new Set(historyCompleted));
+      }
+
       const totalSubcategories = category.subcategoryCount || 0;
-      const progress =
-        totalSubcategories > 0
-          ? Math.round((completedSubcategories.length / totalSubcategories) * 100)
-          : 0;
+      let progress = 0;
+
+      if (totalSubcategories > 0) {
+        progress = Math.round(
+          (completedSubcategories.length / totalSubcategories) * 100
+        );
+      } else if (completedSubcategories.length > 0) {
+        progress = 100;
+      }
+
+      // 3. Se ainda for 0, checar se detailedStats possui percentual direto para esta categoria
+      if (progress === 0 && detailedStats?.categoriesProgress) {
+        const statMatch = detailedStats.categoriesProgress.find(
+          (cp) =>
+            cp.categoryId === category.id ||
+            cp.categoryName?.toLowerCase() === category.name?.toLowerCase()
+        );
+        if (statMatch && typeof statMatch.completionPercentage === "number") {
+          progress = Math.round(statMatch.completionPercentage);
+        }
+      }
 
       return {
         ...category,
-        progress,
+        progress: Math.min(100, Math.max(0, progress)),
       };
     });
-  }, [categories, userProgress]);
+  }, [categories, userProgress, quizHistory, detailedStats]);
 
   function handleCategoryPress(categoryId: string, categoryName: string) {
     navigation.navigate("Subcategories", {

@@ -8,9 +8,45 @@ interface CategoryCardProps {
   name: string;
   questionCount: number;
   progress: number; // 0-100
-  icon: keyof typeof LucideIcons;
+  icon?: string;
   onPress: () => void;
   imageSource?: ImageSourcePropType;
+}
+
+const CATEGORY_ICON_MAP: Record<string, keyof typeof LucideIcons> = {
+  CONCEITOS: "Lightbulb",
+  DIVERSOS: "Compass",
+  ESPIRITOS: "Sun",
+  FILMES: "Film",
+  LIVROS: "BookOpen",
+  PERSONAGENS: "Users",
+};
+
+export function getCategoryIconName(iconName?: string, categoryName?: string): keyof typeof LucideIcons {
+  if (categoryName) {
+    const normalized = categoryName
+      .toUpperCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+    if (CATEGORY_ICON_MAP[normalized]) {
+      return CATEGORY_ICON_MAP[normalized];
+    }
+  }
+
+  if (iconName) {
+    if (iconName in LucideIcons) {
+      return iconName as keyof typeof LucideIcons;
+    }
+    const pascal = iconName
+      .split("-")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join("");
+    if (pascal in LucideIcons) {
+      return pascal as keyof typeof LucideIcons;
+    }
+  }
+
+  return "BookOpen";
 }
 
 export function CategoryCard({
@@ -23,7 +59,9 @@ export function CategoryCard({
 }: CategoryCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-  const IconComponent = LucideIcons[icon] as React.ComponentType<any>;
+
+  const iconKey = getCategoryIconName(icon, name);
+  const IconComponent = (LucideIcons[iconKey] || LucideIcons.BookOpen) as React.ComponentType<any>;
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
