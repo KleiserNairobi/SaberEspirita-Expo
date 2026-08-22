@@ -181,7 +181,12 @@ export function LessonForumScreen({ route, navigation }: Props) {
 
   const comments = useMemo(() => {
     const pages = data?.pages ?? [];
-    return pages.flatMap((p) => p.comments);
+    return pages
+      .flatMap((p) => (Array.isArray(p) ? p : p?.comments ?? []))
+      .filter(
+        (item): item is ForumComment =>
+          !!item && typeof item === "object" && typeof item.id === "string"
+      );
   }, [data?.pages]);
 
   const sections = useMemo(() => {
@@ -243,6 +248,10 @@ export function LessonForumScreen({ route, navigation }: Props) {
           ok: false,
           message: "Sua sessão expirou. Faça login novamente para reagir.",
         };
+      }
+
+      if (!comment?.id) {
+        return { ok: false, message: "Comentário não encontrado. Tente novamente." };
       }
 
       const commentRef = doc(db, "lesson_forums", lessonId, "comments", comment.id);
@@ -475,6 +484,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
 
   const renderComment = useCallback(
     ({ item }: { item: ForumComment }) => {
+      if (!item || !item.id) return null;
       const createdAtLabel = item.createdAt ? item.createdAt.toLocaleString("pt-BR") : "";
       const isMine = !!uid && item.userId === uid;
       const canRemove = isMine && !item.isDeleted;
@@ -742,7 +752,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
           ) : (
             <SectionList
               sections={sections}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item?.id ?? Math.random().toString()}
               renderItem={renderComment}
               ListHeaderComponent={
                 <>

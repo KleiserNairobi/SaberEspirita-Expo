@@ -9,10 +9,22 @@ function normalizeLesson(raw: any): ILesson {
     order,
     videoUrl: resolveCdnUrl(raw.videoUrl),
     audioUrl: resolveCdnUrl(raw.audioUrl),
-    slides: (raw.slides || []).map((slide: any) => ({
-      ...slide,
-      content: slide.content || "",
-    })),
+    slides: (raw.slides || []).map((slide: any) => {
+      const slideType =
+        slide.slideType ||
+        slide.type ||
+        slide.label ||
+        slide.tag ||
+        slide.slide_type ||
+        slide.category ||
+        undefined;
+
+      return {
+        ...slide,
+        slideType,
+        content: slide.content || "",
+      };
+    }),
   };
 }
 

@@ -22,11 +22,18 @@ export const forumApiService = {
     limit: number = 20
   ): Promise<ForumCommentsResponse> {
     if (!lessonId) return { comments: [], nextPage: null };
-    const response = await apiClient.get<ForumCommentsResponse>(
+    const response = await apiClient.get<any>(
       `/forum/lessons/${lessonId}/comments`,
       { params: { page, limit } }
     );
-    return response.data || { comments: [], nextPage: null };
+    const data = response.data;
+    if (!data) return { comments: [], nextPage: null };
+    if (Array.isArray(data)) return { comments: data, nextPage: null };
+    return {
+      comments: Array.isArray(data.comments) ? data.comments : [],
+      nextPage: data.nextPage ?? null,
+      totalComments: data.totalComments,
+    };
   },
 
   /**

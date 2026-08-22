@@ -36,6 +36,15 @@ export const LessonSlide = memo(
     const hasLocalGlossary = !!slide.glossary && slide.glossary.length > 0;
     const termsForInjection: IGlossaryTerm[] = [];
 
+    const slideType =
+      slide.slideType ||
+      (slide as any).type ||
+      (slide as any).label ||
+      (slide as any).tag ||
+      (slide as any).slide_type ||
+      (slide as any).category ||
+      undefined;
+
     return (
       <View style={styles.container}>
         <ScrollView
@@ -48,7 +57,7 @@ export const LessonSlide = memo(
             content={slide.content}
             imagePrompt={slide.imagePrompt}
             fontSize={fontSize}
-            slideType={slide.slideType}
+            slideType={slideType}
             glossaryTerms={termsForInjection}
             onGlossaryTermPress={onGlossaryTermPress}
             slideIndex={slideIndex}

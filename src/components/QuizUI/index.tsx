@@ -13,6 +13,7 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { useQuizAudio } from "@/hooks/useQuizAudio";
 import { IQuestion, IQuizAnswer } from "@/types/quiz";
 import { ReportQuestionBottomSheet } from "@/components/ReportQuestionBottomSheet";
+import { normalizeQuestion } from "@/services/api/quizApiService";
 
 import { createStyles } from "./styles";
 
@@ -60,8 +61,18 @@ export function QuizUI({
 
   const { playFeedback } = useQuizAudio();
 
-  const currentQuestion = questions[currentQuestionIndex];
-  const isLastQuestion = currentQuestionIndex === questions.length - 1;
+  const safeQuestions = useMemo(() => {
+    if (!Array.isArray(questions)) return [];
+    return questions.map((q: any) => normalizeQuestion(q));
+  }, [questions]);
+
+  const currentQuestion = safeQuestions[currentQuestionIndex] || {
+    title: "",
+    alternatives: [],
+    correct: 0,
+    explanation: "",
+  };
+  const isLastQuestion = safeQuestions.length === 0 || currentQuestionIndex >= safeQuestions.length - 1;
 
   function handleOpenReport() {
     reportBottomSheetRef.current?.present();
@@ -73,7 +84,7 @@ export function QuizUI({
     if (selectedAnswer !== null) return;
     selectionLockRef.current = true;
     setSelectedAnswer(index);
-    const isCorrect = index === questions[currentQuestionIndex].correct;
+    const isCorrect = index === currentQuestion.correct;
     setTimeout(() => playFeedback(isCorrect), 0);
   }
 
@@ -82,7 +93,7 @@ export function QuizUI({
       return handleSkipConfirm();
     }
 
-    const currentQ = questions[currentQuestionIndex];
+    const currentQ = currentQuestion;
     const answer: IQuizAnswer = {
       question: currentQ.title,
       alternatives: currentQ.alternatives,
@@ -95,7 +106,7 @@ export function QuizUI({
     setUserAnswers(newAnswers);
     setSelectedAnswer(null);
 
-    if (currentQuestionIndex < questions.length - 1) {
+    if (currentQuestionIndex < safeQuestions.length - 1) {
       selectionLockRef.current = false;
       setCurrentQuestionIndex((prev) => prev + 1);
       scrollViewRef.current?.scrollTo({ y: 0, animated: true });
@@ -112,7 +123,7 @@ export function QuizUI({
   }
 
   function handleNextQuestion() {
-    const currentQ = questions[currentQuestionIndex];
+    const currentQ = currentQuestion;
     const answer: IQuizAnswer = {
       question: currentQ.title,
       alternatives: currentQ.alternatives,
@@ -130,7 +141,7 @@ export function QuizUI({
     setSelectedAnswer(null);
     selectionLockRef.current = false;
 
-    if (currentQuestionIndex < questions.length - 1) {
+    if (currentQuestionIndex < safeQuestions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
       scrollViewRef.current?.scrollTo({ y: 0, animated: true });
     } else {
@@ -186,13 +197,13 @@ export function QuizUI({
       {/* Progress Bar */}
       <QuizProgressBar
         current={currentQuestionIndex + 1}
-        total={questions.length}
+        total={safeQuestions.length}
         title={
-          dynamicTitles && currentQuestion.originSubcategory
+          dynamicTitles && currentQuestion?.originSubcategory
             ? currentQuestion.originSubcategory
             : barTitle || "Perguntas Aleatórias"
         }
-        subtitle={dynamicTitles ? currentQuestion.originSubcategorySubtitle : subtitle}
+        subtitle={dynamicTitles ? currentQuestion?.originSubcategorySubtitle : subtitle}
       />
 
       {/* Conteúdo */}

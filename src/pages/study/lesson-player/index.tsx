@@ -164,10 +164,10 @@ export function LessonPlayerScreen() {
   React.useEffect(() => {
     if (!isLastSlide || !allLessons || !lesson) return;
 
-    const currentLessonIndex = allLessons.findIndex((l) => l.id === lesson.id);
+    const currentLessonIndex = allLessons.findIndex((l) => l?.id === lesson.id);
     const nextLesson = allLessons[currentLessonIndex + 1];
 
-    if (nextLesson) {
+    if (nextLesson?.id) {
       queryClient.prefetchQuery({
         queryKey: LESSONS_KEYS.detail(courseId, nextLesson.id),
         queryFn: () => lessonApiService.getLessonById(nextLesson.id),
@@ -347,7 +347,7 @@ export function LessonPlayerScreen() {
   }, [lesson, navigation]);
 
   const handleOpenForum = useCallback(() => {
-    if (!lesson) return;
+    if (!lesson || !lesson.id) return;
 
     if (useAuthStore.getState().isGuest) {
       showMessage({
@@ -373,13 +373,13 @@ export function LessonPlayerScreen() {
     const focusTag = lesson.reflectionQuestions?.[0]?.focus ?? "Autoconhecimento";
 
     navigation.navigate("LessonForum", {
-      courseId: lesson.courseId,
+      courseId: lesson.courseId || courseId,
       lessonId: lesson.id,
-      lessonTitle: lesson.title,
+      lessonTitle: lesson.title || "Fórum",
       anchorQuestion,
       focusTag,
     });
-  }, [lesson, navigation, showMessage]);
+  }, [courseId, lesson, navigation, showMessage]);
 
   const handleGlossaryTermPress = useCallback(
     async (termId: string, matchedWord?: string) => {

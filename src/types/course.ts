@@ -57,7 +57,7 @@ export interface ILesson {
 }
 
 export interface ISlide {
-  slideType: SlideType;
+  slideType?: SlideType;
   title: string;
   content: string;
   imagePrompt?: string;
@@ -117,7 +117,7 @@ export type CourseStatus = "PUBLISHED" | "COMING_SOON" | "DRAFT" | "LEGACY";
 
 export type LessonStatus = "PUBLISHED" | "COMING_SOON" | "DRAFT";
 
-export type SlideType = "text" | "image" | "highlight" | "reference";
+export type SlideType = string;
 
 export interface ICourseCategory {
   id: string;

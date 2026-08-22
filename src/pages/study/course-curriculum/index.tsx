@@ -302,7 +302,7 @@ export function CourseCurriculumScreen() {
       const previousLesson = lessons[index - 1];
       const isJumpingAhead =
         index > 0 &&
-        previousLesson &&
+        previousLesson?.id &&
         (!progress || !progress.completedLessons.includes(previousLesson.id));
 
       if (isJumpingAhead) {
@@ -752,7 +752,7 @@ export function CourseCurriculumScreen() {
           <FlatList
             ref={flatListRef}
             data={lessons}
-            keyExtractor={(item, index) => `${item.id}_${index}`}
+            keyExtractor={(item, index) => `${item?.id ?? index}_${index}`}
             contentContainerStyle={styles.listContent}
             onScroll={(e) => {
               scrollOffsetMap.set(courseId, e.nativeEvent.contentOffset.y);

@@ -71,7 +71,7 @@ export function useLessonForumComments(_courseId: string, lessonId: string) {
     },
     enabled: !!lessonId && !isGuest,
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
+    getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
     staleTime: 1000 * 60 * 10,
     refetchOnMount: false,
   });
@@ -180,8 +180,13 @@ export function useSetForumReaction() {
           if (!old?.pages) return old;
 
           const nextPages = old.pages.map((page) => {
-            const nextComments = (page.comments ?? []).map((c: ForumComment) => {
-              if (c.id !== vars.commentId) return c;
+            const rawComments = Array.isArray(page?.comments)
+              ? page.comments
+              : Array.isArray(page)
+                ? (page as any)
+                : [];
+            const nextComments = rawComments.map((c: ForumComment) => {
+              if (!c || c.id !== vars.commentId) return c;
 
               const prevType = c.myReaction;
               const nextType = vars.type;
@@ -250,8 +255,13 @@ export function useRemoveForumReaction() {
           if (!old?.pages) return old;
 
           const nextPages = old.pages.map((page) => {
-            const nextComments = (page.comments ?? []).map((c: ForumComment) => {
-              if (c.id !== vars.commentId) return c;
+            const rawComments = Array.isArray(page?.comments)
+              ? page.comments
+              : Array.isArray(page)
+                ? (page as any)
+                : [];
+            const nextComments = rawComments.map((c: ForumComment) => {
+              if (!c || c.id !== vars.commentId) return c;
 
               const prevType = c.myReaction;
               if (!prevType) return c;
