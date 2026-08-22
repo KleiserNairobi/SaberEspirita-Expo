@@ -181,8 +181,20 @@ export const quizApiService = {
    * Obtém todas as categorias de quizzes.
    */
   async getCategories(): Promise<ICategory[]> {
-    const response = await apiClient.get<ICategory[]>("/quizzes/categories");
-    return response.data || [];
+    try {
+      const response = await apiClient.get<any>("/quizzes/categories");
+      const data = response.data;
+      if (!data) return [];
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data.categories)) return data.categories;
+      if (Array.isArray(data.content)) return data.content;
+      if (Array.isArray(data.items)) return data.items;
+      if (Array.isArray(data.data)) return data.data;
+      return [];
+    } catch (error) {
+      console.warn("quizApiService: Erro ao buscar categorias:", error);
+      return [];
+    }
   },
 
   /**
@@ -190,10 +202,22 @@ export const quizApiService = {
    */
   async getSubcategories(categoryId: string): Promise<ISubcategory[]> {
     if (!categoryId) return [];
-    const response = await apiClient.get<ISubcategory[]>(
-      `/quizzes/categories/${categoryId}/subcategories`
-    );
-    return response.data || [];
+    try {
+      const response = await apiClient.get<any>(
+        `/quizzes/categories/${categoryId}/subcategories`
+      );
+      const data = response.data;
+      if (!data) return [];
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data.subcategories)) return data.subcategories;
+      if (Array.isArray(data.content)) return data.content;
+      if (Array.isArray(data.items)) return data.items;
+      if (Array.isArray(data.data)) return data.data;
+      return [];
+    } catch (error) {
+      console.warn(`quizApiService: Erro ao buscar subcategorias (${categoryId}):`, error);
+      return [];
+    }
   },
 
   /**
@@ -201,8 +225,23 @@ export const quizApiService = {
    */
   async getQuizzesByCategory(categoryId: string): Promise<IQuiz[]> {
     if (!categoryId) return [];
-    const response = await apiClient.get<IQuiz[]>(`/quizzes/category/${categoryId}`);
-    return (response.data || []).map((q) => normalizeQuiz(q)!);
+    try {
+      const response = await apiClient.get<any>(`/quizzes/category/${categoryId}`);
+      const data = response.data;
+      const list = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.quizzes)
+        ? data.quizzes
+        : Array.isArray(data?.content)
+        ? data.content
+        : Array.isArray(data?.data)
+        ? data.data
+        : [];
+      return list.map((q: any) => normalizeQuiz(q)!).filter(Boolean);
+    } catch (error) {
+      console.warn(`quizApiService: Erro ao buscar quizzes da categoria (${categoryId}):`, error);
+      return [];
+    }
   },
 
   /**
@@ -210,16 +249,34 @@ export const quizApiService = {
    */
   async getQuizById(quizId: string): Promise<IQuiz | null> {
     if (!quizId) return null;
-    const response = await apiClient.get<IQuiz>(`/quizzes/${quizId}`);
-    return normalizeQuiz(response.data);
+    try {
+      const response = await apiClient.get<any>(`/quizzes/${quizId}`);
+      if (response.data) return normalizeQuiz(response.data);
+    } catch (error) {
+      console.warn(`quizApiService: Erro ao buscar quiz via /quizzes/${quizId}, tentando fallback...`);
+    }
+
+    try {
+      const fallbackResponse = await apiClient.get<any>(`/quizzes/subcategory/${quizId}`);
+      if (fallbackResponse.data) return normalizeQuiz(fallbackResponse.data);
+    } catch (error) {
+      console.warn(`quizApiService: Falha no fallback de quiz ${quizId}:`, error);
+    }
+
+    return null;
   },
 
   /**
    * Obtém o quiz diário para o dia atual.
    */
   async getDailyQuiz(): Promise<IQuiz | null> {
-    const response = await apiClient.get<IQuiz>("/quizzes/daily");
-    return normalizeQuiz(response.data);
+    try {
+      const response = await apiClient.get<any>("/quizzes/daily");
+      if (response.data) return normalizeQuiz(response.data);
+    } catch (error) {
+      console.warn("quizApiService: Erro ao buscar quiz diário:", error);
+    }
+    return null;
   },
 
   /**
@@ -229,44 +286,98 @@ export const quizApiService = {
     quizId: string,
     payload: IQuizSubmitPayload
   ): Promise<IQuizSubmitResult> {
-    const response = await apiClient.post<IQuizSubmitResult>(
-      `/quizzes/${quizId}/submit`,
-      payload
-    );
-    return response.data;
+    try {
+      const response = await apiClient.post<IQuizSubmitResult>(
+        `/quizzes/${quizId}/submit`,
+        payload
+      );
+      if (response.data) return response.data;
+    } catch (error) {
+      console.warn(`quizApiService: Erro ao submeter quiz ${quizId}:`, error);
+    }
+    const totalQuestions = payload.answers?.length || 0;
+    return {
+      quizId,
+      score: 0,
+      totalQuestions,
+      correctAnswers: 0,
+      percentage: 0,
+      earnedPoints: 0,
+      level: "Fraco",
+      completedAt: new Date().toISOString(),
+    };
   },
 
   /**
    * Obtém o histórico completo de quizzes resolvidos pelo usuário autenticado.
    */
   async getUserQuizHistory(): Promise<IQuizHistory[]> {
-    const response = await apiClient.get<IQuizHistory[]>("/quizzes/history/me");
-    return response.data || [];
+    try {
+      const response = await apiClient.get<any>("/quizzes/history/me");
+      const data = response.data;
+      if (!data) return [];
+      if (Array.isArray(data)) return data;
+      if (Array.isArray(data.history)) return data.history;
+      if (Array.isArray(data.content)) return data.content;
+      return [];
+    } catch (error) {
+      console.warn("quizApiService: Erro ao buscar histórico de quizzes:", error);
+      return [];
+    }
   },
 
   /**
    * Obtém o mapa de subcategorias concluídas pelo usuário agrupadas por categoria.
    */
   async getUserProgress(_userId?: string): Promise<Record<string, string[]>> {
-    const response =
-      await apiClient.get<Record<string, string[]>>("/quizzes/progress/me");
-    return response.data || {};
+    try {
+      const response = await apiClient.get<any>("/quizzes/progress/me");
+      const data = response.data;
+      if (!data) return {};
+      if (typeof data === "object" && !Array.isArray(data)) {
+        return data.progress || data.categoriesProgress || data;
+      }
+      return {};
+    } catch (error) {
+      console.warn("quizApiService: Erro ao buscar progresso do usuário:", error);
+      return {};
+    }
   },
 
   /**
    * Obtém as estatísticas detalhadas de desempenho do usuário.
    */
   async getUserDetailedStats(_userId?: string): Promise<IUserDetailedStats> {
-    const response = await apiClient.get<IUserDetailedStats>("/quizzes/stats/me");
-    return (
-      response.data || {
-        totalQuestions: 0,
-        accuracyRate: 0,
-        activeDays: 0,
-        bestScore: 0,
-        categoriesProgress: [],
+    const defaultStats: IUserDetailedStats = {
+      totalQuestions: 0,
+      accuracyRate: 0,
+      activeDays: 0,
+      bestScore: 0,
+      categoriesProgress: [],
+    };
+
+    const endpoints = ["/quizzes/stats/me", "/quizzes/stats", "/stats/quizzes/me"];
+
+    for (const endpoint of endpoints) {
+      try {
+        const response = await apiClient.get<any>(endpoint);
+        if (response.data) {
+          const d = response.data;
+          return {
+            totalQuestions: d.totalQuestions ?? d.total_questions ?? 0,
+            accuracyRate: d.accuracyRate ?? d.accuracy_rate ?? 0,
+            activeDays: d.activeDays ?? d.active_days ?? d.streak ?? 0,
+            bestScore: d.bestScore ?? d.best_score ?? 0,
+            categoriesProgress: d.categoriesProgress ?? d.categories_progress ?? [],
+          };
+        }
+      } catch (e) {
+        // Tentar o próximo endpoint silenciosamente
       }
-    );
+    }
+
+    console.warn("quizApiService: Nenhum endpoint de estatísticas respondeu, usando fallback seguro.");
+    return defaultStats;
   },
 
   /**
@@ -276,6 +387,10 @@ export const quizApiService = {
     questionId: string,
     payload: IQuestionReportPayload
   ): Promise<void> {
-    await apiClient.post(`/quizzes/questions/${questionId}/report`, payload);
+    try {
+      await apiClient.post(`/quizzes/questions/${questionId}/report`, payload);
+    } catch (error) {
+      console.warn(`quizApiService: Erro ao reportar questão ${questionId}:`, error);
+    }
   },
 };

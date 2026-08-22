@@ -7,33 +7,48 @@ export const leaderboardApiService = {
    * Obtém o ranking semanal da comunidade.
    */
   async getWeeklyRanking(): Promise<ILeaderboardUser[]> {
-    const response = await apiClient.get<ILeaderboardUser[]>("/leaderboard/weekly");
-    return (response.data || []).map((user) => ({
-      ...user,
-      photoURL: resolveCdnUrl(user.photoURL),
-    }));
+    try {
+      const response = await apiClient.get<ILeaderboardUser[]>("/leaderboard/weekly");
+      return (response.data || []).map((user) => ({
+        ...user,
+        photoURL: resolveCdnUrl(user.photoURL),
+      }));
+    } catch (error) {
+      console.warn("leaderboardApiService: Erro ao buscar ranking semanal:", error);
+      return [];
+    }
   },
 
   /**
    * Obtém o ranking mensal da comunidade.
    */
   async getMonthlyRanking(): Promise<ILeaderboardUser[]> {
-    const response = await apiClient.get<ILeaderboardUser[]>("/leaderboard/monthly");
-    return (response.data || []).map((user) => ({
-      ...user,
-      photoURL: resolveCdnUrl(user.photoURL),
-    }));
+    try {
+      const response = await apiClient.get<ILeaderboardUser[]>("/leaderboard/monthly");
+      return (response.data || []).map((user) => ({
+        ...user,
+        photoURL: resolveCdnUrl(user.photoURL),
+      }));
+    } catch (error) {
+      console.warn("leaderboardApiService: Erro ao buscar ranking mensal:", error);
+      return [];
+    }
   },
 
   /**
    * Obtém o ranking geral (all-time) da comunidade.
    */
   async getAllTimeRanking(): Promise<ILeaderboardUser[]> {
-    const response = await apiClient.get<ILeaderboardUser[]>("/leaderboard/all-time");
-    return (response.data || []).map((user) => ({
-      ...user,
-      photoURL: resolveCdnUrl(user.photoURL),
-    }));
+    try {
+      const response = await apiClient.get<ILeaderboardUser[]>("/leaderboard/all-time");
+      return (response.data || []).map((user) => ({
+        ...user,
+        photoURL: resolveCdnUrl(user.photoURL),
+      }));
+    } catch (error) {
+      console.warn("leaderboardApiService: Erro ao buscar ranking geral:", error);
+      return [];
+    }
   },
 
   /**
@@ -47,22 +62,32 @@ export const leaderboardApiService = {
         ? "/leaderboard/monthly"
         : "/leaderboard/all-time";
 
-    const response = await apiClient.get<ILeaderboardUser[]>(endpoint);
-    return (response.data || []).map((user) => ({
-      ...user,
-      photoURL: resolveCdnUrl(user.photoURL),
-    }));
+    try {
+      const response = await apiClient.get<ILeaderboardUser[]>(endpoint);
+      return (response.data || []).map((user) => ({
+        ...user,
+        photoURL: resolveCdnUrl(user.photoURL),
+      }));
+    } catch (error) {
+      console.warn(`leaderboardApiService: Erro ao buscar ranking (${timeFilter}):`, error);
+      return [];
+    }
   },
 
   /**
    * Obtém a posição e dados de pontuação do usuário autenticado no ranking.
    */
   async getMyPosition(): Promise<ILeaderboardUser | null> {
-    const response = await apiClient.get<ILeaderboardUser>("/leaderboard/me");
-    if (!response.data) return null;
-    return {
-      ...response.data,
-      photoURL: resolveCdnUrl(response.data.photoURL),
-    };
+    try {
+      const response = await apiClient.get<ILeaderboardUser>("/leaderboard/me");
+      if (!response.data) return null;
+      return {
+        ...response.data,
+        photoURL: resolveCdnUrl(response.data.photoURL),
+      };
+    } catch (error) {
+      console.warn("leaderboardApiService: Erro ao buscar posição do usuário:", error);
+      return null;
+    }
   },
 };
