@@ -27,9 +27,8 @@ export function useDailyChallengeStatus(userId?: string) {
       return history.some((h) => h.completedAt && String(h.completedAt).startsWith(today));
     },
     enabled: !!userId,
-    staleTime: 1000 * 60 * 60 * 24,
+    staleTime: 0,
     gcTime: 1000 * 60 * 60 * 24 * 7,
-    refetchOnMount: false,
   });
 }
 
@@ -41,9 +40,8 @@ export function useUserStreak(userId?: string) {
       return stats.activeDays || 0;
     },
     enabled: !!userId,
-    staleTime: 1000 * 60 * 60 * 24,
+    staleTime: 0,
     gcTime: 1000 * 60 * 60 * 24 * 7,
-    refetchOnMount: false,
   });
 }
 
@@ -60,8 +58,7 @@ export function useDailyChallengeStats(userId?: string) {
       };
     },
     enabled: !!userId,
-    staleTime: 1000 * 60 * 60 * 24,
+    staleTime: 0,
     gcTime: 1000 * 60 * 60 * 24 * 7,
-    refetchOnMount: false,
   });
 }
