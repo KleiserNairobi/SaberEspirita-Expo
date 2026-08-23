@@ -5,6 +5,9 @@ export interface IQuiz {
   id: string;
   idCategory: string;
   idSubcategory: string;
+  categoryName?: string;
+  subcategoryName?: string;
+  subcategorySubtitle?: string;
   questions: IQuestion[];
 }
 

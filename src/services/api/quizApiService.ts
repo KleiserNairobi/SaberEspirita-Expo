@@ -176,6 +176,11 @@ export function normalizeQuiz(raw: any): IQuiz | null {
 
   return {
     ...target,
+    idCategory: target.idCategory || target.categoryId || "",
+    idSubcategory: target.idSubcategory || target.subcategoryId || "",
+    categoryName: target.categoryName || target.category_name || "",
+    subcategoryName: target.subcategoryName || target.subcategory_name || target.name || "",
+    subcategorySubtitle: target.subcategorySubtitle || target.subcategory_subtitle || target.description || target.subtitle || "",
     questions: rawQuestions.map(normalizeQuestion),
   };
 }

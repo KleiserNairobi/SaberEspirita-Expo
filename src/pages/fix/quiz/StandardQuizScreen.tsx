@@ -199,12 +199,21 @@ export function StandardQuizScreen() {
     );
   }
 
+  const displayTitle = categoryName || quiz.categoryName || "Quiz";
+  const displayBarTitle =
+    quiz.subcategoryName && quiz.subcategoryName !== subcategoryId
+      ? quiz.subcategoryName
+      : subcategoryName && subcategoryName !== subcategoryId
+      ? subcategoryName
+      : quiz.subcategoryName || subcategoryName || "Perguntas";
+  const displaySubtitle = subtitle || quiz.subcategorySubtitle;
+
   return (
     <>
       <QuizUI
-        title={categoryName || "Quiz"}
-        barTitle={subcategoryName || "Perguntas Aleatórias"}
-        subtitle={subtitle}
+        title={displayTitle}
+        barTitle={displayBarTitle}
+        subtitle={displaySubtitle}
         questions={quiz.questions}
         showStopButton={true}
         isSubmitting={isSubmitting}
