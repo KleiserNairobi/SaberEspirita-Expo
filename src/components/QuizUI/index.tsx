@@ -30,6 +30,16 @@ interface QuizUIProps {
   onStop: () => void;
 }
 
+function formatCategoryTitle(text?: string): string {
+  if (!text) return "";
+  const cleaned = text.trim();
+  return cleaned
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 export function QuizUI({
   title,
   subtitle,
@@ -187,10 +197,13 @@ export function QuizUI({
         <TouchableOpacity style={styles.backButton} onPress={goToBack}>
           <ArrowLeft size={20} color={theme.colors.primary} />
         </TouchableOpacity>
+
         <Text style={styles.headerTitle}>
-          {dynamicTitles && currentQuestion.originCategory
-            ? currentQuestion.originCategory
-            : title}
+          {formatCategoryTitle(
+            dynamicTitles && currentQuestion.originCategory
+              ? currentQuestion.originCategory
+              : title
+          )}
         </Text>
       </View>
 
