@@ -316,6 +316,38 @@ export const quizApiService = {
   },
 
   /**
+   * Obtém estatísticas dedicadas do Desafio Diário via API REST.
+   */
+  async getDailyChallengeStats(): Promise<{
+    isCompletedToday: boolean;
+    currentStreak: number;
+    longestStreak: number;
+    totalChallenges: number;
+    bestAccuracy: number;
+  }> {
+    try {
+      const response = await apiClient.get<any>("/quizzes/daily/stats");
+      const data = response.data || {};
+      return {
+        isCompletedToday: Boolean(data.isCompletedToday || data.completedToday),
+        currentStreak: data.currentStreak || 0,
+        longestStreak: data.longestStreak || 0,
+        totalChallenges: data.totalChallenges || 0,
+        bestAccuracy: data.bestAccuracy || 0,
+      };
+    } catch (error) {
+      console.warn("quizApiService: Erro ao buscar estatísticas do desafio diário:", error);
+      return {
+        isCompletedToday: false,
+        currentStreak: 0,
+        longestStreak: 0,
+        totalChallenges: 0,
+        bestAccuracy: 0,
+      };
+    }
+  },
+
+  /**
    * Submete as respostas de um quiz para processamento e atualização de pontuação.
    */
   async submitQuiz(
