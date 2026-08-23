@@ -24,9 +24,8 @@ export function useCategories() {
   return useQuery({
     queryKey: QUIZ_KEYS.categories(),
     queryFn: () => quizApiService.getCategories(),
-    staleTime: 1000 * 60 * 60 * 24, // 24 horas
-    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em memória
-    refetchOnMount: false,
+    staleTime: 0,
+    refetchOnMount: true,
   });
 }
 
@@ -38,9 +37,8 @@ export function useSubcategories(categoryId: string) {
     queryKey: QUIZ_KEYS.subcategories(categoryId),
     queryFn: () => quizApiService.getSubcategories(categoryId),
     enabled: !!categoryId,
-    staleTime: 1000 * 60 * 60 * 24, // 24 horas
-    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em memória
-    refetchOnMount: false,
+    staleTime: 0,
+    refetchOnMount: true,
   });
 }
 
@@ -52,9 +50,8 @@ export function useQuiz(quizId: string, enabled = true) {
     queryKey: QUIZ_KEYS.quiz(quizId),
     queryFn: () => quizApiService.getQuizById(quizId),
     enabled: !!quizId && enabled,
-    staleTime: 1000 * 60 * 60, // 1 hora
-    gcTime: 1000 * 60 * 60 * 24, // 24 horas em memória
-    refetchOnMount: false,
+    staleTime: 0,
+    refetchOnMount: true,
   });
 }
 
@@ -66,8 +63,7 @@ export function useUserQuizProgress(userId: string) {
     queryKey: QUIZ_KEYS.userProgress(userId),
     queryFn: () => quizApiService.getUserProgress(userId),
     enabled: !!userId,
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 60,
+    staleTime: 0,
     refetchOnMount: true,
   });
 }
@@ -80,8 +76,7 @@ export function useUserDetailedStats(userId: string) {
     queryKey: QUIZ_KEYS.detailedStats(userId),
     queryFn: () => quizApiService.getUserDetailedStats(userId),
     enabled: !!userId && userId !== "guest",
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 60,
+    staleTime: 0,
     refetchOnMount: true,
   });
 }
@@ -93,7 +88,8 @@ export function useQuizHistory() {
   return useQuery({
     queryKey: QUIZ_KEYS.history(),
     queryFn: () => quizApiService.getUserQuizHistory(),
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 0,
+    refetchOnMount: true,
   });
 }
 

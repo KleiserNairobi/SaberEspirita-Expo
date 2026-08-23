@@ -40,6 +40,7 @@ export function useDailyChallengeHome(userId?: string) {
     enabled: !!userId,
     staleTime: 0,
     gcTime: 1000 * 60 * 60 * 24 * 7,
+    refetchOnMount: true,
   });
 }
 
@@ -54,9 +55,9 @@ export function useDailyChallenge(enabled = true) {
   return useQuery<IQuiz | null>({
     queryKey: ["dailyQuiz", today],
     queryFn: () => quizApiService.getDailyQuiz(),
-    staleTime: 1000 * 60 * 60 * 24, // Cache por 24h
-    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: false,
+    staleTime: 0,
+    gcTime: 1000 * 60 * 60 * 24 * 7,
+    refetchOnMount: true,
     enabled,
   });
 }
