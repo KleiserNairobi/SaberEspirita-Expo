@@ -81,9 +81,15 @@ export const truthOrFalseApiService = {
   async saveResponse(
     payload: Omit<IUserTruthOrFalseResponse, "date">
   ): Promise<IUserTruthOrFalseResponse> {
+    const dto = {
+      questionId: payload.questionId,
+      userAnswer: payload.userAnswer,
+      timeSpent: payload.timeSpent || 0,
+      saveToLibrary: payload.savedToLibrary || false,
+    };
     const response = await apiClient.post<IUserTruthOrFalseResponse>(
       "/truth-or-false/response",
-      payload
+      dto
     );
     return response.data;
   },
