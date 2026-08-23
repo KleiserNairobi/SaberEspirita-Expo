@@ -28,6 +28,16 @@ export const prayerApiService = {
   },
 
   /**
+   * Obtém a lista de orações em alta (Top 10) por período (day, week, total).
+   */
+  async getTrendingPrayers(period: "day" | "week" | "total" = "day"): Promise<IPrayer[]> {
+    const response = await apiClient.get<IPrayer[]>("/prayers/trending", {
+      params: { period },
+    });
+    return response.data || [];
+  },
+
+  /**
    * Obtém os detalhes de uma oração específica por ID.
    */
   async getPrayerById(id: string): Promise<IPrayer | null> {

@@ -9,6 +9,7 @@ export interface IPrayer {
   viewsDay?: number;
   viewsWeek?: number;
   viewsTotal?: number;
+  displayCount?: number;
   categories?: string[];
 }
 

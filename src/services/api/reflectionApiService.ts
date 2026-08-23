@@ -8,6 +8,28 @@ export interface GetReflectionsParams {
   search?: string;
 }
 
+function parseTags(tags: unknown): string[] {
+  if (!tags) return [];
+  if (Array.isArray(tags)) return tags.map(String);
+  if (typeof tags === "string") {
+    try {
+      const parsed = JSON.parse(tags);
+      if (Array.isArray(parsed)) return parsed.map(String);
+    } catch {
+      return tags.split(",").map((t) => t.trim()).filter(Boolean);
+    }
+  }
+  return [];
+}
+
+function formatReflection(reflection: IReflection): IReflection {
+  return {
+    ...reflection,
+    imageUrl: resolveCdnUrl(reflection.imageUrl),
+    tags: parseTags(reflection.tags),
+  };
+}
+
 export const reflectionApiService = {
   /**
    * Obtém a reflexão diária do dia de hoje.
@@ -15,10 +37,7 @@ export const reflectionApiService = {
   async getTodayReflection(): Promise<IReflection | null> {
     const response = await apiClient.get<IReflection>("/reflections/today");
     if (!response.data) return null;
-    return {
-      ...response.data,
-      imageUrl: resolveCdnUrl(response.data.imageUrl),
-    };
+    return formatReflection(response.data);
   },
 
   /**
@@ -26,10 +45,7 @@ export const reflectionApiService = {
    */
   async getReflections(params?: GetReflectionsParams): Promise<IReflection[]> {
     const response = await apiClient.get<IReflection[]>("/reflections", { params });
-    return (response.data || []).map((reflection) => ({
-      ...reflection,
-      imageUrl: resolveCdnUrl(reflection.imageUrl),
-    }));
+    return (response.data || []).map(formatReflection);
   },
 
   /**
@@ -39,9 +55,6 @@ export const reflectionApiService = {
     if (!id) return null;
     const response = await apiClient.get<IReflection>(`/reflections/${id}`);
     if (!response.data) return null;
-    return {
-      ...response.data,
-      imageUrl: resolveCdnUrl(response.data.imageUrl),
-    };
+    return formatReflection(response.data);
   },
 };

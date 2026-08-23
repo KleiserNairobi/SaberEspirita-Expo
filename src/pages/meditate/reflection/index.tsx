@@ -204,7 +204,7 @@ export default function ReflectionScreen() {
           </Text>
 
           {/* Tags */}
-          {reflection.tags && reflection.tags.length > 0 && (
+          {Array.isArray(reflection.tags) && reflection.tags.length > 0 && (
             <View style={styles.tagsContainer}>
               {reflection.tags.map((tag, index) => (
                 <View key={index} style={styles.tag}>

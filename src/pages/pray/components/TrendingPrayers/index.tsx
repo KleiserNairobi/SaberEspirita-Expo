@@ -155,7 +155,15 @@ export function TrendingPrayers() {
                       <View style={styles.countContainer}>
                         <Users size={12} color={theme.colors.textSecondary} />
                         <Text style={styles.countText}>
-                          {formatCount((prayer as any).displayCount || 0)}
+                          {formatCount(
+                            prayer.displayCount ??
+                              (period === "week"
+                                ? prayer.viewsWeek
+                                : period === "total"
+                                ? prayer.viewsTotal
+                                : prayer.viewsDay) ??
+                              0
+                          )}
                         </Text>
                       </View>
                       
