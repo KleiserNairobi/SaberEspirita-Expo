@@ -14,6 +14,7 @@ import * as Storage from "@/utils/Storage";
 import { useAuthStore } from "@/stores/authStore";
 
 let pendingHistoryPromise: Promise<IQuizHistory[]> | null = null;
+let pendingDailyStatsPromise: Promise<any> | null = null;
 
 function parseSingleAlternative(item: any): string {
   if (item === null || item === undefined) return "";
@@ -317,6 +318,7 @@ export const quizApiService = {
 
   /**
    * Obtém estatísticas dedicadas do Desafio Diário via API REST.
+   * Deduplica requisições simultâneas em voo para economizar chamadas de rede.
    */
   async getDailyChallengeStats(): Promise<{
     isCompletedToday: boolean;
@@ -325,26 +327,40 @@ export const quizApiService = {
     totalChallenges: number;
     bestAccuracy: number;
   }> {
-    try {
-      const response = await apiClient.get<any>("/quizzes/daily/stats");
-      const data = response.data || {};
-      return {
-        isCompletedToday: Boolean(data.isCompletedToday || data.completedToday),
-        currentStreak: data.currentStreak || 0,
-        longestStreak: data.longestStreak || 0,
-        totalChallenges: data.totalChallenges || 0,
-        bestAccuracy: data.bestAccuracy || 0,
-      };
-    } catch (error) {
-      console.warn("quizApiService: Erro ao buscar estatísticas do desafio diário:", error);
-      return {
-        isCompletedToday: false,
-        currentStreak: 0,
-        longestStreak: 0,
-        totalChallenges: 0,
-        bestAccuracy: 0,
-      };
+    if (pendingDailyStatsPromise) {
+      return pendingDailyStatsPromise;
     }
+
+    pendingDailyStatsPromise = (async () => {
+      try {
+        const response = await apiClient.get<any>("/quizzes/daily/stats");
+        const data = response.data || {};
+        return {
+          isCompletedToday: Boolean(data.isCompletedToday || data.completedToday),
+          currentStreak: data.currentStreak || 0,
+          longestStreak: data.longestStreak || 0,
+          totalChallenges: data.totalChallenges || 0,
+          bestAccuracy: data.bestAccuracy || 0,
+        };
+      } catch (error) {
+        console.warn("quizApiService: Erro ao buscar estatísticas do desafio diário:", error);
+        return {
+          isCompletedToday: false,
+          currentStreak: 0,
+          longestStreak: 0,
+          totalChallenges: 0,
+          bestAccuracy: 0,
+        };
+      }
+    })();
+
+    pendingDailyStatsPromise.finally(() => {
+      setTimeout(() => {
+        pendingDailyStatsPromise = null;
+      }, 300);
+    });
+
+    return pendingDailyStatsPromise;
   },
 
   /**

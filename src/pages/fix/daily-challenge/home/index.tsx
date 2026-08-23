@@ -15,8 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import {
-  useDailyChallengeStats,
-  useDailyChallengeStatus,
+  useDailyChallengeHome,
 } from "@/hooks/queries/useDailyChallenge";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { DailyChallengeCard } from "@/pages/fix/components/DailyChallengeCard";
@@ -37,8 +36,9 @@ export function DailyQuizHomeScreen() {
   const [messageConfig, setMessageConfig] =
     React.useState<BottomSheetMessageConfig | null>(null);
 
-  const { data: stats, isLoading, refetch } = useDailyChallengeStats(user?.uid);
-  const { data: isCompleted } = useDailyChallengeStatus(user?.uid);
+  const { data, isLoading, refetch } = useDailyChallengeHome(user?.uid);
+  const isCompleted = data?.isCompletedToday ?? false;
+  const stats = data?.stats;
 
   function handleStartQuiz() {
     if (isCompleted) {
