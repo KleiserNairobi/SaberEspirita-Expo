@@ -17,7 +17,6 @@ export interface TruthOrFalseSubmitResult {
 
 export interface TruthOrFalseHomeData {
   hasAnswered: boolean;
-  todayResponse: IUserTruthOrFalseResponse | null;
   stats: ITruthOrFalseStats;
 }
 
@@ -46,20 +45,27 @@ export const truthOrFalseApiService = {
   },
 
   /**
-   * Obtém dados da Home do Verdadeiro ou Falso (resposta de hoje + estatísticas).
+   * Obtém dados da Home do Verdadeiro ou Falso (estatísticas).
    */
   async getHomeData(): Promise<TruthOrFalseHomeData> {
-    const response = await apiClient.get<TruthOrFalseHomeData>(
+    const response = await apiClient.get<any>(
       "/truth-or-false/home"
     );
-    return response.data || {
-      hasAnswered: false,
-      todayResponse: null,
+    const rawData = response.data;
+    const rawStats = rawData?.stats || {};
+    return {
+      hasAnswered: Boolean(rawData?.hasAnswered),
       stats: {
-        totalAnswered: 0,
-        correctAnswers: 0,
-        currentStreak: 0,
-        bestStreak: 0,
+        totalResponses: rawStats.totalResponses ?? rawStats.totalAnswered ?? 0,
+        correctAnswers: rawStats.correctAnswers ?? 0,
+        currentStreak: rawStats.currentStreak ?? 0,
+        longestStreak: rawStats.longestStreak ?? rawStats.bestStreak ?? 0,
+        totalTimeSpent: rawStats.totalTimeSpent ?? 0,
+        byDifficulty: rawStats.byDifficulty ?? {
+          fácil: { total: 0, correct: 0 },
+          médio: { total: 0, correct: 0 },
+          difícil: { total: 0, correct: 0 },
+        },
       },
     };
   },

@@ -24,7 +24,7 @@ export function useTruthOrFalseHomeData() {
   return useQuery({
     queryKey: TRUTH_OR_FALSE_KEYS.stats(userId),
     queryFn: () => truthOrFalseApiService.getHomeData(),
-    staleTime: 1000 * 60 * 15, // 15 minutos
+    staleTime: 0,
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
     enabled: true,
   });
@@ -40,7 +40,7 @@ export function useTruthOrFalseHistory(limitCount = 30) {
   return useQuery({
     queryKey: TRUTH_OR_FALSE_KEYS.history(userId),
     queryFn: () => truthOrFalseApiService.getHistory(limitCount),
-    staleTime: 1000 * 60 * 15, // 15 minutos
+    staleTime: 0,
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
   });
 }
@@ -57,6 +57,9 @@ export function useSaveTruthOrFalseResponse() {
     mutationFn: (payload: Omit<IUserTruthOrFalseResponse, "date">) =>
       truthOrFalseApiService.saveResponse(payload),
     onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: TRUTH_OR_FALSE_KEYS.all,
+      });
       queryClient.invalidateQueries({
         queryKey: TRUTH_OR_FALSE_KEYS.stats(userId),
       });

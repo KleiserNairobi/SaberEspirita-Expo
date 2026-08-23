@@ -48,12 +48,12 @@ export function TruthOrFalseQuestionScreen() {
       const homeData = await truthOrFalseApiService.getHomeData();
       setHasAnswered(homeData.hasAnswered);
 
-      if (homeData.hasAnswered && homeData.todayResponse) {
+      if (homeData.hasAnswered) {
         // Se já respondeu, vai direto para o resultado
         navigation.replace("TruthOrFalseResult", {
-          userAnswer: homeData.todayResponse.userAnswer,
-          isCorrect: homeData.todayResponse.isCorrect,
-          questionId: homeData.todayResponse.questionId,
+          userAnswer: todayQuestion.correct,
+          isCorrect: true,
+          questionId: todayQuestion.id,
           origin: "home",
         });
       }
