@@ -59,24 +59,33 @@ interface AuthState {
   setError: (error: string | null) => void;
   clearError: () => void;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<{ user: AppUser }>;
+  signUp: (email: string, password: string, displayName?: string) => Promise<{ user: AppUser }>;
   signInWithGoogle: (idToken: string, name?: string | null) => Promise<void>;
   signInWithApple: () => Promise<void>;
   loginAsGuest: () => Promise<void>;
   signOut: () => Promise<void>;
+  verifyEmailCode: (email: string, code: string) => Promise<void>;
+  resendVerificationCode: (email: string) => Promise<void>;
   sendPasswordResetEmail: (email: string) => Promise<void>;
+  confirmPasswordReset: (email: string, code: string, newPassword: string) => Promise<void>;
   sendVerificationEmail: (user: AppUser) => Promise<void>;
   initializeAuth: () => () => void;
   checkDeviceBanStatus: () => Promise<boolean>;
 }
 
 // Helper para converter DTO do backend para AppUser
-const profileToAppUser = (profile?: UserProfileDTO | null, fallbackId?: string, fallbackEmail?: string, fallbackName?: string): AppUser => ({
+const profileToAppUser = (
+  profile?: UserProfileDTO | null,
+  fallbackId?: string,
+  fallbackEmail?: string,
+  fallbackName?: string,
+  emailVerified: boolean = true
+): AppUser => ({
   uid: profile?.userId || fallbackId || "user_" + Date.now(),
   email: profile?.email ?? fallbackEmail ?? null,
   displayName: profile?.userName || fallbackName || profile?.email?.split("@")[0] || fallbackEmail?.split("@")[0] || "Usuário",
   photoURL: profile?.photoURL || null,
-  emailVerified: true,
+  emailVerified: emailVerified,
   reload: async () => {},
 });
 
@@ -141,19 +150,50 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      signUp: async (email: string, password: string) => {
+      signUp: async (email: string, password: string, displayName?: string) => {
         set({ loading: true, error: null });
         try {
           console.log("AuthStore: Criando conta no Spring Boot...");
-          const userName = email.split("@")[0] || "Usuário";
-          const res = await authApiService.register({ userName, email, password });
-          const appUser = profileToAppUser(res.user, res.userId, res.email, res.displayName);
+          const nameToUse = displayName?.trim() || email.split("@")[0] || "Usuário";
+          const res = await authApiService.register({ displayName: nameToUse, userName: nameToUse, email, password });
+          const appUser = profileToAppUser(res.user, res.userId, res.email, res.displayName || nameToUse, false);
 
-          set({ user: appUser, isGuest: false, loading: false });
+          // Não publicamos user na store principal ainda para não forçar navegação prematura pelo RootNavigator
+          set({ loading: false });
           return { user: appUser };
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
           console.error("AuthStore: Erro ao criar conta:", errorMessage);
+          set({ error: errorMessage, loading: false });
+          throw error;
+        }
+      },
+
+      verifyEmailCode: async (email: string, code: string) => {
+        set({ loading: true, error: null });
+        try {
+          console.log("AuthStore: Validando código de e-mail OTP...");
+          const res = await authApiService.verifyEmail(email, code);
+          const appUser = profileToAppUser(res.user, res.userId, res.email, res.displayName, true);
+
+          set({ user: appUser, isGuest: false, loading: false });
+        } catch (error: any) {
+          const errorMessage = getErrorMessage(error);
+          console.error("AuthStore: Erro ao validar código de e-mail:", errorMessage);
+          set({ error: errorMessage, loading: false });
+          throw error;
+        }
+      },
+
+      resendVerificationCode: async (email: string) => {
+        set({ loading: true, error: null });
+        try {
+          console.log("AuthStore: Solicitando reenvio de código OTP...");
+          await authApiService.resendCode(email);
+          set({ loading: false });
+        } catch (error: any) {
+          const errorMessage = getErrorMessage(error);
+          console.error("AuthStore: Erro ao reenviar código:", errorMessage);
           set({ error: errorMessage, loading: false });
           throw error;
         }
@@ -268,7 +308,21 @@ export const useAuthStore = create<AuthState>()(
       sendPasswordResetEmail: async (email: string) => {
         set({ loading: true, error: null });
         try {
-          console.log("AuthStore: Solicitação de recuperação de senha enviada para:", email);
+          console.log("AuthStore: Solicitando envio de OTP de redefinição para:", email);
+          await authApiService.forgotPassword(email);
+          set({ loading: false });
+        } catch (error: any) {
+          const errorMessage = getErrorMessage(error);
+          set({ error: errorMessage, loading: false });
+          throw error;
+        }
+      },
+
+      confirmPasswordReset: async (email: string, code: string, newPassword: string) => {
+        set({ loading: true, error: null });
+        try {
+          console.log("AuthStore: Redefinindo senha com código OTP...");
+          await authApiService.resetPassword(email, code, newPassword);
           set({ loading: false });
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);

@@ -195,15 +195,51 @@ export function LoginScreen() {
     } catch (err: any) {
       console.error("Login error:", err);
 
+      const apiErrorMessage =
+        err?.response?.data?.message || err?.message || useAuthStore.getState().error;
+
       if (
+        apiErrorMessage?.toLowerCase().includes("não verificado") ||
+        apiErrorMessage?.toLowerCase().includes("código enviado")
+      ) {
+        setBottomSheetConfig({
+          type: "error",
+          title: "E-mail Não Verificado",
+          message:
+            apiErrorMessage || "Seu e-mail precisa ser verificado. Enviamos um código de 6 dígitos para sua caixa de entrada.",
+          primaryButton: {
+            label: "Digitar Código OTP",
+            onPress: () => {
+              navigation.navigate("VerifyEmail", { email: email.trim().toLowerCase() });
+            },
+          },
+        });
+      } else if (
+        apiErrorMessage?.toLowerCase().includes("desativada") ||
+        apiErrorMessage?.toLowerCase().includes("excluída") ||
+        apiErrorMessage?.toLowerCase().includes("bloqueada")
+      ) {
+        setBottomSheetConfig({
+          type: "error",
+          title: "Conta Desativada",
+          message:
+            apiErrorMessage || "Esta conta foi desativada.",
+          primaryButton: {
+            label: "Entendido",
+            onPress: () => {},
+          },
+        });
+      } else if (
         err.code === "auth/invalid-credential" ||
-        err.message?.includes("auth/invalid-credential")
+        err.message?.includes("auth/invalid-credential") ||
+        apiErrorMessage?.toLowerCase().includes("inválid") ||
+        apiErrorMessage?.toLowerCase().includes("incorret")
       ) {
         setBottomSheetConfig({
           type: "error",
           title: "Credenciais Inválidas",
           message:
-            "O e-mail ou a senha informados estão incorretos.\n Por favor, verifique e tente novamente.",
+            apiErrorMessage || "O e-mail ou a senha informados estão incorretos.\n Por favor, verifique e tente novamente.",
           primaryButton: {
             label: "Tentar Novamente",
             onPress: () => {},
@@ -213,7 +249,7 @@ export function LoginScreen() {
         setBottomSheetConfig({
           type: "error",
           title: "Erro no Login",
-          message: "Ocorreu um erro ao tentar entrar.\n Tente novamente mais tarde.",
+          message: apiErrorMessage || "Ocorreu um erro ao tentar entrar.\n Tente novamente mais tarde.",
           primaryButton: {
             label: "Ok",
             onPress: () => {},
@@ -231,54 +267,9 @@ export function LoginScreen() {
     navigation.navigate("Register");
   }
 
-  async function handleRecoverPassword() {
-    // Validar email antes de enviar
-    const isEmailValid = validateEmail(email);
-
-    if (!isEmailValid) {
-      return;
-    }
-
-    try {
-      clearError();
-      await useAuthStore.getState().sendPasswordResetEmail(email.trim().toLowerCase());
-
-      // Exibir mensagem de sucesso
-      setBottomSheetConfig({
-        type: "success",
-        title: "Redefinição de Senha",
-        message: "Verifique seu e-mail para redefinir sua senha com o link que enviamos.",
-        primaryButton: {
-          label: "OK",
-          onPress: () => {},
-        },
-      });
-
-      // Pequeno delay para garantir que o estado atualizou antes de abrir
-      setTimeout(() => {
-        bottomSheetModalRef.current?.present();
-      }, 100);
-    } catch (err: any) {
-      console.error("Erro ao recuperar senha:", err);
-
-      // Exibir mensagem de erro
-      setBottomSheetConfig({
-        type: "error",
-        title: "Houve um problema",
-        message:
-          err.message ||
-          "Não foi possível enviar o e-mail de recuperação. Tente novamente.",
-        primaryButton: {
-          label: "OK",
-          onPress: () => {},
-        },
-      });
-
-      // Pequeno delay para garantir que o estado atualizou antes de abrir
-      setTimeout(() => {
-        bottomSheetModalRef.current?.present();
-      }, 100);
-    }
+  function handleRecoverPassword() {
+    const trimmedEmail = email.trim().toLowerCase();
+    navigation.navigate("ForgotPassword", { email: trimmedEmail });
   }
 
   return (

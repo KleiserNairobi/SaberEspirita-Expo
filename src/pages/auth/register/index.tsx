@@ -152,36 +152,34 @@ export function RegisterScreen() {
 
     try {
       clearError();
-      const res = await signUp(email.trim(), password);
+      const res = await signUp(email.trim().toLowerCase(), password, fullName.trim());
 
       if (res?.user) {
-        // Exibir mensagem de sucesso
-        setBottomSheetConfig({
-          type: "success",
-          title: "Conta Criada!",
-          message: `Sua conta foi criada com sucesso com o e-mail\n ${email}.`,
-          primaryButton: {
-            label: "Ir para Login",
-            onPress: () => {
-              navigation.navigate("Login");
-            },
-          },
-        });
-
-        setTimeout(() => {
-          bottomSheetModalRef.current?.present();
-        }, 100);
+        navigation.navigate("VerifyEmail", { email: email.trim().toLowerCase() });
       }
     } catch (err: any) {
       console.error("Register error:", err);
-      let errorMessage =
-        "Ocorreu um erro ao tentar criar sua conta.\nTente novamente mais tarde.";
+
+      const apiErrorMessage =
+        err?.response?.data?.message || err?.message || useAuthStore.getState().error;
+
+      let errorMessage = apiErrorMessage || "Ocorreu um erro ao tentar criar sua conta.\nTente novamente mais tarde.";
       let errorTitle = "Erro no Cadastro";
 
-      if (err.code === "auth/email-already-in-use") {
+      if (
+        err.code === "auth/email-already-in-use" ||
+        apiErrorMessage?.toLowerCase().includes("já existe") ||
+        apiErrorMessage?.toLowerCase().includes("em uso")
+      ) {
         errorTitle = "E-mail Já Cadastrado";
-        errorMessage =
-          "Este e-mail já está em uso por outra conta.\nFaça login ou recupere sua senha.";
+        errorMessage = "Já existe uma conta registrada com este e-mail.\nFaça login ou recupere sua senha.";
+      } else if (
+        apiErrorMessage?.toLowerCase().includes("permitido") ||
+        apiErrorMessage?.toLowerCase().includes("bloquead") ||
+        apiErrorMessage?.toLowerCase().includes("banido") ||
+        apiErrorMessage?.toLowerCase().includes("suspenso")
+      ) {
+        errorTitle = "Cadastro Não Permitido";
       } else if (err.code === "auth/invalid-email") {
         errorTitle = "E-mail Inválido";
         errorMessage = "O e-mail informado não é válido.";

@@ -9,6 +9,8 @@ export type RootStackParamList = {
 export type AuthStackParamList = {
   Login: undefined;
   Register: undefined;
+  VerifyEmail: { email: string };
+  ForgotPassword: { email?: string };
 };
 
 export type AppStackParamList = {

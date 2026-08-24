@@ -7,9 +7,11 @@ export interface AuthLoginDTO {
 }
 
 export interface AuthRegisterDTO {
-  userName: string;
+  displayName: string;
+  userName?: string;
   email: string;
   password?: string;
+  deviceId?: string;
 }
 
 export interface UserProfileDTO {
@@ -112,6 +114,42 @@ export const authApiService = {
       }
     }
     return response.data;
+  },
+
+  /**
+   * Valida o e-mail do usuário utilizando o código OTP de 6 dígitos.
+   */
+  async verifyEmail(email: string, code: string): Promise<AuthResponseDTO> {
+    const response = await apiClient.post<AuthResponseDTO>("/auth/verify-email", { email, code });
+    const jwt = response.data?.accessToken || response.data?.token;
+    if (jwt) {
+      Storage.saveString("jwt_token", jwt);
+      if (response.data.refreshToken) {
+        Storage.saveString("refresh_token", response.data.refreshToken);
+      }
+    }
+    return response.data;
+  },
+
+  /**
+   * Solicita o reenvio de um novo código OTP de 6 dígitos para o e-mail.
+   */
+  async resendCode(email: string): Promise<void> {
+    await apiClient.post("/auth/resend-code", { email });
+  },
+
+  /**
+   * Solicita o envio do código de 6 dígitos (OTP) para recuperação de senha.
+   */
+  async forgotPassword(email: string): Promise<void> {
+    await apiClient.post("/auth/forgot-password", { email });
+  },
+
+  /**
+   * Valida o código OTP de 6 dígitos e redefine a senha do usuário.
+   */
+  async resetPassword(email: string, code: string, newPassword: string): Promise<void> {
+    await apiClient.post("/auth/reset-password", { email, code, newPassword });
   },
 
   /**
