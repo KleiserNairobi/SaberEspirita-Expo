@@ -77,7 +77,7 @@ export function ForgotPasswordScreen() {
 
   // Contador regressivo para reenviar código
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (step === 2 && timer > 0) {
       setCanResend(false);
       interval = setInterval(() => {

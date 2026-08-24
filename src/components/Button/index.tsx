@@ -1,5 +1,11 @@
 import React from "react";
-import { TouchableOpacity, Text, ActivityIndicator } from "react-native";
+import {
+  ActivityIndicator,
+  StyleProp,
+  Text,
+  TouchableOpacity,
+  ViewStyle,
+} from "react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { createStyles } from "./styles";
 
@@ -12,6 +18,7 @@ interface ButtonProps {
   loading?: boolean;
   fullWidth?: boolean;
   icon?: React.ReactNode;
+  style?: StyleProp<ViewStyle>;
 }
 
 export function Button({
@@ -23,6 +30,7 @@ export function Button({
   loading = false,
   fullWidth = false,
   icon,
+  style,
 }: ButtonProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -34,6 +42,7 @@ export function Button({
     variant === "outline" && styles.containerOutline,
     fullWidth && styles.containerFullWidth,
     disabled && (variant === "outline" ? styles.containerOutlineDisabled : styles.containerDisabled),
+    style,
   ];
 
   const textStyle = [

@@ -53,7 +53,7 @@ export function VerifyEmailScreen() {
 
   // Contador regressivo para reenviar código
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (timer > 0) {
       setCanResend(false);
       interval = setInterval(() => {
