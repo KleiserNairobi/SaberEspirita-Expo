@@ -24,8 +24,6 @@ export function useHasUnreadNotifications() {
     enabled: !!user?.uid && !isGuest,
     staleTime: 1000 * 30, // 30 segundos
     gcTime: 1000 * 60 * 60, // 1 hora
-    refetchOnMount: "always",
-    refetchOnWindowFocus: true,
   });
 }
 

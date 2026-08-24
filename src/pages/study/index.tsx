@@ -45,15 +45,8 @@ export function StudyScreen() {
     null
   );
 
-  const { data: hasUnreadNotifications = false, refetch: refetchUnreadNotifications } =
-    useHasUnreadNotifications();
+  const { data: hasUnreadNotifications = false } = useHasUnreadNotifications();
   const { data: communityProgress } = useCommunityProgress();
-
-  useFocusEffect(
-    useCallback(() => {
-      void refetchUnreadNotifications();
-    }, [refetchUnreadNotifications])
-  );
 
   const handleOpenJourney = useCallback(() => {
     journeySheetRef.current?.present();
