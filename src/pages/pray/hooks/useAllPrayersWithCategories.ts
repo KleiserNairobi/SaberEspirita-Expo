@@ -3,8 +3,8 @@ import { prayerApiService } from "@/services/api/prayerApiService";
 
 export function useAllPrayersWithCategories() {
   return useQuery({
-    queryKey: ["prayers", "allWithCategories"],
+    queryKey: ["prayers", "allWithCategories", "v2"],
     queryFn: () => prayerApiService.getPrayers(),
-    staleTime: 1000 * 60 * 60, // 1 hora
+    staleTime: 1000 * 60 * 5, // 5 minutos
   });
 }

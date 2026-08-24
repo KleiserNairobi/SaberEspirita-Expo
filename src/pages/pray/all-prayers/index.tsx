@@ -81,13 +81,18 @@ export function AllPrayersScreen() {
   );
 
   const categoryCounts = useMemo(() => {
+    const validFavoritesCount = allPrayers
+      ? allPrayers.filter((p) => isFavorite(p.id)).length
+      : favorites.length;
+
     const counts: Record<string, number> = {
       ALL: allPrayers?.length || 0,
-      FAVORITES: favorites.length,
+      FAVORITES: validFavoritesCount,
     };
     if (allPrayers) {
       allPrayers.forEach((prayer) => {
-        (prayer.categories || []).forEach((cat) => {
+        const cats = Array.isArray(prayer.categories) ? prayer.categories : [];
+        cats.forEach((cat) => {
           if (counts[cat] === undefined) {
             counts[cat] = 0;
           }
@@ -96,7 +101,7 @@ export function AllPrayersScreen() {
       });
     }
     return counts;
-  }, [allPrayers, favorites]);
+  }, [allPrayers, favorites, isFavorite]);
 
   const categoryHasNew = useMemo(() => {
     const hasNew: Record<string, boolean> = {
@@ -108,7 +113,8 @@ export function AllPrayersScreen() {
           prayer.createdAt && differenceInDays(new Date(), prayer.createdAt) <= 15;
         if (isNew) {
           hasNew.ALL = true;
-          (prayer.categories || []).forEach((cat) => {
+          const cats = Array.isArray(prayer.categories) ? prayer.categories : [];
+          cats.forEach((cat) => {
             hasNew[cat] = true;
           });
         }
@@ -154,7 +160,10 @@ export function AllPrayersScreen() {
     if (filterType === "FAVORITES") {
       result = result.filter((p) => isFavorite(p.id));
     } else if (filterType !== "ALL") {
-      result = result.filter((p) => (p.categories || []).includes(filterType));
+      result = result.filter((p) => {
+        const cats = Array.isArray(p.categories) ? p.categories : [];
+        return cats.includes(filterType);
+      });
     }
 
     if (searchQuery.trim()) {

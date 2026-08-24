@@ -33,9 +33,20 @@ import { createStyles } from "./styles";
 
 type Props = NativeStackScreenProps<AppStackParamList, "Notifications">;
 
-function formatWhen(date: Date | null): string {
-  if (!date) return "";
-  return date.toLocaleString("pt-BR");
+function formatWhen(dateInput: Date | string | null | undefined): string {
+  if (!dateInput) return "";
+  const date =
+    typeof dateInput === "string" || typeof dateInput === "number"
+      ? new Date(dateInput)
+      : dateInput;
+
+  if (isNaN(date.getTime())) return "";
+
+  return date.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 }
 
 function getTitle(item: NotificationItem): string {

@@ -7,6 +7,33 @@ export interface GetPrayersParams {
   search?: string;
 }
 
+function normalizeCategories(rawCategories: any): string[] {
+  if (!rawCategories) return [];
+  if (Array.isArray(rawCategories)) return rawCategories;
+  if (typeof rawCategories === "string") {
+    const trimmed = rawCategories.trim();
+    if (!trimmed || trimmed === "[]") return [];
+    if (trimmed.startsWith("[")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {
+        // Fallback em caso de erro no parse
+      }
+    }
+    return [trimmed];
+  }
+  return [];
+}
+
+function normalizePrayer(prayer: IPrayer): IPrayer {
+  if (!prayer) return prayer;
+  return {
+    ...prayer,
+    categories: normalizeCategories(prayer.categories),
+  };
+}
+
 export const prayerApiService = {
   /**
    * Obtém a lista de categorias da central de orações.
@@ -24,7 +51,8 @@ export const prayerApiService = {
    */
   async getPrayers(params?: GetPrayersParams): Promise<IPrayer[]> {
     const response = await apiClient.get<IPrayer[]>("/prayers", { params });
-    return response.data || [];
+    const list = response.data || [];
+    return list.map(normalizePrayer);
   },
 
   /**
@@ -34,7 +62,8 @@ export const prayerApiService = {
     const response = await apiClient.get<IPrayer[]>("/prayers/trending", {
       params: { period },
     });
-    return response.data || [];
+    const list = response.data || [];
+    return list.map(normalizePrayer);
   },
 
   /**
@@ -43,6 +72,6 @@ export const prayerApiService = {
   async getPrayerById(id: string): Promise<IPrayer | null> {
     if (!id) return null;
     const response = await apiClient.get<IPrayer>(`/prayers/${id}`);
-    return response.data || null;
+    return response.data ? normalizePrayer(response.data) : null;
   },
 };

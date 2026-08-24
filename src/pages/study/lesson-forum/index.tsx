@@ -485,7 +485,13 @@ export function LessonForumScreen({ route, navigation }: Props) {
   const renderComment = useCallback(
     ({ item }: { item: ForumComment }) => {
       if (!item || !item.id) return null;
-      const createdAtLabel = item.createdAt ? item.createdAt.toLocaleString("pt-BR") : "";
+      const createdAtLabel = item.createdAt
+        ? new Date(item.createdAt).toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+        : "";
       const isMine = !!uid && item.userId === uid;
       const canRemove = isMine && !item.isDeleted;
 
