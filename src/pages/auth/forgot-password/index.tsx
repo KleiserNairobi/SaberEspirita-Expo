@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+
 import {
   KeyboardAvoidingView,
   Platform,
@@ -8,10 +9,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   ArrowLeft,
@@ -24,6 +24,7 @@ import {
   Mail,
   RefreshCw,
 } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
@@ -39,10 +40,7 @@ type ForgotPasswordScreenNavigationProp = NativeStackNavigationProp<
   "ForgotPassword"
 >;
 
-type ForgotPasswordScreenRouteProp = RouteProp<
-  AuthStackParamList,
-  "ForgotPassword"
->;
+type ForgotPasswordScreenRouteProp = RouteProp<AuthStackParamList, "ForgotPassword">;
 
 export function ForgotPasswordScreen() {
   const { theme } = useAppTheme();
@@ -52,12 +50,8 @@ export function ForgotPasswordScreen() {
 
   const initialEmail = route.params?.email || "";
 
-  const {
-    sendPasswordResetEmail,
-    confirmPasswordReset,
-    loading,
-    clearError,
-  } = useAuthStore();
+  const { sendPasswordResetEmail, confirmPasswordReset, loading, clearError } =
+    useAuthStore();
 
   const [step, setStep] = useState<1 | 2>(initialEmail ? 2 : 1);
   const [email, setEmail] = useState(initialEmail);
@@ -66,7 +60,6 @@ export function ForgotPasswordScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const [timer, setTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
   const [bottomSheetConfig, setBottomSheetConfig] =
@@ -134,16 +127,13 @@ export function ForgotPasswordScreen() {
     } catch (err: any) {
       console.error("ForgotPassword send code error:", err);
       const apiMessage =
-        err?.response?.data?.message ||
-        err?.message ||
-        useAuthStore.getState().error;
+        err?.response?.data?.message || err?.message || useAuthStore.getState().error;
 
       setBottomSheetConfig({
         type: "error",
         title: "Erro ao Enviar Código",
         message:
-          apiMessage ||
-          "Não foi possível enviar o código de recuperação neste momento.",
+          apiMessage || "Não foi possível enviar o código de recuperação neste momento.",
         primaryButton: { label: "Tentar Novamente", onPress: () => {} },
       });
 
@@ -207,9 +197,7 @@ export function ForgotPasswordScreen() {
     } catch (err: any) {
       console.error("ResetPassword error:", err);
       const apiMessage =
-        err?.response?.data?.message ||
-        err?.message ||
-        useAuthStore.getState().error;
+        err?.response?.data?.message || err?.message || useAuthStore.getState().error;
 
       setBottomSheetConfig({
         type: "error",
@@ -346,8 +334,7 @@ export function ForgotPasswordScreen() {
                 {Array.from({ length: 6 }).map((_, index) => {
                   const digit = code[index] || "";
                   const isFocused =
-                    code.length === index ||
-                    (code.length === 6 && index === 5);
+                    code.length === index || (code.length === 6 && index === 5);
                   return (
                     <TouchableOpacity
                       key={index}
@@ -430,9 +417,7 @@ export function ForgotPasswordScreen() {
                   />
                   <TouchableOpacity
                     style={styles.eyeIconButton}
-                    onPress={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
+                    onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                     activeOpacity={0.7}
                   >
                     {showConfirmPassword ? (
@@ -484,16 +469,13 @@ export function ForgotPasswordScreen() {
               {/* Spam Hint & Validity Info */}
               <View style={styles.spamHintContainer}>
                 <View style={styles.hintRow}>
-                  <Info
-                    size={16}
-                    color={theme.colors.primary}
-                    style={styles.hintIcon}
-                  />
+                  <Info size={16} color={theme.colors.primary} style={styles.hintIcon} />
                   <Text style={styles.hintText}>
                     O código enviado por e-mail é válido por{" "}
                     <Text style={{ fontWeight: "bold", color: theme.colors.text }}>
                       15 minutos
-                    </Text>.
+                    </Text>
+                    .
                   </Text>
                 </View>
                 <View style={styles.hintRow}>
@@ -510,7 +492,8 @@ export function ForgotPasswordScreen() {
                     ou{" "}
                     <Text style={{ fontWeight: "bold", color: theme.colors.text }}>
                       Lixo Eletrônico
-                    </Text>.
+                    </Text>
+                    .
                   </Text>
                 </View>
               </View>
@@ -520,10 +503,7 @@ export function ForgotPasswordScreen() {
 
         {/* Modal BottomSheet de Feedback */}
         {bottomSheetConfig && (
-          <BottomSheetMessage
-            ref={bottomSheetModalRef}
-            config={bottomSheetConfig}
-          />
+          <BottomSheetMessage ref={bottomSheetModalRef} config={bottomSheetConfig} />
         )}
       </KeyboardAvoidingView>
     </SafeAreaView>
