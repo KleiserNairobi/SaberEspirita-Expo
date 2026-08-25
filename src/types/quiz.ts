@@ -123,6 +123,7 @@ export interface IQuizSubmitResult {
 }
 
 export interface IQuestionReportPayload {
+  quizId?: string;
   reason: string;
   details?: string;
 }

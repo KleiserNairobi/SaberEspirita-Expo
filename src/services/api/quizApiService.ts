@@ -603,6 +603,7 @@ export const quizApiService = {
       await apiClient.post(`/quizzes/questions/${questionId}/report`, payload);
     } catch (error) {
       console.warn(`quizApiService: Erro ao reportar questão ${questionId}:`, error);
+      throw error;
     }
   },
 };

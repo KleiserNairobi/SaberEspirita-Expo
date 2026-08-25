@@ -8,15 +8,13 @@ import {
   BottomSheetScrollView,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { AlertTriangle, CheckCircle } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button } from "@/components/Button";
-import { db } from "@/configs/firebase/firebase";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { useAuthStore } from "@/stores/authStore";
-import { IQuestion } from "@/types/quiz";
+import { quizApiService } from "@/services/api/quizApiService";
+import { IQuestion, IQuestionReportPayload } from "@/types/quiz";
 
 import { createStyles } from "./styles";
 
@@ -55,35 +53,25 @@ export const ReportQuestionBottomSheet = forwardRef<
   async function handleSendReport() {
     if (!selectedReason || !question) return;
 
-    const user = useAuthStore.getState().user;
-    const userId = user?.uid || "anonymous";
-    const userEmail = user?.email || "anonymous";
-    const userName = user?.displayName || "anonymous";
+    const questionId =
+      (question as any).id || (questionIndex >= 0 ? `q_${questionIndex}` : "unknown");
 
     const selectedReasonObj = REPORT_REASONS.find((r) => r.id === selectedReason);
     const reasonText = selectedReasonObj ? selectedReasonObj.text : "Não especificado";
 
-    const reportData = {
-      userId,
-      userEmail,
-      userName,
+    const fullReason = customComment.trim()
+      ? `${reasonText} - Detalhes: ${customComment.trim()}`
+      : reasonText;
+
+    const payload: IQuestionReportPayload = {
       quizId: quizId || "unknown",
-      questionId: (question as any).id || "unknown",
-      questionIndex: questionIndex !== undefined ? questionIndex : -1,
-      questionText: question.title,
-      alternatives: question.alternatives,
-      correctAnswerIndex: question.correct,
-      selectedAnswerIndex: selectedAnswerIndex ?? -1,
-      reasonId: selectedReason,
-      reasonText,
-      comment:
-        selectedReason === "outro" || customComment.trim() ? customComment.trim() : null,
-      createdAt: serverTimestamp(),
+      reason: fullReason,
+      details: customComment.trim() || undefined,
     };
 
     setIsLoading(true);
     try {
-      await addDoc(collection(db, "quiz_reports"), reportData);
+      await quizApiService.reportQuestion(questionId, payload);
       setIsSuccess(true);
     } catch (error) {
       console.error("Erro ao enviar reporte de questão:", error);
