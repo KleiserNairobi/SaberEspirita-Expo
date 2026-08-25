@@ -62,7 +62,7 @@ export function DailyQuizHomeScreen() {
   useFocusEffect(
     React.useCallback(() => {
       refetch();
-    }, [refetch])
+    }, [])
   );
 
   if (isLoading && !stats) {

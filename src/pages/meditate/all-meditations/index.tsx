@@ -85,13 +85,28 @@ export default function AllMeditationsScreen() {
         break;
     }
 
-    // Busca Textual
+    // Busca Textual Padronizada
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+      const q = searchQuery
+        .trim()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+
+      const normalize = (text?: string) =>
+        text
+          ? text
+              .replace(/\s*\n\s*/g, " ")
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .toLowerCase()
+          : "";
+
       result = result.filter(
         (med) =>
-          med.title.toLowerCase().includes(query) ||
-          med.author?.toLowerCase().includes(query)
+          normalize(med.title).includes(q) ||
+          normalize(med.description).includes(q) ||
+          normalize(med.author).includes(q)
       );
     }
     return result;

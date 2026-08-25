@@ -332,26 +332,117 @@ export const quizApiService = {
     }
 
     pendingDailyStatsPromise = (async () => {
+      let stats = {
+        isCompletedToday: false,
+        currentStreak: 0,
+        longestStreak: 0,
+        totalChallenges: 0,
+        bestAccuracy: 0,
+      };
+
       try {
         const response = await apiClient.get<any>("/quizzes/daily/stats");
         const data = response.data || {};
-        return {
+        stats = {
           isCompletedToday: Boolean(data.isCompletedToday || data.completedToday),
-          currentStreak: data.currentStreak || 0,
-          longestStreak: data.longestStreak || 0,
-          totalChallenges: data.totalChallenges || 0,
-          bestAccuracy: data.bestAccuracy || 0,
+          currentStreak: Number(data.currentStreak || 0),
+          longestStreak: Number(data.longestStreak || 0),
+          totalChallenges: Number(data.totalChallenges || 0),
+          bestAccuracy: Number(data.bestAccuracy || 0),
         };
       } catch (error) {
-        console.warn("quizApiService: Erro ao buscar estatísticas do desafio diário:", error);
-        return {
-          isCompletedToday: false,
-          currentStreak: 0,
-          longestStreak: 0,
-          totalChallenges: 0,
-          bestAccuracy: 0,
-        };
+        console.warn("quizApiService: Erro ao buscar estatísticas do desafio diário remoto:", error);
       }
+
+      // Mesclar / enriquecer com o histórico do MMKV local para garantia off-line e resiliência
+      try {
+        const localHistory = Storage.load<IQuizHistory[]>("quiz_local_history") || [];
+        const dailyLocal = localHistory.filter(
+          (h) =>
+            h.completed &&
+            (h.categoryId === "DAILY" ||
+              h.subcategoryId?.toUpperCase().startsWith("DAILY"))
+        );
+
+        if (dailyLocal.length > 0) {
+          const todayStr = new Date()
+            .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+            .split(" ")[0];
+
+          const isLocalCompletedToday = dailyLocal.some((h) => {
+            if (h.subcategoryId === `DAILY_${todayStr}`) return true;
+            if (h.completedAt) {
+              const d = new Date(h.completedAt)
+                .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+                .split(" ")[0];
+              return d === todayStr;
+            }
+            return false;
+          });
+
+          const localTotal = Math.max(stats.totalChallenges, dailyLocal.length);
+          const localBest = dailyLocal.reduce(
+            (max, item) => Math.max(max, item.percentage || item.score || 0),
+            stats.bestAccuracy
+          );
+
+          const localDatesSet = new Set<string>();
+          for (const item of dailyLocal) {
+            if (item.subcategoryId?.startsWith("DAILY_")) {
+              localDatesSet.add(item.subcategoryId.replace("DAILY_", ""));
+            } else if (item.completedAt) {
+              const dateStr = new Date(item.completedAt)
+                .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+                .split(" ")[0];
+              localDatesSet.add(dateStr);
+            }
+          }
+
+          const sortedDates = Array.from(localDatesSet).sort();
+          if (sortedDates.length > 0) {
+            let currentRun = 1;
+            let maxRun = 1;
+            for (let i = 1; i < sortedDates.length; i++) {
+              const prev = new Date(sortedDates[i - 1]);
+              const curr = new Date(sortedDates[i]);
+              const diffDays = Math.round((curr.getTime() - prev.getTime()) / (1000 * 3600 * 24));
+              if (diffDays === 1) {
+                currentRun++;
+                if (currentRun > maxRun) maxRun = currentRun;
+              } else if (diffDays > 1) {
+                currentRun = 1;
+              }
+            }
+
+            const lastDateStr = sortedDates[sortedDates.length - 1];
+            const yesterdayStr = new Date(Date.now() - 86400000)
+              .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+              .split(" ")[0];
+
+            const localCurrentStreak =
+              lastDateStr === todayStr || lastDateStr === yesterdayStr ? currentRun : 0;
+
+            stats = {
+              isCompletedToday: stats.isCompletedToday || isLocalCompletedToday,
+              currentStreak: Math.max(stats.currentStreak, localCurrentStreak),
+              longestStreak: Math.max(stats.longestStreak, maxRun),
+              totalChallenges: localTotal,
+              bestAccuracy: localBest,
+            };
+          } else {
+            stats = {
+              ...stats,
+              isCompletedToday: stats.isCompletedToday || isLocalCompletedToday,
+              totalChallenges: localTotal,
+              bestAccuracy: localBest,
+            };
+          }
+        }
+      } catch (e) {
+        console.warn("quizApiService: Erro ao mesclar estatísticas locais:", e);
+      }
+
+      return stats;
     })();
 
     pendingDailyStatsPromise.finally(() => {

@@ -27,7 +27,7 @@ export function PrayerCard({ prayer, onPress }: PrayerCardProps) {
       <View style={styles.content}>
         <View style={styles.headerRow}>
           <Text style={styles.title} numberOfLines={2}>
-            {prayer.title}
+            {prayer.title?.replace(/\s*\n\s*/g, " ")}
           </Text>
 
           {isNew && (

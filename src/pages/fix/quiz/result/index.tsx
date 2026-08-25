@@ -151,9 +151,15 @@ export function QuizResultScreen() {
         {/* Título */}
         <View style={styles.titleContainer}>
           <Text style={styles.subcategoryName}>{subcategoryName}</Text>
-          <Text style={styles.categoryName} numberOfLines={2}>
-            {subtitle || categoryName}
-          </Text>
+          {subtitle ? (
+            <Text style={styles.categoryName} numberOfLines={2}>
+              {subtitle}
+            </Text>
+          ) : categoryId !== "DAILY" && categoryName ? (
+            <Text style={styles.categoryName} numberOfLines={2}>
+              {categoryName}
+            </Text>
+          ) : null}
         </View>
 
         {/* Estatísticas */}

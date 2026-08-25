@@ -364,6 +364,7 @@ export default function AccountScreen() {
       <EditProfileBottomSheet
         ref={editProfileSheetRef}
         initialName={displayName}
+        initialPhotoUrl={photoURL}
         onSave={handleUpdateName}
       />
 

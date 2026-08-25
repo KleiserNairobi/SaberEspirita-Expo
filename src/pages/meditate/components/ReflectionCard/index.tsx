@@ -39,7 +39,7 @@ export const ReflectionCard = React.memo(function ReflectionCard({
       <View style={styles.content}>
         <View style={styles.headerRow}>
           <Text style={styles.title} numberOfLines={2}>
-            {reflection.title}
+            {reflection.title?.replace(/\s*\n\s*/g, " ")}
           </Text>
 
           {isNew && (

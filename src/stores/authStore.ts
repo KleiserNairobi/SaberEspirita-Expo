@@ -81,10 +81,10 @@ const profileToAppUser = (
   fallbackName?: string,
   emailVerified: boolean = true
 ): AppUser => ({
-  uid: profile?.userId || fallbackId || "user_" + Date.now(),
+  uid: profile?.userId || profile?.id || fallbackId || "user_" + Date.now(),
   email: profile?.email ?? fallbackEmail ?? null,
-  displayName: profile?.userName || fallbackName || profile?.email?.split("@")[0] || fallbackEmail?.split("@")[0] || "Usuário",
-  photoURL: profile?.photoURL || null,
+  displayName: profile?.userName || profile?.displayName || fallbackName || profile?.email?.split("@")[0] || fallbackEmail?.split("@")[0] || "Usuário",
+  photoURL: profile?.photoUrl || profile?.photoURL || null,
   emailVerified: emailVerified,
   reload: async () => {},
 });

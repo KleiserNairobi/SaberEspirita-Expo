@@ -122,10 +122,10 @@ export const createStyles = (theme: ITheme) =>
       width: 60,
       height: 60,
       borderRadius: 30,
+      borderWidth: 2,
+      borderColor: theme.colors.primary,
     },
-    avatarFirst: {
-      // Dimensions now uniform, no override needed
-    },
+    avatarFirst: {},
     avatarSecond: {},
     avatarThird: {},
 
@@ -205,11 +205,13 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("md", "medium", theme.colors.textSecondary),
     },
     listAvatar: {
-      width: 32,
-      height: 32,
-      borderRadius: 16,
+      width: 36,
+      height: 36,
+      borderRadius: 18,
       marginRight: theme.spacing.md,
-      backgroundColor: theme.colors.border, // Fallback/Loading
+      backgroundColor: theme.colors.border,
+      borderWidth: 1.5,
+      borderColor: theme.colors.primary,
     },
     listContent: {
       flex: 1,

@@ -37,7 +37,7 @@ export const MeditationCard = React.memo(function MeditationCard({
       <View style={styles.content}>
         <View style={styles.headerRow}>
           <Text style={styles.title} numberOfLines={1}>
-            {meditation.title}
+            {meditation.title?.replace(/\s*\n\s*/g, " ")}
           </Text>
           {isNew && (
             <View style={styles.statusBadge}>

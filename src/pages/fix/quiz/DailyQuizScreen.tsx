@@ -117,6 +117,8 @@ export function DailyQuizScreen() {
         queryClient.invalidateQueries({ queryKey: ["dailyQuizStatus", user.uid] });
         queryClient.invalidateQueries({ queryKey: ["userStreak", user.uid] });
         queryClient.invalidateQueries({ queryKey: ["dailyChallengeStats", user.uid] });
+        queryClient.invalidateQueries({ queryKey: ["dailyChallengeHome", user.uid] });
+        queryClient.invalidateQueries({ queryKey: ["dailyQuiz", today] });
         queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
         queryClient.invalidateQueries({ queryKey: ["userScore", user.uid] });
       }
@@ -129,10 +131,6 @@ export function DailyQuizScreen() {
           weekday: "long",
           day: "2-digit",
           month: "long",
-        }),
-        subtitle: new Date().toLocaleDateString("pt-BR", {
-          day: "2-digit",
-          month: "2-digit",
           year: "numeric",
         }),
         correctAnswers,

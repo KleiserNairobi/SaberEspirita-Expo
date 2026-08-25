@@ -9,9 +9,9 @@ export const leaderboardApiService = {
   async getWeeklyRanking(): Promise<ILeaderboardUser[]> {
     try {
       const response = await apiClient.get<ILeaderboardUser[]>("/leaderboard/weekly");
-      return (response.data || []).map((user) => ({
+      return (response.data || []).map((user: any) => ({
         ...user,
-        photoURL: resolveCdnUrl(user.photoURL),
+        photoURL: resolveCdnUrl(user.photoURL || user.photoUrl),
       }));
     } catch (error) {
       console.warn("leaderboardApiService: Erro ao buscar ranking semanal:", error);
@@ -25,9 +25,9 @@ export const leaderboardApiService = {
   async getMonthlyRanking(): Promise<ILeaderboardUser[]> {
     try {
       const response = await apiClient.get<ILeaderboardUser[]>("/leaderboard/monthly");
-      return (response.data || []).map((user) => ({
+      return (response.data || []).map((user: any) => ({
         ...user,
-        photoURL: resolveCdnUrl(user.photoURL),
+        photoURL: resolveCdnUrl(user.photoURL || user.photoUrl),
       }));
     } catch (error) {
       console.warn("leaderboardApiService: Erro ao buscar ranking mensal:", error);
@@ -41,9 +41,9 @@ export const leaderboardApiService = {
   async getAllTimeRanking(): Promise<ILeaderboardUser[]> {
     try {
       const response = await apiClient.get<ILeaderboardUser[]>("/leaderboard/all-time");
-      return (response.data || []).map((user) => ({
+      return (response.data || []).map((user: any) => ({
         ...user,
-        photoURL: resolveCdnUrl(user.photoURL),
+        photoURL: resolveCdnUrl(user.photoURL || user.photoUrl),
       }));
     } catch (error) {
       console.warn("leaderboardApiService: Erro ao buscar ranking geral:", error);
@@ -64,9 +64,9 @@ export const leaderboardApiService = {
 
     try {
       const response = await apiClient.get<ILeaderboardUser[]>(endpoint);
-      return (response.data || []).map((user) => ({
+      return (response.data || []).map((user: any) => ({
         ...user,
-        photoURL: resolveCdnUrl(user.photoURL),
+        photoURL: resolveCdnUrl(user.photoURL || user.photoUrl),
       }));
     } catch (error) {
       console.warn(`leaderboardApiService: Erro ao buscar ranking (${timeFilter}):`, error);
@@ -81,9 +81,10 @@ export const leaderboardApiService = {
     try {
       const response = await apiClient.get<ILeaderboardUser>("/leaderboard/me");
       if (!response.data) return null;
+      const rawUser: any = response.data;
       return {
-        ...response.data,
-        photoURL: resolveCdnUrl(response.data.photoURL),
+        ...rawUser,
+        photoURL: resolveCdnUrl(rawUser.photoURL || rawUser.photoUrl),
       };
     } catch (error) {
       console.warn("leaderboardApiService: Erro ao buscar posição do usuário:", error);

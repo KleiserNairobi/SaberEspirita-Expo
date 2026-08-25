@@ -1,6 +1,6 @@
 import { Leaf, Pencil, Sprout, TreePalm } from "lucide-react-native";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { createStyles } from "./styles";
@@ -21,11 +21,18 @@ const levelConfig = {
 
 export function AccountHeader({
   displayName,
+  photoURL,
   onEditPress,
   communityLevelId,
 }: AccountHeaderProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
+
+  const [imageFailed, setImageFailed] = React.useState(false);
+
+  React.useEffect(() => {
+    setImageFailed(false);
+  }, [photoURL]);
 
   const level = communityLevelId ? levelConfig[communityLevelId] : null;
 
@@ -43,6 +50,11 @@ export function AccountHeader({
         ? `${theme.colors.primary}20`
         : `${theme.colors.border}60`;
 
+  const validPhoto =
+    photoURL && typeof photoURL === "string" && photoURL.trim().length > 0
+      ? photoURL.trim()
+      : null;
+
   return (
     <View style={styles.header}>
       <TouchableOpacity
@@ -50,8 +62,18 @@ export function AccountHeader({
         onPress={onEditPress}
         activeOpacity={0.7}
       >
-        <View style={[styles.avatar, { backgroundColor: theme.colors.primary }]}>
-          <Text style={styles.avatarText}>{displayName.charAt(0).toUpperCase()}</Text>
+        <View style={styles.avatarWrapper}>
+          <View style={styles.avatarContainer}>
+            {validPhoto && !imageFailed ? (
+              <Image
+                source={{ uri: validPhoto }}
+                onError={() => setImageFailed(true)}
+                style={styles.avatarImage}
+              />
+            ) : (
+              <Text style={styles.avatarText}>{displayName.charAt(0).toUpperCase()}</Text>
+            )}
+          </View>
           <View style={styles.editBadge}>
             <Pencil size={14} color={theme.colors.onPrimary} />
           </View>

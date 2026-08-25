@@ -45,7 +45,7 @@
     <key>HOT_UPDATER_CHANNEL</key>
     <string>production</string>
     <key>HOT_UPDATER_FINGERPRINT_HASH</key>
-    <string>4fbb26717a831259a40221b4479b690e09adcece</string>
+    <string>c88563f9410bb2e61e3a9f71c054d379676c2500</string>
     <key>LSMinimumSystemVersion</key>
     <string>12.0</string>
     <key>LSRequiresIPhoneOS</key>
@@ -57,10 +57,16 @@
       <key>NSAllowsLocalNetworking</key>
       <true/>
     </dict>
+    <key>NSCameraUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your camera</string>
     <key>NSFaceIDUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your Face ID biometric data.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Permita sua localização em uso para receber notificações personalizadas sobre o Saber Espírita.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your microphone</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your photos</string>
     <key>RCTNewArchEnabled</key>
     <true/>
     <key>UIBackgroundModes</key>

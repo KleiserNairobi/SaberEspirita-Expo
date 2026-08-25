@@ -15,10 +15,13 @@ export interface AuthRegisterDTO {
 }
 
 export interface UserProfileDTO {
-  userId: string;
-  userName: string;
+  id?: string;
+  userId?: string;
+  userName?: string;
+  displayName?: string;
   email: string | null;
   photoURL?: string | null;
+  photoUrl?: string | null;
   role?: string;
   level?: number;
   totalAllTime?: number;
@@ -42,6 +45,7 @@ export interface AuthResponseDTO {
 export interface UpdateProfileDTO {
   userName?: string;
   photoURL?: string;
+  photoUrl?: string;
 }
 
 export const authApiService = {

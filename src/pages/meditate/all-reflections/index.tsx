@@ -123,15 +123,31 @@ export default function AllReflectionsScreen() {
         break;
     }
 
-    // Aplicar busca
+    // Aplicar busca padronizada
     if (searchQuery.trim()) {
-      const queryStr = searchQuery.toLowerCase();
+      const q = searchQuery
+        .trim()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+
+      const normalize = (text?: string) =>
+        text
+          ? text
+              .replace(/\s*\n\s*/g, " ")
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .toLowerCase()
+          : "";
+
       result = result.filter(
         (reflection) =>
-          reflection.title.toLowerCase().includes(queryStr) ||
-          reflection.subtitle?.toLowerCase().includes(queryStr) ||
-          reflection.author?.toLowerCase().includes(queryStr) ||
-          reflection.source?.toLowerCase().includes(queryStr)
+          normalize(reflection.title).includes(q) ||
+          normalize(reflection.subtitle).includes(q) ||
+          normalize(reflection.content).includes(q) ||
+          normalize(reflection.author).includes(q) ||
+          normalize(reflection.source).includes(q) ||
+          normalize(reflection.topic).includes(q)
       );
     }
 

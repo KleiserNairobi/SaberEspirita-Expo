@@ -167,13 +167,27 @@ export function AllPrayersScreen() {
     }
 
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+      const q = searchQuery
+        .trim()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+
+      const normalize = (text?: string) =>
+        text
+          ? text
+              .replace(/\s*\n\s*/g, " ")
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .toLowerCase()
+          : "";
+
       result = result.filter(
         (prayer) =>
-          prayer.title.toLowerCase().includes(query) ||
-          prayer.content.toLowerCase().includes(query) ||
-          prayer.author?.toLowerCase().includes(query) ||
-          prayer.source?.toLowerCase().includes(query)
+          normalize(prayer.title).includes(q) ||
+          normalize(prayer.content).includes(q) ||
+          normalize(prayer.author).includes(q) ||
+          normalize(prayer.source).includes(q)
       );
     }
 

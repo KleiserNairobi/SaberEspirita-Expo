@@ -22,6 +22,9 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { loadBoolean, saveBoolean } from "@/utils/Storage";
 import { authApiService } from "@/services/api/authApiService";
 
+import { useQueryClient } from "@tanstack/react-query";
+import { mediaApiService } from "@/services/api/mediaApiService";
+
 const HIDE_HINT_KEY = "@hide_leaderboard_hint";
 
 export function LeaderboardScreen() {
@@ -30,6 +33,7 @@ export function LeaderboardScreen() {
   const styles = createStyles(theme);
   const [selectedFilter, setSelectedFilter] = useState<TimeFilter>(TimeFilterEnum.WEEK);
   const [showHint, setShowHint] = useState(false);
+  const queryClient = useQueryClient();
 
   const { user, isGuest } = useAuthStore();
   const editProfileRef = useRef<BottomSheetModal>(null);
@@ -50,14 +54,37 @@ export function LeaderboardScreen() {
     editProfileRef.current?.present();
   }
 
-  async function handleUpdateName(newName: string) {
+  async function handleUpdateProfile(newName: string, newPhotoUri?: string | null) {
     if (!user) return;
     try {
-      await authApiService.updateProfile({ userName: newName });
-      // Opcional: fechar o hint após mudar o nome pela primeira vez
+      let finalPhotoUrl = user.photoURL;
+
+      if (newPhotoUri === "") {
+        await authApiService.updateProfile({ userName: newName, photoUrl: "" });
+        finalPhotoUrl = null;
+      } else if (
+        newPhotoUri &&
+        (newPhotoUri.startsWith("file://") ||
+          newPhotoUri.startsWith("content://") ||
+          newPhotoUri.startsWith("ph://"))
+      ) {
+        const res = await mediaApiService.uploadAvatar(newPhotoUri, "avatar.jpg");
+        finalPhotoUrl = res.url;
+        await authApiService.updateProfile({ userName: newName, photoUrl: res.url });
+      } else {
+        await authApiService.updateProfile({ userName: newName });
+      }
+
+      useAuthStore.getState().setUser({
+        ...user,
+        displayName: newName,
+        photoURL: finalPhotoUrl,
+      });
+
       handleCloseHint();
+      queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
     } catch (error) {
-      console.error("Erro ao atualizar nome no placar:", error);
+      console.error("Erro ao atualizar perfil no placar:", error);
       throw error;
     }
   }
@@ -136,7 +163,7 @@ export function LeaderboardScreen() {
             <User size={18} color={theme.colors.primary} />
           </View>
           <Text style={styles.hintText}>
-            Prefere usar um apelido no placar?{" "}
+            Quer alterar sua foto ou apelido no placar?{" "}
             <Text style={styles.hintAction} onPress={handleEditName}>
               Personalizar
             </Text>
@@ -190,7 +217,8 @@ export function LeaderboardScreen() {
       <EditProfileBottomSheet
         ref={editProfileRef}
         initialName={user?.displayName || ""}
-        onSave={handleUpdateName}
+        initialPhotoUrl={user?.photoURL}
+        onSave={handleUpdateProfile}
       />
     </SafeAreaView>
   );
