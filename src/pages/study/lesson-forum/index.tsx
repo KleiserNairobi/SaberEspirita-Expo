@@ -8,8 +8,8 @@ import {
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
+import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { doc, getDoc } from "firebase/firestore";
 import { ArrowLeft, Brain, ChevronDown, Compass, EyeOff } from "lucide-react-native";
 import { HandHeart, Heart, Leaf, Lightbulb, X } from "lucide-react-native";
 import { MoreVertical, PenTool, Sparkles, Sprout, TreePalm } from "lucide-react-native";
@@ -19,7 +19,6 @@ import { AppBackground } from "@/components/AppBackground";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { CommunityLevelUpModal } from "@/components/CommunityLevelUpModal";
-import { auth, db } from "@/configs/firebase/firebase";
 import { useTouchCourseAccess } from "@/hooks/queries/useCourseProgress";
 import {
   useCommunityProgress,
@@ -66,9 +65,11 @@ export function LessonForumScreen({ route, navigation }: Props) {
   const styles = createStyles(theme);
   const { user, isGuest } = useAuthStore();
   const { mutate: touchAccess } = useTouchCourseAccess();
-  const uid = auth.currentUser?.uid || user?.uid || null;
+  const uid = user?.uid || null;
 
   const { courseId, lessonId, lessonTitle, anchorQuestion, focusTag } = route.params;
+
+  console.log(`[LessonForumScreen LOG] courseId="${courseId}", lessonId="${lessonId}", isGuest=${isGuest}, uid="${uid}"`);
 
   const { data: lesson } = useLesson(courseId, lessonId);
 
@@ -207,9 +208,9 @@ export function LessonForumScreen({ route, navigation }: Props) {
   }, [isGuest, lessonId, setLastSeen, user?.uid]);
 
   useEffect(() => {
-    if (!auth.currentUser?.uid || isGuest) return;
-    touchAccess({ courseId, lessonId, userId: auth.currentUser.uid });
-  }, [courseId, isGuest, lessonId, touchAccess]);
+    if (!user?.uid || isGuest) return;
+    touchAccess({ courseId, lessonId, userId: user.uid });
+  }, [courseId, isGuest, lessonId, touchAccess, user?.uid]);
 
   useEffect(() => {
     if (!user?.uid || isGuest) return;
@@ -243,7 +244,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
         };
       }
 
-      if (!auth.currentUser?.uid) {
+      if (!user?.uid) {
         return {
           ok: false,
           message: "Sua sessão expirou. Faça login novamente para reagir.",
@@ -254,70 +255,30 @@ export function LessonForumScreen({ route, navigation }: Props) {
         return { ok: false, message: "Comentário não encontrado. Tente novamente." };
       }
 
-      const commentRef = doc(db, "lesson_forums", lessonId, "comments", comment.id);
-      const commentSnap = await getDoc(commentRef);
-      if (!commentSnap.exists()) {
-        return { ok: false, message: "Comentário não encontrado. Tente novamente." };
-      }
-
-      const data = commentSnap.data() as Record<string, unknown>;
-      const commentUserId = typeof data.userId === "string" ? data.userId : null;
-      const commentCourseId = typeof data.courseId === "string" ? data.courseId : null;
-      const isDeleted = !!data.isDeleted;
-      const moderationStatus =
-        typeof data.moderationStatus === "string"
-          ? (data.moderationStatus as string)
-          : null;
-
-      if (commentUserId && commentUserId === auth.currentUser.uid) {
+      if (comment.userId && comment.userId === user.uid) {
         return { ok: false, message: "Você não pode reagir ao seu próprio comentário." };
       }
 
-      if (isDeleted) {
+      if (comment.isDeleted) {
         return {
           ok: false,
           message: "Este comentário foi removido e não pode receber reações.",
         };
       }
 
-      if (moderationStatus === "HIDDEN") {
-        return {
-          ok: false,
-          message: "Este comentário não está disponível para reações.",
-        };
-      }
+      const commentCourseId = comment.courseId || courseId;
 
-      if (!commentCourseId) {
-        return {
-          ok: false,
-          message: "Não foi possível validar o curso deste comentário.",
-        };
-      }
-
-      touchAccess({
-        courseId: commentCourseId,
-        lessonId,
-        userId: auth.currentUser.uid,
-      });
-
-      const progressRef = doc(
-        db,
-        "users",
-        auth.currentUser.uid,
-        "courseProgress",
-        commentCourseId
-      );
-      const progressSnap = await getDoc(progressRef);
-      if (!progressSnap.exists()) {
-        return {
-          ok: false,
-          message: "Você precisa iniciar este curso para reagir no fórum.",
-        };
+      if (commentCourseId && user.uid) {
+        touchAccess({
+          courseId: commentCourseId,
+          lessonId,
+          userId: user.uid,
+        });
       }
 
       return { ok: true };
     },
-    [isGuest, lessonId]
+    [courseId, isGuest, lessonId, touchAccess, user?.uid]
   );
 
   const showGuestMessage = useCallback(() => {
@@ -355,20 +316,33 @@ export function LessonForumScreen({ route, navigation }: Props) {
     const userAvatar = null;
     const level = communityProgress?.communityLevelId ?? "sementeiro";
 
-    await createComment({
-      courseId,
-      lessonId,
-      content,
-      isAnonymous,
-      userName,
-      userAvatar,
-      userCommunityLevel: level,
-    });
+    try {
+      await createComment({
+        courseId,
+        lessonId,
+        content,
+        isAnonymous,
+        userName,
+        userAvatar,
+        userCommunityLevel: level,
+      });
 
-    setText("");
-    setIsAnonymous(false);
-    setIsExpanded(false);
-    void refetch();
+      setText("");
+      setIsAnonymous(false);
+      setIsExpanded(false);
+      await refetch();
+    } catch (err) {
+      console.error("[Forum] Erro ao publicar comentário:", err);
+      setMessageConfig({
+        type: "error",
+        title: "Fórum",
+        message: "Não foi possível publicar sua reflexão agora. Tente novamente.",
+        primaryButton: {
+          label: "Entendi",
+          onPress: () => setMessageConfig(null),
+        },
+      });
+    }
   }, [
     communityProgress?.communityLevelId,
     courseId,
@@ -412,7 +386,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
   const handleSelectReaction = useCallback(
     async (type: ForumReactionType) => {
       if (!reactionTarget) return;
-      if (!auth.currentUser?.uid) return;
+      if (!user?.uid) return;
 
       const target = reactionTarget;
 
@@ -437,7 +411,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
         const baseMessage = String((e as any)?.message ?? "").trim();
         const message = code.includes("permission-denied")
           ? __DEV__
-            ? `Sem permissão para salvar sua reação.\n\nuid: ${auth.currentUser?.uid ?? "-"}\nprojectId: ${String(auth.app.options.projectId ?? "-")}\nlessonId: ${lessonId}\ncommentId: ${target.id}`
+            ? `Sem permissão para salvar sua reação.\n\nuid: ${user.uid}\nlessonId: ${lessonId}\ncommentId: ${target.id}`
             : "Sem permissão para salvar sua reação. Reabra a aula para validar sua matrícula ou faça login novamente."
           : baseMessage.length > 0
             ? baseMessage

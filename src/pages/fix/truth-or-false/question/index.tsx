@@ -10,7 +10,6 @@ import {
 
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Timestamp } from "firebase/firestore";
 import { ArrowLeft, Check, HelpCircle, X } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -78,7 +77,7 @@ export function TruthOrFalseQuestionScreen() {
         userAnswer,
         isCorrect,
         timeSpent: 0, // pode implementar timer depois
-        respondedAt: Timestamp.now(),
+        respondedAt: new Date().toISOString(),
         savedToLibrary: false,
       });
 

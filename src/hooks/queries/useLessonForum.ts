@@ -12,8 +12,8 @@ import { CommunityLevelId, ForumComment, ForumReactionType } from "@/types/forum
 
 export const FORUM_KEYS = {
   communityProgress: (userId: string) => ["communityProgress", userId] as const,
-  comments: (lessonId: string, userId: string) =>
-    ["forumComments", lessonId, userId] as const,
+  comments: (lessonId: string, _userId?: string) =>
+    ["forumCommentsV2", lessonId] as const,
   hasNew: (lessonId: string, userId: string) =>
     ["forumHasNew", lessonId, userId] as const,
 };
@@ -59,21 +59,23 @@ export function useForumHasNewComments(lessonId: string) {
  * Hook para buscar comentários paginados de uma lição (suporte a Infinite Scroll).
  */
 export function useLessonForumComments(_courseId: string, lessonId: string) {
-  const { user, isGuest } = useAuthStore();
+  const { user } = useAuthStore();
 
   return useInfiniteQuery({
     queryKey: FORUM_KEYS.comments(lessonId, user?.uid || "guest"),
-    queryFn: async ({ pageParam = 1 }) => {
-      if (isGuest || !lessonId) {
+    queryFn: async ({ pageParam = 0 }) => {
+      const page = typeof pageParam === "number" ? Math.max(0, pageParam) : 0;
+      if (!lessonId) {
         return { comments: [], nextPage: null };
       }
-      return forumApiService.getComments(lessonId, pageParam as number, 20);
+      return forumApiService.getComments(lessonId, page, 20);
     },
-    enabled: !!lessonId && !isGuest,
-    initialPageParam: 1,
+    enabled: !!lessonId,
+    initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
-    staleTime: 1000 * 60 * 10,
-    refetchOnMount: false,
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: "always",
   });
 }
 
@@ -116,7 +118,7 @@ export function useCreateForumComment() {
     },
     onSuccess: (_, vars) => {
       queryClient.invalidateQueries({
-        queryKey: FORUM_KEYS.comments(vars.lessonId, user?.uid || "guest"),
+        queryKey: ["forumComments", vars.lessonId],
       });
       queryClient.invalidateQueries({
         queryKey: FORUM_KEYS.communityProgress(user?.uid || "guest"),

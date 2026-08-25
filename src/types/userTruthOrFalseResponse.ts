@@ -1,5 +1,3 @@
-import { Timestamp } from "firebase/firestore";
-
 /**
  * Interface para a resposta do usuário a uma pergunta de Verdade ou Mentira
  */
@@ -11,6 +9,6 @@ export interface IUserTruthOrFalseResponse {
   userAnswer: boolean; // O que o usuário respondeu (true = Verdade, false = Mentira)
   isCorrect: boolean; // Se acertou ou errou
   timeSpent: number; // Tempo em segundos para responder
-  respondedAt: Timestamp; // Timestamp exato da resposta
+  respondedAt: string | Date; // Timestamp exato da resposta
   savedToLibrary: boolean; // Se o usuário salvou para revisão posterior
 }

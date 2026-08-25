@@ -12,27 +12,73 @@ export interface ForumCommentsResponse {
   totalComments?: number;
 }
 
+function normalizeReactions(raw: any): Record<ForumReactionType, number> {
+  if (!raw || typeof raw !== "object") {
+    return {
+      me_tocou: 0,
+      aprendi_algo: 0,
+      quero_refletir: 0,
+      gratidao: 0,
+      luz: 0,
+    };
+  }
+  return {
+    me_tocou: Number(raw.me_tocou ?? raw.meTocou ?? 0),
+    aprendi_algo: Number(raw.aprendi_algo ?? raw.aprendiAlgo ?? 0),
+    quero_refletir: Number(raw.quero_refletir ?? raw.queroRefletir ?? 0),
+    gratidao: Number(raw.gratidao ?? raw.gratidao ?? 0),
+    luz: Number(raw.luz ?? raw.luz ?? 0),
+  };
+}
+
 export const forumApiService = {
   /**
    * Obtém a lista paginada de comentários de uma lição.
    */
   async getComments(
     lessonId: string,
-    page: number = 1,
+    page: number = 0,
     limit: number = 20
   ): Promise<ForumCommentsResponse> {
     if (!lessonId) return { comments: [], nextPage: null };
+    const pageNum = typeof page === "number" && !isNaN(page) ? Math.max(0, page) : 0;
     const response = await apiClient.get<any>(
       `/forum/lessons/${lessonId}/comments`,
-      { params: { page, limit } }
+      { params: { page: pageNum, size: limit, limit } }
     );
     const data = response.data;
+    console.log(`[forumApiService.getComments] lessonId="${lessonId}", page=${pageNum}, status=${response.status}`, "data:", data);
     if (!data) return { comments: [], nextPage: null };
-    if (Array.isArray(data)) return { comments: data, nextPage: null };
+
+    const rawComments = Array.isArray(data)
+      ? data
+      : Array.isArray(data.content)
+      ? data.content
+      : Array.isArray(data.comments)
+      ? data.comments
+      : [];
+
+    const comments: ForumComment[] = rawComments.map((item: any) => ({
+      ...item,
+      myReaction: item.myReaction ?? item.userReaction ?? null,
+      reactions: normalizeReactions(item.reactions),
+    }));
+
+    const isLast =
+      data.last === true ||
+      (data.number !== undefined &&
+        data.totalPages !== undefined &&
+        data.number >= data.totalPages - 1);
+    const nextPage = isLast
+      ? null
+      : data.number !== undefined
+      ? data.number + 1
+      : page + 1;
+
     return {
-      comments: Array.isArray(data.comments) ? data.comments : [],
-      nextPage: data.nextPage ?? null,
-      totalComments: data.totalComments,
+      comments,
+      nextPage,
+      totalComments: data.totalElements ?? data.totalComments ?? comments.length,
     };
   },
 
@@ -43,11 +89,16 @@ export const forumApiService = {
     lessonId: string,
     payload: CreateCommentPayload
   ): Promise<ForumComment> {
-    const response = await apiClient.post<ForumComment>(
+    const response = await apiClient.post<any>(
       `/forum/lessons/${lessonId}/comments`,
       payload
     );
-    return response.data;
+    const item = response.data;
+    return {
+      ...item,
+      myReaction: item?.myReaction ?? item?.userReaction ?? null,
+      reactions: normalizeReactions(item?.reactions),
+    };
   },
 
   /**

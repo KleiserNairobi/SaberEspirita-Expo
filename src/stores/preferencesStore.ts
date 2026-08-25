@@ -1,9 +1,7 @@
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { OneSignal } from "react-native-onesignal";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { auth, db } from "@/configs/firebase/firebase";
 import * as Storage from "@/utils/Storage";
 
 // Adapter MMKV para Zustand
@@ -69,20 +67,6 @@ export const usePreferencesStore = create<PreferencesState>()(
           OneSignal.User.addTag("course_reminders", value.toString());
         } catch (error) {
           console.error("Erro ao sincronizar tag course_reminders:", error);
-        }
-
-        const uid = auth.currentUser?.uid;
-        if (uid) {
-          setDoc(
-            doc(db, "users", uid),
-            {
-              "notificationPrefs.course_reminders": value,
-              updatedAt: serverTimestamp(),
-            },
-            { merge: true }
-          ).catch((error) => {
-            console.error("Erro ao persistir preferência course_reminders:", error);
-          });
         }
       },
 
