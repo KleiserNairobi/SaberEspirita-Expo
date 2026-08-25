@@ -3,7 +3,6 @@ import { useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { httpsCallable } from "firebase/functions";
 import {
   Bell,
   BellRing,
@@ -25,7 +24,6 @@ import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types"
 import { Button } from "@/components/Button";
 import { SettingsItem } from "@/components/SettingsItem";
 import { SettingsSection } from "@/components/SettingsSection";
-import { functions } from "@/configs/firebase/firebase";
 import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
 import { authApiService } from "@/services/api/authApiService";
 import { AccountHeader } from "@/pages/account/components/AccountHeader";
@@ -143,20 +141,14 @@ export default function AccountScreen() {
     }, 100);
 
     try {
-      // 1. Tentar excluir via API REST Spring Boot
-      try {
-        await authApiService.deleteAccount();
-        console.log("AccountScreen: Conta excluída via API REST Spring Boot com sucesso.");
-      } catch (restError) {
-        console.warn("AccountScreen: Falha na exclusão REST, tentando via Cloud Function:", restError);
-        const deleteFn = httpsCallable(functions, "deleteMyAccount");
-        await deleteFn({ confirm: true, reason });
-      }
+      // Exclusão lógica (LGPD/Anonimização) via API REST Spring Boot
+      await authApiService.deleteAccount();
+      console.log("AccountScreen: Conta excluída (anonimizada) via API REST Spring Boot com sucesso.");
 
       setMessageConfig({
         type: "success",
         title: "Conta excluída",
-        message: "Sua conta e seus dados foram removidos com sucesso.",
+        message: "Sua conta e seus dados foram anonimizados com sucesso.",
       });
       setTimeout(() => {
         bottomSheetRef.current?.present();
