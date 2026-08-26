@@ -117,17 +117,39 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.sm, // Gap between avatar and bar
       alignItems: "center",
       justifyContent: "center",
+      position: "relative",
     },
     avatar: {
       width: 60,
       height: 60,
       borderRadius: 30,
-      borderWidth: 2,
+      borderWidth: 1.5,
       borderColor: theme.colors.primary,
     },
-    avatarFirst: {},
+    avatarFirst: {
+      width: 68,
+      height: 68,
+      borderRadius: 34,
+      borderWidth: 1.5,
+      borderColor: theme.colors.primary,
+    },
     avatarSecond: {},
     avatarThird: {},
+
+    // Crown Badge for 1st place
+    crownBadgeContainer: {
+      position: "absolute",
+      top: -16,
+      backgroundColor: "#FFD700",
+      padding: 4,
+      borderRadius: 12,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+      zIndex: 10,
+    },
 
     // The Bars
     podiumBar: {
@@ -192,8 +214,9 @@ export const createStyles = (theme: ITheme) =>
       borderColor: theme.colors.border,
     },
     currentUserItem: {
-      backgroundColor: theme.colors.primary + "10", // 10% opacity primary bg
+      backgroundColor: theme.colors.primary + "15", // 15% opacity primary bg
       borderColor: theme.colors.primary,
+      borderWidth: 2,
     },
     rankContainer: {
       width: 32,
@@ -251,5 +274,58 @@ export const createStyles = (theme: ITheme) =>
     activeFilterText: {
       color: "#FFFFFF",
       fontWeight: "bold",
+    },
+    // Card Fixo do Rodapé (Usuário Logado Fora do Top 100)
+    userFooterContainer: {
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      backgroundColor: theme.colors.background,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: -2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 4,
+      elevation: 8,
+    },
+    userFooterCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.colors.primary + "15",
+      paddingVertical: 12,
+      paddingHorizontal: theme.spacing.md,
+      borderRadius: theme.radius.md,
+      borderWidth: 2,
+      borderColor: theme.colors.primary,
+    },
+    footerRankContainer: {
+      width: 44,
+      alignItems: "center",
+      justifyContent: "center",
+      marginRight: theme.spacing.sm,
+    },
+    footerRankText: {
+      ...theme.text("md", "bold", theme.colors.primary),
+    },
+    footerAvatar: {
+      width: 38,
+      height: 38,
+      borderRadius: 19,
+      marginRight: theme.spacing.md,
+      borderWidth: 1.5,
+      borderColor: theme.colors.primary,
+    },
+    footerContent: {
+      flex: 1,
+    },
+    footerLabel: {
+      ...theme.text("xs", "medium", theme.colors.textSecondary),
+      marginBottom: 2,
+    },
+    footerName: {
+      ...theme.text("md", "semibold", theme.colors.text),
+    },
+    footerScore: {
+      ...theme.text("md", "bold", theme.colors.primary),
     },
   });

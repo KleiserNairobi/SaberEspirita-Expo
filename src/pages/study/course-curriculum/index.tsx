@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { RouteProp, useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, BookOpen, CheckCircle, ChevronRight } from "lucide-react-native";
@@ -29,6 +29,7 @@ import { parseExerciseResults } from "@/services/api/userActivityApiService";
 import { useAuthStore } from "@/stores/authStore";
 import { ILesson } from "@/types/course";
 import { loadBoolean, saveBoolean } from "@/utils/Storage";
+import { getLessonSlideProgress } from "@/utils/lessonProgressStorage";
 
 import { ProgressSummaryCard } from "./components/ProgressSummaryCard";
 import { createStyles } from "./styles";
@@ -54,6 +55,15 @@ export function CourseCurriculumScreen() {
   const route = useRoute<CourseCurriculumRouteProp>();
   const navigation = useNavigation<NavigationProp>();
   const { courseId, autoEnroll } = route.params;
+
+  // Estado para forçar re-renderização ao retornar do leitor de aula
+  const [, setFocusTick] = useState(0);
+
+  useFocusEffect(
+    useCallback(() => {
+      setFocusTick((prev) => prev + 1);
+    }, [])
+  );
 
   // Fetch das aulas reais
   const { data: lessons = [], isLoading: isLoadingLessons } = useLessons(courseId);
@@ -240,19 +250,27 @@ export function CourseCurriculumScreen() {
   }, [courseId, isGuest, user?.uid, autoEnroll, touchAccess]);
 
   function getLessonStatus(lesson: ILesson, _index: number): LessonStatus {
-    // Verificar se a aula foi concluída
-    if (progress?.completedLessons.includes(lesson.id)) {
+    // 1. Se a aula já foi concluída ativamente pelo usuário no backend
+    if (progress?.completedLessons?.includes(lesson.id)) {
       return LessonStatus.COMPLETED;
     }
 
-    // Verificar se é a próxima aula (em andamento)
+    // 2. Se o usuário tem progresso de slide salvo > 0 (qualquer slide a partir do slide 2, incluindo o último)
+    const slideProg = getLessonSlideProgress(user?.uid, lesson.id);
+    if (
+      slideProg &&
+      typeof slideProg.slideIndex === "number" &&
+      slideProg.slideIndex > 0
+    ) {
+      return LessonStatus.IN_PROGRESS;
+    }
+
+    // 3. Se for a última aula acessada no backend
     if (progress?.lastLessonId === lesson.id) {
       return LessonStatus.IN_PROGRESS;
     }
 
-    // Lógica ÁGIL (Híbrida):
-    // Todas as outras aulas estão visualmente DISPONÍVEIS ao invés de BLOQUEADAS (cadeado).
-    // O aviso de pulo será dado ao clicar.
+    // 4. Demais aulas ficam disponíveis (não iniciadas)
     return LessonStatus.AVAILABLE;
   }
 
@@ -268,7 +286,6 @@ export function CourseCurriculumScreen() {
     navigation.navigate("CourseDetails", { courseId });
   };
 
-  // ✅ NOVO: Handler para botão de certificado
   // ✅ NOVO: Handler para botão de certificado
   function handleGetCertificate() {
     if (!isReadyForCertificate) {
@@ -574,6 +591,7 @@ export function CourseCurriculumScreen() {
     const isComingSoon = item.status === "COMING_SOON";
 
     const status = getLessonStatus(item, index);
+    const slideProg = getLessonSlideProgress(user?.uid, item.id);
 
     // Obter exercícios desta aula
     const lessonExercises = allExercises
@@ -621,9 +639,9 @@ export function CourseCurriculumScreen() {
                   {!isComingSoon && status === LessonStatus.IN_PROGRESS && (
                     <PlayCircle
                       size={32}
-                      color={theme.colors.primary}
-                      fill={theme.colors.primary}
-                      fillOpacity={0.1}
+                      color="#E67E22"
+                      fill="#E67E22"
+                      fillOpacity={0.15}
                     />
                   )}
                   {!isComingSoon && status === LessonStatus.LOCKED && (
@@ -646,6 +664,25 @@ export function CourseCurriculumScreen() {
                     <Text style={styles.statusBadgeTextComingSoon}>EM BREVE</Text>
                   </View>
                 )}
+                {!isComingSoon && status === LessonStatus.COMPLETED && (
+                  <View style={styles.statusBadgeCompleted}>
+                    <Text style={styles.statusBadgeTextCompleted}>CONCLUÍDA</Text>
+                  </View>
+                )}
+                {!isComingSoon && status === LessonStatus.IN_PROGRESS && (
+                  <>
+                    <View style={styles.statusBadgeInProgress}>
+                      <Text style={styles.statusBadgeTextInProgress}>EM ANDAMENTO</Text>
+                    </View>
+                    {slideProg && (
+                      <View style={styles.slideProgressBadge}>
+                        <Text style={styles.slideProgressText}>
+                          Slide {slideProg.slideIndex + 1} de {slideProg.totalSlides || item.slides?.length || 1}
+                        </Text>
+                      </View>
+                    )}
+                  </>
+                )}
                 {!isComingSoon && status === LessonStatus.LOCKED && (
                   <View style={styles.statusBadgeLocked}>
                     <Text style={styles.statusBadgeTextLocked}>BLOQUEADA</Text>
@@ -663,6 +700,7 @@ export function CourseCurriculumScreen() {
                 <Text style={styles.lessonTitle} numberOfLines={1}>
                   {index + 1}. {item.title}
                 </Text>
+
                 {/* Source com ícone */}
                 {item.source && (
                   <View style={styles.metaRow}>

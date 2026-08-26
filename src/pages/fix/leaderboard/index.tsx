@@ -1,29 +1,35 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
 import {
-  View,
-  ScrollView,
   ActivityIndicator,
+  FlatList,
+  Image,
+  Platform,
   Text,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { createStyles } from "./styles";
+import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, User, X } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { useCurrentUserScore, useLeaderboard } from "@/hooks/queries/useLeaderboard";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { EditProfileBottomSheet } from "@/pages/account/components/EditProfileBottomSheet";
+import { authApiService } from "@/services/api/authApiService";
+import { mediaApiService } from "@/services/api/mediaApiService";
+import { useAuthStore } from "@/stores/authStore";
+import { TimeFilter, TimeFilterEnum } from "@/types/leaderboard";
+import { loadBoolean, saveBoolean } from "@/utils/Storage";
+import { formatUserName } from "@/utils/formatName";
+
 import { LeaderboardFilter } from "./components/LeaderboardFilter";
 import { LeaderboardPodium } from "./components/Podium";
 import { RankingList } from "./components/RankingList";
-import { TimeFilter, TimeFilterEnum } from "@/types/leaderboard";
-import { useLeaderboard } from "@/hooks/queries/useLeaderboard";
-import { useAuthStore } from "@/stores/authStore";
-import { EditProfileBottomSheet } from "@/pages/account/components/EditProfileBottomSheet";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { loadBoolean, saveBoolean } from "@/utils/Storage";
-import { authApiService } from "@/services/api/authApiService";
-
-import { useQueryClient } from "@tanstack/react-query";
-import { mediaApiService } from "@/services/api/mediaApiService";
+import { createStyles } from "./styles";
 
 const HIDE_HINT_KEY = "@hide_leaderboard_hint";
 
@@ -141,10 +147,33 @@ export function LeaderboardScreen() {
     );
   }
 
-  const { data: players = [], isLoading } = useLeaderboard(selectedFilter);
+  const { data: rawPlayers = [], isLoading } = useLeaderboard(selectedFilter);
+  const { data: myScoreData } = useCurrentUserScore();
 
-  const topThree = players.slice(0, 3);
-  const others = players.slice(3);
+  // Limitação estrita do placar ao Top 100
+  const top100Players = rawPlayers.slice(0, 100);
+  const topThree = top100Players.slice(0, 3);
+  const others = top100Players.slice(3, 100);
+
+  // Verifica se o usuário autenticado está entre os 100 primeiros colocados
+  const isUserInTop100 = top100Players.some(
+    (p) => p.isCurrentUser || (user?.uid && p.userId === user.uid)
+  );
+
+  // Card fixo do rodapé para o usuário logado caso NÃO esteja no Top 100
+  const userFooterData =
+    !isUserInTop100 && !isGuest && user
+      ? myScoreData || {
+          userId: user.uid,
+          userName: user.displayName || "Você",
+          photoURL: user.photoURL || undefined,
+          score: 0,
+          position: 0,
+          isCurrentUser: true,
+        }
+      : null;
+
+  const primaryColorHex = theme.colors.primary.replace("#", "");
 
   return (
     <SafeAreaView style={styles.container}>
@@ -182,12 +211,12 @@ export function LeaderboardScreen() {
 
       {/* Content */}
       <View style={styles.content}>
-        {isLoading && players.length === 0 ? (
+        {isLoading && rawPlayers.length === 0 ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={theme.colors.primary} />
             <Text style={styles.loadingText}>Carregando ranking...</Text>
           </View>
-        ) : players.length === 0 ? (
+        ) : rawPlayers.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyTitle}>Nenhum registro ainda</Text>
             <Text style={styles.emptyMessage}>
@@ -199,20 +228,50 @@ export function LeaderboardScreen() {
             </Text>
           </View>
         ) : (
-          <ScrollView
+          <FlatList
+            data={others}
+            keyExtractor={(item) => item.userId}
+            renderItem={({ item }) => <RankingList player={item} />}
+            ListHeaderComponent={<LeaderboardPodium players={topThree} />}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.scrollContent}
-          >
-            {/* Top 3 Podium */}
-            <LeaderboardPodium players={topThree} />
-
-            {/* List for the rest */}
-            {others.map((player) => (
-              <RankingList key={player.userId} player={player} />
-            ))}
-          </ScrollView>
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={5}
+            removeClippedSubviews={Platform.OS === "android"}
+          />
         )}
       </View>
+
+      {/* Card Fixo de Rodapé para Usuário Logado Fora do Top 100 */}
+      {userFooterData && (
+        <View style={styles.userFooterContainer}>
+          <View style={styles.userFooterCard}>
+            <View style={styles.footerRankContainer}>
+              <Text style={styles.footerRankText}>
+                {userFooterData.position > 0 ? `${userFooterData.position}º` : "-"}
+              </Text>
+            </View>
+            <Image
+              source={{
+                uri:
+                  userFooterData.photoURL?.trim() ||
+                  `https://ui-avatars.com/api/?background=${primaryColorHex}&color=fff&name=${encodeURIComponent(
+                    formatUserName(userFooterData.userName)
+                  )}&bold=true&font-size=0.35&format=png`,
+              }}
+              style={styles.footerAvatar}
+            />
+            <View style={styles.footerContent}>
+              <Text style={styles.footerLabel}>Sua Posição</Text>
+              <Text style={styles.footerName} numberOfLines={1}>
+                {formatUserName(userFooterData.userName)}
+              </Text>
+            </View>
+            <Text style={styles.footerScore}>{userFooterData.score} pts</Text>
+          </View>
+        </View>
+      )}
 
       <EditProfileBottomSheet
         ref={editProfileRef}

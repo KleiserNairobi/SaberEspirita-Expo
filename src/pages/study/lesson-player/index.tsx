@@ -51,6 +51,12 @@ import { IGlossaryTerm } from "@/types/glossary";
 import { SHARE_FOOTER } from "@/utils/constants";
 import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
 
+import {
+  saveLessonSlideProgress,
+  getLessonSlideProgress,
+  clearLessonSlideProgress,
+} from "@/utils/lessonProgressStorage";
+
 import { GlossaryTermBottomSheet } from "./components/GlossaryTermBottomSheet";
 import { LessonActionsFAB } from "./components/LessonActionsFAB";
 import { LessonSlide } from "./components/LessonSlide";
@@ -158,6 +164,28 @@ export function LessonPlayerScreen() {
   const isFirstSlide = currentSlideIndex === 0;
   const currentSlide = lesson?.slides[currentSlideIndex];
 
+  // ✅ Restauração do progresso de slide salvo da aula
+  const isRestoredRef = useRef(false);
+
+  React.useEffect(() => {
+    if (!lesson || isRestoredRef.current || totalSlides === 0) return;
+    isRestoredRef.current = true;
+
+    const savedProgress = getLessonSlideProgress(user?.uid, lessonId);
+    if (
+      savedProgress &&
+      typeof savedProgress.slideIndex === "number" &&
+      savedProgress.slideIndex > 0 &&
+      savedProgress.slideIndex < totalSlides
+    ) {
+      const targetIndex = savedProgress.slideIndex;
+      setCurrentSlideIndex(targetIndex);
+      setTimeout(() => {
+        flatListRef.current?.scrollToIndex({ index: targetIndex, animated: false });
+      }, 100);
+    }
+  }, [lesson, lessonId, totalSlides, user?.uid]);
+
   // ✅ Prefetch da próxima aula
   const { data: allLessons } = useLessons(courseId);
 
@@ -207,6 +235,9 @@ export function LessonPlayerScreen() {
       if (newIndex !== currentSlideIndex) {
         setCurrentSlideIndex(newIndex);
 
+        // Salva o progresso do slide atual
+        saveLessonSlideProgress(user?.uid, lessonId, newIndex, totalSlides);
+
         // Para narração ao mudar de slide
         if (isNarrating) {
           stopSpeaking();
@@ -214,11 +245,14 @@ export function LessonPlayerScreen() {
         }
       }
     },
-    [currentSlideIndex, isNarrating]
+    [currentSlideIndex, isNarrating, lessonId, totalSlides, user?.uid]
   );
 
   async function handleFinish() {
     if (!lesson) return;
+
+    // Limpa o progresso temporário do slide pois a aula foi concluída
+    clearLessonSlideProgress(user?.uid, lesson.id);
 
     if (!isGuest && isLessonAlreadyCompleted) {
       navigateBackAfterCompletion();
@@ -560,13 +594,9 @@ export function LessonPlayerScreen() {
 
         {isLastSlide ? (
           <TouchableOpacity
-            style={[
-              styles.finishButton,
-              (isProcessing || (!isGuest && isLessonAlreadyCompleted)) &&
-                styles.finishButtonDisabled,
-            ]}
+            style={[styles.finishButton, isProcessing && styles.finishButtonDisabled]}
             onPress={handleFinish}
-            disabled={isProcessing || (!isGuest && isLessonAlreadyCompleted)}
+            disabled={isProcessing}
           >
             {isProcessing ? (
               <>
@@ -576,15 +606,7 @@ export function LessonPlayerScreen() {
                 </Text>
               </>
             ) : (
-              <Text
-                style={[
-                  styles.finishButtonText,
-                  (!isGuest && isLessonAlreadyCompleted) &&
-                    styles.finishButtonTextDisabled,
-                ]}
-              >
-                {(!isGuest && isLessonAlreadyCompleted) ? "Concluída" : "Finalizar"}
-              </Text>
+              <Text style={styles.finishButtonText}>Finalizar</Text>
             )}
           </TouchableOpacity>
         ) : (

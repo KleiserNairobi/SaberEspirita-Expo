@@ -129,8 +129,8 @@ export const createStyles = (theme: ITheme) =>
       borderColor: `${theme.colors.success}30`, // ✅ Success 30% opacidade
     },
     cardInProgress: {
-      backgroundColor: `${theme.colors.primary}15`, // ✅ Primary 15% opacidade
-      borderColor: `${theme.colors.primary}30`, // ✅ Primary 30% opacidade
+      backgroundColor: "#E67E2212", // ✅ Laranja 12% opacidade
+      borderColor: "#E67E2240", // ✅ Laranja 40% opacidade
       flexDirection: "column",
       alignItems: "stretch",
     },
@@ -143,7 +143,6 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: theme.colors.card,
       borderColor: theme.colors.border,
     },
-
     // CONTEÚDO DO CARD
     cardHeaderRow: {
       flexDirection: "row",
@@ -262,12 +261,49 @@ export const createStyles = (theme: ITheme) =>
       paddingHorizontal: 6,
       paddingVertical: 2,
       borderRadius: 4,
-      backgroundColor: theme.colors.success,
+      backgroundColor: `${theme.colors.textSecondary}30`,
     },
     statusBadgeTextAvailable: {
-      ...theme.text("xs", "semibold", theme.colors.background),
+      ...theme.text("xs", "semibold", theme.colors.textSecondary),
       fontSize: 8,
       letterSpacing: 0.3,
+    },
+    statusBadgeInProgress: {
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 4,
+      backgroundColor: "#E67E22", // Laranja vibrante
+    },
+    statusBadgeTextInProgress: {
+      ...theme.text("xs", "bold", "#FFFFFF"),
+      fontSize: 8,
+      letterSpacing: 0.3,
+    },
+    statusBadgeCompleted: {
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 4,
+      backgroundColor: theme.colors.success,
+    },
+    statusBadgeTextCompleted: {
+      ...theme.text("xs", "bold", "#FFFFFF"),
+      fontSize: 8,
+      letterSpacing: 0.3,
+    },
+    slideProgressBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: 4,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      backgroundColor: "#E67E2220", // Laranja 20% opacidade
+      borderRadius: 4,
+    },
+    slideProgressText: {
+      ...theme.text("xs", "bold", "#D35400"), // Laranja escuro para texto legível
+      fontSize: 9,
+      textAlign: "center",
     },
 
     // INTERNAL PROGRESS BAR (Para aulas em andamento)

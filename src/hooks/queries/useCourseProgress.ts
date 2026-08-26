@@ -41,9 +41,8 @@ export function useTouchCourseAccess() {
 
   return useMutation({
     mutationFn: async ({ courseId, lessonId }: TouchCourseAccessParams) => {
-      if (lessonId) {
-        return userActivityApiService.completeLesson(courseId, lessonId);
-      }
+      // O mero acesso à aula NÃO deve marcar a lição como concluída no backend.
+      // A lição só é concluída via useCompleteLesson() / handleFinish no botão de finalizar.
       return null;
     },
     onSuccess: (_, variables) => {

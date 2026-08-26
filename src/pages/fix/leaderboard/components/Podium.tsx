@@ -1,5 +1,5 @@
-import React from "react";
-
+import React, { useState, useEffect } from "react";
+import { Crown } from "lucide-react-native";
 import { Image, Text, View } from "react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -59,6 +59,11 @@ export function LeaderboardPodium({ players }: Props) {
       <View style={[styles.podiumItem, isFirst && styles.podiumFirst]}>
         {/* Avatar positioned above the bar */}
         <View style={styles.avatarContainer}>
+          {isFirst && (
+            <View style={styles.crownBadgeContainer}>
+              <Crown size={14} color="#7A5200" fill="#FFD700" />
+            </View>
+          )}
           <Image
             source={{ uri: avatarUrl }}
             onError={() => setImageFailed(true)}
