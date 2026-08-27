@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -10,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { PrayStackParamList } from "@/routers/types";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useQueryClient } from "@tanstack/react-query";
 import { Heart, BookOpen } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -41,6 +43,22 @@ export default function PrayScreen() {
     }
   }, [user?.uid, syncWithFirebase]);
 
+  const queryClient = useQueryClient();
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const handleRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["prayers"] }),
+        queryClient.invalidateQueries({ queryKey: ["prayerCategories"] }),
+        queryClient.invalidateQueries({ queryKey: ["trendingPrayers"] }),
+      ]);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [queryClient]);
+
   // Reseta o humor e desliga áudio da Oração passada ao retornar
   useFocusEffect(
     React.useCallback(() => {
@@ -66,6 +84,14 @@ export default function PrayScreen() {
         style={styles.safeArea}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[theme.colors.primary]}
+            tintColor={theme.colors.primary}
+          />
+        }
       >
         {/* Header com Atalhos */}
         <View style={styles.header}>

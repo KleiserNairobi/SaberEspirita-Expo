@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
 import {
   ActivityIndicator,
+  RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -62,12 +63,27 @@ export default function MeditateScreen() {
   }, [featuredMeditations]);
 
   const queryClient = useQueryClient();
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const handleRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: REFLECTION_KEYS.all }),
+        queryClient.invalidateQueries({ queryKey: REFLECTION_KEYS.featured }),
+        queryClient.invalidateQueries({ queryKey: MEDITATION_KEYS.all }),
+        queryClient.invalidateQueries({ queryKey: MEDITATION_KEYS.featured }),
+      ]);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [queryClient]);
 
   function prefetchReflection(id: string) {
     queryClient.prefetchQuery({
       queryKey: REFLECTION_KEYS.detail(id),
       queryFn: () => reflectionApiService.getReflectionById(id),
-      staleTime: 1000 * 60 * 60 * 24, // 24 horas
+      staleTime: 1000 * 60 * 15, // 15 minutos
     });
   }
 
@@ -75,7 +91,7 @@ export default function MeditateScreen() {
     queryClient.prefetchQuery({
       queryKey: MEDITATION_KEYS.detail(id),
       queryFn: () => meditationApiService.getMeditationById(id),
-      staleTime: 1000 * 60 * 60 * 24, // 24 horas
+      staleTime: 1000 * 60 * 15, // 15 minutos
     });
     if (imageUrl) Image.prefetch(imageUrl);
   }
@@ -97,6 +113,14 @@ export default function MeditateScreen() {
         style={styles.safeArea}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[theme.colors.primary]}
+            tintColor={theme.colors.primary}
+          />
+        }
       >
         {/* Header */}
         <View style={styles.header}>

@@ -19,7 +19,7 @@ export function useCourseProgress(courseId: string) {
     queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(userId, courseId),
     queryFn: () => userActivityApiService.getCourseProgress(courseId),
     enabled: !!userId && !!courseId,
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 1000 * 30, // 30 segundos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em memória
     refetchOnMount: true,
   });

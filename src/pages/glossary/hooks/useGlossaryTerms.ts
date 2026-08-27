@@ -14,9 +14,9 @@ export function useGlossaryTerms() {
   return useQuery({
     queryKey: GLOSSARY_KEYS.all,
     queryFn: () => glossaryApiService.getGlossaryTerms(),
-    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    staleTime: 1000 * 60 * 30, // 30 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnReconnect: true,
   });
 }
@@ -26,9 +26,9 @@ export function useGlossaryTerm(id: string) {
     queryKey: GLOSSARY_KEYS.term(id),
     queryFn: () => glossaryApiService.getGlossaryTermById(id),
     enabled: !!id,
-    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    staleTime: 1000 * 60 * 30, // 30 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnReconnect: true,
   });
 }

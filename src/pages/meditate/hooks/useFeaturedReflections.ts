@@ -10,8 +10,8 @@ export function useFeaturedReflections() {
       const reflections = await reflectionApiService.getReflections();
       return reflections.filter((r) => r.featured);
     },
-    staleTime: 1000 * 60 * 60 * 24, // 24 horas (conteúdo raramente muda)
+    staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: false,
+    refetchOnMount: true,
   });
 }

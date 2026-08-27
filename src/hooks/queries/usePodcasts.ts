@@ -11,9 +11,9 @@ export function usePodcasts() {
   return useQuery({
     queryKey: PODCAST_KEYS.all,
     queryFn: () => podcastApiService.getPodcasts(),
-    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnReconnect: true,
   });
 }
@@ -25,9 +25,9 @@ export function useFeaturedPodcasts() {
       const podcasts = await podcastApiService.getPodcasts();
       return podcasts.filter((p) => p.featured);
     },
-    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnReconnect: true,
   });
 }
@@ -37,9 +37,9 @@ export function usePodcast(id: string) {
     queryKey: PODCAST_KEYS.detail(id),
     queryFn: () => podcastApiService.getPodcastById(id),
     enabled: !!id,
-    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnReconnect: true,
   });
 }

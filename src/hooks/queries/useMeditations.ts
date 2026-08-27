@@ -11,9 +11,9 @@ export function useMeditations() {
   return useQuery({
     queryKey: MEDITATION_KEYS.all,
     queryFn: () => meditationApiService.getMeditations(),
-    staleTime: 1000 * 60 * 60 * 24, // 24 horas (conteúdo de áudio é estático)
+    staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnReconnect: true,
   });
 }
@@ -25,9 +25,9 @@ export function useFeaturedMeditations() {
       const meditations = await meditationApiService.getMeditations();
       return meditations.filter((m) => m.featured);
     },
-    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnReconnect: true,
   });
 }
@@ -37,9 +37,9 @@ export function useMeditation(id: string) {
     queryKey: MEDITATION_KEYS.detail(id),
     queryFn: () => meditationApiService.getMeditationById(id),
     enabled: !!id,
-    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnReconnect: true,
   });
 }

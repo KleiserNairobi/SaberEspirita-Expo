@@ -6,6 +6,7 @@ export function usePrayersByCategory(categoryId: string) {
     queryKey: ["prayers", "category", categoryId],
     queryFn: () => prayerApiService.getPrayers({ categoryId }),
     enabled: !!categoryId,
-    staleTime: 1000 * 60 * 60, // 1 hora
+    staleTime: 1000 * 60 * 15, // 15 minutos
+    refetchOnMount: true,
   });
 }

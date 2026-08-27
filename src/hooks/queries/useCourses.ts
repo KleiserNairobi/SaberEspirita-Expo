@@ -49,8 +49,9 @@ export function useFeaturedCourses() {
   return useQuery({
     queryKey: COURSES_KEYS.featured,
     queryFn: fetchFeaturedCourses,
-    staleTime: 1000 * 60 * 15, // 15 minutos
+    staleTime: 1000 * 60 * 3, // 3 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    refetchOnMount: true,
     refetchOnReconnect: true,
   });
 }

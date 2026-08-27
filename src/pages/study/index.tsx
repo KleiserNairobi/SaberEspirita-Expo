@@ -1,10 +1,11 @@
 import React, { useCallback, useRef, useState } from "react";
 
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useQueryClient } from "@tanstack/react-query";
 import { differenceInDays } from "date-fns";
 import { Bell, ChevronRight, Leaf, Sprout, TreePalm } from "lucide-react-native";
 import { Feather } from "lucide-react-native";
@@ -18,7 +19,7 @@ import { JourneyBottomSheet } from "@/components/JourneyBottomSheet";
 import { ResumeCard } from "@/components/ResumeCard";
 import { Biblioteca } from "@/data/Biblioteca";
 import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
-import { useFeaturedCourses } from "@/hooks/queries/useCourses";
+import { COURSES_KEYS, useFeaturedCourses } from "@/hooks/queries/useCourses";
 import { useLastAccessedCourse } from "@/hooks/queries/useLastAccessedCourse";
 import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
 import { useHasUnreadNotifications } from "@/hooks/queries/useNotifications";
@@ -77,14 +78,31 @@ export function StudyScreen() {
     navigation.navigate("Notifications");
   }, [isGuest, navigation]);
 
+  const queryClient = useQueryClient();
+  const [refreshing, setRefreshing] = useState(false);
+
   // Fetching de cursos populares via React Query
-  const { data: featuredCourses = [] } = useFeaturedCourses();
+  const { data: featuredCourses = [], refetch: refetchFeatured } = useFeaturedCourses();
 
   // Fetching de todos os progressos para o Carrossel Inteligente
   const { data: allProgress = {} } = useAllCoursesProgress();
 
   // Fetching do último curso acessado
   const { data: lastAccessed } = useLastAccessedCourse();
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: COURSES_KEYS.all }),
+        queryClient.invalidateQueries({ queryKey: COURSES_KEYS.featured }),
+        queryClient.invalidateQueries({ queryKey: ["podcasts"] }),
+        refetchFeatured(),
+      ]);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [queryClient, refetchFeatured]);
 
   // Fetching de podcasts e termos do glossário para verificar existência de conteúdo novo (createdAt <= 15 dias)
   const { data: podcasts = [] } = usePodcasts();
@@ -279,6 +297,14 @@ export function StudyScreen() {
         ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}
         contentContainerStyle={styles.contentContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[theme.colors.primary]}
+            tintColor={theme.colors.primary}
+          />
+        }
         renderItem={({ item }) => {
           const IconComponent = item.icon;
           const isItemNew =

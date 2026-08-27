@@ -228,7 +228,7 @@ export function CourseCurriculumScreen() {
       queryClient.prefetchQuery({
         queryKey: LESSONS_KEYS.detail(courseId, lesson.id),
         queryFn: () => lessonApiService.getLessonById(lesson.id),
-        staleTime: 1000 * 60 * 60 * 12, // 12 horas
+        staleTime: 1000 * 60 * 5, // 5 minutos
       });
     });
 

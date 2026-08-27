@@ -199,7 +199,7 @@ export function LessonPlayerScreen() {
       queryClient.prefetchQuery({
         queryKey: LESSONS_KEYS.detail(courseId, nextLesson.id),
         queryFn: () => lessonApiService.getLessonById(nextLesson.id),
-        staleTime: 1000 * 60 * 60 * 12, // 12 horas
+        staleTime: 1000 * 60 * 5, // 5 minutos
       });
     }
   }, [isLastSlide, allLessons, lesson, courseId, queryClient]);

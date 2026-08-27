@@ -11,7 +11,8 @@ export function useAmbientAudios() {
     queryFn: async (): Promise<IAmbientAudio[]> => {
       return ambientAudioApiService.getAmbientAudios();
     },
-    staleTime: 1000 * 60 * 60, // 1 hora
+    staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24, // 24 horas
+    refetchOnMount: true,
   });
 }

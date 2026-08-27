@@ -6,6 +6,7 @@ export function usePrayer(prayerId: string) {
     queryKey: ["prayer", prayerId],
     queryFn: () => prayerApiService.getPrayerById(prayerId),
     enabled: !!prayerId,
-    staleTime: 1000 * 60 * 60, // 1 hora
+    staleTime: 1000 * 60 * 15, // 15 minutos
+    refetchOnMount: true,
   });
 }
