@@ -212,30 +212,7 @@ export function CourseCurriculumScreen() {
 
   // Ref da FlatList para controle programático do scroll
   const flatListRef = useRef<FlatList>(null);
-
-  // ✅ NOVO: QueryClient para prefetch
-  const queryClient = useQueryClient();
   const { mutate: touchAccess } = useTouchCourseAccess();
-
-  // ✅ NOVO: Prefetch inteligente das primeiras 3 aulas
-  useEffect(() => {
-    if (!lessons || lessons.length === 0) return;
-
-    // Prefetch das primeiras 3 aulas para carregamento instantâneo
-    const lessonsToPrefetch = lessons.slice(0, 3);
-
-    lessonsToPrefetch.forEach((lesson) => {
-      queryClient.prefetchQuery({
-        queryKey: LESSONS_KEYS.detail(courseId, lesson.id),
-        queryFn: () => lessonApiService.getLessonById(lesson.id),
-        staleTime: 1000 * 60 * 5, // 5 minutos
-      });
-    });
-
-    console.log(
-      `✅ [CourseCurriculum] Prefetch de ${lessonsToPrefetch.length} aulas iniciado`
-    );
-  }, [lessons, courseId, queryClient]);
 
   const lastTouchedCourseIdRef = useRef<string | null>(null);
 
