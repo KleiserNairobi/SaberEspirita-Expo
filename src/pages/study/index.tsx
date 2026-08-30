@@ -82,7 +82,7 @@ export function StudyScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   // Fetching de cursos populares via React Query
-  const { data: featuredCourses = [], refetch: refetchFeatured } = useFeaturedCourses();
+  const { data: featuredCourses = [] } = useFeaturedCourses();
 
   // Fetching de todos os progressos para o Carrossel Inteligente
   const { data: allProgress = {} } = useAllCoursesProgress();
@@ -94,18 +94,17 @@ export function StudyScreen() {
     setRefreshing(true);
     try {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: COURSES_KEYS.all }),
-        queryClient.invalidateQueries({ queryKey: COURSES_KEYS.featured }),
+        queryClient.invalidateQueries({ queryKey: COURSES_KEYS.all, exact: true }),
+        queryClient.invalidateQueries({ queryKey: COURSES_KEYS.featured, exact: true }),
         queryClient.invalidateQueries({ queryKey: ["lastAccessedCourse"] }),
-        queryClient.invalidateQueries({ queryKey: ["allCoursesProgress"] }),
+        queryClient.invalidateQueries({ queryKey: ["coursesProgressList"] }),
         queryClient.invalidateQueries({ queryKey: ["podcasts"] }),
         queryClient.invalidateQueries({ queryKey: ["glossaryTerms"] }),
-        refetchFeatured(),
       ]);
     } finally {
       setRefreshing(false);
     }
-  }, [queryClient, refetchFeatured]);
+  }, [queryClient]);
 
   // Fetching de podcasts e termos do glossário para verificar existência de conteúdo novo (createdAt <= 15 dias)
   const { data: podcasts = [] } = usePodcasts();
