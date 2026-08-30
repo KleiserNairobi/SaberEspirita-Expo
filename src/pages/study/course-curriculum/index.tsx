@@ -3,9 +3,13 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { RouteProp, useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import {
+  RouteProp,
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, BookOpen, CheckCircle, ChevronRight } from "lucide-react-native";
 import { CircleAlert, Clock, Info, Lock, PlayCircle, Tag } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,11 +24,10 @@ import {
 } from "@/hooks/queries/useCourseProgress";
 import { useCourse } from "@/hooks/queries/useCourses";
 import { useCourseExercises } from "@/hooks/queries/useExercises";
-import { LESSONS_KEYS, useLessons } from "@/hooks/queries/useLessons";
+import { useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { courseApiService } from "@/services/api/courseApiService";
-import { lessonApiService } from "@/services/api/lessonApiService";
 import { parseExerciseResults } from "@/services/api/userActivityApiService";
 import { useAuthStore } from "@/stores/authStore";
 import { ILesson } from "@/types/course";
@@ -654,7 +657,8 @@ export function CourseCurriculumScreen() {
                     {slideProg && (
                       <View style={styles.slideProgressBadge}>
                         <Text style={styles.slideProgressText}>
-                          Slide {slideProg.slideIndex + 1} de {slideProg.totalSlides || item.slides?.length || 1}
+                          Slide {slideProg.slideIndex + 1} de{" "}
+                          {slideProg.totalSlides || item.slides?.length || 1}
                         </Text>
                       </View>
                     )}

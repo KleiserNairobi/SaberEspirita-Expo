@@ -22,8 +22,9 @@ export function useHasUnreadNotifications() {
       return res.items.some((n) => !(n.isRead ?? !!n.readAt));
     },
     enabled: !!user?.uid && !isGuest,
-    staleTime: 1000 * 30, // 30 segundos
+    staleTime: 1000 * 15, // 15 segundos
     gcTime: 1000 * 60 * 60, // 1 hora
+    refetchOnMount: true,
   });
 }
 
@@ -45,9 +46,9 @@ export function useNotifications() {
     enabled: !!user?.uid && !isGuest,
     initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
-    staleTime: 1000 * 60 * 5, // 5 minutos de cache
+    staleTime: 1000 * 60, // 1 minuto de cache
     gcTime: 1000 * 60 * 60, // 1 hora em memória
-    refetchOnMount: false,
+    refetchOnMount: true,
   });
 }
 

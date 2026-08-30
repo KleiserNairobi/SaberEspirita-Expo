@@ -59,7 +59,7 @@ export function useLastAccessedCourse() {
 
         if (!targetProgress) {
           targetProgress = {
-            userId: user.uid,
+            userId,
             courseId: targetCourse.id,
             completedLessons: [],
             exerciseResults: [],

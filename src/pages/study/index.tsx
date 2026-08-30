@@ -3,7 +3,7 @@ import React, { useCallback, useRef, useState } from "react";
 import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { differenceInDays } from "date-fns";
@@ -22,7 +22,7 @@ import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
 import { COURSES_KEYS, useFeaturedCourses } from "@/hooks/queries/useCourses";
 import { useLastAccessedCourse } from "@/hooks/queries/useLastAccessedCourse";
 import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
-import { useHasUnreadNotifications } from "@/hooks/queries/useNotifications";
+import { NOTIFICATION_KEYS, useHasUnreadNotifications } from "@/hooks/queries/useNotifications";
 import { usePodcasts } from "@/hooks/queries/usePodcasts";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
@@ -93,6 +93,7 @@ export function StudyScreen() {
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
+      const currentUserId = user?.uid || "guest";
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: COURSES_KEYS.all, exact: true }),
         queryClient.invalidateQueries({ queryKey: COURSES_KEYS.featured, exact: true }),
@@ -100,11 +101,14 @@ export function StudyScreen() {
         queryClient.invalidateQueries({ queryKey: ["coursesProgressList"] }),
         queryClient.invalidateQueries({ queryKey: ["podcasts"] }),
         queryClient.invalidateQueries({ queryKey: ["glossaryTerms"] }),
+        queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.hasUnread(currentUserId) }),
+        queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.list(currentUserId) }),
+        queryClient.invalidateQueries({ queryKey: ["communityProgress", currentUserId] }),
       ]);
     } finally {
       setRefreshing(false);
     }
-  }, [queryClient]);
+  }, [queryClient, user?.uid]);
 
   // Fetching de podcasts e termos do glossário para verificar existência de conteúdo novo (createdAt <= 15 dias)
   const { data: podcasts = [] } = usePodcasts();
