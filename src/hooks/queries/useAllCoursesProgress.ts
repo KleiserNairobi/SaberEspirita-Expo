@@ -27,7 +27,8 @@ export function useAllCoursesProgress() {
       return progressMap;
     },
     enabled: !!userId,
-    staleTime: 1000 * 60 * 15, // 15 minutos
+    staleTime: 1000 * 30, // 30 segundos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em memória
+    refetchOnMount: true,
   });
 }

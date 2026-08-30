@@ -76,8 +76,8 @@ export function useLastAccessedCourse() {
       }
     },
     enabled: !!user?.uid,
-    staleTime: 1000 * 60 * 15,
+    staleTime: 1000 * 30, // 30 segundos
     gcTime: 1000 * 60 * 60 * 24,
-    refetchOnMount: false,
+    refetchOnMount: true,
   });
 }

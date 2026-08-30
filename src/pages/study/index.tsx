@@ -96,7 +96,10 @@ export function StudyScreen() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: COURSES_KEYS.all }),
         queryClient.invalidateQueries({ queryKey: COURSES_KEYS.featured }),
+        queryClient.invalidateQueries({ queryKey: ["lastAccessedCourse"] }),
+        queryClient.invalidateQueries({ queryKey: ["allCoursesProgress"] }),
         queryClient.invalidateQueries({ queryKey: ["podcasts"] }),
+        queryClient.invalidateQueries({ queryKey: ["glossaryTerms"] }),
         refetchFeatured(),
       ]);
     } finally {
