@@ -348,6 +348,8 @@ export const quizApiService = {
         bestAccuracy: 0,
       };
 
+      let remoteSucceeded = false;
+
       try {
         const response = await apiClient.get<any>("/quizzes/daily/stats");
         const data = response.data || {};
@@ -358,43 +360,46 @@ export const quizApiService = {
           totalChallenges: Number(data.totalChallenges || 0),
           bestAccuracy: Number(data.bestAccuracy || 0),
         };
+        remoteSucceeded = true;
       } catch (error) {
         console.warn("quizApiService: Erro ao buscar estatísticas do desafio diário remoto:", error);
       }
 
-      // Mesclar / enriquecer com o histórico do MMKV local isolado pelo usuário atual
-      try {
-        const key = this.getHistoryStorageKey();
-        const localHistory = Storage.load<IQuizHistory[]>(key) || [];
-        const dailyLocal = localHistory.filter(
-          (h) =>
-            h.completed &&
-            (h.categoryId === "DAILY" ||
-              h.subcategoryId?.toUpperCase().startsWith("DAILY"))
-        );
+      // Se a chamada remota falhou (offline), recorrer ao histórico do MMKV local como fallback
+      if (!remoteSucceeded) {
+        try {
+          const key = this.getHistoryStorageKey();
+          const localHistory = Storage.load<IQuizHistory[]>(key) || [];
+          const dailyLocal = localHistory.filter(
+            (h) =>
+              h.completed &&
+              (h.categoryId === "DAILY" ||
+                h.subcategoryId?.toUpperCase().startsWith("DAILY"))
+          );
 
-        if (dailyLocal.length > 0) {
-          const todayStr = new Date()
-            .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
-            .split(" ")[0];
+          if (dailyLocal.length > 0) {
+            const todayStr = new Date()
+              .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+              .split(" ")[0];
 
-          const isLocalCompletedToday = dailyLocal.some((h) => {
-            if (h.subcategoryId === `DAILY_${todayStr}`) return true;
-            if (h.completedAt) {
-              const d = new Date(h.completedAt)
-                .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
-                .split(" ")[0];
-              return d === todayStr;
+            const isLocalCompletedToday = dailyLocal.some((h) => {
+              if (h.subcategoryId === `DAILY_${todayStr}`) return true;
+              if (h.completedAt) {
+                const d = new Date(h.completedAt)
+                  .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
+                  .split(" ")[0];
+                return d === todayStr;
+              }
+              return false;
+            });
+
+            if (isLocalCompletedToday) {
+              stats.isCompletedToday = true;
             }
-            return false;
-          });
-
-          if (isLocalCompletedToday) {
-            stats.isCompletedToday = true;
           }
+        } catch (e) {
+          console.warn("quizApiService: Erro ao ler desafio diário local:", e);
         }
-      } catch (e) {
-        console.warn("quizApiService: Erro ao ler desafio diário local:", e);
       }
 
       return stats;
