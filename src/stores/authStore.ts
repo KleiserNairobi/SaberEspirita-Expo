@@ -4,8 +4,9 @@ import { OneSignal } from "react-native-onesignal";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { authApiService, UserProfileDTO } from "@/services/api/authApiService";
+import { UserProfileDTO, authApiService } from "@/services/api/authApiService";
 import * as Storage from "@/utils/Storage";
+import { getDeviceIdentifiers } from "@/utils/device";
 
 import { usePreferencesStore } from "./preferencesStore";
 
@@ -59,7 +60,11 @@ interface AuthState {
   setError: (error: string | null) => void;
   clearError: () => void;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, displayName?: string) => Promise<{ user: AppUser }>;
+  signUp: (
+    email: string,
+    password: string,
+    displayName?: string
+  ) => Promise<{ user: AppUser }>;
   signInWithGoogle: (idToken: string, name?: string | null) => Promise<void>;
   signInWithApple: () => Promise<void>;
   loginAsGuest: () => Promise<void>;
@@ -67,7 +72,11 @@ interface AuthState {
   verifyEmailCode: (email: string, code: string) => Promise<void>;
   resendVerificationCode: (email: string) => Promise<void>;
   sendPasswordResetEmail: (email: string) => Promise<void>;
-  confirmPasswordReset: (email: string, code: string, newPassword: string) => Promise<void>;
+  confirmPasswordReset: (
+    email: string,
+    code: string,
+    newPassword: string
+  ) => Promise<void>;
   sendVerificationEmail: (user: AppUser) => Promise<void>;
   initializeAuth: () => () => void;
   checkDeviceBanStatus: () => Promise<boolean>;
@@ -83,7 +92,13 @@ const profileToAppUser = (
 ): AppUser => ({
   uid: profile?.userId || profile?.id || fallbackId || "user_" + Date.now(),
   email: profile?.email ?? fallbackEmail ?? null,
-  displayName: profile?.userName || profile?.displayName || fallbackName || profile?.email?.split("@")[0] || fallbackEmail?.split("@")[0] || "Usuário",
+  displayName:
+    profile?.userName ||
+    profile?.displayName ||
+    fallbackName ||
+    profile?.email?.split("@")[0] ||
+    fallbackEmail?.split("@")[0] ||
+    "Usuário",
   photoURL: profile?.photoUrl || profile?.photoURL || null,
   emailVerified: emailVerified,
   reload: async () => {},
@@ -125,9 +140,23 @@ export const useAuthStore = create<AuthState>()(
       signIn: async (email: string, password: string) => {
         set({ loading: true, error: null });
         try {
-          console.log("AuthStore: Realizando login REST Spring Boot...");
-          const res = await authApiService.login({ email, password });
-          const appUser = profileToAppUser(res.user, res.userId, res.email, res.displayName);
+          let deviceIdPayload: string | undefined = undefined;
+          try {
+            const devIds = await getDeviceIdentifiers();
+            deviceIdPayload = JSON.stringify(devIds);
+          } catch {}
+
+          const res = await authApiService.login({
+            email,
+            password,
+            deviceId: deviceIdPayload,
+          });
+          const appUser = profileToAppUser(
+            res.user,
+            res.userId,
+            res.email,
+            res.displayName
+          );
 
           set({ user: appUser, isGuest: false, loading: false });
 
@@ -155,8 +184,26 @@ export const useAuthStore = create<AuthState>()(
         try {
           console.log("AuthStore: Criando conta no Spring Boot...");
           const nameToUse = displayName?.trim() || email.split("@")[0] || "Usuário";
-          const res = await authApiService.register({ displayName: nameToUse, userName: nameToUse, email, password });
-          const appUser = profileToAppUser(res.user, res.userId, res.email, res.displayName || nameToUse, false);
+          let deviceIdPayload: string | undefined = undefined;
+          try {
+            const devIds = await getDeviceIdentifiers();
+            deviceIdPayload = JSON.stringify(devIds);
+          } catch {}
+
+          const res = await authApiService.register({
+            displayName: nameToUse,
+            userName: nameToUse,
+            email,
+            password,
+            deviceId: deviceIdPayload,
+          });
+          const appUser = profileToAppUser(
+            res.user,
+            res.userId,
+            res.email,
+            res.displayName || nameToUse,
+            false
+          );
 
           // Não publicamos user na store principal ainda para não forçar navegação prematura pelo RootNavigator
           set({ loading: false });
@@ -174,7 +221,13 @@ export const useAuthStore = create<AuthState>()(
         try {
           console.log("AuthStore: Validando código de e-mail OTP...");
           const res = await authApiService.verifyEmail(email, code);
-          const appUser = profileToAppUser(res.user, res.userId, res.email, res.displayName, true);
+          const appUser = profileToAppUser(
+            res.user,
+            res.userId,
+            res.email,
+            res.displayName,
+            true
+          );
 
           set({ user: appUser, isGuest: false, loading: false });
         } catch (error: any) {
@@ -203,8 +256,19 @@ export const useAuthStore = create<AuthState>()(
         set({ loading: true, error: null });
         try {
           console.log("AuthStore: Realizando login social REST com Google...");
-          const res = await authApiService.socialLogin("google", idToken, name);
-          const appUser = profileToAppUser(res.user, res.userId, res.email, res.displayName);
+          let deviceIdPayload: string | undefined = undefined;
+          try {
+            const devIds = await getDeviceIdentifiers();
+            deviceIdPayload = JSON.stringify(devIds);
+          } catch {}
+
+          const res = await authApiService.socialLogin("google", idToken, name, deviceIdPayload);
+          const appUser = profileToAppUser(
+            res.user,
+            res.userId,
+            res.email,
+            res.displayName
+          );
 
           set({ user: appUser, isGuest: false, loading: false });
 
@@ -216,7 +280,10 @@ export const useAuthStore = create<AuthState>()(
               course_reminders: preferences.courseNotifications.toString(),
             });
           } catch (onesignalError) {
-            console.error("Erro ao sincronizar OneSignal no login Google:", onesignalError);
+            console.error(
+              "Erro ao sincronizar OneSignal no login Google:",
+              onesignalError
+            );
           }
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
@@ -239,15 +306,32 @@ export const useAuthStore = create<AuthState>()(
 
           let name: string | null = null;
           if (credential.fullName?.givenName || credential.fullName?.familyName) {
-            name = `${credential.fullName.givenName || ""} ${credential.fullName.familyName || ""}`.trim();
+            name =
+              `${credential.fullName.givenName || ""} ${credential.fullName.familyName || ""}`.trim();
           }
 
           if (!credential.identityToken) {
             throw new Error("Identity Token da Apple ausente.");
           }
 
-          const res = await authApiService.socialLogin("apple", credential.identityToken, name);
-          const appUser = profileToAppUser(res.user, res.userId, res.email, res.displayName);
+          let deviceIdPayload: string | undefined = undefined;
+          try {
+            const devIds = await getDeviceIdentifiers();
+            deviceIdPayload = JSON.stringify(devIds);
+          } catch {}
+
+          const res = await authApiService.socialLogin(
+            "apple",
+            credential.identityToken,
+            name,
+            deviceIdPayload
+          );
+          const appUser = profileToAppUser(
+            res.user,
+            res.userId,
+            res.email,
+            res.displayName
+          );
 
           set({ user: appUser, isGuest: false, loading: false });
 
@@ -259,7 +343,10 @@ export const useAuthStore = create<AuthState>()(
               course_reminders: preferences.courseNotifications.toString(),
             });
           } catch (onesignalError) {
-            console.error("Erro ao sincronizar OneSignal no login Apple:", onesignalError);
+            console.error(
+              "Erro ao sincronizar OneSignal no login Apple:",
+              onesignalError
+            );
           }
         } catch (error: any) {
           if (error.code === "ERR_REQUEST_CANCELED") {
@@ -361,12 +448,16 @@ export const useAuthStore = create<AuthState>()(
             if (!activeToken) {
               const tokenToUse = refreshToken || user.uid;
               try {
-                console.log("AuthStore: Obtendo token JWT do Spring Boot para a sessão ativa...");
+                console.log(
+                  "AuthStore: Obtendo token JWT do Spring Boot para a sessão ativa..."
+                );
                 const res = await authApiService.refreshToken(tokenToUse);
                 const newToken = res?.accessToken || res?.token;
                 if (newToken) {
                   activeToken = newToken;
-                  console.log("AuthStore: Token JWT do Spring Boot obtido e salvo no MMKV com sucesso.");
+                  console.log(
+                    "AuthStore: Token JWT do Spring Boot obtido e salvo no MMKV com sucesso."
+                  );
                 }
               } catch (err) {
                 console.warn("AuthStore: Falha ao obter token JWT inicial:", err);
@@ -385,10 +476,15 @@ export const useAuthStore = create<AuthState>()(
                   emailVerified: true,
                 };
                 set({ user: updatedUser });
-                console.log("AuthStore: Perfil sincronizado via GET /users/me com sucesso.");
+                console.log(
+                  "AuthStore: Perfil sincronizado via GET /users/me com sucesso."
+                );
               }
             } catch (err) {
-              console.warn("AuthStore: Erro ao buscar perfil (mantendo sessão ativa offline):", err);
+              console.warn(
+                "AuthStore: Erro ao buscar perfil (mantendo sessão ativa offline):",
+                err
+              );
             }
           };
 

@@ -11,26 +11,23 @@ export function useUserProfile() {
     queryKey: ["userProfile", user?.uid],
     queryFn: async () => {
       if (isGuest || !user) return null;
-      console.log("useUserProfile: Disparando GET /users/me...");
       return await authApiService.getProfile();
     },
     enabled: !isGuest && !!user,
-    staleTime: 1000 * 30, // Considera os dados atualizados por 30 segundos
+    staleTime: 10 * 60 * 1000, // 10 minutos
+    refetchOnWindowFocus: false,
   });
 
-  const isFetching = query.isFetching;
-  const isStale = query.isStale;
   const refetch = query.refetch;
   const uid = user?.uid;
 
-  // Dispara a busca apenas quando a tela ganha foco E a query estiver stale/não estiver buscando
+  // Dispara a atualização apenas quando o usuário realmente entra na tela de Conta
   useFocusEffect(
     useCallback(() => {
-      if (!isGuest && uid && !isFetching && isStale) {
-        console.log("useUserProfile: Aba Conta focada -> executando refetch de /users/me");
+      if (!isGuest && uid) {
         void refetch();
       }
-    }, [isGuest, uid, isFetching, isStale, refetch])
+    }, [isGuest, uid, refetch])
   );
 
   useEffect(() => {

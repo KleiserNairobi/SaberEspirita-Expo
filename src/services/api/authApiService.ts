@@ -1,9 +1,11 @@
-import apiClient from "./apiClient";
 import * as Storage from "@/utils/Storage";
+
+import apiClient from "./apiClient";
 
 export interface AuthLoginDTO {
   email: string;
   password?: string;
+  deviceId?: string;
 }
 
 export interface AuthRegisterDTO {
@@ -85,12 +87,14 @@ export const authApiService = {
   async socialLogin(
     provider: "google" | "apple",
     idToken: string,
-    name?: string | null
+    name?: string | null,
+    deviceId?: string
   ): Promise<AuthResponseDTO> {
     const response = await apiClient.post<AuthResponseDTO>("/auth/social-login", {
       provider,
       idToken,
       name,
+      deviceId,
     });
     const jwt = response.data?.accessToken || response.data?.token;
     if (jwt) {
@@ -106,10 +110,9 @@ export const authApiService = {
    * Renova o token de acesso (JWT) expirado utilizando o refreshToken salvo.
    */
   async refreshToken(refreshToken: string): Promise<AuthResponseDTO> {
-    const response = await apiClient.post<AuthResponseDTO>(
-      "/auth/refresh-token",
-      { token: refreshToken }
-    );
+    const response = await apiClient.post<AuthResponseDTO>("/auth/refresh-token", {
+      token: refreshToken,
+    });
     const jwt = response.data?.accessToken || response.data?.token;
     if (jwt) {
       Storage.saveString("jwt_token", jwt);
@@ -124,7 +127,10 @@ export const authApiService = {
    * Valida o e-mail do usuário utilizando o código OTP de 6 dígitos.
    */
   async verifyEmail(email: string, code: string): Promise<AuthResponseDTO> {
-    const response = await apiClient.post<AuthResponseDTO>("/auth/verify-email", { email, code });
+    const response = await apiClient.post<AuthResponseDTO>("/auth/verify-email", {
+      email,
+      code,
+    });
     const jwt = response.data?.accessToken || response.data?.token;
     if (jwt) {
       Storage.saveString("jwt_token", jwt);

@@ -135,12 +135,16 @@ export const chatApiService = {
       };
 
       xhr.onload = () => {
+        const currentText = xhr.responseText || "";
+        if (currentText.length > lastIndex) {
+          buffer += currentText.substring(lastIndex);
+        }
+        processBuffer(true);
+
         if (xhr.status >= 200 && xhr.status < 300) {
-          const currentText = xhr.responseText || "";
-          if (currentText.length > lastIndex) {
-            buffer += currentText.substring(lastIndex);
-          }
-          processBuffer(true);
+          resolve(fullText);
+        } else if (fullText.trim().length > 0) {
+          // Se já recebeu texto antes do fechamento, considera sucesso
           resolve(fullText);
         } else {
           reject(new Error(`Erro no chat stream (status ${xhr.status}): ${xhr.responseText}`));
@@ -148,11 +152,26 @@ export const chatApiService = {
       };
 
       xhr.onerror = () => {
-        reject(new Error("Erro de rede ao conectar ao stream de chat"));
+        // No React Native iOS, o fechamento normal de SSE pelo backend pode disparar onerror.
+        // Se já coletamos a resposta completa, resolvemos com sucesso!
+        const currentText = xhr.responseText || "";
+        if (currentText.length > lastIndex) {
+          buffer += currentText.substring(lastIndex);
+          processBuffer(true);
+        }
+        if (fullText.trim().length > 0) {
+          resolve(fullText);
+        } else {
+          reject(new Error("Erro de rede ao conectar ao stream de chat"));
+        }
       };
 
       xhr.ontimeout = () => {
-        reject(new Error("Timeout ao aguardar resposta do stream de chat"));
+        if (fullText.trim().length > 0) {
+          resolve(fullText);
+        } else {
+          reject(new Error("Timeout ao aguardar resposta do stream de chat"));
+        }
       };
 
       xhr.timeout = 120000; // 120s timeout

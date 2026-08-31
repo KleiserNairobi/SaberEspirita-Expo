@@ -41,7 +41,7 @@ export function useDeepSeekChat(chatType: ChatType | "emotional" | "scientific" 
         prev.map((msg) => (msg.id === messageId ? { ...msg, text: accumulated } : msg))
       );
 
-      await new Promise((resolve) => setTimeout(resolve, 40));
+      await new Promise((resolve) => setTimeout(resolve, 15));
     }
   }, []);
 
@@ -104,8 +104,8 @@ export function useDeepSeekChat(chatType: ChatType | "emotional" | "scientific" 
         ];
 
         // Invoca a API REST Spring Boot com suporte a streaming SSE via fetch
+        let accumulatedText = "";
         try {
-          let accumulatedText = "";
           await chatApiService.sendMessageStream(
             apiMessages,
             chatType as any,
@@ -119,6 +119,10 @@ export function useDeepSeekChat(chatType: ChatType | "emotional" | "scientific" 
             }
           );
         } catch (streamErr) {
+          // Se já recebemos a resposta pelo stream, NÃO executamos fallback síncrono
+          if (accumulatedText.trim().length > 0) {
+            return;
+          }
           console.warn("Falha no chat stream SSE, executando fallback síncrono:", streamErr);
           const responseData = await chatApiService.sendMessage(apiMessages, chatType as any);
           const replyText = responseData.content || responseData.response || "";
@@ -138,7 +142,7 @@ export function useDeepSeekChat(chatType: ChatType | "emotional" | "scientific" 
 
         setMessages((prev) => [...prev, errorMsg]);
       } finally {
-        // Garante que o loading sempre destrava, mesmo se o stream for interrompido
+        // Garante que o loading sempre destrava, liberando o input imediatamente
         setIsLoading(false);
       }
     },

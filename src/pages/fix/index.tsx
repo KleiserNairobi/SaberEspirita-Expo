@@ -77,11 +77,25 @@ export default function FixHomeScreen() {
     ])
   );
 
+  const OFFICIAL_ORDER = ["CONCEITOS", "PERSONAGENS", "LIVROS", "FILMES", "ESPIRITOS", "DIVERSOS"];
+
   // Calcular progresso por categoria com suporte a múltiplas fontes
   const categoriesWithProgress = useMemo(() => {
     if (!categories) return [];
 
-    return categories.map((category) => {
+    return categories
+      .filter(
+        (c) =>
+          c.id?.toUpperCase() !== "DAILY" &&
+          c.name?.toLowerCase() !== "desafio diário" &&
+          c.name?.toLowerCase() !== "desafio diario"
+      )
+      .sort((a, b) => {
+        const idxA = OFFICIAL_ORDER.indexOf(a.id?.toUpperCase() || "");
+        const idxB = OFFICIAL_ORDER.indexOf(b.id?.toUpperCase() || "");
+        return (idxA >= 0 ? idxA : 99) - (idxB >= 0 ? idxB : 99);
+      })
+      .map((category) => {
       const catKeyNormalized = category.name
         .toUpperCase()
         .normalize("NFD")

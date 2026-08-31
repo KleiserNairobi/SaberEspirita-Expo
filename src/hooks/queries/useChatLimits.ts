@@ -20,8 +20,8 @@ export function useChatLimits(chatType: string = "EMOTIONAL") {
       return chatApiService.getDailyLimits(normalizedType as any);
     },
     enabled: !!user?.uid || isGuest,
-    staleTime: 30_000, // 30 segundos
-    refetchOnMount: true,
+    staleTime: 60_000,          // 1 minuto
+    refetchOnWindowFocus: false, // evita refetch quando teclado dispensa ao rolar (keyboardDismissMode)
   });
 }
 

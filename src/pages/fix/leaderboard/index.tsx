@@ -89,6 +89,7 @@ export function LeaderboardScreen() {
 
       handleCloseHint();
       queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
     } catch (error) {
       console.error("Erro ao atualizar perfil no placar:", error);
       throw error;

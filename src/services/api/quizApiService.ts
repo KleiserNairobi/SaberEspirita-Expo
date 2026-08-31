@@ -317,6 +317,14 @@ export const quizApiService = {
   },
 
   /**
+   * Retorna a chave do MMKV para histórico de quizzes isolada por usuário.
+   */
+  getHistoryStorageKey(userId?: string): string {
+    const uid = userId || useAuthStore.getState().user?.uid || "guest";
+    return `quiz_local_history_${uid}`;
+  },
+
+  /**
    * Obtém estatísticas dedicadas do Desafio Diário via API REST.
    * Deduplica requisições simultâneas em voo para economizar chamadas de rede.
    */
@@ -354,9 +362,10 @@ export const quizApiService = {
         console.warn("quizApiService: Erro ao buscar estatísticas do desafio diário remoto:", error);
       }
 
-      // Mesclar / enriquecer com o histórico do MMKV local para garantia off-line e resiliência
+      // Mesclar / enriquecer com o histórico do MMKV local isolado pelo usuário atual
       try {
-        const localHistory = Storage.load<IQuizHistory[]>("quiz_local_history") || [];
+        const key = this.getHistoryStorageKey();
+        const localHistory = Storage.load<IQuizHistory[]>(key) || [];
         const dailyLocal = localHistory.filter(
           (h) =>
             h.completed &&
@@ -380,66 +389,12 @@ export const quizApiService = {
             return false;
           });
 
-          const localTotal = Math.max(stats.totalChallenges, dailyLocal.length);
-          const localBest = dailyLocal.reduce(
-            (max, item) => Math.max(max, item.percentage || item.score || 0),
-            stats.bestAccuracy
-          );
-
-          const localDatesSet = new Set<string>();
-          for (const item of dailyLocal) {
-            if (item.subcategoryId?.startsWith("DAILY_")) {
-              localDatesSet.add(item.subcategoryId.replace("DAILY_", ""));
-            } else if (item.completedAt) {
-              const dateStr = new Date(item.completedAt)
-                .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
-                .split(" ")[0];
-              localDatesSet.add(dateStr);
-            }
-          }
-
-          const sortedDates = Array.from(localDatesSet).sort();
-          if (sortedDates.length > 0) {
-            let currentRun = 1;
-            let maxRun = 1;
-            for (let i = 1; i < sortedDates.length; i++) {
-              const prev = new Date(sortedDates[i - 1]);
-              const curr = new Date(sortedDates[i]);
-              const diffDays = Math.round((curr.getTime() - prev.getTime()) / (1000 * 3600 * 24));
-              if (diffDays === 1) {
-                currentRun++;
-                if (currentRun > maxRun) maxRun = currentRun;
-              } else if (diffDays > 1) {
-                currentRun = 1;
-              }
-            }
-
-            const lastDateStr = sortedDates[sortedDates.length - 1];
-            const yesterdayStr = new Date(Date.now() - 86400000)
-              .toLocaleString("sv-SE", { timeZone: "America/Sao_Paulo" })
-              .split(" ")[0];
-
-            const localCurrentStreak =
-              lastDateStr === todayStr || lastDateStr === yesterdayStr ? currentRun : 0;
-
-            stats = {
-              isCompletedToday: stats.isCompletedToday || isLocalCompletedToday,
-              currentStreak: Math.max(stats.currentStreak, localCurrentStreak),
-              longestStreak: Math.max(stats.longestStreak, maxRun),
-              totalChallenges: localTotal,
-              bestAccuracy: localBest,
-            };
-          } else {
-            stats = {
-              ...stats,
-              isCompletedToday: stats.isCompletedToday || isLocalCompletedToday,
-              totalChallenges: localTotal,
-              bestAccuracy: localBest,
-            };
+          if (isLocalCompletedToday) {
+            stats.isCompletedToday = true;
           }
         }
       } catch (e) {
-        console.warn("quizApiService: Erro ao mesclar estatísticas locais:", e);
+        console.warn("quizApiService: Erro ao ler desafio diário local:", e);
       }
 
       return stats;
@@ -493,13 +448,15 @@ export const quizApiService = {
       };
     }
 
-    // Salvar o histórico de submissão no MMKV local para persistência garantida
+    // Salvar o histórico de submissão no MMKV local isolado pelo usuário atual
     try {
       if (payload.subcategoryId || quizId) {
-        const localHistory = Storage.load<IQuizHistory[]>("quiz_local_history") || [];
+        const uid = useAuthStore.getState().user?.uid || "guest";
+        const key = this.getHistoryStorageKey(uid);
+        const localHistory = Storage.load<IQuizHistory[]>(key) || [];
         const newHistoryItem: IQuizHistory = {
           id: result.historyId || quizId,
-          userId: useAuthStore.getState().user?.uid || "guest",
+          userId: uid,
           categoryId: payload.categoryId || "",
           subcategoryId: payload.subcategoryId || quizId,
           quizId: quizId,
@@ -524,7 +481,7 @@ export const quizApiService = {
           localHistory.push(newHistoryItem);
         }
 
-        Storage.save("quiz_local_history", localHistory);
+        Storage.save(key, localHistory);
       }
     } catch (e) {
       console.warn("quizApiService: Erro ao salvar histórico localmente:", e);
@@ -535,7 +492,7 @@ export const quizApiService = {
 
   /**
    * Obtém o histórico completo de quizzes resolvidos pelo usuário autenticado.
-   * Deduplica requisições simultâneas em voo e mescla a API com a fonte local (MMKV).
+   * Deduplica requisições simultâneas em voo e mescla a API com a fonte local isolada por usuário.
    */
   async getUserQuizHistory(): Promise<IQuizHistory[]> {
     if (pendingHistoryPromise) {
@@ -556,20 +513,22 @@ export const quizApiService = {
         console.warn("quizApiService: Erro ao buscar histórico remoto:", error);
       }
 
-      // Mesclar com o histórico local do MMKV
+      // Mesclar apenas com o histórico local pertencente a ESTE usuário
       try {
-        const localHistory = Storage.load<IQuizHistory[]>("quiz_local_history") || [];
+        const uid = useAuthStore.getState().user?.uid || "guest";
+        const key = this.getHistoryStorageKey(uid);
+        const localHistory = Storage.load<IQuizHistory[]>(key) || [];
         if (localHistory.length > 0) {
           const combinedMap = new Map<string, IQuizHistory>();
 
           for (const item of localHistory) {
-            const key = item.subcategoryId || item.quizId || item.id || Math.random().toString();
-            combinedMap.set(key, item);
+            const itemKey = item.subcategoryId || item.quizId || item.id || Math.random().toString();
+            combinedMap.set(itemKey, item);
           }
 
           for (const item of remoteHistory) {
-            const key = item.subcategoryId || item.quizId || item.id || Math.random().toString();
-            combinedMap.set(key, item);
+            const itemKey = item.subcategoryId || item.quizId || item.id || Math.random().toString();
+            combinedMap.set(itemKey, item);
           }
 
           return Array.from(combinedMap.values());
