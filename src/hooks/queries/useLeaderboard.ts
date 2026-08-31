@@ -10,9 +10,9 @@ export function useLeaderboard(timeFilter: TimeFilter) {
   return useQuery({
     queryKey: ["leaderboard", timeFilter],
     queryFn: () => leaderboardApiService.getLeaderboard(timeFilter),
-    staleTime: 1000 * 60 * 15, // 15 minutos
+    staleTime: 1000 * 30, // 30 segundos
     gcTime: 1000 * 60 * 60, // 1 hora
-    refetchOnMount: false,
+    refetchOnMount: true,
   });
 }
 
@@ -27,7 +27,7 @@ export function useCurrentUserScore() {
     queryKey: ["userScore", userId],
     queryFn: () => leaderboardApiService.getMyPosition(),
     enabled: !!userId,
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 1000 * 30, // 30 segundos
     gcTime: 1000 * 60 * 60,
     refetchOnMount: true,
   });

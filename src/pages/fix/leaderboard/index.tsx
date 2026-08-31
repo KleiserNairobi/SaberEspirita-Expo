@@ -11,7 +11,7 @@ import {
 } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, User, X } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -148,8 +148,15 @@ export function LeaderboardScreen() {
     );
   }
 
-  const { data: rawPlayers = [], isLoading } = useLeaderboard(selectedFilter);
-  const { data: myScoreData } = useCurrentUserScore();
+  const { data: rawPlayers = [], isLoading, refetch: refetchLeaderboard } = useLeaderboard(selectedFilter);
+  const { data: myScoreData, refetch: refetchScore } = useCurrentUserScore();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetchLeaderboard();
+      refetchScore();
+    }, [refetchLeaderboard, refetchScore])
+  );
 
   // Limitação estrita do placar ao Top 100
   const top100Players = rawPlayers.slice(0, 100);
