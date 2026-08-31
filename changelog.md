@@ -2,6 +2,37 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.19-ota.10] - 2026-08-31 (Hot-Update)
+
+### Adicionado
+
+- **Migração Completa para API REST**: Desacoplamento integral do Firebase e transição para arquitetura REST conectada ao novo backend Spring Boot com persistência PostgreSQL e Cloudflare R2:
+  - **Autenticação e Perfis (`authApiService.ts`, `userApiService.ts`)**: Suporte a tokens JWT, renovação automática via Refresh Token, inicialização de sessão com restauração segura via MMKV e captura de `deviceId`.
+  - **Fluxos OTP (`EmailVerificationScreen`, `PasswordResetScreen`)**: Novas telas e validação por código de uso único (OTP) para verificação de e-mail e redefinição de senha.
+  - **Módulos Integrados**: Serviços dedicados para Cursos, Aulas, Mídias, Exercícios, Quizzes, Histórico de Tentativas, Fórum & Reações, Orações, Meditações, Certificados, Favoritos, Notificações, Ranking, Telemetria e Uploads no Cloudflare R2.
+- **Streaming de Chat com IA em Tempo Real (`chatApiService.ts`, `ChatScreen`)**: Implementado consumo incremental de tokens via `XMLHttpRequest onprogress` / Server-Sent Events (SSE) para respostas fluidas dos assistentes com prompts centralizados no backend e histórico isolado por usuário.
+- **Persistência de Slides de Aula (`LessonViewerScreen`, `useLessonProgress`)**: Salva e restaura o slide atual no armazenamento local ao navegar, adicionando badges visuais "Em Andamento" com cor laranja e indicador de progresso, além de evitar auto-conclusão prematura ao apenas abrir a aula.
+- **Avatares no Placar e Perfil (`LeaderboardScreen`, `AccountHeader`)**: Renderização e sincronização do avatar do usuário no ranking global e cabeçalho da conta, incluindo coroa para o 1º colocado e virtualização de lista (Top 100).
+
+### Alterado / Otimizado
+
+- **Deduplicação de Requisições e Políticas de Cache (`React Query` + `MMKV`)**:
+  - **Cursos e Currículo (`useCourses.ts`, `useLessons.ts`)**: Eliminadas requisições triplicadas de cursos em destaque e removido prefetch desnecessário de aulas no currículo.
+  - **Progresso de Cursos (`useCourseProgress.ts`, `useAllCoursesProgress.ts`)**: Unificadas e deduplicadas consultas de progresso com revalidação automática ao focar na tela (`useFocusEffect`).
+  - **Desafio Diário (`quizApiService.ts`, `useDailyChallenge.ts`)**: Migrado para endpoint dedicado (`GET /quizzes/daily/stats`), eliminando o download integral do histórico de tentativas.
+  - **Aba Fixe & Quizzes (`useQuiz.ts`, `FixScreen`)**: Adicionados refetch automático ao alternar abas, persistência local em MMKV do histórico e controle rigoroso de expiração de cache.
+  - **Listagens Gerais**: Adicionado suporte a _Pull-to-Refresh_ nas telas de cursos, meditações e orações.
+- **Central de Notificações (`useNotifications.ts`)**: Eliminada requisição duplicada no momento do login e padronizada a formatação de datas em formato pt-BR.
+- **Limpeza de Código e Descontinuação de Legados**: Removidos diretórios obsoletos de serviços legados, mocks e imports inutilizados em telas, hooks e componentes.
+
+### Corrigido
+
+- **Gerenciamento de Áudio e Players (`playerStore.ts`, `useAudioPlayer.ts`)**: Correção no ciclo de vida dos players de áudio (reset de estado ao sair da tela e limpeza de cache de URLs reproduzidas).
+- **Fórum de Lições (`forumApiService.ts`, `LessonForum`)**: Corrigida a paginação (base 0) e desserialização de payloads de comentários e reações da comunidade.
+- **Normalização Defensiva de Quizzes (`quizService.ts`, `QuizScreen`)**: Tratamento robusto para vincular subcategorias a partir de slugs/nomes legíveis e prevenção de chamadas a rotas inexistentes.
+- **Barra de Busca do Glossário (`GlossaryScreen`)**: Corrigido loop de renderização ao digitar na busca e restaurado o cabeçalho fixo (_sticky header_) original com suporte a múltiplos formatos de sinônimos.
+- **Filtro de Orações em Alta (`prayerApiService.ts`, `TrendingPrayers`)**: Tratamento seguro de tags em reflexões como array e exibição exclusiva de contagens positivas.
+
 ## [2.0.19-ota.9] - 2026-08-05 (Hot-Update)
 
 ### Alterado / Otimizado / Corrigido
