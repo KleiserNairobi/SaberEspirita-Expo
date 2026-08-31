@@ -88,6 +88,7 @@ const CarouselItem = React.memo(function CarouselItem({
         : require("@/assets/images/placeholder.jpeg");
 
   const isComingSoon = item.status === "COMING_SOON";
+  const isLegacy = item.status === "LEGACY";
 
   const hasStarted = !!progress;
   const completionPercent =
@@ -96,13 +97,17 @@ const CarouselItem = React.memo(function CarouselItem({
       : 0;
   const isCompleted = completionPercent >= 100;
 
+  const isLocked = isComingSoon || (isLegacy && !hasStarted);
+
   const buttonText = isComingSoon
     ? "EM BREVE"
-    : isCompleted
-      ? "CONCLUÍDO"
-      : hasStarted
-        ? "CONTINUAR"
-        : "INICIAR";
+    : isLegacy && !hasStarted
+      ? "ENCERRADO"
+      : isCompleted
+        ? "CONCLUÍDO"
+        : hasStarted
+          ? "CONTINUAR"
+          : "INICIAR";
 
   const displayPercent = Math.min(Math.round(completionPercent), 100);
 
@@ -149,16 +154,16 @@ const CarouselItem = React.memo(function CarouselItem({
             <TouchableOpacity
               style={[
                 styles.button,
-                isComingSoon && styles.buttonComingSoon,
+                isLocked && styles.buttonComingSoon,
                 isCompleted && styles.buttonCompleted,
                 hasStarted && !isCompleted && styles.buttonContinuing,
               ]}
-              activeOpacity={isComingSoon ? 1 : 0.8}
-              onPress={isComingSoon ? undefined : () => onPress(item.id)}
-              disabled={isComingSoon}
+              activeOpacity={isLocked ? 1 : 0.8}
+              onPress={isLocked ? undefined : () => onPress(item.id)}
+              disabled={isLocked}
             >
               <View style={styles.buttonContent}>
-                {isComingSoon ? (
+                {isLocked ? (
                   <Clock size={14} color="#FFF" style={{ marginRight: 6 }} />
                 ) : isCompleted ? (
                   <CheckCircle2 size={14} color="#FFF" style={{ marginRight: 6 }} />
