@@ -749,9 +749,29 @@ export function CourseCurriculumScreen() {
               <ArrowLeft size={20} color={theme.colors.primary} />
             </TouchableOpacity>
 
-            <Text style={styles.navTitle} numberOfLines={1}>
-              {course?.title || "Aulas da Série"}
-            </Text>
+            {(() => {
+              const fullTitle = course?.title || "Aulas da Série";
+              const titleLines = fullTitle
+                .split(/\n+/)
+                .map((s) => s.trim())
+                .filter(Boolean);
+
+              const mainTitle = titleLines[0] || fullTitle;
+              const subTitle = titleLines.slice(1).join(" ");
+
+              return (
+                <View style={styles.navTitleContainer}>
+                  <Text style={styles.navTitle} numberOfLines={1}>
+                    {mainTitle}
+                  </Text>
+                  {!!subTitle && (
+                    <Text style={styles.navSubtitle} numberOfLines={1}>
+                      {subTitle}
+                    </Text>
+                  )}
+                </View>
+              );
+            })()}
           </View>
 
           <TouchableOpacity

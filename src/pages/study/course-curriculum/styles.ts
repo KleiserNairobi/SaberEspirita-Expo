@@ -31,11 +31,19 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: theme.colors.accent,
       marginRight: 16,
     },
+    navTitleContainer: {
+      flex: 1,
+      justifyContent: "center",
+      marginRight: 12,
+    },
     navTitle: {
-      ...theme.text("lg", "semibold"),
+      ...theme.text("md", "semibold"),
       color: theme.colors.text,
-      flexShrink: 1, // Permite que o texto trunque se for muito longo
-      marginRight: 16, // Espaço entre o título e as elipses/ícone direito
+    },
+    navSubtitle: {
+      ...theme.text("xs", "medium"),
+      color: theme.colors.textSecondary,
+      marginTop: 1,
     },
     infoButton: {
       width: 40,
