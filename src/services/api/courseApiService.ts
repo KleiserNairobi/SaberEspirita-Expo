@@ -71,9 +71,17 @@ export const courseApiService = {
     if (!response.data) return null;
 
     const rawCourse = response.data.course ? response.data.course : response.data;
+    const exerciseCount = response.data.exerciseCount ?? rawCourse.exerciseCount ?? rawCourse.stats?.exerciseCount ?? 0;
+    const hasForum = response.data.hasForum ?? rawCourse.hasForum ?? false;
+
     return {
       ...rawCourse,
       imageUrl: typeof rawCourse.imageUrl === "string" ? resolveCdnUrl(rawCourse.imageUrl) : rawCourse.imageUrl,
+      hasForum,
+      stats: {
+        ...(rawCourse.stats || {}),
+        exerciseCount,
+      },
     };
   },
 

@@ -159,9 +159,10 @@ export function CourseDetailsScreen() {
   const userProgress =
     totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
-  // Dados de certificação
+  // Dados de certificação, exercícios e fórum
   const hasCertification = course?.certification?.enabled || false;
-  const exerciseCount = course?.stats?.exerciseCount || 0;
+  const exerciseCount = course?.stats?.exerciseCount ?? (course as any)?.exerciseCount ?? 0;
+  const hasForum = Boolean(course?.hasForum || lessons.some((l) => Boolean(l.forumEnabled)));
 
   // Formatação de duração (igual ao CourseCard)
   const workloadMinutes = course?.workloadMinutes || 0;
@@ -353,7 +354,7 @@ export function CourseDetailsScreen() {
                   <MessageCircle size={16} color={theme.colors.primary} />
                 </View>
                 <Text style={styles.statText}>
-                  {course.hasForum ? "Fórum ativo" : "Sem fórum"}
+                  {hasForum ? "Fórum ativo" : "Sem fórum"}
                 </Text>
               </View>
 
