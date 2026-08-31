@@ -4,6 +4,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import TrackPlayer from "react-native-track-player";
 import { PrayStackParamList } from "@/routers/types";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -37,14 +38,14 @@ export function PrayerScreen() {
   const queryClient = useQueryClient();
   const { setPlaying, setCurrentTrack } = useAmbientPlayerStore();
 
-  // Extermina som instataneamente se houver regressão na pilha (Back Hardware, Seta ou Cancelamento)
+  // Extermina som instantaneamente se houver regressão na pilha (Back Hardware, Seta ou Cancelamento)
   useEffect(() => {
     const unsubscribe = navigation.addListener("beforeRemove", (e) => {
       if (e.data.action.type === "GO_BACK" || e.data.action.type === "POP") {
-        // Para a música e reseta a seleção visual, exigindo nova seleção se quiser.
-        // Isso é a lógica à prova de falhas demandada.
         setPlaying(false);
         setCurrentTrack(null, null);
+        TrackPlayer.reset().catch(() => {});
+        stopSpeaking();
       }
     });
     return unsubscribe;

@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import { userActivityApiService } from "@/services/api/userActivityApiService";
 import { useAuthStore } from "@/stores/authStore";
 
 export const COURSE_PROGRESS_KEYS = {
   byUserAndCourse: (userId: string, courseId: string) =>
     ["courseProgress", userId, courseId] as const,
-  all: (userId: string) => ["allCoursesProgress", userId] as const,
+  all: (userId: string) => ["coursesProgressList", userId] as const,
 };
 
 /**
@@ -19,7 +20,7 @@ export function useCourseProgress(courseId: string) {
     queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(userId, courseId),
     queryFn: () => userActivityApiService.getCourseProgress(courseId),
     enabled: !!userId && !!courseId,
-    staleTime: 1000 * 30, // 30 segundos
+    staleTime: 0,
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em memória
     refetchOnMount: true,
   });
@@ -49,10 +50,13 @@ export function useTouchCourseAccess() {
       const targetUserId = variables.userId || userId;
       if (targetUserId) {
         queryClient.invalidateQueries({
-          queryKey: ["lastAccessedCourse", targetUserId],
+          queryKey: ["lastAccessedCourse"],
         });
         queryClient.invalidateQueries({
-          queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(targetUserId, variables.courseId),
+          queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(
+            targetUserId,
+            variables.courseId
+          ),
         });
       }
     },
@@ -75,7 +79,13 @@ export function useCompleteLesson() {
         queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(userId, variables.courseId),
       });
       queryClient.invalidateQueries({
-        queryKey: COURSE_PROGRESS_KEYS.all(userId),
+        queryKey: ["coursesProgressList"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["allCoursesProgress"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["lastAccessedCourse"],
       });
       queryClient.invalidateQueries({
         queryKey: ["user-activity"],

@@ -126,36 +126,18 @@ export default function MeditationPlayerScreen() {
   }, [playbackState.state]);
 
   // --- SETUP E CARREGAMENTO DO ÁUDIO ---
-  // Lógica de lock para evitar race conditions em Fast Refresh / remounts
   useEffect(() => {
     let isActive = true;
 
     async function setupAndLoad() {
       if (localAudioUri && meditation) {
         try {
-          // Pergunta diretamente ao engine nativo o que está tocando
-          const currentNativeTrackIndex = await TrackPlayer.getActiveTrackIndex();
-          let currentNativeTrack = null;
-          if (currentNativeTrackIndex !== undefined && currentNativeTrackIndex !== null) {
-            currentNativeTrack = await TrackPlayer.getTrack(currentNativeTrackIndex);
-          }
-
-          // Se a meditação já está carregada na engine nativa, apenas dá play (sem re-injeção)
-          if (currentNativeTrack?.id === meditation.id) {
-            const currentState = await TrackPlayer.getPlaybackState();
-            if (currentState.state !== State.Playing) {
-              await TrackPlayer.play();
-            }
-            setPlaying(true);
-            return;
-          }
-
-          // Fila diferente ou vazia: reset completo e carregamento fresco
+          // Reset completo para garantir que a meditação inicie sempre do zero
           await TrackPlayer.reset();
 
           if (!isActive) return;
-          // Aguarda 300ms para maior estabilidade no iOS (evita "Removed Instance")
-          await new Promise((resolve) => setTimeout(resolve, 300));
+          // Aguarda 200ms para maior estabilidade no iOS
+          await new Promise((resolve) => setTimeout(resolve, 200));
           if (!isActive) return;
 
           await TrackPlayer.add({
@@ -186,13 +168,9 @@ export default function MeditationPlayerScreen() {
     setupAndLoad();
 
     return () => {
-      // KILL-SWITCH LOCAL: cancela operações assíncronas pendentes
       isActive = false;
       setPlaying(false);
-
-      // stop() para o áudio e reseta posição para 0, mantendo a fila inteira.
-      // É mais seguro que reset() no cleanup do iOS (evita "Removed Instance").
-      TrackPlayer.stop().catch(() => {});
+      TrackPlayer.reset().catch(() => {});
     };
   }, [localAudioUri, meditation?.id]);
 

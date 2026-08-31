@@ -7,10 +7,15 @@ export const ambientAudioApiService = {
    * Obtém a lista de áudios ambientes para meditação e estudo.
    */
   async getAmbientAudios(): Promise<IAmbientAudio[]> {
-    const response = await apiClient.get<IAmbientAudio[]>("/ambient-audios");
-    return (response.data || []).map((audio) => ({
-      ...audio,
-      storagePath: resolveCdnUrl(audio.storagePath) || audio.storagePath,
-    }));
+    const response = await apiClient.get<any[]>("/ambient-audios");
+    return (response.data || []).map((audio) => {
+      const fileName = audio.fileName || `${audio.id}.mp3`;
+      const rawPath = audio.url || audio.storagePath || `prayers/audio/${fileName}`;
+      return {
+        ...audio,
+        fileName,
+        storagePath: resolveCdnUrl(rawPath) || rawPath,
+      };
+    });
   },
 };

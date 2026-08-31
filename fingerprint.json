@@ -177,7 +177,7 @@
         "reasons": [
           "expoAutolinkingIos"
         ],
-        "hash": "5d3603f54c680a13e269fe37c1f447cefe5f0ea8"
+        "hash": "b1a29bd78d870fdc7f7be9325d4a688374dd8a4e"
       },
       {
         "type": "dir",
@@ -367,7 +367,7 @@
         "hash": "4e3906b710c22b00ea730348099f6e4c1facafc3"
       }
     ],
-    "hash": "c88563f9410bb2e61e3a9f71c054d379676c2500"
+    "hash": "6dcce665b8dfe050c6adedcae8ab0830ad837465"
   },
   "android": {
     "sources": [
@@ -546,7 +546,7 @@
         "reasons": [
           "expoAutolinkingAndroid"
         ],
-        "hash": "c0322e564fc5e5d300ac4e12081c0a0443050acc"
+        "hash": "5f35ec711402c013a266333f23dbdc9e92fe523b"
       },
       {
         "type": "dir",
@@ -736,6 +736,6 @@
         "hash": "c6d705877e851ecfcb5284c9c419859f5561afe5"
       }
     ],
-    "hash": "8b69d90375a7c02c59289e6cb79d26efc733830c"
+    "hash": "f38df48a8907597a8fa22abb33330b78636b1a7f"
   }
 }

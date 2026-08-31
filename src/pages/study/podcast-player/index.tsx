@@ -128,28 +128,12 @@ export default function PodcastPlayerScreen() {
     async function setupAndLoad() {
       if (localAudioUri && podcast) {
         try {
-          const currentNativeTrackIndex = await TrackPlayer.getActiveTrackIndex();
-          let currentNativeTrack = null;
-          if (currentNativeTrackIndex !== undefined && currentNativeTrackIndex !== null) {
-            currentNativeTrack = await TrackPlayer.getTrack(currentNativeTrackIndex);
-          }
-
-          // Se o podcast já está carregado na engine nativa, apenas dá play
-          if (currentNativeTrack?.id === podcast.id) {
-            const currentState = await TrackPlayer.getPlaybackState();
-            if (currentState.state !== State.Playing) {
-              await TrackPlayer.play();
-            }
-            setPlaying(true);
-            return;
-          }
-
-          // Fila diferente ou vazia: reset completo e carregamento fresco
+          // Reset completo para garantir que o áudio inicie sempre do zero
           await TrackPlayer.reset();
 
           if (!isActive) return;
-          // Aguarda 300ms para maior estabilidade no iOS (evita "Removed Instance")
-          await new Promise((resolve) => setTimeout(resolve, 300));
+          // Aguarda 200ms para maior estabilidade no iOS
+          await new Promise((resolve) => setTimeout(resolve, 200));
           if (!isActive) return;
 
           await TrackPlayer.add({
@@ -182,7 +166,7 @@ export default function PodcastPlayerScreen() {
     return () => {
       isActive = false;
       setPlaying(false);
-      TrackPlayer.stop().catch(() => {});
+      TrackPlayer.reset().catch(() => {});
     };
   }, [localAudioUri, podcast?.id]);
 

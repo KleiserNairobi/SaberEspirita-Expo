@@ -1,10 +1,11 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAuthStore } from "@/stores/authStore";
-import { ICourse, IUserCourseProgress, ILesson } from "@/types/course";
+
 import { courseApiService } from "@/services/api/courseApiService";
 import { lessonApiService } from "@/services/api/lessonApiService";
 import { userActivityApiService } from "@/services/api/userActivityApiService";
-import { COURSES_PROGRESS_KEYS } from "./useAllCoursesProgress";
+import { useAuthStore } from "@/stores/authStore";
+import { ICourse, ILesson, IUserCourseProgress } from "@/types/course";
+
 import { COURSES_KEYS } from "./useCourses";
 
 export interface LastAccessedCourseData {
@@ -32,12 +33,8 @@ export function useLastAccessedCourse() {
         });
         if (!courses || courses.length === 0) return null;
 
-        // Reutiliza cache de progresso do usuário via React Query (evita duplicação de requisições)
-        const progresses = await queryClient.ensureQueryData({
-          queryKey: COURSES_PROGRESS_KEYS.list(userId),
-          queryFn: () => userActivityApiService.getCoursesProgress(),
-          staleTime: 1000 * 30,
-        });
+        // Busca o progresso fresco do usuário via API REST
+        const progresses = await userActivityApiService.getCoursesProgress();
 
         let targetCourse = courses[0];
         let targetProgress: IUserCourseProgress | null = null;
@@ -89,7 +86,7 @@ export function useLastAccessedCourse() {
       }
     },
     enabled: !!userId,
-    staleTime: 1000 * 30, // 30 segundos
+    staleTime: 0,
     gcTime: 1000 * 60 * 60 * 24,
     refetchOnMount: true,
   });

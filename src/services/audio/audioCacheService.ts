@@ -64,16 +64,16 @@ export async function checkAudioCache(fileName: string): Promise<string | null> 
  * Se não existir, baixa do Firebase Storage e salva em cache
  */
 export async function getCachedAudioUri(
-  storageUrl: string,
+  storageUrl?: string | null,
   forcedFileName?: string
 ): Promise<string> {
   try {
     await ensureCacheDirectoryExists();
 
-    const cacheFileName = forcedFileName || getCacheFileName(storageUrl);
+    const cacheFileName = forcedFileName || (storageUrl ? getCacheFileName(storageUrl) : "temp_audio.mp3");
     const localUri = `${AUDIO_CACHE_DIR}${cacheFileName}`;
 
-    // Verifica se já existe em cache
+    // 1. Verifica se já existe em cache no disco
     const fileInfo = await FileSystem.getInfoAsync(localUri);
 
     if (fileInfo.exists && fileInfo.size && fileInfo.size > 0) {
@@ -88,8 +88,13 @@ export async function getCachedAudioUri(
       await FileSystem.deleteAsync(localUri, { idempotent: true });
     }
 
+    if (!storageUrl || !storageUrl.startsWith("http")) {
+      console.warn("[AudioCache] URL de áudio inválida ou ausente para download:", storageUrl);
+      return localUri;
+    }
+
     // Não existe em cache ou estava vazio, fazer download
-    console.log("[AudioCache] Baixando áudio do Firebase Storage:", cacheFileName);
+    console.log("[AudioCache] Baixando áudio:", cacheFileName);
 
     const downloadResult = await FileSystem.downloadAsync(storageUrl, localUri);
 
@@ -101,7 +106,7 @@ export async function getCachedAudioUri(
     }
   } catch (error) {
     console.error("[AudioCache] Erro ao obter áudio em cache:", error);
-    return storageUrl;
+    return storageUrl || "";
   }
 }
 

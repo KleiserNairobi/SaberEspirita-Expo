@@ -3,7 +3,7 @@ import React, { useCallback, useRef, useState } from "react";
 import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { differenceInDays } from "date-fns";
@@ -89,6 +89,15 @@ export function StudyScreen() {
 
   // Fetching do último curso acessado
   const { data: lastAccessed } = useLastAccessedCourse();
+
+  // Revalidar progresso dos cursos e último acessado ao focar na tela
+  useFocusEffect(
+    useCallback(() => {
+      queryClient.invalidateQueries({ queryKey: ["lastAccessedCourse"] });
+      queryClient.invalidateQueries({ queryKey: ["coursesProgressList"] });
+      queryClient.invalidateQueries({ queryKey: ["allCoursesProgress"] });
+    }, [queryClient])
+  );
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);

@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { userActivityApiService } from "@/services/api/userActivityApiService";
 import { useAuthStore } from "@/stores/authStore";
 import { IUserCourseProgress } from "@/types/course";
@@ -20,7 +21,7 @@ export function useCoursesProgressList() {
     queryKey: COURSES_PROGRESS_KEYS.list(userId),
     queryFn: () => userActivityApiService.getCoursesProgress(),
     enabled: !!userId,
-    staleTime: 1000 * 30, // 30 segundos
+    staleTime: 0,
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em memória
     refetchOnMount: true,
   });
@@ -49,7 +50,7 @@ export function useAllCoursesProgress() {
       return progressMap;
     },
     enabled: !!userId,
-    staleTime: 1000 * 30, // 30 segundos
+    staleTime: 0,
     gcTime: 1000 * 60 * 60 * 24 * 7,
     refetchOnMount: true,
   });

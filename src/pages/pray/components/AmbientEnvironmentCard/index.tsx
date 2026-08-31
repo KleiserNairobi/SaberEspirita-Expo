@@ -15,7 +15,7 @@ import { State, usePlaybackState } from "react-native-track-player";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
-import { getCachedAudioUri } from "@/services/audio/audioCacheService";
+import { checkAudioCache, getCachedAudioUri } from "@/services/audio/audioCacheService";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { IAmbientAudio } from "@/types/ambientAudio";
 
@@ -103,27 +103,35 @@ export function AmbientEnvironmentCard({
       return;
     }
 
-    if (audio.localUri) {
-      setPendingName(null);
-      setCurrentTrack(audio.localUri, audio.id);
-    } else {
-      try {
-        // Feedback instantâneo no COMBO e no estado Global
-        setDownloading(true);
-        setCurrentTrack(null, audio.id); // Registra a intenção Imediatamente!
-        setPendingName(
-          `${audio.title}${COMPOSERS[audio.id] ? ` (${COMPOSERS[audio.id]})` : ""}`
-        );
+    const fileName =
+      audio.fileName ||
+      audio.storagePath.split("/").pop()?.split("?")[0] ||
+      `${audio.id}.mp3`;
 
-        // Baixa o áudio em segundo plano
-        const localUri = await getCachedAudioUri(audio.storagePath, audio.fileName);
-        setCurrentTrack(localUri, audio.id);
-      } catch (error) {
-        Alert.alert("Erro", "Não foi possível carregar este áudio ambiente.");
-      } finally {
-        setDownloading(false);
-        setPendingName(null);
-      }
+    // 1. Checa se o arquivo já existe no cache local do dispositivo
+    const cachedUri = audio.localUri || (await checkAudioCache(fileName));
+    if (cachedUri) {
+      setPendingName(null);
+      setCurrentTrack(cachedUri, audio.id);
+      return;
+    }
+
+    // 2. Se não estiver em cache, efetua o download em segundo plano com feedback
+    try {
+      setDownloading(true);
+      setCurrentTrack(null, audio.id); // Registra a intenção Imediatamente!
+      setPendingName(
+        `${audio.title}${COMPOSERS[audio.id] ? ` (${COMPOSERS[audio.id]})` : ""}`
+      );
+
+      // Baixa o áudio em segundo plano
+      const localUri = await getCachedAudioUri(audio.storagePath, audio.fileName);
+      setCurrentTrack(localUri, audio.id);
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível carregar este áudio ambiente.");
+    } finally {
+      setDownloading(false);
+      setPendingName(null);
     }
   }
 

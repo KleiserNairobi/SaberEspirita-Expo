@@ -8,7 +8,7 @@ import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
 import { createStyles } from "./styles";
 import { IAmbientAudio } from "@/types/ambientAudio";
-import { getCachedAudioUri } from "@/services/audio/audioCacheService";
+import { checkAudioCache, getCachedAudioUri } from "@/services/audio/audioCacheService";
 
 // Mapeamento de ícones
 const ICON_MAP = {
@@ -25,7 +25,7 @@ export function AmbientPlayer() {
   const { isPlaying, currentTrack, setPlaying, setCurrentTrack } =
     useAmbientPlayerStore();
 
-  // Carregar áudios do Firebase Storage com cache
+  // Carregar áudios com cache
   const { data: audios, isLoading, error } = useAmbientAudios();
 
   // Estado para rastrear qual música está sendo baixada (pelo ID/FileName)
@@ -33,42 +33,40 @@ export function AmbientPlayer() {
 
   async function handleTrackPress(audio: IAmbientAudio) {
     try {
-      // 1. Se já tem URI local, comportamento normal (Play/Pause)
-      if (audio.localUri) {
-        if (currentTrack === audio.localUri && isPlaying) {
-          // Pausar
+      const fileName =
+        audio.fileName ||
+        audio.storagePath.split("/").pop()?.split("?")[0] ||
+        `${audio.id}.mp3`;
+
+      const cachedUri = audio.localUri || (await checkAudioCache(fileName));
+
+      // 1. Se já tem URI local ou em cache, comportamento normal (Play/Pause)
+      if (cachedUri) {
+        if (currentTrack === cachedUri && isPlaying) {
           console.log("[AmbientPlayer] Pausando track atual");
           setPlaying(false);
-        } else if (currentTrack === audio.localUri && !isPlaying) {
-          // Retomar
+        } else if (currentTrack === cachedUri && !isPlaying) {
           console.log("[AmbientPlayer] Retomando track pausada");
           setPlaying(true);
         } else {
-          // Tocar nova (Em cache)
-          console.log("[AmbientPlayer] Selecionando nova track:", audio.localUri);
-
-          // Removemos o 'setDownloadingId' estético aqui. Se a música já existe em disco,
-          // ela não deve simular engasgo visual de reload para não causar desconfiança do cache.
-          setPlaying(true); // Engata o store
-          setCurrentTrack(audio.localUri);
+          console.log("[AmbientPlayer] Selecionando nova track em cache:", cachedUri);
+          setCurrentTrack(cachedUri, audio.id);
+          setPlaying(true);
         }
         return;
       }
 
-      // 2. Se NÃO tem URI, iniciar download real com Feedback Spinning Completo
+      // 2. Se NÃO tem em cache, iniciar download real
       console.log("[AmbientPlayer] Áudio não em cache, baixando:", audio.title);
       setDownloadingId(audio.id);
 
-      // Baixa o áudio
-      const newLocalUri = await getCachedAudioUri(audio.storagePath, audio.fileName);
+      const newLocalUri = await getCachedAudioUri(audio.storagePath, fileName);
 
-      // Atualiza o cache do React Query para persistir que agora temos o arquivo localmente
       await queryClient.invalidateQueries({ queryKey: ["ambientAudios"] });
 
-      // Toca o áudio baixado imediatamente
-      setCurrentTrack(newLocalUri);
+      setCurrentTrack(newLocalUri, audio.id);
       setPlaying(true);
-      // setDownloadingId(null) será limpo pelo Effect mestre
+      setDownloadingId(null);
     } catch (error) {
       console.error("[AmbientPlayer] Erro ao reproduzir/baixar áudio:", error);
       setPlaying(false);

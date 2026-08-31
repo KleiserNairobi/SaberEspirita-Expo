@@ -129,10 +129,16 @@ export function CourseQuizScreen() {
             queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, courseId),
           });
           queryClient.invalidateQueries({
-            queryKey: ["allCoursesProgress", user.uid],
+            queryKey: ["coursesProgressList"],
           });
           queryClient.invalidateQueries({
-            queryKey: ["lastAccessedCourse", user.uid],
+            queryKey: ["allCoursesProgress"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["lastAccessedCourse"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["user-activity"],
           });
         }
       }
