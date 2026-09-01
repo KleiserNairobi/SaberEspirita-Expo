@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Crown } from "lucide-react-native";
+import React, { useEffect, useState } from "react";
+
 import { Image, Text, View } from "react-native";
+
+import { Crown } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { ILeaderboardUser } from "@/types/leaderboard";
@@ -37,23 +39,24 @@ export function LeaderboardPodium({ players }: Props) {
 
     const primaryColorHex = theme.colors.primary.replace("#", "");
     const formattedName = formatUserName(player.userName);
+    
+    /* TODO: Restaurar foto customizada do usuário no próximo release nativo
     const rawPhoto = player.photoURL || (player as any).photoUrl;
     const validPhoto =
       rawPhoto && typeof rawPhoto === "string" && rawPhoto.trim().length > 0
         ? rawPhoto.trim()
         : null;
 
-    const fallbackUrl = `https://ui-avatars.com/api/?background=${primaryColorHex}&color=fff&name=${encodeURIComponent(
-      formattedName
-    )}&bold=true&font-size=0.35&format=png`;
-
     const [imageFailed, setImageFailed] = React.useState(false);
 
     React.useEffect(() => {
       setImageFailed(false);
     }, [player.userId, player.photoURL, (player as any).photoUrl]);
+    */
 
-    const avatarUrl = validPhoto && !imageFailed ? validPhoto : fallbackUrl;
+    const avatarUrl = `https://ui-avatars.com/api/?background=${primaryColorHex}&color=fff&name=${encodeURIComponent(
+      formattedName
+    )}&bold=true&font-size=0.35&format=png`;
 
     return (
       <View style={[styles.podiumItem, isFirst && styles.podiumFirst]}>
@@ -66,7 +69,6 @@ export function LeaderboardPodium({ players }: Props) {
           )}
           <Image
             source={{ uri: avatarUrl }}
-            onError={() => setImageFailed(true)}
             style={[
               styles.avatar,
               isFirst && styles.avatarFirst,

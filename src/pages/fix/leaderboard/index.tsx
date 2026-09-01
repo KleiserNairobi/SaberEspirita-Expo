@@ -148,7 +148,11 @@ export function LeaderboardScreen() {
     );
   }
 
-  const { data: rawPlayers = [], isLoading, refetch: refetchLeaderboard } = useLeaderboard(selectedFilter);
+  const {
+    data: rawPlayers = [],
+    isLoading,
+    refetch: refetchLeaderboard,
+  } = useLeaderboard(selectedFilter);
   const { data: myScoreData, refetch: refetchScore } = useCurrentUserScore();
 
   useFocusEffect(
