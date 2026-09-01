@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-import { Platform } from "react-native";
+import { ActivityIndicator, Image, Platform, StyleSheet, View } from "react-native";
 
 import { Allura_400Regular } from "@expo-google-fonts/allura";
 import {
@@ -219,6 +218,36 @@ function AppContent() {
   );
 }
 
+function HotUpdaterFallback() {
+  return (
+    <View style={fallbackStyles.container}>
+      <Image
+        source={require("./assets/images/splash-icon.png")}
+        style={fallbackStyles.logo}
+        resizeMode="contain"
+      />
+      <ActivityIndicator size="small" color="#3B82F6" style={fallbackStyles.spinner} />
+    </View>
+  );
+}
+
+const fallbackStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F2F7F2",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logo: {
+    width: 130,
+    height: 130,
+    marginBottom: 20,
+  },
+  spinner: {
+    marginTop: 8,
+  },
+});
+
 if (__DEV__) {
   require("./ReactotronConfig");
 }
@@ -231,6 +260,7 @@ const WrappedApp = HotUpdater.wrap({
   baseURL:
     "https://saber-espirita-hot-updater-worker.kleiser-nairobi.workers.dev/api/check-update",
   updateStrategy: "fingerprint",
+  fallbackComponent: HotUpdaterFallback,
 })(App);
 
 registerRootComponent(WrappedApp);

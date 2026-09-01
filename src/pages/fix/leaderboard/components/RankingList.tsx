@@ -19,7 +19,6 @@ export function RankingList({ player }: Props) {
   const formattedName = formatUserName(player.userName);
   const primaryColorHex = theme.colors.primary.replace("#", "");
 
-  /* TODO: Restaurar foto customizada do usuário no próximo release nativo
   const rawPhoto = player.photoURL || (player as any).photoUrl;
   const validPhoto =
     rawPhoto && typeof rawPhoto === "string" && rawPhoto.trim().length > 0
@@ -31,11 +30,12 @@ export function RankingList({ player }: Props) {
   React.useEffect(() => {
     setImageFailed(false);
   }, [player.userId, player.photoURL, (player as any).photoUrl]);
-  */
 
-  const avatarUrl = `https://ui-avatars.com/api/?background=${primaryColorHex}&color=fff&name=${encodeURIComponent(
+  const fallbackAvatarUrl = `https://ui-avatars.com/api/?background=${primaryColorHex}&color=fff&name=${encodeURIComponent(
     formattedName
   )}&bold=true&font-size=0.35&format=png`;
+
+  const avatarUrl = validPhoto && !imageFailed ? validPhoto : fallbackAvatarUrl;
 
   return (
     <View style={[styles.listItem, player.isCurrentUser && styles.currentUserItem]}>
@@ -44,6 +44,7 @@ export function RankingList({ player }: Props) {
       </View>
       <Image
         source={{ uri: avatarUrl }}
+        onError={() => setImageFailed(true)}
         style={styles.listAvatar}
       />
       <View style={styles.listContent}>

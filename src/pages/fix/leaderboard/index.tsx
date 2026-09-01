@@ -267,10 +267,11 @@ export function LeaderboardScreen() {
             <Image
               source={{
                 uri:
-                  userFooterData.photoURL?.trim() ||
-                  `https://ui-avatars.com/api/?background=${primaryColorHex}&color=fff&name=${encodeURIComponent(
-                    formatUserName(userFooterData.userName)
-                  )}&bold=true&font-size=0.35&format=png`,
+                  (userFooterData.photoURL && userFooterData.photoURL.trim().length > 0)
+                    ? userFooterData.photoURL.trim()
+                    : `https://ui-avatars.com/api/?background=${primaryColorHex}&color=fff&name=${encodeURIComponent(
+                        formatUserName(userFooterData.userName)
+                      )}&bold=true&font-size=0.35&format=png`,
               }}
               style={styles.footerAvatar}
             />

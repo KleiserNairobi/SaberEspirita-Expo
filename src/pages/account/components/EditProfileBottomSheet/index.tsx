@@ -1,8 +1,7 @@
 import React, { forwardRef, useEffect, useState } from "react";
-import { Image, Text, View } from "react-native";
-// import { Alert, TouchableOpacity } from "react-native";
-// import * as ImagePicker from "expo-image-picker";
-// import { Camera, Image as ImageIcon, Trash2 } from "lucide-react-native";
+import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { Camera, Image as ImageIcon, Trash2 } from "lucide-react-native";
 
 import {
   BottomSheetBackdrop,
@@ -33,8 +32,8 @@ export const EditProfileBottomSheet = forwardRef<
   const styles = createStyles(theme);
 
   const [name, setName] = useState(initialName);
-  // const [selectedPhotoUri, setSelectedPhotoUri] = useState<string | null>(null);
-  // const [isRemovingPhoto, setIsRemovingPhoto] = useState(false);
+  const [selectedPhotoUri, setSelectedPhotoUri] = useState<string | null>(null);
+  const [isRemovingPhoto, setIsRemovingPhoto] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -42,8 +41,8 @@ export const EditProfileBottomSheet = forwardRef<
 
   useEffect(() => {
     setName(initialName);
-    // setSelectedPhotoUri(null);
-    // setIsRemovingPhoto(false);
+    setSelectedPhotoUri(null);
+    setIsRemovingPhoto(false);
     setError("");
   }, [initialName, initialPhotoUrl]);
 
@@ -67,7 +66,6 @@ export const EditProfileBottomSheet = forwardRef<
     return true;
   }
 
-  /* TODO: Restaurar seleção de foto no próximo release com build nativo nas lojas
   async function handlePickGallery() {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -126,15 +124,14 @@ export const EditProfileBottomSheet = forwardRef<
     setSelectedPhotoUri(null);
     setIsRemovingPhoto(true);
   }
-  */
 
   async function handleSave() {
     if (!validateName(name)) return;
 
     const isNameChanged = name.trim() !== initialName;
-    // const isPhotoChanged = selectedPhotoUri !== null || isRemovingPhoto;
+    const isPhotoChanged = selectedPhotoUri !== null || isRemovingPhoto;
 
-    if (!isNameChanged /* && !isPhotoChanged */) {
+    if (!isNameChanged && !isPhotoChanged) {
       // @ts-ignore
       ref.current?.dismiss();
       return;
@@ -142,8 +139,8 @@ export const EditProfileBottomSheet = forwardRef<
 
     setIsLoading(true);
     try {
-      // const photoUriToSave = isRemovingPhoto ? "" : selectedPhotoUri;
-      await onSave(name.trim(), undefined);
+      const photoUriToSave = isRemovingPhoto ? "" : (selectedPhotoUri || undefined);
+      await onSave(name.trim(), photoUriToSave);
       // @ts-ignore
       ref.current?.dismiss();
     } catch (error) {
@@ -155,8 +152,8 @@ export const EditProfileBottomSheet = forwardRef<
 
   function handleCancel() {
     setName(initialName);
-    // setSelectedPhotoUri(null);
-    // setIsRemovingPhoto(false);
+    setSelectedPhotoUri(null);
+    setIsRemovingPhoto(false);
     setError("");
     // @ts-ignore
     ref.current?.dismiss();
@@ -175,6 +172,7 @@ export const EditProfileBottomSheet = forwardRef<
 
   const activePhoto =
     initialPhotoUrl && initialPhotoUrl.trim().length > 0 ? initialPhotoUrl : null;
+  const displayPhoto = isRemovingPhoto ? null : (selectedPhotoUri || activePhoto);
 
   const formattedName = formatUserName(name || initialName || "Usuário");
   const initialLetter = formattedName.charAt(0).toUpperCase();
@@ -182,7 +180,7 @@ export const EditProfileBottomSheet = forwardRef<
   const isSaveDisabled =
     isLoading ||
     !name.trim() ||
-    name.trim() === initialName ||
+    (name.trim() === initialName && selectedPhotoUri === null && !isRemovingPhoto) ||
     !!error;
 
   return (
@@ -201,7 +199,7 @@ export const EditProfileBottomSheet = forwardRef<
         <View>
           <Text style={styles.title}>Editar Perfil</Text>
           <Text style={styles.description}>
-            Altere seu nome ou apelido exibido nos placares e comunidade.
+            Altere seu nome ou apelido e foto exibidos nos placares e comunidade.
           </Text>
         </View>
 
@@ -209,20 +207,18 @@ export const EditProfileBottomSheet = forwardRef<
         <View style={styles.avatarSection}>
           <View style={styles.avatarWrapper}>
             <View style={styles.avatarContainer}>
-              {activePhoto ? (
-                <Image source={{ uri: activePhoto }} style={styles.avatarImage} />
+              {displayPhoto ? (
+                <Image source={{ uri: displayPhoto }} style={styles.avatarImage} />
               ) : (
                 <Text style={styles.avatarInitials}>{initialLetter}</Text>
               )}
             </View>
-            {/* 
             <View style={styles.cameraBadge}>
               <Camera size={14} color="#FFFFFF" />
-            </View> 
-            */}
+            </View>
           </View>
 
-          {/* Opções de Foto (Comentadas para próximo release nativo)
+          {/* Opções de Foto */}
           <View style={styles.photoOptionsRow}>
             <TouchableOpacity
               style={styles.photoOptionButton}
@@ -238,12 +234,11 @@ export const EditProfileBottomSheet = forwardRef<
             </TouchableOpacity>
           </View>
 
-          {activePhoto && (
+          {displayPhoto && (
             <TouchableOpacity onPress={handleRemovePhoto} style={{ marginTop: 6 }}>
               <Text style={styles.removePhotoText}>Remover foto</Text>
             </TouchableOpacity>
           )}
-          */}
         </View>
 
         {/* Input de Nome */}

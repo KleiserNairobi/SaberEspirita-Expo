@@ -40,7 +40,6 @@ export function LeaderboardPodium({ players }: Props) {
     const primaryColorHex = theme.colors.primary.replace("#", "");
     const formattedName = formatUserName(player.userName);
     
-    /* TODO: Restaurar foto customizada do usuário no próximo release nativo
     const rawPhoto = player.photoURL || (player as any).photoUrl;
     const validPhoto =
       rawPhoto && typeof rawPhoto === "string" && rawPhoto.trim().length > 0
@@ -52,11 +51,12 @@ export function LeaderboardPodium({ players }: Props) {
     React.useEffect(() => {
       setImageFailed(false);
     }, [player.userId, player.photoURL, (player as any).photoUrl]);
-    */
 
-    const avatarUrl = `https://ui-avatars.com/api/?background=${primaryColorHex}&color=fff&name=${encodeURIComponent(
+    const fallbackAvatarUrl = `https://ui-avatars.com/api/?background=${primaryColorHex}&color=fff&name=${encodeURIComponent(
       formattedName
     )}&bold=true&font-size=0.35&format=png`;
+
+    const avatarUrl = validPhoto && !imageFailed ? validPhoto : fallbackAvatarUrl;
 
     return (
       <View style={[styles.podiumItem, isFirst && styles.podiumFirst]}>
@@ -69,6 +69,7 @@ export function LeaderboardPodium({ players }: Props) {
           )}
           <Image
             source={{ uri: avatarUrl }}
+            onError={() => setImageFailed(true)}
             style={[
               styles.avatar,
               isFirst && styles.avatarFirst,

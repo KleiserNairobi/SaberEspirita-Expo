@@ -41,6 +41,8 @@ export interface AuthResponseDTO {
   userId?: string;
   email?: string;
   displayName?: string;
+  photoUrl?: string | null;
+  photoURL?: string | null;
   user?: UserProfileDTO;
 }
 
@@ -88,12 +90,14 @@ export const authApiService = {
     provider: "google" | "apple",
     idToken: string,
     name?: string | null,
+    photoUrl?: string | null,
     deviceId?: string
   ): Promise<AuthResponseDTO> {
     const response = await apiClient.post<AuthResponseDTO>("/auth/social-login", {
       provider,
       idToken,
       name,
+      photoUrl,
       deviceId,
     });
     const jwt = response.data?.accessToken || response.data?.token;

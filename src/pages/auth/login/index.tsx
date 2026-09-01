@@ -63,9 +63,10 @@ export function LoginScreen() {
       const userInfo = await GoogleSignin.signIn();
       const token = userInfo.data?.idToken;
       const name = userInfo.data?.user?.name;
+      const photo = userInfo.data?.user?.photo;
 
       if (token) {
-        await signInWithGoogle(token, name);
+        await signInWithGoogle(token, name, photo);
       }
     } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {

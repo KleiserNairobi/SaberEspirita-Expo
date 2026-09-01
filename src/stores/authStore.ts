@@ -65,7 +65,11 @@ interface AuthState {
     password: string,
     displayName?: string
   ) => Promise<{ user: AppUser }>;
-  signInWithGoogle: (idToken: string, name?: string | null) => Promise<void>;
+  signInWithGoogle: (
+    idToken: string,
+    name?: string | null,
+    photoUrl?: string | null
+  ) => Promise<void>;
   signInWithApple: () => Promise<void>;
   loginAsGuest: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -88,7 +92,8 @@ const profileToAppUser = (
   fallbackId?: string,
   fallbackEmail?: string,
   fallbackName?: string,
-  emailVerified: boolean = true
+  emailVerified: boolean = true,
+  fallbackPhotoUrl?: string | null
 ): AppUser => ({
   uid: profile?.userId || profile?.id || fallbackId || "user_" + Date.now(),
   email: profile?.email ?? fallbackEmail ?? null,
@@ -99,7 +104,7 @@ const profileToAppUser = (
     profile?.email?.split("@")[0] ||
     fallbackEmail?.split("@")[0] ||
     "Usuário",
-  photoURL: profile?.photoUrl || profile?.photoURL || null,
+  photoURL: profile?.photoUrl || profile?.photoURL || fallbackPhotoUrl || null,
   emailVerified: emailVerified,
   reload: async () => {},
 });
@@ -252,7 +257,11 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      signInWithGoogle: async (idToken: string, name?: string | null) => {
+      signInWithGoogle: async (
+        idToken: string,
+        name?: string | null,
+        photoUrl?: string | null
+      ) => {
         set({ loading: true, error: null });
         try {
           console.log("AuthStore: Realizando login social REST com Google...");
@@ -262,12 +271,20 @@ export const useAuthStore = create<AuthState>()(
             deviceIdPayload = JSON.stringify(devIds);
           } catch {}
 
-          const res = await authApiService.socialLogin("google", idToken, name, deviceIdPayload);
+          const res = await authApiService.socialLogin(
+            "google",
+            idToken,
+            name,
+            photoUrl,
+            deviceIdPayload
+          );
           const appUser = profileToAppUser(
             res.user,
             res.userId,
             res.email,
-            res.displayName
+            res.displayName,
+            true,
+            res.photoUrl || (res.user as any)?.photoURL || (res.user as any)?.photoUrl || photoUrl
           );
 
           set({ user: appUser, isGuest: false, loading: false });
@@ -469,10 +486,10 @@ export const useAuthStore = create<AuthState>()(
               const profile = await authApiService.getProfile();
               if (profile) {
                 const updatedUser: AppUser = {
-                  uid: profile.userId || user.uid,
+                  uid: profile.userId || profile.id || user.uid,
                   email: profile.email ?? user.email,
-                  displayName: profile.userName ?? user.displayName,
-                  photoURL: profile.photoURL ?? user.photoURL,
+                  displayName: profile.displayName ?? profile.userName ?? user.displayName,
+                  photoURL: profile.photoUrl ?? profile.photoURL ?? user.photoURL,
                   emailVerified: true,
                 };
                 set({ user: updatedUser });

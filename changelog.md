@@ -2,6 +2,17 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.20] - 2026-09-01 (Store Release)
+
+### Adicionado / Corrigido
+
+- **Captura e Sincronização de Avatar**:
+  - Restabelecido o upload de foto de perfil (avatar) via Câmera e Galeria (`expo-image-picker`) no `EditProfileBottomSheet`, integrado com envio multipart para o Cloudflare R2 e backend Spring Boot.
+  - Habilitada a renderização de avatares reais dos usuários no Pódio e na Lista de Ranking do Placar (`LeaderboardPodium` e `RankingList`).
+  - Corrigida a extração da URL de foto no login social com Google (`picture` / `photo_url` nas claims OIDC e payload nativo).
+- **Proteção e Estabilidade de Boot (`HotUpdaterFallback`)**:
+  - Adicionado `fallbackComponent` no `HotUpdater.wrap` para evitar execuções paralelas ou flash de conteúdo de bundles legados durante a inicialização.
+
 ## [2.0.19-ota.10] - 2026-08-31 (Hot-Update)
 
 ### Adicionado
