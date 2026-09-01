@@ -55,38 +55,89 @@ export function useVersionControl() {
     }
 
     const platform = Platform.OS === "ios" ? "ios" : "android";
-    const platformData = versionData[platform];
     const currentVersion = Application.nativeApplicationVersion;
 
-    if (!platformData || !currentVersion) {
-      return { needUpdate: false, critical: false };
-    }
+    // Normalizar modo de manutenção
+    const isMaintenance = Boolean(
+      versionData.maintenanceMode ?? versionData.maintenance_mode
+    );
+    const maintenanceMsg =
+      versionData.maintenanceMessage ?? versionData.maintenance_message;
 
-    // Verificar se está em modo de manutenção
-    if (versionData.maintenance_mode) {
+    if (isMaintenance) {
       return {
         needUpdate: true,
         critical: true,
         maintenance: true,
-        message: versionData.maintenance_message,
+        message: maintenanceMsg,
       };
     }
 
-    // Verificar se a versão atual é menor que a mínima requerida
-    const needUpdate =
-      compareVersions(currentVersion, platformData.minimum_required_version) < 0;
-    const isLatest = compareVersions(currentVersion, platformData.latest_version) >= 0;
+    // Extração flexível dos dados de versão (suporta DTO Spring Boot e JSON Firestore)
+    const minVersion =
+      platform === "android"
+        ? (versionData.androidMinVersion ?? versionData.android?.minimum_required_version)
+        : (versionData.iosMinVersion ?? versionData.ios?.minimum_required_version);
+
+    const latestVersion =
+      platform === "android"
+        ? (versionData.androidLatestVersion ?? versionData.android?.latest_version)
+        : (versionData.iosLatestVersion ?? versionData.ios?.latest_version);
+
+    const updateUrl =
+      platform === "android"
+        ? (versionData.androidUpdateUrl ?? versionData.android?.update_url)
+        : (versionData.iosUpdateUrl ?? versionData.ios?.update_url);
+
+    const criticalFlag =
+      platform === "android"
+        ? Boolean(versionData.android?.critical)
+        : Boolean(versionData.ios?.critical);
+
+    if (!currentVersion || (!minVersion && !latestVersion)) {
+      return { needUpdate: false, critical: false };
+    }
+
+    // Testar se versão instalada é menor que a versão mínima exigida
+    const isBelowMin = minVersion
+      ? compareVersions(currentVersion, minVersion) < 0
+      : false;
+
+    // Testar se versão instalada é menor que a versão mais recente publicada
+    const isBelowLatest = latestVersion
+      ? compareVersions(currentVersion, latestVersion) < 0
+      : false;
+
+    // Se for menor que a mínima OU menor que a mais recente, precisa atualizar
+    const needUpdate = isBelowMin || isBelowLatest;
+
+    // É crítico (impede continuar sem atualizar) se estiver abaixo da versão mínima
+    // ou se o sinalizador critical do documento for verdadeiro.
+    const isCritical = isBelowMin || (needUpdate && criticalFlag);
+
+    const announceMessage =
+      versionData.announcementBody || versionData.message
+        ? {
+            title: versionData.announcementTitle || "Atualização Disponível",
+            body:
+              typeof versionData.message === "string"
+                ? versionData.message
+                : versionData.announcementBody ||
+                  "Uma nova versão do aplicativo com melhorias e novidades está disponível.",
+            button_text: "Atualizar Agora",
+          }
+        : versionData.message;
 
     return {
       needUpdate,
-      critical: needUpdate && platformData.critical,
+      critical: isCritical,
       maintenance: false,
       currentVersion,
-      minimumVersion: platformData.minimum_required_version,
-      latestVersion: platformData.latest_version,
-      updateUrl: platformData.update_url,
-      message: versionData.message,
-      isLatest,
+      minimumVersion: minVersion,
+      latestVersion,
+      updateUrl,
+      message: announceMessage,
+      isLatest: !isBelowLatest,
     };
   };
 

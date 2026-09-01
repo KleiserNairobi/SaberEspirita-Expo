@@ -14,6 +14,19 @@ export interface VersionControlData {
   maintenance_message?: string;
   message?: string;
   updated_at?: string;
+
+  // Propriedades retornadas pela API Spring Boot / PostgreSQL
+  androidMinVersion?: string;
+  androidLatestVersion?: string;
+  androidUpdateUrl?: string;
+  iosMinVersion?: string;
+  iosLatestVersion?: string;
+  iosUpdateUrl?: string;
+  maintenanceMode?: boolean;
+  maintenanceMessage?: string;
+  announcementTitle?: string;
+  announcementBody?: string;
+  announcementActive?: boolean;
 }
 
 export const appConfigApiService = {
