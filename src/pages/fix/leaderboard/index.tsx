@@ -176,31 +176,16 @@ export function LeaderboardScreen() {
   const topThree = top100Players.slice(0, 3);
   const others = top100Players.slice(3, 100);
 
-  // Verifica se o usuário autenticado está no Top 3 (Pódio)
-  const isUserInTopThree = topThree.some(
+  // Verifica se o usuário autenticado está entre os 100 primeiros colocados
+  const isUserInTop100 = top100Players.some(
     (p) => p.isCurrentUser || (user?.uid && p.userId === user.uid)
   );
 
-  // Localiza o usuário autenticado na lista carregada
-  const userInList = enrichedPlayers.find(
-    (p) => p.isCurrentUser || (user?.uid && p.userId === user.uid)
-  );
-
-  // Card fixo do rodapé: exibido para qualquer usuário logado fora do Top 3
+  // Card fixo do rodapé: exibido EXCLUSIVAMENTE para usuário logado fora do Top 100
   const userFooterData = React.useMemo(() => {
-    if (isGuest || !user || isUserInTopThree) {
+    // Não exibe se for visitante, não autenticado, se estiver carregando a lista inicial, ou se estiver no Top 100
+    if (isGuest || !user || isUserInTop100 || (isLoading && rawPlayers.length === 0)) {
       return null;
-    }
-
-    if (userInList) {
-      return {
-        userId: user.uid,
-        userName: userInList.userName || user.displayName || "Você",
-        photoURL: userInList.photoURL || user.photoURL || undefined,
-        score: userInList.score ?? 0,
-        position: userInList.position ?? 0,
-        isCurrentUser: true,
-      };
     }
 
     if (myScoreData) {
@@ -222,7 +207,7 @@ export function LeaderboardScreen() {
       position: 0,
       isCurrentUser: true,
     };
-  }, [isGuest, user, isUserInTopThree, userInList, myScoreData]);
+  }, [isGuest, user, isUserInTop100, isLoading, rawPlayers.length, myScoreData]);
 
   const primaryColorHex = theme.colors.primary.replace("#", "");
 
