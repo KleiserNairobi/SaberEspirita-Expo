@@ -19,13 +19,13 @@ export function useLeaderboard(timeFilter: TimeFilter) {
 /**
  * Hook para buscar a pontuação e posição do usuário logado via API REST.
  */
-export function useCurrentUserScore() {
+export function useCurrentUserScore(timeFilter?: TimeFilter) {
   const { user } = useAuthStore();
   const userId = user?.uid || "";
 
   return useQuery({
-    queryKey: ["userScore", userId],
-    queryFn: () => leaderboardApiService.getMyPosition(),
+    queryKey: ["userScore", userId, timeFilter || "all-time"],
+    queryFn: () => leaderboardApiService.getMyPosition(timeFilter),
     enabled: !!userId,
     staleTime: 1000 * 60 * 5, // 5 minutos
     gcTime: 1000 * 60 * 60,

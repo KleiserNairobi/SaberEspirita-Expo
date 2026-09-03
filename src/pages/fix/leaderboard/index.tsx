@@ -153,7 +153,7 @@ export function LeaderboardScreen() {
     isLoading,
     refetch: refetchLeaderboard,
   } = useLeaderboard(selectedFilter);
-  const { data: myScoreData, refetch: refetchScore } = useCurrentUserScore();
+  const { data: myScoreData, refetch: refetchScore } = useCurrentUserScore(selectedFilter);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -162,28 +162,67 @@ export function LeaderboardScreen() {
     }, [refetchLeaderboard, refetchScore])
   );
 
+  // Enriquece a lista garantindo posições corretas e marcação do usuário logado
+  const enrichedPlayers = React.useMemo(() => {
+    return rawPlayers.map((p, index) => ({
+      ...p,
+      position: p.position || index + 1,
+      isCurrentUser: !!(user?.uid && p.userId === user.uid),
+    }));
+  }, [rawPlayers, user?.uid]);
+
   // Limitação estrita do placar ao Top 100
-  const top100Players = rawPlayers.slice(0, 100);
+  const top100Players = enrichedPlayers.slice(0, 100);
   const topThree = top100Players.slice(0, 3);
   const others = top100Players.slice(3, 100);
 
-  // Verifica se o usuário autenticado está entre os 100 primeiros colocados
-  const isUserInTop100 = top100Players.some(
+  // Verifica se o usuário autenticado está no Top 3 (Pódio)
+  const isUserInTopThree = topThree.some(
     (p) => p.isCurrentUser || (user?.uid && p.userId === user.uid)
   );
 
-  // Card fixo do rodapé para o usuário logado caso NÃO esteja no Top 100
-  const userFooterData =
-    !isUserInTop100 && !isGuest && user
-      ? myScoreData || {
-          userId: user.uid,
-          userName: user.displayName || "Você",
-          photoURL: user.photoURL || undefined,
-          score: 0,
-          position: 0,
-          isCurrentUser: true,
-        }
-      : null;
+  // Localiza o usuário autenticado na lista carregada
+  const userInList = enrichedPlayers.find(
+    (p) => p.isCurrentUser || (user?.uid && p.userId === user.uid)
+  );
+
+  // Card fixo do rodapé: exibido para qualquer usuário logado fora do Top 3
+  const userFooterData = React.useMemo(() => {
+    if (isGuest || !user || isUserInTopThree) {
+      return null;
+    }
+
+    if (userInList) {
+      return {
+        userId: user.uid,
+        userName: userInList.userName || user.displayName || "Você",
+        photoURL: userInList.photoURL || user.photoURL || undefined,
+        score: userInList.score ?? 0,
+        position: userInList.position ?? 0,
+        isCurrentUser: true,
+      };
+    }
+
+    if (myScoreData) {
+      return {
+        userId: user.uid,
+        userName: myScoreData.userName || user.displayName || "Você",
+        photoURL: myScoreData.photoURL || user.photoURL || undefined,
+        score: myScoreData.score ?? 0,
+        position: myScoreData.position ?? 0,
+        isCurrentUser: true,
+      };
+    }
+
+    return {
+      userId: user.uid,
+      userName: user.displayName || "Você",
+      photoURL: user.photoURL || undefined,
+      score: 0,
+      position: 0,
+      isCurrentUser: true,
+    };
+  }, [isGuest, user, isUserInTopThree, userInList, myScoreData]);
 
   const primaryColorHex = theme.colors.primary.replace("#", "");
 

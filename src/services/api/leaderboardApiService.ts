@@ -77,9 +77,11 @@ export const leaderboardApiService = {
   /**
    * Obtém a posição e dados de pontuação do usuário autenticado no ranking.
    */
-  async getMyPosition(): Promise<ILeaderboardUser | null> {
+  async getMyPosition(period?: TimeFilter): Promise<ILeaderboardUser | null> {
     try {
-      const response = await apiClient.get<ILeaderboardUser>("/leaderboard/me");
+      const response = await apiClient.get<ILeaderboardUser>("/leaderboard/me", {
+        params: period ? { period } : undefined,
+      });
       if (!response.data) return null;
       const rawUser: any = response.data;
       return {
