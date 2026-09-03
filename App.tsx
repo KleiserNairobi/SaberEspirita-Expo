@@ -203,7 +203,7 @@ function AppContent() {
         <BottomSheetModalProvider>
           <PersistQueryClientProvider
             client={queryClient}
-            persistOptions={{ persister, buster: "1.0.5" }}
+            persistOptions={{ persister, buster: "1.0.6" }}
           >
             <StatusBar
               style={resolvedThemeType === "dark" ? "light" : "dark"}

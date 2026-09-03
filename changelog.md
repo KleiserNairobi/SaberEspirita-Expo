@@ -2,6 +2,20 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.20-ota.1] - 2026-09-03 (Hot-Update)
+
+### Corrigido
+
+- **Orações e Momento de Sintonia (`WelcomingHero`, `useSuggestedContent`)**:
+  - Implementada busca resiliente e desvinculação de dependência de áudio no card "Para o seu Momento", garantindo carregamento imediato das orações sugeridas conforme o humor selecionado com feedback visual de carregamento.
+- **Reflexões e Meditações em Destaque (`useFeaturedReflections`, `useFeaturedMeditations`)**:
+  - Adicionado fallback gracioso nas listagens da aba Medite para exibir os textos e meditações mais recentes caso não haja itens marcados com flag estrita de destaque.
+- **Favoritos (`favoritesApiService.ts`)**:
+  - Integrados endpoints de toggle para orações e reflexões e normalização de listas de IDs favoritas no cliente.
+- **Placar e Ranking da Comunidade (`LeaderboardScreen`, `useLeaderboard.ts`)**:
+  - Estabilizada a exibição do card de posição fixa no rodapé exclusivamente para usuários fora do Top 100, eliminando oscilações e duplicações visuais para quem já se encontra entre os 100 melhores colocados.
+  - Sincronizado o cálculo de colocação do usuário logado conforme o período ativo (Semana, Mês e Sempre).
+
 ## [2.0.20] - 2026-09-01 (Store Release)
 
 ### Adicionado / Corrigido
