@@ -8,7 +8,9 @@ export function useFeaturedReflections() {
     queryKey: REFLECTION_KEYS.featured,
     queryFn: async () => {
       const reflections = await reflectionApiService.getReflections();
-      return reflections.filter((r) => r.featured);
+      const featured = reflections.filter((r) => r.featured);
+      if (featured.length > 0) return featured;
+      return reflections.slice(0, 10);
     },
     staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias

@@ -23,7 +23,9 @@ export function useFeaturedMeditations() {
     queryKey: MEDITATION_KEYS.featured,
     queryFn: async () => {
       const meditations = await meditationApiService.getMeditations();
-      return meditations.filter((m) => m.featured);
+      const featured = meditations.filter((m) => m.featured);
+      if (featured.length > 0) return featured;
+      return meditations.slice(0, 10);
     },
     staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
