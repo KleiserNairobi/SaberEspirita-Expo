@@ -5,8 +5,9 @@ export const favoritesApiService = {
    * Obtém os IDs de todas as orações favoritadas pelo usuário.
    */
   async getFavoritePrayers(): Promise<string[]> {
-    const response = await apiClient.get<string[]>("/favorites/prayers");
-    return response.data || [];
+    const response = await apiClient.get<any[]>("/favorites/prayers");
+    const data = response.data || [];
+    return data.map((item) => (typeof item === "string" ? item : item?.id)).filter(Boolean);
   },
 
   /**
@@ -23,8 +24,9 @@ export const favoritesApiService = {
    * Obtém os IDs de todas as reflexões favoritadas pelo usuário.
    */
   async getFavoriteReflections(): Promise<string[]> {
-    const response = await apiClient.get<string[]>("/favorites/reflections");
-    return response.data || [];
+    const response = await apiClient.get<any[]>("/favorites/reflections");
+    const data = response.data || [];
+    return data.map((item) => (typeof item === "string" ? item : item?.id)).filter(Boolean);
   },
 
   /**
