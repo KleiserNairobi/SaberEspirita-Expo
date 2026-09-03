@@ -124,11 +124,28 @@ export function PrayerPrepScreen() {
     navigation.navigate("Prayer", { id });
   }
 
-  if (isLoading || !prayer) {
+  if (isLoading) {
     return (
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator color={theme.colors.primary} size="large" />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!prayer) {
+    return (
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
+        <View style={styles.loadingContainer}>
+          <Text style={[styles.title, { marginBottom: 16 }]}>Oração não encontrada</Text>
+          <TouchableOpacity
+            style={[styles.backButton, { width: "auto", paddingHorizontal: 20 }]}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
+          >
+            <Text style={{ color: theme.colors.primary, fontWeight: "600" }}>Voltar</Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
