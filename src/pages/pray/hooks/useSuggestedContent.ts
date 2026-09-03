@@ -34,21 +34,29 @@ export function useSuggestedContent(mood: UserMood | null) {
   const categoryId = MOOD_TO_CATEGORY[currentMood];
   const audioId = MOOD_TO_AUDIO_ID[currentMood];
 
-  // Busca orações da categoria sugerida
+  // Busca orações da categoria sugerida com fallback para todas as orações
   const { data: prayers, isLoading: isPrayersLoading } = useQuery({
     queryKey: ["prayers", "suggested", categoryId],
-    queryFn: () => prayerApiService.getPrayers({ categoryId }),
+    queryFn: async () => {
+      const categoryPrayers = await prayerApiService.getPrayers({ categoryId });
+      if (categoryPrayers && categoryPrayers.length > 0) {
+        return categoryPrayers;
+      }
+      // Fallback: se a categoria não tiver itens no momento, busca as orações gerais
+      return prayerApiService.getPrayers();
+    },
     enabled: !!categoryId,
+    staleTime: 1000 * 60 * 15,
   });
 
   // Busca lista de áudios para encontrar o sugerido
   const { data: audios, isLoading: isAudiosLoading } = useAmbientAudios();
 
   const suggestedContent = useMemo(() => {
-    if (!prayers || prayers.length === 0 || !audios) return null;
+    if (!prayers || prayers.length === 0) return null;
 
-    // Seleciona o áudio sugerido
-    const suggestedAudio = audios.find((a) => a.id === audioId) || audios[0];
+    // Seleciona o áudio sugerido (se houver lista de áudios disponível)
+    const suggestedAudio = audios?.find((a) => a.id === audioId) || audios?.[0] || null;
 
     return {
       prayers: prayers, // Retorna todas as sugestões para scroll interno
@@ -59,6 +67,6 @@ export function useSuggestedContent(mood: UserMood | null) {
 
   return {
     suggestedContent,
-    isLoading: isPrayersLoading || isAudiosLoading,
+    isLoading: isPrayersLoading,
   };
 }

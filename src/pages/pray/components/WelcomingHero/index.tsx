@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ScrollView, Text, TouchableOpacity, View, Animated } from "react-native";
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View, Animated } from "react-native";
 import { ChevronDown, Compass, ChevronRight } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -17,7 +17,7 @@ export function WelcomingHero() {
     useNavigation<NativeStackNavigationProp<AppStackParamList & PrayStackParamList>>();
 
   const { currentMood, lastMood, lastMoodDate } = useMoodStore();
-  const { suggestedContent } = useSuggestedContent(currentMood);
+  const { suggestedContent, isLoading } = useSuggestedContent(currentMood);
 
   // Animações para comportamento retrátil (Padrão LegalSection)
   const [expanded, setExpanded] = useState(false);
@@ -120,7 +120,13 @@ export function WelcomingHero() {
             </Text>
           )}
 
-          {suggestedContent?.prayers && hasMood && (
+          {hasMood && isLoading && (
+            <View style={{ paddingVertical: 16, alignItems: "center" }}>
+              <ActivityIndicator size="small" color={theme.colors.primary} />
+            </View>
+          )}
+
+          {suggestedContent?.prayers && hasMood && !isLoading && (
             <View style={{ marginTop: 0 }}>
               <Text style={styles.scrollTip}>Role a lista para ver outras orações</Text>
               <View style={[styles.prayerList, { maxHeight: 243, paddingHorizontal: 4 }]}>
