@@ -97,7 +97,9 @@ const CarouselItem = React.memo(function CarouselItem({
       : 0;
   const isCompleted = completionPercent >= 100;
 
-  const isLocked = isComingSoon || (isLegacy && !hasStarted);
+  // Apenas cursos COMING_SOON são travados de toque. Cursos LEGACY (Encerrados)
+  // devem permitir o toque para que o usuário veja a explicação e o botão de ir para a nova edição.
+  const isLocked = isComingSoon;
 
   const buttonText = isComingSoon
     ? "EM BREVE"
@@ -154,7 +156,7 @@ const CarouselItem = React.memo(function CarouselItem({
             <TouchableOpacity
               style={[
                 styles.button,
-                isLocked && styles.buttonComingSoon,
+                (isComingSoon || (isLegacy && !hasStarted)) && styles.buttonComingSoon,
                 isCompleted && styles.buttonCompleted,
                 hasStarted && !isCompleted && styles.buttonContinuing,
               ]}
@@ -163,7 +165,7 @@ const CarouselItem = React.memo(function CarouselItem({
               disabled={isLocked}
             >
               <View style={styles.buttonContent}>
-                {isLocked ? (
+                {isComingSoon || (isLegacy && !hasStarted) ? (
                   <Clock size={14} color="#FFF" style={{ marginRight: 6 }} />
                 ) : isCompleted ? (
                   <CheckCircle2 size={14} color="#FFF" style={{ marginRight: 6 }} />

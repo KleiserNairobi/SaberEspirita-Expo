@@ -28,8 +28,9 @@ export const mediaApiService = {
       formData,
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          Accept: "application/json",
         },
+        transformRequest: (data) => data,
       }
     );
 
@@ -60,8 +61,9 @@ export const mediaApiService = {
       formData,
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          Accept: "application/json",
         },
+        transformRequest: (data) => data,
       }
     );
 

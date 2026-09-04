@@ -2,6 +2,15 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.20-ota.2] - 2026-09-04 (Hot-Update)
+
+### Corrigido
+
+- **Cursos Encerrados / Legados no Carrossel (`Carousel/index.tsx`)**:
+  - Desbloqueado o toque no botão dos cards de cursos com status `LEGACY` (ex: Iniciação à Doutrina), permitindo que novos usuários acessem os detalhes e sejam orientados sobre a substituição para *Entendendo o Espiritismo*, enquanto alunos já matriculados continuam concluindo seus estudos normalmente.
+- **Upload de Fotos de Perfil e Avatares (`EditProfileBottomSheet`, `mediaApiService`, `apiClient`)**:
+  - Otimizada a compressão nativa de imagem no ImagePicker (`quality: 0.6`) e ajustado o envio multipart no cliente para evitar conflitos de boundary e sobrecarga de rede.
+
 ## [2.0.20-ota.1] - 2026-09-03 (Hot-Update)
 
 ### Corrigido

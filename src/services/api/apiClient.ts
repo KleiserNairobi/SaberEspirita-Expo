@@ -26,6 +26,11 @@ apiClient.interceptors.request.use(
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+
+      // Se for FormData, remove o Content-Type para o React Native injetar o boundary correto
+      if (config.data instanceof FormData && config.headers) {
+        delete config.headers["Content-Type"];
+      }
     } catch (error) {
       console.warn("apiClient: Falha ao obter token JWT para a requisição:", error);
     }
