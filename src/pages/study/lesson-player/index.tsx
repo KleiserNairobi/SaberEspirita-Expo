@@ -249,10 +249,13 @@ export function LessonPlayerScreen() {
   );
 
   async function handleFinish() {
-    if (!lesson) return;
+    const targetCourseId = lesson?.courseId || courseId;
+    const targetLessonId = lesson?.id || lessonId;
+
+    if (!targetLessonId || !targetCourseId) return;
 
     // Limpa o progresso temporário do slide pois a aula foi concluída
-    clearLessonSlideProgress(user?.uid, lesson.id);
+    clearLessonSlideProgress(user?.uid, targetLessonId);
 
     if (!isGuest && isLessonAlreadyCompleted) {
       navigateBackAfterCompletion();
@@ -260,12 +263,15 @@ export function LessonPlayerScreen() {
     }
 
     if (useAuthStore.getState().isGuest) {
-      statsApiService.logEvent({
-        eventName: "lesson_completed",
-        category: "course",
-        label: lesson.title,
-        metadata: { courseId: lesson.courseId, lessonId: lesson.id },
-      });
+      try {
+        statsApiService.logEvent({
+          eventName: "lesson_completed",
+          category: "course",
+          label: lesson?.title || "Aula",
+          metadata: { courseId: targetCourseId, lessonId: targetLessonId },
+        });
+      } catch {}
+
       setMessageConfig({
         type: "info",
         title: "Modo Visitante",
@@ -295,57 +301,65 @@ export function LessonPlayerScreen() {
     setIsProcessing(true);
 
     try {
-      await userActivityApiService.completeLesson(lesson.courseId, lesson.id);
-      statsApiService.logEvent({
-        eventName: "lesson_completed",
-        category: "course",
-        label: lesson.title,
-        metadata: { courseId: lesson.courseId, lessonId: lesson.id },
-      });
+      await userActivityApiService.completeLesson(targetCourseId, targetLessonId);
+
+      try {
+        statsApiService.logEvent({
+          eventName: "lesson_completed",
+          category: "course",
+          label: lesson?.title || "Aula",
+          metadata: { courseId: targetCourseId, lessonId: targetLessonId },
+        });
+      } catch {}
+
       incrementLessonsCompletedCount();
 
       if (user?.uid) {
-        await Promise.all([
-          queryClient.invalidateQueries({
-            queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, lesson.courseId),
-          }),
-          queryClient.invalidateQueries({
-            queryKey: ["coursesProgressList"],
-          }),
-          queryClient.invalidateQueries({
-            queryKey: ["allCoursesProgress"],
-          }),
-          queryClient.invalidateQueries({
-            queryKey: ["lastAccessedCourse"],
-          }),
-          queryClient.invalidateQueries({
-            queryKey: ["user-activity"],
-          }),
-        ]);
+        try {
+          await Promise.all([
+            queryClient.invalidateQueries({
+              queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, targetCourseId),
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["coursesProgressList"],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["allCoursesProgress"],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["lastAccessedCourse"],
+            }),
+            queryClient.invalidateQueries({
+              queryKey: ["user-activity"],
+            }),
+          ]);
+        } catch {}
       }
 
       if (user?.uid) {
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        const progress = await forumApiService.getCommunityProgress();
-        if (progress) {
-          const raw = getStoredCommunityLevelRaw(user.uid);
-          if (raw === null) {
-            setStoredCommunityLevel(user.uid, progress.communityLevelId);
-          } else {
-            const levelUp = getLevelUpIfAny({
-              userId: user.uid,
-              currentLevelId: progress.communityLevelId,
-            });
-            if (levelUp) {
-              setLevelUpId(levelUp);
-              setNavigateAfterLevelUp(true);
-              setLevelUpVisible(true);
-              setStoredCommunityLevel(user.uid, levelUp);
-              setIsProcessing(false);
-              return;
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 800));
+          const progress = await forumApiService.getCommunityProgress();
+          if (progress) {
+            const raw = getStoredCommunityLevelRaw(user.uid);
+            if (raw === null) {
+              setStoredCommunityLevel(user.uid, progress.communityLevelId);
+            } else {
+              const levelUp = getLevelUpIfAny({
+                userId: user.uid,
+                currentLevelId: progress.communityLevelId,
+              });
+              if (levelUp) {
+                setLevelUpId(levelUp);
+                setNavigateAfterLevelUp(true);
+                setLevelUpVisible(true);
+                setStoredCommunityLevel(user.uid, levelUp);
+                setIsProcessing(false);
+                return;
+              }
             }
           }
-        }
+        } catch {}
       }
 
       // Verificar se deve pedir avaliação
@@ -359,6 +373,7 @@ export function LessonPlayerScreen() {
         navigateBackAfterCompletion();
       }
     } catch (error) {
+      console.error("Erro ao salvar progresso da lição:", error);
       setIsProcessing(false);
       setMessageConfig({
         type: "error",
