@@ -115,21 +115,33 @@ export const forumApiService = {
     commentId: string,
     reactionType: ForumReactionType
   ): Promise<Record<ForumReactionType, number>> {
-    const response = await apiClient.post<Record<ForumReactionType, number>>(
+    const response = await apiClient.post<any>(
       `/forum/comments/${commentId}/reactions`,
-      { type: reactionType }
+      { reactionType, type: reactionType }
     );
-    return response.data;
+    if (response.data && typeof response.data === "object") {
+      if (response.data.reactions) {
+        return normalizeReactions(response.data.reactions);
+      }
+      return normalizeReactions(response.data);
+    }
+    return normalizeReactions(null);
   },
 
   /**
    * Remove uma reação em um comentário.
    */
   async removeReaction(commentId: string): Promise<Record<ForumReactionType, number>> {
-    const response = await apiClient.delete<Record<ForumReactionType, number>>(
+    const response = await apiClient.delete<any>(
       `/forum/comments/${commentId}/reactions`
     );
-    return response.data;
+    if (response.data && typeof response.data === "object") {
+      if (response.data.reactions) {
+        return normalizeReactions(response.data.reactions);
+      }
+      return normalizeReactions(response.data);
+    }
+    return normalizeReactions(null);
   },
 
   /**
