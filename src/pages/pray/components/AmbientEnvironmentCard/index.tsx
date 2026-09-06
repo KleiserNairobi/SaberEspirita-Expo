@@ -15,6 +15,7 @@ import { State, usePlaybackState } from "react-native-track-player";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
+import { statsApiService } from "@/services/api/statsApiService";
 import { checkAudioCache, getCachedAudioUri } from "@/services/audio/audioCacheService";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { IAmbientAudio } from "@/types/ambientAudio";
@@ -113,6 +114,12 @@ export function AmbientEnvironmentCard({
     if (cachedUri) {
       setPendingName(null);
       setCurrentTrack(cachedUri, audio.id);
+      statsApiService.logEvent({
+        eventName: "ambient_play",
+        category: "ambient_player",
+        label: audio.title,
+        metadata: { trackId: audio.id, trackTitle: audio.title },
+      });
       return;
     }
 
@@ -127,6 +134,12 @@ export function AmbientEnvironmentCard({
       // Baixa o áudio em segundo plano
       const localUri = await getCachedAudioUri(audio.storagePath, audio.fileName);
       setCurrentTrack(localUri, audio.id);
+      statsApiService.logEvent({
+        eventName: "ambient_play",
+        category: "ambient_player",
+        label: audio.title,
+        metadata: { trackId: audio.id, trackTitle: audio.title },
+      });
     } catch (error) {
       Alert.alert("Erro", "Não foi possível carregar este áudio ambiente.");
     } finally {

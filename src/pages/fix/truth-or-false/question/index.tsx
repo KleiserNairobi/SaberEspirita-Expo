@@ -18,6 +18,7 @@ import { truthOrFalseQuestions } from "@/data/truthOrFalseQuestions";
 import { useSaveTruthOrFalseResponse } from "@/hooks/queries/useTruthOrFalse";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
+import { statsApiService } from "@/services/api/statsApiService";
 import { truthOrFalseApiService } from "@/services/api/truthOrFalseApiService";
 import { getDayOfYear, getTodayString } from "@/utils/truthOrFalseUtils";
 
@@ -79,6 +80,13 @@ export function TruthOrFalseQuestionScreen() {
         timeSpent: 0, // pode implementar timer depois
         respondedAt: new Date().toISOString(),
         savedToLibrary: false,
+      });
+
+      statsApiService.logEvent({
+        eventName: "truth_or_false_answer",
+        category: "truth_or_false",
+        label: todayQuestion.id,
+        metadata: { questionId: todayQuestion.id, isCorrect },
       });
 
       navigation.navigate("TruthOrFalseResult", {

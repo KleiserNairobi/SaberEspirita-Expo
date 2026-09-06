@@ -112,6 +112,13 @@ export function DailyQuizScreen() {
           })),
         });
 
+        statsApiService.logEvent({
+          eventName: "daily_challenge_completed",
+          category: "quiz",
+          label: dailySubcategoryId,
+          metadata: { date: today, percentage, correctAnswers },
+        });
+
         queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.userProgress(user.uid) });
         queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.detailedStats(user.uid) });
         queryClient.invalidateQueries({ queryKey: ["dailyQuizStatus", user.uid] });
