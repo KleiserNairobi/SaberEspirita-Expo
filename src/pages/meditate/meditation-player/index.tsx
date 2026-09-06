@@ -181,6 +181,9 @@ export default function MeditationPlayerScreen() {
         eventName: "meditation_play",
         category: "meditation",
         label: meditation.title,
+        id: meditation.id,
+        meditationId: meditation.id,
+        title: meditation.title,
       });
       hasLogged.current = true;
     }

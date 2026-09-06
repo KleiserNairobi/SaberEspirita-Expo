@@ -103,6 +103,9 @@ export function PrayerScreen() {
         eventName: "prayer_completed",
         category: "prayer",
         label: prayer.title,
+        id: prayer.id,
+        prayerId: prayer.id,
+        title: prayer.title,
       });
       hasLogged.current = true;
       queryClient.invalidateQueries({ queryKey: ["prayers", "trending"] });

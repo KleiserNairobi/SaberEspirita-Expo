@@ -4,8 +4,17 @@ export interface LogEventPayload {
   eventName: string;
   category?: string;
   label?: string;
+  id?: string;
+  title?: string;
+  meditationId?: string;
+  podcastId?: string;
+  prayerId?: string;
+  trackId?: string;
+  lessonId?: string;
+  quizId?: string;
   value?: number;
   metadata?: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 export interface GlobalStatsResponse {
@@ -22,10 +31,14 @@ export const statsApiService = {
    */
   async logEvent(eventData: LogEventPayload): Promise<void> {
     try {
+      const flattenedPayload = {
+        ...eventData,
+        ...(eventData.metadata || {}),
+      };
       await apiClient.post("/logs/event", {
         logType: eventData.eventName || eventData.category || "visit",
         userId: null,
-        payload: JSON.stringify(eventData),
+        payload: JSON.stringify(flattenedPayload),
       });
     } catch {
       // Ignora falhas de envio de telemetria em background

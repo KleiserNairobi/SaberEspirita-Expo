@@ -177,6 +177,9 @@ export default function PodcastPlayerScreen() {
         eventName: "podcast_play",
         category: "podcast",
         label: podcast.title,
+        id: podcast.id,
+        podcastId: podcast.id,
+        title: podcast.title,
       });
       hasLogged.current = true;
     }
