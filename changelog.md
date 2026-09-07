@@ -2,6 +2,16 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.20-ota.3] - 2026-09-07 (Hot-Update)
+
+### Corrigido
+
+- **Conclusão de Aulas e Salvamento de Progresso (`LessonPlayerScreen`, `userActivityApiService`)**:
+  - Sanitizados os identificadores de curso e aula (`courseId` e `lessonId`) com limpeza de espaços em branco residuais no envio para a API REST.
+  - Aprimorada a detecção abrangente de visitantes no leitor de aula (`isGuest || !user?.uid`), exibindo adequadamente as orientações de conta sem disparar erros 401/403.
+  - Implementado tratamento resiliente de erros na finalização de aulas com opções de **"Tentar Novamente"** e **"Sair Mesmo Assim"**, evitando que oscilações de conexão travem o aluno na tela.
+  - Incrementado o *React Query Cache Buster* para `"1.0.8"` para sincronização limpa do progresso de estudos.
+
 ## [2.0.20-ota.2] - 2026-09-04 (Hot-Update)
 
 ### Corrigido

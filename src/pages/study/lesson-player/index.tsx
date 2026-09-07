@@ -249,20 +249,25 @@ export function LessonPlayerScreen() {
   );
 
   async function handleFinish() {
-    const targetCourseId = lesson?.courseId || courseId;
-    const targetLessonId = lesson?.id || lessonId;
+    const rawCourseId = lesson?.courseId || courseId;
+    const rawLessonId = lesson?.id || lessonId;
 
-    if (!targetLessonId || !targetCourseId) return;
+    if (!rawLessonId || !rawCourseId) return;
+
+    const targetCourseId = rawCourseId.trim();
+    const targetLessonId = rawLessonId.trim();
 
     // Limpa o progresso temporário do slide pois a aula foi concluída
     clearLessonSlideProgress(user?.uid, targetLessonId);
 
-    if (!isGuest && isLessonAlreadyCompleted) {
+    const isUserGuest = isGuest || !user?.uid;
+
+    if (!isUserGuest && isLessonAlreadyCompleted) {
       navigateBackAfterCompletion();
       return;
     }
 
-    if (useAuthStore.getState().isGuest) {
+    if (isUserGuest) {
       try {
         statsApiService.logEvent({
           eventName: "lesson_completed",
@@ -312,7 +317,9 @@ export function LessonPlayerScreen() {
         });
       } catch {}
 
-      incrementLessonsCompletedCount();
+      try {
+        incrementLessonsCompletedCount();
+      } catch {}
 
       if (user?.uid) {
         try {
@@ -372,16 +379,35 @@ export function LessonPlayerScreen() {
       } else {
         navigateBackAfterCompletion();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao salvar progresso da lição:", error);
       setIsProcessing(false);
+
+      const errorMessage =
+        error?.response?.data?.message ||
+        (error?.message && !error.message.includes("status code")
+          ? error.message
+          : "Não foi possível salvar o progresso da aula no momento.");
+
       setMessageConfig({
         type: "error",
-        title: "Erro",
-        message: "Não foi possível salvar o progresso.",
+        title: "Erro ao Salvar",
+        message: errorMessage,
         primaryButton: {
-          label: "OK",
-          onPress: () => bottomSheetRef.current?.dismiss(),
+          label: "Tentar Novamente",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+            setTimeout(() => {
+              handleFinish();
+            }, 300);
+          },
+        },
+        secondaryButton: {
+          label: "Sair Mesmo Assim",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+            navigateBackAfterCompletion();
+          },
         },
       });
       setTimeout(() => bottomSheetRef.current?.present(), 100);

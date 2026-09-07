@@ -66,9 +66,10 @@ export const userActivityApiService = {
    */
   async getCourseProgress(courseId: string): Promise<IUserCourseProgress | null> {
     if (!courseId || !Storage.loadString("jwt_token")) return null;
+    const cleanCourseId = courseId.trim();
     try {
       const response = await apiClient.get<any>(
-        `/user-activity/courses/progress/${courseId}`
+        `/user-activity/courses/progress/${cleanCourseId}`
       );
       if (!response.data) return null;
       return normalizeProgress(response.data);
@@ -84,8 +85,10 @@ export const userActivityApiService = {
     courseId: string,
     lessonId: string
   ): Promise<IUserCourseProgress> {
+    const cleanCourseId = courseId.trim();
+    const cleanLessonId = lessonId.trim();
     const response = await apiClient.post<any>(
-      `/user-activity/courses/progress/${courseId}/lessons/${lessonId}/complete`
+      `/user-activity/courses/progress/${cleanCourseId}/lessons/${cleanLessonId}/complete`
     );
     return normalizeProgress(response.data);
   },
