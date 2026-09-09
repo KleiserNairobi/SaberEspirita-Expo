@@ -141,8 +141,8 @@ export default function AccountScreen() {
     }, 100);
 
     try {
-      // Exclusão lógica (LGPD/Anonimização) via API REST Spring Boot
-      await authApiService.deleteAccount();
+      // Exclusão lógica (LGPD/Anonimização) com pesquisa de churn via API REST Spring Boot
+      await authApiService.deleteAccount(reason);
       console.log("AccountScreen: Conta excluída (anonimizada) via API REST Spring Boot com sucesso.");
 
       setMessageConfig({

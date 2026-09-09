@@ -205,10 +205,12 @@ export const authApiService = {
   },
 
   /**
-   * Solicita a exclusão voluntária da conta do usuário no backend REST.
+   * Solicita a exclusão voluntária da conta do usuário no backend REST com pesquisa de churn.
    */
-  async deleteAccount(): Promise<void> {
-    await apiClient.delete("/users/me");
+  async deleteAccount(reason?: string): Promise<void> {
+    await apiClient.delete("/users/me", {
+      data: reason ? { reason } : undefined,
+    });
     Storage.remove("jwt_token");
     Storage.remove("refresh_token");
   },
