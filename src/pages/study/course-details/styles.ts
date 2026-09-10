@@ -267,7 +267,7 @@ export const createStyles = (theme: ITheme) =>
       borderBottomColor: theme.colors.border,
       marginBottom: theme.spacing.md,
       marginTop: theme.spacing.xs,
-      gap: theme.spacing.lg,
+      gap: theme.spacing.md,
     },
     tabButton: {
       paddingVertical: theme.spacing.sm,

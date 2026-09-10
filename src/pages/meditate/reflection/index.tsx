@@ -22,7 +22,7 @@ import { createStyles } from "./styles";
 
 type ReflectionScreenRouteProp = RouteProp<MeditateStackParamList, "Reflection">;
 
-export default function ReflectionScreen() {
+export function ReflectionScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const route = useRoute<ReflectionScreenRouteProp>();
@@ -229,3 +229,6 @@ export default function ReflectionScreen() {
     </SafeAreaView>
   );
 }
+
+export default ReflectionScreen;
+

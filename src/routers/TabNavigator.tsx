@@ -1,4 +1,5 @@
 import React from "react";
+
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import {
@@ -9,13 +10,14 @@ import {
   User,
 } from "lucide-react-native";
 
-import { TabParamList } from "./types";
 import { AnimatedTabBar } from "@/components/AnimatedTabBar";
-import { PrayNavigator } from "./PrayNavigator";
-import { MeditateNavigator } from "./MeditateNavigator";
-import { FixNavigator } from "./FixNavigator";
-import AccountScreen from "@/pages/account";
+import { AccountScreen } from "@/pages/account";
 import { StudyScreen } from "@/pages/study";
+
+import { FixNavigator } from "./FixNavigator";
+import { MeditateNavigator } from "./MeditateNavigator";
+import { PrayNavigator } from "./PrayNavigator";
+import { TabParamList } from "./types";
 
 const Tab = createBottomTabNavigator<TabParamList>();
 

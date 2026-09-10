@@ -1,5 +1,5 @@
 import apiClient from "./apiClient";
-import { CourseDifficultyLevel, ICourse } from "@/types/course";
+import { CourseDifficultyLevel, ICourse, ICourseMaterialsResponse } from "@/types/course";
 
 export interface GetCoursesParams {
   category?: string;
@@ -108,4 +108,41 @@ export const courseApiService = {
     );
     return response.data || [];
   },
+
+  /**
+   * Obtém os materiais complementares vinculados ao curso (apostilas, podcasts, reflexões e meditações).
+   */
+  async getCourseMaterials(courseId: string): Promise<ICourseMaterialsResponse> {
+    if (!courseId) {
+      return { booklets: [], podcasts: [], reflections: [], meditations: [] };
+    }
+
+    const response = await apiClient.get<ICourseMaterialsResponse>(
+      `/courses/${courseId}/materials`
+    );
+    const data = response.data || { booklets: [], podcasts: [], reflections: [], meditations: [] };
+
+    return {
+      booklets: (data.booklets || []).map((b) => ({
+        ...b,
+        fileUrl: resolveCdnUrl(b.fileUrl) || b.fileUrl,
+        imageUrl: resolveCdnUrl(b.imageUrl) || b.imageUrl,
+      })),
+      podcasts: (data.podcasts || []).map((p) => ({
+        ...p,
+        audioUrl: resolveCdnUrl(p.audioUrl) || p.audioUrl,
+        imageUrl: resolveCdnUrl(p.imageUrl) || p.imageUrl,
+      })),
+      reflections: (data.reflections || []).map((r) => ({
+        ...r,
+        imageUrl: resolveCdnUrl(r.imageUrl) || r.imageUrl,
+      })),
+      meditations: (data.meditations || []).map((m) => ({
+        ...m,
+        audioUrl: resolveCdnUrl(m.audioUrl) || m.audioUrl,
+        imageUrl: resolveCdnUrl(m.imageUrl) || m.imageUrl,
+      })),
+    };
+  },
 };
+

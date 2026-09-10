@@ -27,7 +27,7 @@ import { createStyles } from "./styles";
 
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
-export default function PodcastPlayerScreen() {
+export function PodcastPlayerScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<NavigationProp>();
@@ -352,3 +352,6 @@ export default function PodcastPlayerScreen() {
     </View>
   );
 }
+
+export default PodcastPlayerScreen;
+

@@ -38,7 +38,7 @@ const PODCAST_FILTER_OPTIONS = [
 
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
-export default function AllPodcastsScreen() {
+export function AllPodcastsScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<NavigationProp>();
@@ -243,3 +243,6 @@ export default function AllPodcastsScreen() {
     </SafeAreaView>
   );
 }
+
+export default AllPodcastsScreen;
+

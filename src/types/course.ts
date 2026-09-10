@@ -233,3 +233,14 @@ export interface ICertificate {
   validationCode: string;
   validationUrl: string;
 }
+
+// ✅ NOVO - Materiais Complementares do Curso (Apostilas, Podcasts, Reflexões, Meditações)
+export type { IBooklet } from "./booklet";
+
+export interface ICourseMaterialsResponse {
+  booklets: import("./booklet").IBooklet[];
+  podcasts: import("./podcast").IPodcast[];
+  reflections: import("./reflection").IReflection[];
+  meditations: import("./meditate").IMeditation[];
+}
+

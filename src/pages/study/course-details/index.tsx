@@ -29,14 +29,16 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { ContentSheet } from "@/components/ContentSheet";
 import { HeroHeader } from "@/components/HeroHeader";
+import { PremiumContentNoticeModal } from "@/components/PremiumContentNoticeModal";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
-import { useCourse } from "@/hooks/queries/useCourses";
+import { useCourse, useCourseMaterials } from "@/hooks/queries/useCourses";
 import { useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
 import { prefetchImages } from "@/utils/imagePrefetch";
 
+import { CourseMaterialsTab } from "./components/CourseMaterialsTab";
 import { createStyles } from "./styles";
 
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -52,6 +54,13 @@ export function CourseDetailsScreen() {
   // React Query Fetch
   const { data: course, isLoading: isLoadingCourse } = useCourse(courseId);
   const { data: progress, isLoading: isLoadingProgress } = useCourseProgress(courseId);
+  const { data: materials, isLoading: isLoadingMaterials } = useCourseMaterials(courseId);
+
+  const totalMaterials =
+    (materials?.booklets?.length || 0) +
+    (materials?.podcasts?.length || 0) +
+    (materials?.reflections?.length || 0) +
+    (materials?.meditations?.length || 0);
 
   // Prefetch automático e deduplicado da capa do curso ao carregar os detalhes
   React.useEffect(() => {
@@ -65,7 +74,14 @@ export function CourseDetailsScreen() {
 
   const isEnrolled = !!progress; // Se tem objeto de progresso, está matriculado
 
-  const [activeTab, setActiveTab] = useState<"about" | "lessons">("about");
+  const [activeTab, setActiveTab] = useState<"about" | "lessons" | "materials">("about");
+  const premiumModalRef = useRef<BottomSheetModal>(null);
+  const [selectedPremiumItem, setSelectedPremiumItem] = useState<string>("");
+
+  function handleOpenPremiumModal(itemName: string) {
+    setSelectedPremiumItem(itemName);
+    premiumModalRef.current?.present();
+  }
 
   async function handleShare() {
     if (!course) return;
@@ -251,7 +267,7 @@ export function CourseDetailsScreen() {
           )}
         </View>
 
-        {/* SELETOR DE ABAS (SOBRE E AULAS) */}
+        {/* SELETOR DE ABAS (SOBRE, AULAS E MATERIAIS) */}
         <View style={styles.tabContainer}>
           <TouchableOpacity
             style={[styles.tabButton, activeTab === "about" && styles.activeTabButton]}
@@ -269,6 +285,22 @@ export function CourseDetailsScreen() {
               style={[styles.tabText, activeTab === "lessons" && styles.activeTabText]}
             >
               Aulas ({course.lessonCount || 0})
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.tabButton,
+              activeTab === "materials" && styles.activeTabButton,
+            ]}
+            onPress={() => setActiveTab("materials")}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === "materials" && styles.activeTabText,
+              ]}
+            >
+              Materiais ({totalMaterials})
             </Text>
           </TouchableOpacity>
         </View>
@@ -428,6 +460,14 @@ export function CourseDetailsScreen() {
             )}
           </View>
         )}
+
+        {/* ABA MATERIAIS */}
+        {activeTab === "materials" && (
+          <CourseMaterialsTab
+            courseId={courseId}
+            onOpenPremiumModal={handleOpenPremiumModal}
+          />
+        )}
       </ContentSheet>
 
       {/* FIXED FOOTER */}
@@ -462,6 +502,10 @@ export function CourseDetailsScreen() {
       </View>
 
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
+      <PremiumContentNoticeModal
+        ref={premiumModalRef}
+        itemName={selectedPremiumItem}
+      />
     </View>
   );
 }

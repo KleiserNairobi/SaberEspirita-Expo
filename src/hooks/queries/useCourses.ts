@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { courseApiService } from "@/services/api/courseApiService";
-import { ICourse } from "@/types/course";
+import { ICourse, ICourseMaterialsResponse } from "@/types/course";
 
 export const COURSES_KEYS = {
   all: ["courses"] as const,
   featured: ["courses", "featured"] as const,
   detail: (id: string) => ["courses", "detail", id] as const,
+  materials: (courseId: string) => ["courses", "materials", courseId] as const,
 };
+
 async function fetchCourses(): Promise<ICourse[]> {
   try {
     return await courseApiService.getCourses();
@@ -33,6 +35,15 @@ async function fetchCourseById(id: string): Promise<ICourse | null> {
     console.warn(`useCourse(${id}): Erro ao buscar curso:`, error);
   }
   return null;
+}
+
+async function fetchCourseMaterials(courseId: string): Promise<ICourseMaterialsResponse> {
+  try {
+    return await courseApiService.getCourseMaterials(courseId);
+  } catch (error) {
+    console.warn(`useCourseMaterials(${courseId}): Erro ao buscar materiais do curso:`, error);
+    return { booklets: [], podcasts: [], reflections: [], meditations: [] };
+  }
 }
 
 export function useCourses() {
@@ -66,4 +77,16 @@ export function useCourse(id: string) {
     refetchOnReconnect: true,
   });
 }
+
+export function useCourseMaterials(courseId: string) {
+  return useQuery({
+    queryKey: COURSES_KEYS.materials(courseId),
+    queryFn: () => fetchCourseMaterials(courseId),
+    enabled: !!courseId,
+    staleTime: 1000 * 60 * 5, // 5 minutos
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    refetchOnReconnect: true,
+  });
+}
+
 

@@ -35,7 +35,7 @@ import { APP_VERSION } from "@/pages/account/constants";
 import { useAccountScreen } from "@/pages/account/hooks/useAccountScreen";
 import { createStyles } from "@/pages/account/styles";
 
-export default function AccountScreen() {
+export function AccountScreen() {
   const {
     theme,
     displayName,
@@ -380,3 +380,5 @@ export default function AccountScreen() {
     </SafeAreaView>
   );
 }
+
+export default AccountScreen;
