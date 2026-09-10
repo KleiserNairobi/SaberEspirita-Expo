@@ -112,14 +112,14 @@ export function CourseMaterialsTab({
 
   return (
     <View style={styles.container}>
-      {/* 1. SEÇÃO DE APOSTILAS & GUIAS DIGITAIS */}
+      {/* 1. SEÇÃO DE GUIAS, INFOGRÁFICOS E MAPAS MENTAIS */}
       {booklets.length > 0 && (
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={styles.sectionIcon}>
               <FileText size={15} color={theme.colors.primary} />
             </View>
-            <Text style={styles.sectionTitle}>Apostilas & Guias Digitais (PDF)</Text>
+            <Text style={styles.sectionTitle}>Guias, Infográficos e Mapas Mentais</Text>
             <Text style={styles.sectionCount}>{booklets.length}</Text>
           </View>
 

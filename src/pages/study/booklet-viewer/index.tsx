@@ -9,7 +9,7 @@ import Pdf from "react-native-pdf";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ArrowLeft, BookOpen, RotateCcw } from "lucide-react-native";
+import { ArrowLeft, BookOpen, ZoomIn } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
@@ -17,10 +17,24 @@ import apiClient from "@/services/api/apiClient";
 import { resolveCdnUrl } from "@/services/api/courseApiService";
 import { IBooklet } from "@/types/booklet";
 
+import { ZoomableImage } from "./components/ZoomableImage";
 import { createStyles } from "./styles";
 
 type BookletViewerRouteProp = RouteProp<AppStackParamList, "BookletViewer">;
 type BookletViewerNavProp = NativeStackNavigationProp<AppStackParamList, "BookletViewer">;
+
+function isImageUrl(url?: string): boolean {
+  if (!url) return false;
+  const cleanUrl = url.split("?")[0].toLowerCase();
+  return (
+    cleanUrl.endsWith(".png") ||
+    cleanUrl.endsWith(".jpg") ||
+    cleanUrl.endsWith(".jpeg") ||
+    cleanUrl.endsWith(".webp") ||
+    cleanUrl.endsWith(".gif") ||
+    cleanUrl.endsWith(".svg")
+  );
+}
 
 export function BookletViewerScreen() {
   const { theme } = useAppTheme();
@@ -34,7 +48,7 @@ export function BookletViewerScreen() {
     if (initialFileUrl) {
       return {
         id: id || "booklet",
-        title: initialTitle || "Apostila Digital",
+        title: initialTitle || "Guia Digital",
         fileUrl: resolveCdnUrl(initialFileUrl) || initialFileUrl,
       };
     }
@@ -42,7 +56,7 @@ export function BookletViewerScreen() {
   });
 
   const [isLoadingMetadata, setIsLoadingMetadata] = useState<boolean>(!initialFileUrl);
-  const [isPdfLoading, setIsPdfLoading] = useState<boolean>(true);
+  const [isFileLoading, setIsFileLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +66,7 @@ export function BookletViewerScreen() {
       if (initialFileUrl) {
         setBooklet({
           id: id || "booklet",
-          title: initialTitle || "Apostila Digital",
+          title: initialTitle || "Guia Digital",
           fileUrl: resolveCdnUrl(initialFileUrl) || initialFileUrl,
         });
         setIsLoadingMetadata(false);
@@ -60,7 +74,7 @@ export function BookletViewerScreen() {
       }
 
       if (!id) {
-        setError("Identificador da apostila não fornecido.");
+        setError("Identificador do material não fornecido.");
         setIsLoadingMetadata(false);
         return;
       }
@@ -75,10 +89,10 @@ export function BookletViewerScreen() {
             fileUrl: resolveCdnUrl(res.data.fileUrl) || res.data.fileUrl,
           });
         } else {
-          setError("Apostila não encontrada.");
+          setError("Material não encontrado.");
         }
       } catch (err) {
-        console.warn("[BookletViewer] Erro ao carregar metadados da apostila:", err);
+        console.warn("[BookletViewer] Erro ao carregar metadados do material:", err);
         setError("Não foi possível carregar as informações do documento.");
       } finally {
         setIsLoadingMetadata(false);
@@ -88,7 +102,8 @@ export function BookletViewerScreen() {
     loadBooklet();
   }, [id, initialFileUrl, initialTitle]);
 
-  const pdfUrl = booklet?.fileUrl;
+  const fileUrl = booklet?.fileUrl;
+  const isImage = isImageUrl(fileUrl);
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
@@ -105,12 +120,18 @@ export function BookletViewerScreen() {
 
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle} numberOfLines={1}>
-            {booklet?.title || initialTitle || "Apostila Digital"}
+            {booklet?.title || initialTitle || (isImage ? "Infográfico" : "Guia Digital")}
           </Text>
-          <Text style={styles.headerSubtitle}>Leitura In-App Protegida</Text>
+          <Text style={styles.headerSubtitle}>
+            {isImage ? "Infográfico & Mapa Visual" : "Leitura Digital Protegida"}
+          </Text>
         </View>
 
-        {totalPages > 0 ? (
+        {isImage ? (
+          <View style={styles.pageBadge}>
+            <Text style={styles.pageBadgeText}>HD</Text>
+          </View>
+        ) : totalPages > 0 ? (
           <View style={styles.pageBadge}>
             <Text style={styles.pageBadgeText}>
               {currentPage}/{totalPages}
@@ -122,11 +143,11 @@ export function BookletViewerScreen() {
       </View>
 
       {/* Conteúdo Principal */}
-      <View style={styles.pdfContainer}>
+      <View style={isImage ? styles.imageContainer : styles.pdfContainer}>
         {isLoadingMetadata && (
           <View style={styles.loadingOverlay}>
             <ActivityIndicator size="large" color={theme.colors.primary} />
-            <Text style={styles.loadingText}>Carregando documento...</Text>
+            <Text style={styles.loadingText}>Carregando material...</Text>
           </View>
         )}
 
@@ -138,7 +159,7 @@ export function BookletViewerScreen() {
               style={styles.retryButton}
               onPress={() => {
                 setError(null);
-                setIsPdfLoading(true);
+                setIsFileLoading(true);
               }}
               activeOpacity={0.8}
             >
@@ -147,31 +168,56 @@ export function BookletViewerScreen() {
           </View>
         )}
 
-        {pdfUrl && !error && (
+        {fileUrl && !error && (
           <>
-            <Pdf
-              source={{ uri: pdfUrl, cache: true }}
-              onLoadComplete={(numberOfPages) => {
-                setTotalPages(numberOfPages);
-                setIsPdfLoading(false);
-              }}
-              onPageChanged={(page) => {
-                setCurrentPage(page);
-              }}
-              onError={(err) => {
-                console.warn("[BookletViewer] Erro ao renderizar PDF:", err);
-                setError("Erro ao renderizar o arquivo PDF.");
-                setIsPdfLoading(false);
-              }}
-              style={styles.pdf}
-              enablePaging={false}
-              trustAllCerts={false}
-            />
+            {isImage ? (
+              <>
+                <ZoomableImage
+                  uri={fileUrl}
+                  onLoadEnd={() => setIsFileLoading(false)}
+                  onError={() => {
+                    setError("Erro ao carregar a imagem do infográfico.");
+                    setIsFileLoading(false);
+                  }}
+                />
 
-            {isPdfLoading && (
+                {/* Dica de UX para Gestos */}
+                {!isFileLoading && (
+                  <View style={styles.hintContainer} pointerEvents="none">
+                    <ZoomIn size={14} color={theme.colors.primary} />
+                    <Text style={styles.hintText}>
+                      Toque 2x ou use pinça para ampliar
+                    </Text>
+                  </View>
+                )}
+              </>
+            ) : (
+              <Pdf
+                source={{ uri: fileUrl, cache: true }}
+                onLoadComplete={(numberOfPages) => {
+                  setTotalPages(numberOfPages);
+                  setIsFileLoading(false);
+                }}
+                onPageChanged={(page) => {
+                  setCurrentPage(page);
+                }}
+                onError={(err) => {
+                  console.warn("[BookletViewer] Erro ao renderizar PDF:", err);
+                  setError("Erro ao renderizar o arquivo PDF.");
+                  setIsFileLoading(false);
+                }}
+                style={styles.pdf}
+                enablePaging={false}
+                trustAllCerts={false}
+              />
+            )}
+
+            {isFileLoading && (
               <View style={styles.loadingOverlay}>
                 <ActivityIndicator size="large" color={theme.colors.primary} />
-                <Text style={styles.loadingText}>Carregando páginas...</Text>
+                <Text style={styles.loadingText}>
+                  {isImage ? "Carregando infográfico..." : "Carregando páginas..."}
+                </Text>
               </View>
             )}
           </>
@@ -182,3 +228,4 @@ export function BookletViewerScreen() {
 }
 
 export default BookletViewerScreen;
+
