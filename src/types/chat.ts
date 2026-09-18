@@ -63,8 +63,39 @@ export interface UseChatReturn {
   messages: Message[];
   isLoading: boolean;
   error: string | null;
+  conversationId?: string | null;
   sendMessage: (message: string) => Promise<void>;
   clearChat: () => void;
+}
+
+/**
+ * Resumo de uma conversa/sessão de chat
+ */
+export interface ChatConversationSummary {
+  id: string;
+  userId: string;
+  chatType: "emotional" | "scientific";
+  title: string;
+  messageCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * Mensagem detalhada de uma conversa salva
+ */
+export interface SavedChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  createdAt: string;
+}
+
+/**
+ * Conversa detalhada com histórico completo
+ */
+export interface ChatConversationDetail extends ChatConversationSummary {
+  messages: SavedChatMessage[];
 }
 
 /**
@@ -80,3 +111,4 @@ export interface ChatInterfaceProps extends UseChatReturn {
  * Modelo de IA usado pela DeepSeek
  */
 export const DEEPSEEK_MODEL = "deepseek-chat";
+

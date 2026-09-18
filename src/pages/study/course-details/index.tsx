@@ -287,22 +287,24 @@ export function CourseDetailsScreen() {
               Aulas ({course.lessonCount || 0})
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.tabButton,
-              activeTab === "materials" && styles.activeTabButton,
-            ]}
-            onPress={() => setActiveTab("materials")}
-          >
-            <Text
+          {totalMaterials > 0 && (
+            <TouchableOpacity
               style={[
-                styles.tabText,
-                activeTab === "materials" && styles.activeTabText,
+                styles.tabButton,
+                activeTab === "materials" && styles.activeTabButton,
               ]}
+              onPress={() => setActiveTab("materials")}
             >
-              Materiais ({totalMaterials})
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={[
+                  styles.tabText,
+                  activeTab === "materials" && styles.activeTabText,
+                ]}
+              >
+                Materiais ({totalMaterials})
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* ABA SOBRE */}
