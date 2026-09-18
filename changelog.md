@@ -2,6 +2,21 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.20-ota.4] - 2026-09-18 (Hot-Update)
+
+### Adicionado / Aprimorado
+
+- **Materiais Complementares das Séries (`CourseMaterialsTab`, `BookletViewer`, `courseDetails`, `courseCurriculum`)**:
+  - Implementada a exibição e consumo de materiais complementares da série com suporte integrado a Apostilas/E-books em PDF nativo (`react-native-pdf`, `react-native-blob-util`), Podcasts, Reflexões e Meditações.
+  - Leitor de apostilas aprimorado com zoom interativo, visualizador de infográficos/páginas em tela cheia e barra de ferramentas de navegação rápida.
+  - Exibição condicional da aba de materiais: tanto na tela de detalhes do curso quanto na tela de currículo/aulas, a aba **Materiais** só é exibida quando o curso possuir materiais cadastrados (`totalMaterials > 0`), garantindo uma interface coesa e sem abas vazias desnecessárias.
+- **Assistentes de IA & Sessão Contínua (`useDeepSeekChat`, `chatApiService`, `types/chat`)**:
+  - Implementado gerenciamento transparente de `conversationId` no hook `useDeepSeekChat`, persistindo o identificador de sessão nos fluxos síncronos e de streaming SSE com backend Spring Boot.
+  - Reset inteligente de sessão ao limpar a conversa (`clearChat`), iniciando automaticamente um novo tópico limpo na próxima interação.
+  - Tipagens e infraestrutura de histórico de conversas preparadas para o futuro painel Premium.
+- **Cache Buster**:
+  - Incrementado o *React Query Cache Buster* para `"1.0.9"` no `App.tsx` para sincronização limpa das novas propriedades de materiais nos cursos salvos em cache.
+
 ## [2.0.20-ota.3] - 2026-09-07 (Hot-Update)
 
 ### Corrigido
