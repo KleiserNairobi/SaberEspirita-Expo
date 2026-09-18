@@ -184,38 +184,49 @@ export const createStyles = (theme: ITheme) =>
     },
     // REQUIREMENTS CARD
     requirementsCard: {
-      backgroundColor: `${theme.colors.warning}08`,
+      backgroundColor: `${theme.colors.warning}0a`,
       borderRadius: theme.radius.md,
       borderWidth: 1,
-      borderColor: `${theme.colors.warning}30`,
-      padding: theme.spacing.lg,
+      borderColor: `${theme.colors.warning}35`,
+      padding: theme.spacing.md,
       marginBottom: theme.spacing.md,
-      marginTop: theme.spacing.md,
+      marginTop: theme.spacing.sm,
+    },
+    noCertificateCard: {
+      backgroundColor: `${theme.colors.textSecondary}08`,
+      borderColor: `${theme.colors.border}`,
     },
     requirementsHeader: {
       flexDirection: "row",
       alignItems: "center",
       gap: theme.spacing.sm,
-      marginBottom: theme.spacing.sm,
+      marginBottom: theme.spacing.xs,
     },
     requirementsTitle: {
-      ...theme.text("md", "regular"),
+      ...theme.text("md", "semibold"),
+      color: theme.colors.text,
     },
     requirementsList: {
-      gap: theme.spacing.xs,
+      gap: 4,
+      marginTop: 2,
     },
     requirementItem: {
       flexDirection: "row",
       alignItems: "center",
-      gap: theme.spacing.sm,
-      marginLeft: theme.spacing.md,
+      gap: theme.spacing.xs,
+      marginLeft: theme.spacing.xs,
     },
     requirementBullet: {
-      ...theme.text("md", "bold", theme.colors.warning),
+      ...theme.text("sm", "bold", theme.colors.warning),
     },
     requirementText: {
       ...theme.text("sm", "regular", theme.colors.textSecondary),
       flex: 1,
+    },
+    noCertificateText: {
+      ...theme.text("sm", "regular", theme.colors.textSecondary),
+      lineHeight: 20,
+      marginTop: 2,
     },
 
     // FOOTER
@@ -267,7 +278,7 @@ export const createStyles = (theme: ITheme) =>
       borderBottomColor: theme.colors.border,
       marginBottom: theme.spacing.md,
       marginTop: theme.spacing.xs,
-      gap: theme.spacing.lg,
+      gap: theme.spacing.md,
     },
     tabButton: {
       paddingVertical: theme.spacing.sm,

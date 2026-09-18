@@ -7,10 +7,13 @@ export interface IMeditation {
   audioUrl: string; // Link obrigatório para a meditação guiada
   imageUrl?: string; // Thumbnail opcional
   categoryId?: string; // Caso o app expanda as meditações por categoria futuro
+  courseId?: string; // Associação opcional ao Curso / Série
+  orderIndex?: number; // Ordem de exibição nos materiais do curso
   isPremium?: boolean; // Sinalização para o futuro Paywall
   featured?: boolean; // Para destaque na UI
   createdAt?: Date; // Data de criação para badge "Novo"
 }
+
 
 export interface IMeditationCategory {
   id: string;

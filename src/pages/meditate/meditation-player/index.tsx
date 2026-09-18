@@ -25,7 +25,7 @@ import { useAuth } from "@/stores/authStore";
 import { useMeditationPlayerStore } from "@/stores/meditationPlayerStore";
 import { createStyles } from "./styles";
 
-export default function MeditationPlayerScreen() {
+export function MeditationPlayerScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
@@ -361,3 +361,6 @@ export default function MeditationPlayerScreen() {
     </View>
   );
 }
+
+export default MeditationPlayerScreen;
+

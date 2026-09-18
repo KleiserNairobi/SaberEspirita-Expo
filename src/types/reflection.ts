@@ -9,9 +9,13 @@ export interface IReflection {
   readingTimeMinutes: number;
   topic: string;
   tags?: string[];
+  courseId?: string;
+  orderIndex?: number;
+  isPremium?: boolean;
   featured?: boolean;
   createdAt?: Date;
 }
+
 
 export type ReflectionTopic = string;
 

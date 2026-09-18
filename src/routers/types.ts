@@ -79,6 +79,9 @@ export type AppStackParamList = {
   Performance: undefined;
   AllPodcasts: undefined;
   PodcastPlayer: { id: string };
+  BookletViewer: { id: string; fileUrl?: string; title?: string };
+  Reflection: { id: string };
+  MeditationPlayer: { id: string };
 };
 
 export type GlossaryStackParamList = {

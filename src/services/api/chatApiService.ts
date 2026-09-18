@@ -1,5 +1,10 @@
 import apiClient from "./apiClient";
-import { ChatMessage, ChatType } from "@/types/chat";
+import {
+  ChatMessage,
+  ChatType,
+  ChatConversationSummary,
+  ChatConversationDetail,
+} from "@/types/chat";
 import * as Storage from "@/utils/Storage";
 
 export { ChatType };
@@ -9,6 +14,7 @@ export interface ChatCompletionResponse {
   response: string;
   content?: string;
   role?: "assistant";
+  conversationId?: string;
   usage?: {
     promptTokens: number;
     completionTokens: number;
@@ -40,19 +46,25 @@ export const chatApiService = {
    */
   async sendMessage(
     messages: ChatMessage[],
-    type: ChatType | string = ChatType.EMOTIONAL
+    type: ChatType | string = ChatType.EMOTIONAL,
+    conversationId?: string | null
   ): Promise<ChatCompletionResponse> {
     const typeStr = String(type || "").toLowerCase();
     const chatType = typeStr.includes("scientific") || typeStr.includes("doctrinal")
       ? "scientific"
       : "emotional";
 
+    const payload: { chatType: string; messages: ChatMessage[]; conversationId?: string } = {
+      chatType,
+      messages,
+    };
+    if (conversationId) {
+      payload.conversationId = conversationId;
+    }
+
     const response = await apiClient.post<any>(
       "/chat/completions",
-      {
-        chatType,
-        messages,
-      },
+      payload,
       {
         timeout: 120000, // 120s timeout estendido para IA
       }
@@ -65,6 +77,7 @@ export const chatApiService = {
       content: text,
       response: text,
       role: "assistant",
+      conversationId: data.conversationId,
     };
   },
 
@@ -75,8 +88,10 @@ export const chatApiService = {
   async sendMessageStream(
     messages: ChatMessage[],
     type: ChatType | string = ChatType.EMOTIONAL,
-    onChunk?: (chunk: string) => void
-  ): Promise<string> {
+    onChunk?: (chunk: string) => void,
+    conversationId?: string | null,
+    onMeta?: (meta: { conversationId?: string; chatType?: string }) => void
+  ): Promise<{ text: string; conversationId?: string }> {
     const typeStr = String(type || "").toLowerCase();
     const chatType = typeStr.includes("scientific") || typeStr.includes("doctrinal")
       ? "scientific"
@@ -97,6 +112,7 @@ export const chatApiService = {
       let fullText = "";
       let buffer = "";
       let lastIndex = 0;
+      let returnedConversationId: string | undefined = conversationId || undefined;
 
       const processBuffer = (flush = false) => {
         const lines = buffer.split(/\r?\n/);
@@ -113,6 +129,12 @@ export const chatApiService = {
             if (!jsonStr) continue;
             try {
               const parsed = JSON.parse(jsonStr);
+              if (parsed.conversationId) {
+                returnedConversationId = parsed.conversationId;
+                if (onMeta) {
+                  onMeta({ conversationId: parsed.conversationId, chatType: parsed.chatType });
+                }
+              }
               if (parsed.content) {
                 fullText += parsed.content;
                 if (onChunk) onChunk(parsed.content);
@@ -142,10 +164,10 @@ export const chatApiService = {
         processBuffer(true);
 
         if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(fullText);
+          resolve({ text: fullText, conversationId: returnedConversationId });
         } else if (fullText.trim().length > 0) {
           // Se já recebeu texto antes do fechamento, considera sucesso
-          resolve(fullText);
+          resolve({ text: fullText, conversationId: returnedConversationId });
         } else {
           reject(new Error(`Erro no chat stream (status ${xhr.status}): ${xhr.responseText}`));
         }
@@ -160,7 +182,7 @@ export const chatApiService = {
           processBuffer(true);
         }
         if (fullText.trim().length > 0) {
-          resolve(fullText);
+          resolve({ text: fullText, conversationId: returnedConversationId });
         } else {
           reject(new Error("Erro de rede ao conectar ao stream de chat"));
         }
@@ -168,15 +190,55 @@ export const chatApiService = {
 
       xhr.ontimeout = () => {
         if (fullText.trim().length > 0) {
-          resolve(fullText);
+          resolve({ text: fullText, conversationId: returnedConversationId });
         } else {
           reject(new Error("Timeout ao aguardar resposta do stream de chat"));
         }
       };
 
       xhr.timeout = 120000; // 120s timeout
-      xhr.send(JSON.stringify({ chatType, messages }));
+      const requestPayload: any = { chatType, messages };
+      if (conversationId) {
+        requestPayload.conversationId = conversationId;
+      }
+      xhr.send(JSON.stringify(requestPayload));
     });
+  },
+
+  /**
+   * Obtém lista de conversas salvas no histórico (recurso Premium).
+   */
+  async getConversations(type?: ChatType | string): Promise<ChatConversationSummary[]> {
+    const params: Record<string, string> = {};
+    if (type) {
+      const typeStr = String(type).toLowerCase();
+      params.chatType = typeStr.includes("scientific") || typeStr.includes("doctrinal") ? "scientific" : "emotional";
+    }
+    const response = await apiClient.get<ChatConversationSummary[]>("/chat/conversations", { params });
+    return response.data || [];
+  },
+
+  /**
+   * Obtém detalhes e mensagens completas de uma conversa pelo ID.
+   */
+  async getConversationDetail(id: string): Promise<ChatConversationDetail> {
+    const response = await apiClient.get<ChatConversationDetail>(`/chat/conversations/${id}`);
+    return response.data;
+  },
+
+  /**
+   * Renomeia o título de uma conversa salva.
+   */
+  async updateConversationTitle(id: string, title: string): Promise<ChatConversationSummary> {
+    const response = await apiClient.put<ChatConversationSummary>(`/chat/conversations/${id}`, { title });
+    return response.data;
+  },
+
+  /**
+   * Exclui uma conversa do histórico.
+   */
+  async deleteConversation(id: string): Promise<void> {
+    await apiClient.delete(`/chat/conversations/${id}`);
   },
 
   /**

@@ -53,11 +53,37 @@ export function CourseCertificateScreen() {
   const [bottomSheetConfig, setBottomSheetConfig] =
     useState<BottomSheetMessageConfig | null>(null);
 
+  const totalExercises =
+    (course?.stats?.exerciseCount ?? 0) > 0
+      ? (course?.stats?.exerciseCount ?? 0)
+      : (course as any)?.exerciseCount ?? 0;
+
+  const exerciseResultsList = parseExerciseResults(progress?.exerciseResults);
+  const completedExercises =
+    exerciseResultsList.filter((r: any) => r && r.passed).length || 0;
+
+  const exercisesProgress =
+    totalExercises > 0 ? Math.round((completedExercises / totalExercises) * 100) : 0;
+
+  const completedLessonsCount = progress?.completedLessons?.length || 0;
+  const totalLessons = course?.lessonCount || 0;
+  const lessonsProgress =
+    totalLessons > 0 ? Math.round((completedLessonsCount / totalLessons) * 100) : 0;
+
+  const certificateEnabled = course?.certification?.enabled ?? false;
+  const requiredLessonsPercent = course?.certification?.requiredLessonsPercent ?? 100;
+  const requiredExercisesPercent = course?.certification?.requiredExercisesPercent ?? 100;
+
+  const isEligible =
+    certificateEnabled &&
+    lessonsProgress >= requiredLessonsPercent &&
+    (totalExercises === 0 || exercisesProgress >= requiredExercisesPercent);
+
   /**
    * OPÇÃO 1: Gerar e Compartilhar (Local - Rápido)
    */
   async function handleGenerateLocal() {
-    if (!user || !course || !progress) return;
+    if (!user || !course || !progress || !isEligible) return;
 
     setIsGenerating(true);
     try {
@@ -106,7 +132,7 @@ export function CourseCertificateScreen() {
    * OPÇÃO 2: Gerar e Salvar na Nuvem (com validação)
    */
   async function handleGenerateCloud() {
-    if (!user || !course || !progress) return;
+    if (!user || !course || !progress || !isEligible) return;
 
     setIsGenerating(true);
     try {
@@ -245,12 +271,48 @@ export function CourseCertificateScreen() {
         <View style={styles.infoCard}>
           <Text style={styles.infoTitle}>{course.title}</Text>
           <Text style={styles.infoText}>
-            Você concluiu {progress?.completedLessons?.length || 0} aulas e{" "}
-            {parseExerciseResults(progress?.exerciseResults).filter((r: any) => r && r.passed).length} exercícios.
+            Você concluiu {completedLessonsCount} de {totalLessons} aulas e{" "}
+            {completedExercises} de {totalExercises} exercícios.
           </Text>
         </View>
 
-        {!certificateUri ? (
+        {!isEligible && !certificateUri ? (
+          <View style={styles.actionsContainer}>
+            <View
+              style={[
+                styles.infoCard,
+                {
+                  backgroundColor: `${theme.colors.warning}10`,
+                  borderColor: `${theme.colors.warning}40`,
+                  borderWidth: 1,
+                  borderRadius: theme.radius.md,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.infoTitle,
+                  { color: theme.colors.warning, fontSize: 16, marginBottom: 6 },
+                ]}
+              >
+                Requisitos Pendentes
+              </Text>
+              <Text style={[styles.infoText, { textAlign: "left", lineHeight: 22 }]}>
+                Para emitir seu certificado de conclusão, é necessário atingir os seguintes critérios:
+                {"\n"}• {requiredLessonsPercent}% das aulas concluídas ({completedLessonsCount}/{totalLessons})
+                {totalExercises > 0 &&
+                  `\n• ${requiredExercisesPercent}% dos exercícios com nota ≥ ${course.certification?.minimumGrade ?? 70} (${completedExercises}/${totalExercises})`}
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              style={[styles.shareButton, { backgroundColor: theme.colors.primary, marginTop: 16 }]}
+              onPress={() => navigation.goBack()}
+            >
+              <Text style={styles.shareButtonText}>Voltar ao Currículo</Text>
+            </TouchableOpacity>
+          </View>
+        ) : !certificateUri ? (
           <View style={styles.actionsContainer}>
             <Text style={styles.optionsTitle}>Escolha como gerar seu certificado:</Text>
 

@@ -29,14 +29,16 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { ContentSheet } from "@/components/ContentSheet";
 import { HeroHeader } from "@/components/HeroHeader";
+import { PremiumContentNoticeModal } from "@/components/PremiumContentNoticeModal";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
-import { useCourse } from "@/hooks/queries/useCourses";
+import { useCourse, useCourseMaterials } from "@/hooks/queries/useCourses";
 import { useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
 import { prefetchImages } from "@/utils/imagePrefetch";
 
+import { CourseMaterialsTab } from "./components/CourseMaterialsTab";
 import { createStyles } from "./styles";
 
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -52,6 +54,13 @@ export function CourseDetailsScreen() {
   // React Query Fetch
   const { data: course, isLoading: isLoadingCourse } = useCourse(courseId);
   const { data: progress, isLoading: isLoadingProgress } = useCourseProgress(courseId);
+  const { data: materials, isLoading: isLoadingMaterials } = useCourseMaterials(courseId);
+
+  const totalMaterials =
+    (materials?.booklets?.length || 0) +
+    (materials?.podcasts?.length || 0) +
+    (materials?.reflections?.length || 0) +
+    (materials?.meditations?.length || 0);
 
   // Prefetch automático e deduplicado da capa do curso ao carregar os detalhes
   React.useEffect(() => {
@@ -65,7 +74,14 @@ export function CourseDetailsScreen() {
 
   const isEnrolled = !!progress; // Se tem objeto de progresso, está matriculado
 
-  const [activeTab, setActiveTab] = useState<"about" | "lessons">("about");
+  const [activeTab, setActiveTab] = useState<"about" | "lessons" | "materials">("about");
+  const premiumModalRef = useRef<BottomSheetModal>(null);
+  const [selectedPremiumItem, setSelectedPremiumItem] = useState<string>("");
+
+  function handleOpenPremiumModal(itemName: string) {
+    setSelectedPremiumItem(itemName);
+    premiumModalRef.current?.present();
+  }
 
   async function handleShare() {
     if (!course) return;
@@ -251,7 +267,7 @@ export function CourseDetailsScreen() {
           )}
         </View>
 
-        {/* SELETOR DE ABAS (SOBRE E AULAS) */}
+        {/* SELETOR DE ABAS (SOBRE, AULAS E MATERIAIS) */}
         <View style={styles.tabContainer}>
           <TouchableOpacity
             style={[styles.tabButton, activeTab === "about" && styles.activeTabButton]}
@@ -271,6 +287,24 @@ export function CourseDetailsScreen() {
               Aulas ({course.lessonCount || 0})
             </Text>
           </TouchableOpacity>
+          {totalMaterials > 0 && (
+            <TouchableOpacity
+              style={[
+                styles.tabButton,
+                activeTab === "materials" && styles.activeTabButton,
+              ]}
+              onPress={() => setActiveTab("materials")}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  activeTab === "materials" && styles.activeTabText,
+                ]}
+              >
+                Materiais ({totalMaterials})
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* ABA SOBRE */}
@@ -376,7 +410,7 @@ export function CourseDetailsScreen() {
             </View>
 
             {/* REQUISITOS PARA CERTIFICADO */}
-            {hasCertification && (
+            {hasCertification ? (
               <View style={styles.requirementsCard}>
                 <View style={styles.requirementsHeader}>
                   <Award size={20} color={theme.colors.warning} />
@@ -386,17 +420,28 @@ export function CourseDetailsScreen() {
                   <View style={styles.requirementItem}>
                     <Text style={styles.requirementBullet}>•</Text>
                     <Text style={styles.requirementText}>
-                      {course.certification.requiredLessonsPercent}% das aulas concluídas
+                      {course.certification?.requiredLessonsPercent ?? 100}% das aulas concluídas
                     </Text>
                   </View>
                   <View style={styles.requirementItem}>
                     <Text style={styles.requirementBullet}>•</Text>
                     <Text style={styles.requirementText}>
-                      {course.certification.requiredExercisesPercent}% dos exercícios com
-                      nota ≥ {course.certification.minimumGrade}
+                      {course.certification?.requiredExercisesPercent ?? 100}% dos exercícios com nota ≥ {course.certification?.minimumGrade ?? 70}
                     </Text>
                   </View>
                 </View>
+              </View>
+            ) : (
+              <View style={[styles.requirementsCard, styles.noCertificateCard]}>
+                <View style={styles.requirementsHeader}>
+                  <Award size={20} color={theme.colors.textSecondary} />
+                  <Text style={[styles.requirementsTitle, { color: theme.colors.textSecondary }]}>
+                    Não Emite Certificado
+                  </Text>
+                </View>
+                <Text style={styles.noCertificateText}>
+                  Esta série é livre e voltada para estudo reflexivo, sem emissão de certificado formal de conclusão.
+                </Text>
               </View>
             )}
           </View>
@@ -427,6 +472,15 @@ export function CourseDetailsScreen() {
               </Text>
             )}
           </View>
+        )}
+
+        {/* ABA MATERIAIS */}
+        {activeTab === "materials" && (
+          <CourseMaterialsTab
+            courseId={courseId}
+            interactive={false}
+            onOpenPremiumModal={handleOpenPremiumModal}
+          />
         )}
       </ContentSheet>
 
@@ -462,6 +516,10 @@ export function CourseDetailsScreen() {
       </View>
 
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
+      <PremiumContentNoticeModal
+        ref={premiumModalRef}
+        itemName={selectedPremiumItem}
+      />
     </View>
   );
 }

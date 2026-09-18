@@ -19,12 +19,13 @@ function toApiMessages(messages: Message[]): ChatMessage[] {
 }
 
 /**
- * Hook principal para gerenciar chat com DeepSeek
+ * Hook principal para gerenciar chat com DeepSeek e controle transparente de sessão
  */
 export function useDeepSeekChat(chatType: ChatType | "emotional" | "scientific" = ChatType.EMOTIONAL): UseChatReturn {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [conversationId, setConversationId] = useState<string | null>(null);
 
   /**
    * Simula streaming palavra por palavra para respostas locais (saudações, despedidas) ou fallback
@@ -106,7 +107,7 @@ export function useDeepSeekChat(chatType: ChatType | "emotional" | "scientific" 
         // Invoca a API REST Spring Boot com suporte a streaming SSE via fetch
         let accumulatedText = "";
         try {
-          await chatApiService.sendMessageStream(
+          const streamResult = await chatApiService.sendMessageStream(
             apiMessages,
             chatType as any,
             (chunk) => {
@@ -116,15 +117,27 @@ export function useDeepSeekChat(chatType: ChatType | "emotional" | "scientific" 
                   msg.id === assistantMsg.id ? { ...msg, text: accumulatedText } : msg
                 )
               );
+            },
+            conversationId,
+            (meta) => {
+              if (meta?.conversationId) {
+                setConversationId(meta.conversationId);
+              }
             }
           );
+          if (streamResult?.conversationId) {
+            setConversationId(streamResult.conversationId);
+          }
         } catch (streamErr) {
           // Se já recebemos a resposta pelo stream, NÃO executamos fallback síncrono
           if (accumulatedText.trim().length > 0) {
             return;
           }
           console.warn("Falha no chat stream SSE, executando fallback síncrono:", streamErr);
-          const responseData = await chatApiService.sendMessage(apiMessages, chatType as any);
+          const responseData = await chatApiService.sendMessage(apiMessages, chatType as any, conversationId);
+          if (responseData.conversationId) {
+            setConversationId(responseData.conversationId);
+          }
           const replyText = responseData.content || responseData.response || "";
           await simulateStreaming(replyText, assistantMsg.id);
         }
@@ -146,21 +159,23 @@ export function useDeepSeekChat(chatType: ChatType | "emotional" | "scientific" 
         setIsLoading(false);
       }
     },
-    [chatType, simulateStreaming]
+    [chatType, conversationId, simulateStreaming]
   );
 
   /**
-   * Limpa histórico de chat
+   * Limpa histórico de chat e reseta a sessão atual
    */
   const clearChat = useCallback(() => {
     setMessages([]);
     setError(null);
+    setConversationId(null);
   }, []);
 
   return {
     messages,
     isLoading,
     error,
+    conversationId,
     sendMessage,
     clearChat,
   };

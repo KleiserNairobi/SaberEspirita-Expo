@@ -1,0 +1,158 @@
+import { StyleSheet } from "react-native";
+import { ITheme } from "@/configs/theme/types";
+
+export const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+      backgroundColor: theme.colors.background,
+    },
+    backButton: {
+      width: 40,
+      height: 40,
+      borderRadius: theme.radius.full,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: theme.colors.accent,
+    },
+    headerTitleContainer: {
+      flex: 1,
+      marginHorizontal: theme.spacing.sm,
+      alignItems: "center",
+    },
+    headerTitle: {
+      ...theme.text("md", "bold"),
+      color: theme.colors.text,
+      textAlign: "center",
+    },
+    headerSubtitle: {
+      ...theme.text("xs", "regular"),
+      color: theme.colors.textSecondary,
+      textAlign: "center",
+      marginTop: 2,
+    },
+    pageBadge: {
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: theme.radius.xs,
+      backgroundColor: `${theme.colors.primary}18`,
+      minWidth: 48,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pageBadgeText: {
+      ...theme.text("xs", "bold", theme.colors.primary),
+      fontFamily: "Oswald_400Regular",
+    },
+    headerRightPlaceholder: {
+      width: 48,
+    },
+    pdfContainer: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+      position: "relative",
+    },
+    imageContainer: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+      justifyContent: "center",
+      alignItems: "center",
+      overflow: "hidden",
+    },
+    imageWrapper: {
+      width: "100%",
+      height: "100%",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    image: {
+      width: "100%",
+      height: "100%",
+    },
+    hintContainer: {
+      position: "absolute",
+      bottom: theme.spacing.md,
+      alignSelf: "center",
+      backgroundColor: `${theme.colors.card}E6`,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radius.full,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.xs,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.15,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    hintText: {
+      ...theme.text("xs", "medium"),
+      color: theme.colors.textSecondary,
+    },
+    shareButton: {
+      padding: theme.spacing.xs,
+      borderRadius: theme.radius.sm,
+      backgroundColor: theme.colors.background,
+      marginLeft: theme.spacing.xs,
+    },
+    headerRightContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.xs,
+    },
+    pdf: {
+      flex: 1,
+      width: "100%",
+      height: "100%",
+      backgroundColor: theme.colors.background,
+    },
+    loadingOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: theme.colors.background,
+      zIndex: 10,
+    },
+    loadingText: {
+      marginTop: theme.spacing.sm,
+      ...theme.text("sm", "medium"),
+      color: theme.colors.textSecondary,
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: theme.spacing.lg,
+      gap: theme.spacing.sm,
+    },
+    errorText: {
+      ...theme.text("md", "medium"),
+      color: theme.colors.error,
+      textAlign: "center",
+      maxWidth: 280,
+    },
+    retryButton: {
+      marginTop: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      backgroundColor: theme.colors.primary,
+      borderRadius: theme.radius.sm,
+    },
+    retryButtonText: {
+      ...theme.text("sm", "bold"),
+      color: theme.colors.background,
+    },
+  });

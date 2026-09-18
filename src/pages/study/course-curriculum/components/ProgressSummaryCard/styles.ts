@@ -68,25 +68,8 @@ export const createStyles = (theme: ITheme) =>
     },
     rateButtonContainer: {
       marginTop: theme.spacing.xs,
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 12,
-    },
-    methodologyButton: {
-      flex: 1.2,
-      backgroundColor: "#F2F4F1",
-      borderRadius: 100,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      paddingVertical: 10,
-      gap: 8,
-    },
-    methodologyButtonText: {
-      ...theme.text("sm", "regular", "#7A8C70"),
     },
     rateButton: {
-      flex: 1,
       backgroundColor: "#6B7A5F",
       borderRadius: 100,
       paddingVertical: 12,

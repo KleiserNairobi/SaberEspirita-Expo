@@ -56,6 +56,7 @@ export const createStyles = (theme: ITheme) =>
 
     listContent: {
       paddingHorizontal: 16,
+      paddingTop: 16,
       paddingBottom: 40,
     },
 
@@ -437,5 +438,33 @@ export const createStyles = (theme: ITheme) =>
       color: theme.colors.warning,
       ...theme.text("sm", "regular"),
       textDecorationLine: "none",
+    },
+
+    // ABAS (TABS) FIXAS NO TOPO
+    tabContainer: {
+      flexDirection: "row",
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+      paddingHorizontal: 16,
+      gap: theme.spacing.md,
+      backgroundColor: theme.colors.background,
+    },
+    tabButton: {
+      paddingVertical: theme.spacing.sm,
+      borderBottomWidth: 2,
+      borderBottomColor: "transparent",
+    },
+    activeTabButton: {
+      borderBottomColor: theme.colors.primary,
+    },
+    tabText: {
+      ...theme.text("md", "medium", theme.colors.textSecondary),
+    },
+    activeTabText: {
+      color: theme.colors.primary,
+      fontWeight: "bold",
+    },
+    materialsContent: {
+      paddingBottom: 20,
     },
   });

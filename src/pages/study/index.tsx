@@ -90,12 +90,14 @@ export function StudyScreen() {
   // Fetching do último curso acessado
   const { data: lastAccessed } = useLastAccessedCourse();
 
-  // Revalidar progresso dos cursos e último acessado ao focar na tela
+  // Revalidar progresso dos cursos, notas e último acessado ao focar na tela
   useFocusEffect(
     useCallback(() => {
       queryClient.invalidateQueries({ queryKey: ["lastAccessedCourse"] });
       queryClient.invalidateQueries({ queryKey: ["coursesProgressList"] });
       queryClient.invalidateQueries({ queryKey: ["allCoursesProgress"] });
+      queryClient.invalidateQueries({ queryKey: COURSES_KEYS.featured });
+      queryClient.invalidateQueries({ queryKey: COURSES_KEYS.all });
     }, [queryClient])
   );
 
