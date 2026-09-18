@@ -2,7 +2,7 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
-## [2.0.20-ota.4] - 2026-09-18 (Hot-Update)
+## [2.0.21] - 2026-09-18 (Build 58)
 
 ### Adicionado / Aprimorado
 
