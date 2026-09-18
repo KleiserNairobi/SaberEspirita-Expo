@@ -47,6 +47,7 @@ export interface AuthResponseDTO {
 }
 
 export interface UpdateProfileDTO {
+  displayName?: string;
   userName?: string;
   photoURL?: string;
   photoUrl?: string;

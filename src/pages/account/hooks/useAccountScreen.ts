@@ -107,14 +107,14 @@ export function useAccountScreen() {
       let finalPhotoUrl = user.photoURL;
 
       if (newPhotoUri === "") {
-        await authApiService.updateProfile({ userName: newName, photoUrl: "" });
+        await authApiService.updateProfile({ displayName: newName, userName: newName, photoUrl: "" });
         finalPhotoUrl = null;
       } else if (newPhotoUri && (newPhotoUri.startsWith("file://") || newPhotoUri.startsWith("content://") || newPhotoUri.startsWith("ph://"))) {
         const res = await mediaApiService.uploadAvatar(newPhotoUri, "avatar.jpg");
         finalPhotoUrl = res.url;
-        await authApiService.updateProfile({ userName: newName, photoUrl: res.url });
+        await authApiService.updateProfile({ displayName: newName, userName: newName, photoUrl: res.url });
       } else {
-        await authApiService.updateProfile({ userName: newName });
+        await authApiService.updateProfile({ displayName: newName, userName: newName });
       }
 
       useAuthStore.getState().setUser({

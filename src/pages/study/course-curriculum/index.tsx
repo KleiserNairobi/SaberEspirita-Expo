@@ -10,6 +10,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, BookOpen, CheckCircle, ChevronRight } from "lucide-react-native";
 import { CircleAlert, Clock, Info, Lock, PlayCircle, Tag } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -18,14 +19,16 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { Button } from "@/components/Button";
 import { CourseFeedbackBottomSheet } from "@/components/CourseFeedbackBottomSheet";
+import { PremiumContentNoticeModal } from "@/components/PremiumContentNoticeModal";
 import {
   useCourseProgress,
   useTouchCourseAccess,
 } from "@/hooks/queries/useCourseProgress";
-import { useCourse } from "@/hooks/queries/useCourses";
+import { COURSES_KEYS, useCourse, useCourseMaterials } from "@/hooks/queries/useCourses";
 import { useCourseExercises } from "@/hooks/queries/useExercises";
 import { useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { CourseMaterialsTab } from "@/pages/study/course-details/components/CourseMaterialsTab";
 import { AppStackParamList } from "@/routers/types";
 import { courseApiService } from "@/services/api/courseApiService";
 import { parseExerciseResults } from "@/services/api/userActivityApiService";
@@ -74,6 +77,24 @@ export function CourseCurriculumScreen() {
   // ✅ Fetch do curso para exibir título
   const { data: course, isLoading: isLoadingCourse } = useCourse(courseId);
 
+  // ✅ Fetch dos materiais complementares do curso
+  const { data: materials, isLoading: isLoadingMaterials } = useCourseMaterials(courseId);
+
+  const totalMaterials =
+    (materials?.booklets?.length || 0) +
+    (materials?.podcasts?.length || 0) +
+    (materials?.reflections?.length || 0) +
+    (materials?.meditations?.length || 0);
+
+  const [activeTab, setActiveTab] = useState<"lessons" | "materials">("lessons");
+  const premiumModalRef = useRef<BottomSheetModal>(null);
+  const [selectedPremiumItem, setSelectedPremiumItem] = useState<string>("");
+
+  function handleOpenPremiumModal(itemName: string) {
+    setSelectedPremiumItem(itemName);
+    premiumModalRef.current?.present();
+  }
+
   // ✅ Fetch do progresso real do usuário
   const { data: progress, isLoading: isLoadingProgress } = useCourseProgress(courseId);
 
@@ -101,14 +122,16 @@ export function CourseCurriculumScreen() {
   const exercisesProgress =
     totalExercises > 0 ? Math.round((completedExercises / totalExercises) * 100) : 0;
 
-  // ✅ NOVO: Verificar elegibilidade para certificado (Backend ou Local)
+  // ✅ Verificação estrita de elegibilidade para certificado com base nas regras do curso
   const certificateEnabled = course?.certification?.enabled ?? false;
-  const serverCertificateEligible = progress?.certificateEligible || false;
+  const requiredLessonsPercent = course?.certification?.requiredLessonsPercent ?? 100;
+  const requiredExercisesPercent = course?.certification?.requiredExercisesPercent ?? 100;
 
-  // Apenas elegível se certificado estiver habilitado E (backend autorizou OU cumpriu requisitos locais)
-  const isReadyForCertificate =
-    certificateEnabled &&
-    (serverCertificateEligible || (lessonsProgress === 100 && exercisesProgress === 100));
+  const lessonsMet = lessonsProgress >= requiredLessonsPercent;
+  const exercisesMet = totalExercises === 0 || exercisesProgress >= requiredExercisesPercent;
+
+  // Apenas elegível se certificado estiver habilitado E cumpriu aulas E cumpriu exercícios
+  const isReadyForCertificate = certificateEnabled && lessonsMet && exercisesMet;
 
   // ✅ NOVO: Estado e ref para BottomSheet de certificado
   const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
@@ -118,6 +141,7 @@ export function CourseCurriculumScreen() {
 
   // ✅ NOVO: Ref e Ações para BottomSheet de Avaliação de Curso
   const feedbackSheetRef = useRef<BottomSheetModal>(null);
+  const queryClient = useQueryClient();
   const { user, isGuest } = useAuthStore();
 
   // ✅ NOVO: Estado para esconder botão instantaneamente
@@ -134,48 +158,43 @@ export function CourseCurriculumScreen() {
   const handleSubmitFeedback = async (rating: number, comment: string) => {
     if (!user?.uid || !courseId) return;
 
-    await courseApiService.sendCourseFeedback(courseId, {
-      rating,
-      comment,
-    });
+    try {
+      await courseApiService.sendCourseFeedback(courseId, {
+        rating,
+        comment,
+      });
 
-    // Trigger re-render by updating local state or forcing a refetch if needed
-    saveBoolean(`course_${courseId}_review_submitted`, true);
-    setHasGloballySubmittedState(true); // NOVO
+      // Invalida cache de cursos para refletir a nova nota imediatamente nos cards e detalhes
+      queryClient.invalidateQueries({ queryKey: COURSES_KEYS.all });
+      queryClient.invalidateQueries({ queryKey: COURSES_KEYS.featured });
+      queryClient.invalidateQueries({ queryKey: COURSES_KEYS.detail(courseId) });
 
-    setMessageConfig({
-      type: "success",
-      title: "Avaliação Enviada!",
-      message: "Muito obrigado por compartilhar sua opinião conosco.",
-      primaryButton: {
-        label: "FECHAR",
-        onPress: () => {
-          bottomSheetRef.current?.dismiss();
+      // Trigger re-render by updating local state or forcing a refetch if needed
+      saveBoolean(`course_${courseId}_review_submitted`, true);
+      setHasGloballySubmittedState(true);
+
+      setMessageConfig({
+        type: "success",
+        title: "Avaliação Enviada!",
+        message: "Muito obrigado por compartilhar sua opinião conosco.",
+        primaryButton: {
+          label: "FECHAR",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+          },
         },
-      },
-    });
+      });
 
-    // Timeout sútil para dar tempo do feedback modal fechar antes do alerta genérico abrir
-    setTimeout(() => {
-      bottomSheetRef.current?.present();
-    }, 500);
+      // Timeout sútil para dar tempo do feedback modal fechar antes do alerta genérico abrir
+      setTimeout(() => {
+        bottomSheetRef.current?.present();
+      }, 500);
+    } catch (error) {
+      console.warn("[CourseCurriculum] Erro ao enviar avaliação do curso:", error);
+    }
   };
 
-  const handleOpenMethodology = () => {
-    setMessageConfig({
-      type: "info",
-      title: "Entenda nossa pedagogia",
-      message:
-        "Nossas séries espirituais foram desenvolvidas com uma metodologia própria, pensada para transformar o estudo em uma experiência ativa e envolvente.\n\nAo longo das aulas, você perceberá que alguns textos terminam com reticências (...). Isso é intencional. Esses momentos funcionam como pausas reflexivas, convidando você a pensar, internalizar e conectar o conteúdo com sua própria vida.\n\nAs aulas seguem uma progressão estruturada — da pergunta inicial à aplicação prática — como uma jornada de descoberta. Por isso, recomendamos que você avance slide a slide, respeitando esse ritmo.\n\nAqui, você não apenas lê:\n você reflete, compreende e transforma.",
-      primaryButton: {
-        label: "FECHAR",
-        onPress: () => {
-          bottomSheetRef.current?.dismiss();
-        },
-      },
-    });
-    bottomSheetRef.current?.present();
-  };
+
 
   // ✅ NOVO: Lógica Proativa de Avaliação por Marcos (40%, 75%, 100%)
   useEffect(() => {
@@ -269,21 +288,39 @@ export function CourseCurriculumScreen() {
   // ✅ NOVO: Handler para botão de certificado
   function handleGetCertificate() {
     if (!isReadyForCertificate) {
-      // Mostrar popup de aviso via BottomSheet
-      const missingCount = totalExercises - completedExercises;
-
-      setMessageConfig({
-        type: "warning",
-        title: "Certificado Bloqueado",
-        message: `Você ainda precisa completar ${missingCount} exercícios para obter o certificado. Verifique as aulas e complete os exercícios pendentes.`,
-        primaryButton: {
-          label: "ENTENDI",
-          onPress: () => {
-            bottomSheetRef.current?.dismiss();
+      if (!lessonsMet) {
+        setMessageConfig({
+          type: "warning",
+          title: "Aulas Pendentes",
+          message: `Você precisa concluir ao menos ${requiredLessonsPercent}% das aulas da série para desbloquear o certificado.`,
+          primaryButton: {
+            label: "ENTENDI",
+            onPress: () => {
+              bottomSheetRef.current?.dismiss();
+            },
           },
-        },
-      });
-      bottomSheetRef.current?.present();
+        });
+        bottomSheetRef.current?.present();
+        return;
+      }
+
+      if (!exercisesMet) {
+        const missingCount = Math.max(1, totalExercises - completedExercises);
+        const minGrade = course?.certification?.minimumGrade ?? 70;
+        setMessageConfig({
+          type: "warning",
+          title: "Exercícios Pendentes",
+          message: `Você ainda precisa completar ${missingCount} ${missingCount === 1 ? "exercício" : "exercícios"} com nota ≥ ${minGrade} para desbloquear o certificado. Complete os exercícios de fixação e tente novamente.`,
+          primaryButton: {
+            label: "ENTENDI",
+            onPress: () => {
+              bottomSheetRef.current?.dismiss();
+            },
+          },
+        });
+        bottomSheetRef.current?.present();
+        return;
+      }
       return;
     }
 
@@ -783,6 +820,44 @@ export function CourseCurriculumScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* SELETOR DE ABAS FIXO NO TOPO (AULAS E MATERIAIS) */}
+        {totalMaterials > 0 && (
+          <View style={styles.tabContainer}>
+            <TouchableOpacity
+              style={[
+                styles.tabButton,
+                activeTab === "lessons" && styles.activeTabButton,
+              ]}
+              onPress={() => setActiveTab("lessons")}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  activeTab === "lessons" && styles.activeTabText,
+                ]}
+              >
+                Aulas ({totalLessons})
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.tabButton,
+                activeTab === "materials" && styles.activeTabButton,
+              ]}
+              onPress={() => setActiveTab("materials")}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  activeTab === "materials" && styles.activeTabText,
+                ]}
+              >
+                Materiais ({totalMaterials})
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {loading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -790,7 +865,7 @@ export function CourseCurriculumScreen() {
         ) : (
           <FlatList
             ref={flatListRef}
-            data={lessons}
+            data={activeTab === "lessons" ? lessons : []}
             keyExtractor={(item, index) => `${item?.id ?? index}_${index}`}
             contentContainerStyle={styles.listContent}
             onScroll={(e) => {
@@ -808,7 +883,7 @@ export function CourseCurriculumScreen() {
             scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={
-              <View>
+              activeTab === "lessons" ? (
                 <ProgressSummaryCard
                   courseTitle={course?.title || "Série"}
                   lessonsProgress={lessonsProgress}
@@ -822,21 +897,30 @@ export function CourseCurriculumScreen() {
                   onRateCourse={
                     hasGloballySubmittedState ? undefined : handleOpenFeedback
                   }
-                  onOpenMethodology={handleOpenMethodology}
                 />
-              </View>
+              ) : (
+                <View style={styles.materialsContent}>
+                  <CourseMaterialsTab
+                    courseId={courseId}
+                    interactive={true}
+                    onOpenPremiumModal={handleOpenPremiumModal}
+                  />
+                </View>
+              )
             }
-            renderItem={renderLessonItem}
+            renderItem={activeTab === "lessons" ? renderLessonItem : null}
             ListEmptyComponent={
-              <Text
-                style={{
-                  textAlign: "center",
-                  color: theme.colors.textSecondary,
-                  marginTop: 40,
-                }}
-              >
-                Nenhuma aula encontrada.
-              </Text>
+              activeTab === "lessons" ? (
+                <Text
+                  style={{
+                    textAlign: "center",
+                    color: theme.colors.textSecondary,
+                    marginTop: 40,
+                  }}
+                >
+                  Nenhuma aula encontrada.
+                </Text>
+              ) : null
             }
           />
         )}
@@ -863,6 +947,12 @@ export function CourseCurriculumScreen() {
         courseId={courseId}
         courseTitle={course?.title || "Série"}
         onSubmit={handleSubmitFeedback}
+      />
+
+      {/* ✅ Modal de Conteúdo Premium */}
+      <PremiumContentNoticeModal
+        ref={premiumModalRef}
+        itemName={selectedPremiumItem}
       />
     </SafeAreaView>
   );

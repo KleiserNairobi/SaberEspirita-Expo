@@ -408,7 +408,7 @@ export function CourseDetailsScreen() {
             </View>
 
             {/* REQUISITOS PARA CERTIFICADO */}
-            {hasCertification && (
+            {hasCertification ? (
               <View style={styles.requirementsCard}>
                 <View style={styles.requirementsHeader}>
                   <Award size={20} color={theme.colors.warning} />
@@ -418,17 +418,28 @@ export function CourseDetailsScreen() {
                   <View style={styles.requirementItem}>
                     <Text style={styles.requirementBullet}>•</Text>
                     <Text style={styles.requirementText}>
-                      {course.certification.requiredLessonsPercent}% das aulas concluídas
+                      {course.certification?.requiredLessonsPercent ?? 100}% das aulas concluídas
                     </Text>
                   </View>
                   <View style={styles.requirementItem}>
                     <Text style={styles.requirementBullet}>•</Text>
                     <Text style={styles.requirementText}>
-                      {course.certification.requiredExercisesPercent}% dos exercícios com
-                      nota ≥ {course.certification.minimumGrade}
+                      {course.certification?.requiredExercisesPercent ?? 100}% dos exercícios com nota ≥ {course.certification?.minimumGrade ?? 70}
                     </Text>
                   </View>
                 </View>
+              </View>
+            ) : (
+              <View style={[styles.requirementsCard, styles.noCertificateCard]}>
+                <View style={styles.requirementsHeader}>
+                  <Award size={20} color={theme.colors.textSecondary} />
+                  <Text style={[styles.requirementsTitle, { color: theme.colors.textSecondary }]}>
+                    Não Emite Certificado
+                  </Text>
+                </View>
+                <Text style={styles.noCertificateText}>
+                  Esta série é livre e voltada para estudo reflexivo, sem emissão de certificado formal de conclusão.
+                </Text>
               </View>
             )}
           </View>
@@ -465,6 +476,7 @@ export function CourseDetailsScreen() {
         {activeTab === "materials" && (
           <CourseMaterialsTab
             courseId={courseId}
+            interactive={false}
             onOpenPremiumModal={handleOpenPremiumModal}
           />
         )}

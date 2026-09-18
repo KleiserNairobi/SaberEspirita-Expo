@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { Award, BookOpen, Pencil, Lightbulb } from "lucide-react-native";
+import { Award, BookOpen, Pencil } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { createStyles } from "./styles";
@@ -16,7 +16,6 @@ interface ProgressSummaryCardProps {
   certificateEligible: boolean;
   hasCertificate?: boolean; // Prop opcional
   onRateCourse?: () => void; // Ação de clique
-  onOpenMethodology?: () => void; // Ação para abrir pop-up de metodologia
 }
 
 export function ProgressSummaryCard({
@@ -29,7 +28,6 @@ export function ProgressSummaryCard({
   completedExercises,
   certificateEligible,
   onRateCourse,
-  onOpenMethodology,
 }: ProgressSummaryCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -93,27 +91,15 @@ export function ProgressSummaryCard({
       </View>
 
       {/* Botões de Ação */}
-      {(onRateCourse || onOpenMethodology) && (
+      {onRateCourse && completedLessons > 0 && (
         <View style={styles.rateButtonContainer}>
-          {onOpenMethodology && (
-            <TouchableOpacity
-              style={styles.methodologyButton}
-              onPress={onOpenMethodology}
-              activeOpacity={0.7}
-            >
-              <Lightbulb size={20} color="#7A8C70" />
-              <Text style={styles.methodologyButtonText}>Sobre a Pedagogia</Text>
-            </TouchableOpacity>
-          )}
-          {onRateCourse && completedLessons > 0 && (
-            <TouchableOpacity
-              style={styles.rateButton}
-              onPress={onRateCourse}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.rateButtonText}>Deixar Avaliação</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity
+            style={styles.rateButton}
+            onPress={onRateCourse}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.rateButtonText}>Deixar Avaliação</Text>
+          </TouchableOpacity>
         </View>
       )}
     </View>

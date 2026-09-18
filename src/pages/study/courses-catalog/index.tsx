@@ -17,7 +17,7 @@ import { BarChart2, BarChart3, BarChart4, GraduationCap } from "lucide-react-nat
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
-import { useCourses } from "@/hooks/queries/useCourses";
+import { COURSES_KEYS, useCourses } from "@/hooks/queries/useCourses";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
@@ -91,11 +91,11 @@ export function CoursesCatalogScreen({ navigation }: any) {
     }
   }, [courses]);
 
-  // Invalida o cache de progresso total ao focar na tela
-  // (Muito mais eficiente pois é apenas 1 request Firestore na rede, compartilhado com a Home)
+  // Invalida o cache de progresso total e lista de cursos ao focar na tela
   useFocusEffect(
     useCallback(() => {
       queryClient.invalidateQueries({ queryKey: ["allCoursesProgress"] });
+      queryClient.invalidateQueries({ queryKey: COURSES_KEYS.all });
     }, [queryClient])
   );
 

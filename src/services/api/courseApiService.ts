@@ -39,6 +39,41 @@ export function resolveCdnUrl(url?: string | null): string | undefined {
   return `${CDN_BASE_URL}/${cleanPath}`;
 }
 
+function parseCertification(cert: any): ICourse["certification"] {
+  if (!cert) {
+    return {
+      enabled: true,
+      minimumGrade: 70,
+      requiredLessonsPercent: 100,
+      requiredExercisesPercent: 100,
+    };
+  }
+  if (typeof cert === "string") {
+    try {
+      const parsed = JSON.parse(cert);
+      return {
+        enabled: parsed.enabled ?? true,
+        minimumGrade: parsed.minimumGrade ?? 70,
+        requiredLessonsPercent: parsed.requiredLessonsPercent ?? 100,
+        requiredExercisesPercent: parsed.requiredExercisesPercent ?? 100,
+      };
+    } catch {
+      return {
+        enabled: true,
+        minimumGrade: 70,
+        requiredLessonsPercent: 100,
+        requiredExercisesPercent: 100,
+      };
+    }
+  }
+  return {
+    enabled: cert.enabled ?? true,
+    minimumGrade: cert.minimumGrade ?? 70,
+    requiredLessonsPercent: cert.requiredLessonsPercent ?? 100,
+    requiredExercisesPercent: cert.requiredExercisesPercent ?? 100,
+  };
+}
+
 export const courseApiService = {
   /**
    * Obtém a lista de cursos com suporte a filtros.
@@ -48,6 +83,7 @@ export const courseApiService = {
     return (response.data || []).map((course) => ({
       ...course,
       imageUrl: typeof course.imageUrl === "string" ? resolveCdnUrl(course.imageUrl) : course.imageUrl,
+      certification: parseCertification(course.certification),
     }));
   },
 
@@ -59,6 +95,7 @@ export const courseApiService = {
     return (response.data || []).map((course) => ({
       ...course,
       imageUrl: typeof course.imageUrl === "string" ? resolveCdnUrl(course.imageUrl) : course.imageUrl,
+      certification: parseCertification(course.certification),
     }));
   },
 
@@ -73,10 +110,12 @@ export const courseApiService = {
     const rawCourse = response.data.course ? response.data.course : response.data;
     const exerciseCount = response.data.exerciseCount ?? rawCourse.exerciseCount ?? rawCourse.stats?.exerciseCount ?? 0;
     const hasForum = response.data.hasForum ?? rawCourse.hasForum ?? false;
+    const certification = parseCertification(rawCourse.certification ?? response.data.certification);
 
     return {
       ...rawCourse,
       imageUrl: typeof rawCourse.imageUrl === "string" ? resolveCdnUrl(rawCourse.imageUrl) : rawCourse.imageUrl,
+      certification,
       hasForum,
       stats: {
         ...(rawCourse.stats || {}),

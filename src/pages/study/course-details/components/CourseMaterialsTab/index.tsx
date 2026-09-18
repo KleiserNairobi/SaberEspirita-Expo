@@ -28,12 +28,16 @@ type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
 interface CourseMaterialsTabProps {
   courseId: string;
-  onOpenPremiumModal: (itemName: string) => void;
+  interactive?: boolean;
+  onOpenPremiumModal?: (itemName: string) => void;
+  onDisabledPress?: () => void;
 }
 
 export function CourseMaterialsTab({
   courseId,
+  interactive = true,
   onOpenPremiumModal,
+  onDisabledPress,
 }: CourseMaterialsTabProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -74,8 +78,12 @@ export function CourseMaterialsTab({
   }
 
   function handleBookletPress(booklet: IBooklet) {
+    if (!interactive) {
+      onDisabledPress?.();
+      return;
+    }
     if (booklet.isPremium) {
-      onOpenPremiumModal(booklet.title);
+      onOpenPremiumModal?.(booklet.title);
       return;
     }
     navigation.navigate("BookletViewer", {
@@ -86,8 +94,12 @@ export function CourseMaterialsTab({
   }
 
   function handlePodcastPress(podcast: IPodcast) {
+    if (!interactive) {
+      onDisabledPress?.();
+      return;
+    }
     if (podcast.isPremium) {
-      onOpenPremiumModal(podcast.title);
+      onOpenPremiumModal?.(podcast.title);
       return;
     }
     setCurrentPodcast(podcast);
@@ -95,16 +107,24 @@ export function CourseMaterialsTab({
   }
 
   function handleReflectionPress(reflection: IReflection) {
+    if (!interactive) {
+      onDisabledPress?.();
+      return;
+    }
     if (reflection.isPremium) {
-      onOpenPremiumModal(reflection.title);
+      onOpenPremiumModal?.(reflection.title);
       return;
     }
     navigation.navigate("Reflection", { id: reflection.id });
   }
 
   function handleMeditationPress(meditation: IMeditation) {
+    if (!interactive) {
+      onDisabledPress?.();
+      return;
+    }
     if (meditation.isPremium) {
-      onOpenPremiumModal(meditation.title);
+      onOpenPremiumModal?.(meditation.title);
       return;
     }
     navigation.navigate("MeditationPlayer", { id: meditation.id });
@@ -129,7 +149,7 @@ export function CourseMaterialsTab({
                 key={booklet.id}
                 style={styles.listItem}
                 onPress={() => handleBookletPress(booklet)}
-                activeOpacity={0.6}
+                activeOpacity={interactive ? 0.6 : 0.9}
               >
                 <Text style={styles.itemText} numberOfLines={1}>
                   {index + 1}. {booklet.title}{" "}
@@ -142,7 +162,9 @@ export function CourseMaterialsTab({
                       <Text style={styles.premiumTagText}>Premium</Text>
                     </View>
                   )}
-                  <ChevronRight size={16} color={theme.colors.muted} />
+                  {interactive && (
+                    <ChevronRight size={16} color={theme.colors.muted} />
+                  )}
                 </View>
               </TouchableOpacity>
             ))}
@@ -167,7 +189,7 @@ export function CourseMaterialsTab({
                 key={podcast.id}
                 style={styles.listItem}
                 onPress={() => handlePodcastPress(podcast)}
-                activeOpacity={0.6}
+                activeOpacity={interactive ? 0.6 : 0.9}
               >
                 <Text style={styles.itemText} numberOfLines={1}>
                   {index + 1}. {podcast.title}{" "}
@@ -180,7 +202,9 @@ export function CourseMaterialsTab({
                       <Text style={styles.premiumTagText}>Premium</Text>
                     </View>
                   )}
-                  <ChevronRight size={16} color={theme.colors.muted} />
+                  {interactive && (
+                    <ChevronRight size={16} color={theme.colors.muted} />
+                  )}
                 </View>
               </TouchableOpacity>
             ))}
@@ -205,7 +229,7 @@ export function CourseMaterialsTab({
                 key={reflection.id}
                 style={styles.listItem}
                 onPress={() => handleReflectionPress(reflection)}
-                activeOpacity={0.6}
+                activeOpacity={interactive ? 0.6 : 0.9}
               >
                 <Text style={styles.itemText} numberOfLines={1}>
                   {index + 1}. {reflection.title}{" "}
@@ -220,7 +244,9 @@ export function CourseMaterialsTab({
                       <Text style={styles.premiumTagText}>Premium</Text>
                     </View>
                   )}
-                  <ChevronRight size={16} color={theme.colors.muted} />
+                  {interactive && (
+                    <ChevronRight size={16} color={theme.colors.muted} />
+                  )}
                 </View>
               </TouchableOpacity>
             ))}
@@ -245,7 +271,7 @@ export function CourseMaterialsTab({
                 key={meditation.id}
                 style={styles.listItem}
                 onPress={() => handleMeditationPress(meditation)}
-                activeOpacity={0.6}
+                activeOpacity={interactive ? 0.6 : 0.9}
               >
                 <Text style={styles.itemText} numberOfLines={1}>
                   {index + 1}. {meditation.title}{" "}
@@ -260,7 +286,9 @@ export function CourseMaterialsTab({
                       <Text style={styles.premiumTagText}>Premium</Text>
                     </View>
                   )}
-                  <ChevronRight size={16} color={theme.colors.muted} />
+                  {interactive && (
+                    <ChevronRight size={16} color={theme.colors.muted} />
+                  )}
                 </View>
               </TouchableOpacity>
             ))}
