@@ -73,7 +73,12 @@ export const createStyles = (theme: ITheme) =>
     metaTextAuthor: {
       ...theme.text("xs", "regular"),
       color: theme.colors.textSecondary,
-      maxWidth: 120,
+      maxWidth: 100,
+    },
+    metaTextDate: {
+      ...theme.text("xs", "regular"),
+      color: theme.colors.textSecondary,
+      fontFamily: "Oswald_400Regular",
     },
     metaDivider: {
       width: 4,
