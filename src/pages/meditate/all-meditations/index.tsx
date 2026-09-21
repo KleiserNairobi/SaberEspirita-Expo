@@ -85,6 +85,18 @@ export default function AllMeditationsScreen() {
         break;
     }
 
+    // Ordenação padrão em ordem decrescente por createdAt (mais recentes primeiro, e id como desempate)
+    if (filterType !== "BY_AUTHOR") {
+      result.sort((a, b) => {
+        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        if (timeA !== timeB) {
+          return timeB - timeA;
+        }
+        return b.id.localeCompare(a.id);
+      });
+    }
+
     // Busca Textual Padronizada
     if (searchQuery.trim()) {
       const q = searchQuery

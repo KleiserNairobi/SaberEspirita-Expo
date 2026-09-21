@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Text,
@@ -14,6 +14,7 @@ import { ArrowLeft, BookOpen, ZoomIn } from "lucide-react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import apiClient from "@/services/api/apiClient";
+import { statsApiService } from "@/services/api/statsApiService";
 import { resolveCdnUrl } from "@/services/api/courseApiService";
 import { IBooklet } from "@/types/booklet";
 
@@ -60,6 +61,7 @@ export function BookletViewerScreen() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
+  const hasLogged = useRef<boolean>(false);
 
   useEffect(() => {
     async function loadBooklet() {
@@ -101,6 +103,21 @@ export function BookletViewerScreen() {
 
     loadBooklet();
   }, [id, initialFileUrl, initialTitle]);
+
+  // --- LOG DE USO E AUDITORIA (ANALYTICS) ---
+  useEffect(() => {
+    if (booklet && booklet.title && !hasLogged.current) {
+      statsApiService.logEvent({
+        eventName: "booklet_view",
+        category: "booklet",
+        label: booklet.title,
+        id: booklet.id,
+        bookletId: booklet.id,
+        title: booklet.title,
+      });
+      hasLogged.current = true;
+    }
+  }, [booklet]);
 
   const fileUrl = booklet?.fileUrl;
   const isImage = isImageUrl(fileUrl);

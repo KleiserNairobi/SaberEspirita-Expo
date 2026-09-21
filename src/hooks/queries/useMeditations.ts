@@ -23,9 +23,15 @@ export function useFeaturedMeditations() {
     queryKey: MEDITATION_KEYS.featured,
     queryFn: async () => {
       const meditations = await meditationApiService.getMeditations();
-      const featured = meditations.filter((m) => m.featured);
+      const sorted = [...meditations].sort((a, b) => {
+        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        if (timeA !== timeB) return timeB - timeA;
+        return b.id.localeCompare(a.id);
+      });
+      const featured = sorted.filter((m) => m.featured);
       if (featured.length > 0) return featured;
-      return meditations.slice(0, 10);
+      return sorted.slice(0, 10);
     },
     staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias

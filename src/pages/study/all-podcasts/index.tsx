@@ -86,15 +86,15 @@ export function AllPodcastsScreen() {
         break;
     }
 
-    // Ordenação padrão em ordem crescente por createdAt (e id como desempate)
+    // Ordenação padrão em ordem decrescente por createdAt (mais recentes primeiro, e id como desempate)
     if (filterType !== "BY_AUTHOR") {
       result.sort((a, b) => {
         const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
         const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
         if (timeA !== timeB) {
-          return timeA - timeB;
+          return timeB - timeA;
         }
-        return a.id.localeCompare(b.id);
+        return b.id.localeCompare(a.id);
       });
     }
 
