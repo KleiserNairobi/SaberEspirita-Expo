@@ -2,6 +2,15 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.21-ota.1] - 2026-09-21 (Hot-Update)
+
+### Aprimorado / Corrigido
+
+- **Notificações Push & OneSignal (`App`, `authStore`)**:
+  - Unificado o App ID do OneSignal para gestão centralizada e multiplataforma (Android & iOS).
+  - Implementada a sincronização imediata do usuário (`OneSignal.login(uid)`) na restauração automática de sessão via MMKV no boot do app, garantindo que o `External ID` e tags de preferências fiquem sempre sincronizados com o painel do OneSignal.
+  - Adicionado diagnóstico detalhado em runtime do status de inscrição (`pushSubscription.id` e `optedIn`).
+
 ## [2.0.21] - 2026-09-18 (Build 58)
 
 ### Adicionado / Aprimorado
