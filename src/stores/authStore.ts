@@ -455,6 +455,13 @@ export const useAuthStore = create<AuthState>()(
         set({ initialized: true, loading: false });
 
         if (user?.uid && !isGuest) {
+          try {
+            OneSignal.login(user.uid);
+            console.log("AuthStore: OneSignal.login sincronizado para UID:", user.uid);
+          } catch (e) {
+            console.warn("AuthStore: Falha ao chamar OneSignal.login na restauração de sessão:", e);
+          }
+
           const jwtToken = Storage.loadString("jwt_token");
           const refreshToken = Storage.loadString("refresh_token");
 

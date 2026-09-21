@@ -141,11 +141,8 @@ function App() {
   // Inicializar OneSignal
   useEffect(() => {
     if (appIsReady) {
-      // App IDs do OneSignal
-      const oneSignalAppId =
-        Platform.OS === "ios"
-          ? "53fdc0bb-07b5-49c2-822e-963720610ebd"
-          : "10a5e77f-2de1-43ed-8bdb-817d357df2d9";
+      // App ID unificado do OneSignal (iOS e Android)
+      const oneSignalAppId = "3c6a4e60-74c6-430f-8800-6917385cb9b8";
 
       // Configurar log level para debug
       OneSignal.Debug.setLogLevel(LogLevel.Verbose);
@@ -156,18 +153,33 @@ function App() {
       // Solicitar permissões de notificação
       OneSignal.Notifications.requestPermission(true);
 
-      // Sincronizar tags de preferências
+      // Sincronizar usuário e tags de preferências
       try {
+        const { useAuthStore } = require("./src/stores/authStore");
         const { usePreferencesStore } = require("./src/stores/preferencesStore");
-        const preferences = usePreferencesStore.getState();
 
+        const authState = useAuthStore.getState();
+        if (authState.user?.uid && !authState.isGuest) {
+          OneSignal.login(authState.user.uid);
+          console.log("OneSignal: Usuário identificado com External ID:", authState.user.uid);
+        }
+
+        const preferences = usePreferencesStore.getState();
         OneSignal.User.addTags({
           app_updates: preferences.appUpdateNotifications.toString(),
           course_reminders: preferences.courseNotifications.toString(),
         });
         console.log("OneSignal: Tags iniciais sincronizadas");
+
+        // Log de diagnóstico da inscrição Push
+        OneSignal.User.pushSubscription.getIdAsync().then((id) => {
+          console.log("OneSignal: Push Subscription ID:", id || "Aguardando token FCM/APNs...");
+        });
+        OneSignal.User.pushSubscription.getOptedInAsync().then((optedIn) => {
+          console.log("OneSignal: Push Subscription OptedIn:", optedIn);
+        });
       } catch (error) {
-        console.error("Erro ao sincronizar tags iniciais:", error);
+        console.error("Erro ao sincronizar OneSignal na inicialização:", error);
       }
     }
   }, [appIsReady]);
