@@ -9,7 +9,7 @@ import Pdf from "react-native-pdf";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ArrowLeft, BookOpen, ZoomIn } from "lucide-react-native";
+import { ArrowLeft, BookOpen, Share2, ZoomIn } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
@@ -17,6 +17,7 @@ import apiClient from "@/services/api/apiClient";
 import { statsApiService } from "@/services/api/statsApiService";
 import { resolveCdnUrl } from "@/services/api/courseApiService";
 import { IBooklet } from "@/types/booklet";
+import { shareCertificate } from "@/utils/sharing";
 
 import { ZoomableImage } from "./components/ZoomableImage";
 import { createStyles } from "./styles";
@@ -43,7 +44,13 @@ export function BookletViewerScreen() {
   const navigation = useNavigation<BookletViewerNavProp>();
   const route = useRoute<BookletViewerRouteProp>();
 
-  const { id, fileUrl: initialFileUrl, title: initialTitle } = route.params || {};
+  const {
+    id,
+    fileUrl: initialFileUrl,
+    title: initialTitle,
+    canShare,
+    subtitle: customSubtitle,
+  } = route.params || {};
 
   const [booklet, setBooklet] = useState<IBooklet | null>(() => {
     if (initialFileUrl) {
@@ -124,7 +131,7 @@ export function BookletViewerScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-      {/* Header Nativo e Seguro */}
+      {/* Header Nativo */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -140,11 +147,23 @@ export function BookletViewerScreen() {
             {booklet?.title || initialTitle || (isImage ? "Infográfico" : "Guia Digital")}
           </Text>
           <Text style={styles.headerSubtitle}>
-            {isImage ? "Infográfico & Mapa Visual" : "Leitura Digital Protegida"}
+            {customSubtitle ||
+              (isImage ? "Infográfico & Mapa Visual" : "Leitura Digital Protegida")}
           </Text>
         </View>
 
-        {isImage ? (
+        {canShare && fileUrl ? (
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() =>
+              shareCertificate(fileUrl, booklet?.title || initialTitle || "Certificado")
+            }
+            activeOpacity={0.7}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Share2 size={18} color={theme.colors.primary} />
+          </TouchableOpacity>
+        ) : isImage ? (
           <View style={styles.pageBadge}>
             <Text style={styles.pageBadgeText}>HD</Text>
           </View>

@@ -1,39 +1,48 @@
-import React, { useState, useRef } from "react";
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { AppStackParamList } from "@/routers/types";
+import React, { useRef, useState } from "react";
+
 import {
-  Share as ShareIcon,
-  Home,
-  Award,
-  Download,
-  Cloud,
-  CheckCircle,
-  ArrowLeft,
-} from "lucide-react-native";
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import * as Print from "expo-print";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import * as Print from "expo-print";
+import {
+  ArrowLeft,
+  Award,
+  CheckCircle,
+  Eye,
+  FileCheck,
+  Home,
+  Share2,
+} from "lucide-react-native";
 
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { useAuthStore } from "@/stores/authStore";
-import { useCourse } from "@/hooks/queries/useCourses";
+import { BottomSheetMessage } from "@/components/BottomSheetMessage";
+import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { Button } from "@/components/Button";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
+import { useCourse } from "@/hooks/queries/useCourses";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { AppStackParamList } from "@/routers/types";
 import {
-  userActivityApiService,
   parseExerciseResults,
+  userActivityApiService,
 } from "@/services/api/userActivityApiService";
+import { useAuthStore } from "@/stores/authStore";
 import {
-  generateCertificateHTML,
   CertificateData,
+  generateCertificateHTML,
 } from "@/templates/certificateTemplate";
 import { shareCertificate, shareCertificateFile } from "@/utils/sharing";
 
-import { Button } from "@/components/Button";
-import { BottomSheetMessage } from "@/components/BottomSheetMessage";
-import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { createStyles } from "./styles";
 
 type CertificateScreenRouteProp = RouteProp<AppStackParamList, "CourseCertificate">;
@@ -49,23 +58,40 @@ export function CourseCertificateScreen() {
   const route = useRoute<CertificateScreenRouteProp>();
   const { courseId } = route.params;
 
+  const queryClient = useQueryClient();
   const { user } = useAuthStore();
   const { data: course, isLoading: isLoadingCourse } = useCourse(courseId!);
   const { data: progress, isLoading: isLoadingProgress } = useCourseProgress(courseId!);
 
+  // Busca lista de certificados do usuário para identificar emissão prévia
+  const { data: userCertificates = [], isLoading: isLoadingCertificates } = useQuery({
+    queryKey: ["userCertificates", user?.uid],
+    queryFn: () => userActivityApiService.getCertificates(),
+    enabled: !!user?.uid,
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+
   const [isGenerating, setIsGenerating] = useState(false);
-  const [certificateUri, setCertificateUri] = useState<string | null>(null);
-  const [certificateNumber, setCertificateNumber] = useState<string | null>(null);
-  const [validationCode, setValidationCode] = useState<string | null>(null);
+  const [localPdfUri, setLocalPdfUri] = useState<string | null>(null);
+  const [generatedCertNumber, setGeneratedCertNumber] = useState<string | null>(null);
+  const [generatedValidationCode, setGeneratedValidationCode] = useState<string | null>(
+    null
+  );
+  const [generatedPdfUrl, setGeneratedPdfUrl] = useState<string | null>(null);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [bottomSheetConfig, setBottomSheetConfig] =
     useState<BottomSheetMessageConfig | null>(null);
 
+  // Busca se já existe um certificado deste curso
+  const existingCert = userCertificates.find(
+    (c) => c.courseId === courseId || c.courseId === course?.id
+  );
+
   const totalExercises =
     (course?.stats?.exerciseCount ?? 0) > 0
       ? (course?.stats?.exerciseCount ?? 0)
-      : (course as any)?.exerciseCount ?? 0;
+      : ((course as any)?.exerciseCount ?? 0);
 
   const exerciseResultsList = parseExerciseResults(progress?.exerciseResults);
   const completedExercises =
@@ -88,206 +114,214 @@ export function CourseCertificateScreen() {
     lessonsProgress >= requiredLessonsPercent &&
     (totalExercises === 0 || exercisesProgress >= requiredExercisesPercent);
 
-  function buildCertificateData(
-    cert: {
-      certificateNumber: string;
-      validationCode?: string;
-      validationUrl?: string;
-      finalGrade?: number;
-    },
-    includeValidation: boolean
-  ): CertificateData {
-    const finalGrade =
-      cert.finalGrade ||
-      (exerciseResultsList.length > 0
-        ? Math.round(
-            exerciseResultsList.reduce(
-              (acc: number, curr: any) => acc + (curr?.bestScore || 0),
-              0
-            ) / exerciseResultsList.length
-          )
-        : 100);
+  // Determina se o certificado já está emitido (seja pelo banco, progresso ou sessão atual)
+  const isIssued =
+    !!existingCert ||
+    !!progress?.certificateIssued ||
+    !!generatedCertNumber ||
+    !!generatedPdfUrl;
 
-    const workloadHours = Math.round((course?.workloadMinutes || 60) / 60);
+  const activeCertNumber =
+    generatedCertNumber ||
+    existingCert?.certificateNumber ||
+    (progress as any)?.certificateNumber ||
+    existingCert?.id ||
+    "CERTIFICADO";
 
+  const activePdfUrl =
+    generatedPdfUrl ||
+    existingCert?.pdfUrl ||
+    (progress as any)?.certificatePdfUrl ||
+    localPdfUri ||
+    "";
+
+  const activeValidationCode =
+    generatedValidationCode ||
+    existingCert?.validationCode ||
+    (progress as any)?.validationCode ||
+    "";
+
+  const finalGrade =
+    existingCert?.finalGrade ||
+    (exerciseResultsList.length > 0
+      ? Math.round(
+          exerciseResultsList.reduce(
+            (acc: number, curr: any) => acc + (curr?.bestScore || 0),
+            0
+          ) / exerciseResultsList.length
+        )
+      : 100);
+
+  const workloadHours = Math.round((course?.workloadMinutes || 60) / 60);
+
+  function buildCertificateData(cert: {
+    certificateNumber: string;
+    validationCode?: string;
+    validationUrl?: string;
+    finalGrade?: number;
+  }): CertificateData {
     return {
       studentName: user?.displayName || "Estudante Espírita",
       studentEmail: user?.email || "",
       courseTitle: course?.title || "Série Espírita",
       courseAuthor: course?.author || "Saber Espírita",
       workloadHours: workloadHours > 0 ? workloadHours : 1,
-      finalGrade,
+      finalGrade: cert.finalGrade || finalGrade,
       completedLessons: completedLessonsCount > 0 ? completedLessonsCount : totalLessons,
       completedExercises: completedExercises,
       certificateNumber: cert.certificateNumber,
-      validationCode: includeValidation ? cert.validationCode : undefined,
+      validationCode: cert.validationCode,
       issuedDate: format(new Date(), "d 'de' MMMM 'de' yyyy", { locale: ptBR }),
-      validationUrl: includeValidation ? cert.validationUrl : undefined,
+      validationUrl: cert.validationUrl,
     };
   }
 
   /**
-   * OPÇÃO 1: Gerar e Compartilhar (Local - Rápido)
+   * Emissão Única Oficial de Certificado
    */
-  async function handleGenerateLocal() {
+  async function handleIssueCertificate() {
     if (!user || !course || !progress || !isEligible) return;
 
     setIsGenerating(true);
     try {
+      // 1. Gera registro no backend com numeração única e idempotente
       const cert = await userActivityApiService.generateCertificate(course.id);
       const certNum = cert.certificateNumber || cert.id;
 
-      const certData = buildCertificateData(
-        {
-          certificateNumber: certNum,
-          validationCode: cert.validationCode,
-          validationUrl: cert.validationUrl,
-          finalGrade: cert.finalGrade,
-        },
-        false
-      );
+      // 2. Monta dados e renderiza HTML do certificado
+      const certData = buildCertificateData({
+        certificateNumber: certNum,
+        validationCode: cert.validationCode,
+        validationUrl: cert.validationUrl,
+        finalGrade: cert.finalGrade,
+      });
       const html = generateCertificateHTML(certData);
 
+      // 3. Gera PDF nativo
       const { uri } = await Print.printToFileAsync({
         html,
         base64: false,
       });
 
-      setCertificateUri(uri);
-      setCertificateNumber(certNum);
+      setLocalPdfUri(uri);
+      setGeneratedCertNumber(certNum);
+      setGeneratedValidationCode(cert.validationCode || "");
 
-      // Upload em background para garantir persistência no CDN
-      userActivityApiService.uploadCertificate(course.id, uri).catch((err) => {
-        console.warn("Upload de certificado em background:", err);
-      });
+      // 4. Faz upload para o Cloudflare R2 / CDN
+      let finalUrl = uri;
+      try {
+        const uploadedCert = await userActivityApiService.uploadCertificate(
+          course.id,
+          uri
+        );
+        finalUrl = uploadedCert.pdfUrl || cert.pdfUrl || uri;
+        setGeneratedPdfUrl(finalUrl);
+      } catch (uploadErr) {
+        console.warn("Upload do PDF falhou, utilizando URI local:", uploadErr);
+        setGeneratedPdfUrl(cert.pdfUrl || uri);
+      }
 
-      // Compartilhar arquivo PDF local diretamente
-      await shareCertificateFile(uri, course.title);
+      // 5. Invalida caches para persistência imediata
+      queryClient.invalidateQueries({ queryKey: ["courseProgress", course.id] });
+      queryClient.invalidateQueries({ queryKey: ["userCertificates", user.uid] });
 
+      // 6. Apresenta modal comemorativo de sucesso
       setBottomSheetConfig({
         type: "success",
-        title: "Certificado Gerado!",
-        message: "Seu certificado foi gerado e compartilhado com sucesso.",
-        primaryButton: {
-          label: "Ok",
-          onPress: () => {},
-        },
-      });
-      setTimeout(() => {
-        bottomSheetModalRef.current?.present();
-      }, 100);
-    } catch (error) {
-      console.error("Erro ao gerar certificado local:", error);
-      setBottomSheetConfig({
-        type: "error",
-        title: "Erro",
-        message: "Não foi possível gerar o certificado. Tente novamente.",
-        primaryButton: {
-          label: "Ok",
-          onPress: () => {},
-        },
-      });
-      setTimeout(() => {
-        bottomSheetModalRef.current?.present();
-      }, 100);
-    } finally {
-      setIsGenerating(false);
-    }
-  }
-
-  /**
-   * OPÇÃO 2: Gerar e Salvar na Nuvem (com validação)
-   */
-  async function handleGenerateCloud() {
-    if (!user || !course || !progress || !isEligible) return;
-
-    setIsGenerating(true);
-    try {
-      const cert = await userActivityApiService.generateCertificate(course.id);
-      const certNum = cert.certificateNumber || cert.id;
-
-      const certData = buildCertificateData(
-        {
-          certificateNumber: certNum,
-          validationCode: cert.validationCode,
-          validationUrl: cert.validationUrl,
-          finalGrade: cert.finalGrade,
-        },
-        true
-      );
-      const html = generateCertificateHTML(certData);
-
-      const { uri } = await Print.printToFileAsync({
-        html,
-        base64: false,
-      });
-
-      const uploadedCert = await userActivityApiService.uploadCertificate(course.id, uri);
-      const finalPdfUrl = uploadedCert.pdfUrl || cert.pdfUrl || uri;
-
-      setCertificateUri(finalPdfUrl);
-      setCertificateNumber(certNum);
-      setValidationCode(cert.validationCode || "");
-
-      setBottomSheetConfig({
-        type: "success",
-        title: "Certificado Salvo na Nuvem!",
+        title: "Certificado Emitido com Sucesso!",
         message:
-          "Seu certificado foi gerado, salvo e está disponível para validação online.",
+          "Parabéns pelo seu empenho e dedicação aos estudos doutrinários! Seu certificado oficial com selo digital já está disponível.",
         primaryButton: {
-          label: "Compartilhar Link",
-          onPress: () => shareCertificate(finalPdfUrl, course.title),
+          label: "Visualizar Certificado",
+          onPress: () => {
+            bottomSheetModalRef.current?.dismiss();
+            setTimeout(() => {
+              navigation.navigate("BookletViewer", {
+                id: certNum,
+                fileUrl: finalUrl,
+                title: course.title,
+                canShare: true,
+                subtitle: "Certificado Oficial de Conclusão",
+              });
+            }, 300);
+          },
         },
         secondaryButton: {
-          label: "Compartilhar Arquivo PDF",
-          onPress: () => shareCertificateFile(uri, course.title),
+          label: "Compartilhar Conquista",
+          onPress: () => {
+            bottomSheetModalRef.current?.dismiss();
+            setTimeout(() => {
+              if (finalUrl && finalUrl.startsWith("http")) {
+                shareCertificate(finalUrl, course.title);
+              } else {
+                shareCertificateFile(uri, course.title);
+              }
+            }, 300);
+          },
         },
       });
       setTimeout(() => {
         bottomSheetModalRef.current?.present();
-      }, 100);
+      }, 150);
     } catch (error) {
-      console.error("Erro ao gerar certificado na nuvem:", error);
+      console.error("Erro ao emitir certificado:", error);
       setBottomSheetConfig({
         type: "error",
-        title: "Erro",
+        title: "Falha na Emissão",
         message:
-          "Não foi possível salvar o certificado na nuvem. Verifique sua conexão e tente novamente.",
+          "Não foi possível emitir seu certificado no momento. Verifique sua conexão e tente novamente.",
         primaryButton: {
-          label: "Ok",
-          onPress: () => {},
+          label: "Entendi",
+          onPress: () => bottomSheetModalRef.current?.dismiss(),
         },
       });
       setTimeout(() => {
         bottomSheetModalRef.current?.present();
-      }, 100);
+      }, 150);
     } finally {
       setIsGenerating(false);
     }
   }
 
   /**
-   * Compartilhar certificado já gerado
+   * Abre o visualizador de tela cheia nativo com zoom e botão de compartilhar
    */
-  async function handleShare() {
-    if (!certificateUri || !course) return;
+  function handleOpenViewer() {
+    if (!course) return;
+
+    // Se já temos a URL (CDN ou local), abre o BookletViewer diretamente
+    const targetUrl = activePdfUrl || localPdfUri;
+    if (targetUrl) {
+      navigation.navigate("BookletViewer", {
+        id: activeCertNumber,
+        fileUrl: targetUrl,
+        title: course.title,
+        canShare: true,
+        subtitle: "Certificado Oficial de Conclusão",
+      });
+    } else {
+      // Se por algum motivo o arquivo ainda não tem URL, reemite/recarrega
+      handleIssueCertificate();
+    }
+  }
+
+  /**
+   * Compartilha o certificado (link web oficial ou arquivo)
+   */
+  async function handleShareCertificate() {
+    if (!course) return;
 
     try {
-      await shareCertificate(certificateUri, course.title);
+      if (activePdfUrl && activePdfUrl.startsWith("http")) {
+        await shareCertificate(activePdfUrl, course.title);
+      } else if (localPdfUri) {
+        await shareCertificateFile(localPdfUri, course.title);
+      } else {
+        // Se ainda não gerou PDF local, gera e compartilha
+        handleIssueCertificate();
+      }
     } catch (error) {
-      console.error("Erro ao compartilhar:", error);
-      setBottomSheetConfig({
-        type: "error",
-        title: "Erro",
-        message: "Não foi possível compartilhar o certificado.",
-        primaryButton: {
-          label: "Ok",
-          onPress: () => {},
-        },
-      });
-      setTimeout(() => {
-        bottomSheetModalRef.current?.present();
-      }, 100);
+      console.error("Erro ao compartilhar certificado:", error);
     }
   }
 
@@ -295,7 +329,7 @@ export function CourseCertificateScreen() {
     navigation.navigate("Tabs");
   }
 
-  if (isLoadingCourse || isLoadingProgress) {
+  if (isLoadingCourse || isLoadingProgress || isLoadingCertificates) {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -306,7 +340,9 @@ export function CourseCertificateScreen() {
   if (!course || !progress) {
     return (
       <View style={styles.container}>
-        <Text style={styles.errorText}>Série espiritual ou progresso não encontrado.</Text>
+        <Text style={styles.errorText}>
+          Série espiritual ou progresso não encontrado.
+        </Text>
         <Button title="Voltar" onPress={() => navigation.goBack()} />
       </View>
     );
@@ -319,9 +355,8 @@ export function CourseCertificateScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          {/* Linha 1: Botão Voltar | Ícone | Espaço */}
+          {/* Linha 1: Botão Voltar | Ícone Central | Espaço */}
           <View style={styles.headerRow}>
-            {/* Coluna Esquerda: Botão Voltar */}
             <View style={styles.headerSide}>
               <TouchableOpacity
                 style={styles.backButton}
@@ -332,7 +367,6 @@ export function CourseCertificateScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* Coluna Central: Ícone com Anéis */}
             <View style={styles.iconRingsContainer}>
               <View style={styles.ringOuter} />
               <View style={styles.ringMiddle} />
@@ -342,28 +376,71 @@ export function CourseCertificateScreen() {
               </View>
             </View>
 
-            {/* Coluna Direita: Espaço vazio para manter simetria */}
             <View style={styles.headerSide} />
           </View>
 
           {/* Linha 2: Título e Subtítulo */}
           <View style={styles.headerTextContainer}>
-            <Text style={styles.headerTitle}>Certificado de Mérito</Text>
+            <Text style={styles.headerTitle}>
+              {isIssued ? "Certificado Conquistado" : "Certificado de Mérito"}
+            </Text>
             <Text style={styles.headerSubtitle}>
-              Crescimento espiritual através do estudo
+              {isIssued
+                ? "Documento oficial de reconhecimento doutrinário"
+                : "Crescimento espiritual através do estudo"}
             </Text>
           </View>
         </View>
 
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>{course.title}</Text>
-          <Text style={styles.infoText}>
-            Você concluiu {completedLessonsCount} de {totalLessons} aulas e{" "}
-            {completedExercises} de {totalExercises} exercícios.
+        {/* Card de Conquista / Mérito */}
+        <View style={styles.meritCard}>
+          <View style={styles.meritBadgePill}>
+            {isIssued ? (
+              <>
+                <CheckCircle size={14} color={theme.colors.success} />
+                <Text
+                  style={[styles.meritBadgeText, { color: theme.colors.success }]}
+                >
+                  Certificado Emitido
+                </Text>
+              </>
+            ) : (
+              <>
+                <Award size={14} color={theme.colors.primary} />
+                <Text style={styles.meritBadgeText}>Conquista Doutrinária</Text>
+              </>
+            )}
+          </View>
+
+          <Text style={styles.meritCourseTitle}>{course.title}</Text>
+          <Text style={styles.meritSubtitle}>
+            {isIssued
+              ? `Registro Nº ${activeCertNumber}`
+              : "Conclusão com excelência do programa de estudos"}
           </Text>
+
+          <View style={styles.statsRow}>
+            <View style={styles.statsItem}>
+              <Text style={styles.statsValue}>{finalGrade}%</Text>
+              <Text style={styles.statsLabel}>Aproveitamento</Text>
+            </View>
+            <View style={styles.statsItem}>
+              <Text style={styles.statsValue}>
+                {workloadHours > 0 ? `${workloadHours}h` : "1h"}
+              </Text>
+              <Text style={styles.statsLabel}>Carga Horária</Text>
+            </View>
+            <View style={styles.statsItem}>
+              <Text style={styles.statsValue}>
+                {completedLessonsCount}/{totalLessons}
+              </Text>
+              <Text style={styles.statsLabel}>Aulas</Text>
+            </View>
+          </View>
         </View>
 
-        {!isEligible && !certificateUri ? (
+        {/* Bloco de Ações e Estados */}
+        {!isEligible && !isIssued ? (
           <View style={styles.actionsContainer}>
             <View
               style={[
@@ -385,91 +462,77 @@ export function CourseCertificateScreen() {
                 Requisitos Pendentes
               </Text>
               <Text style={[styles.infoText, { textAlign: "left", lineHeight: 22 }]}>
-                Para emitir seu certificado de conclusão, é necessário atingir os seguintes critérios:
-                {"\n"}• {requiredLessonsPercent}% das aulas concluídas ({completedLessonsCount}/{totalLessons})
+                Para emitir seu certificado de conclusão, é necessário atingir os
+                seguintes critérios:
+                {"\n"}• {requiredLessonsPercent}% das aulas concluídas (
+                {completedLessonsCount}/{totalLessons})
                 {totalExercises > 0 &&
                   `\n• ${requiredExercisesPercent}% dos exercícios com nota ≥ ${course.certification?.minimumGrade ?? 70} (${completedExercises}/${totalExercises})`}
               </Text>
             </View>
 
             <TouchableOpacity
-              style={[styles.shareButton, { backgroundColor: theme.colors.primary, marginTop: 16 }]}
+              style={[
+                styles.shareButton,
+                { backgroundColor: theme.colors.primary, marginTop: 16 },
+              ]}
               onPress={() => navigation.goBack()}
             >
               <Text style={styles.shareButtonText}>Voltar ao Currículo</Text>
             </TouchableOpacity>
           </View>
-        ) : !certificateUri ? (
-          <View style={styles.actionsContainer}>
-            <Text style={styles.optionsTitle}>Escolha como gerar seu certificado:</Text>
-
-            {/* OPÇÃO 1: Local (Rápido) */}
+        ) : !isIssued ? (
+          /* Estado Elegível - Emissão Única */
+          <View style={styles.actionSection}>
             <TouchableOpacity
-              style={[styles.optionButton, styles.optionButtonLocal]}
-              onPress={handleGenerateLocal}
+              style={styles.issueButton}
+              onPress={handleIssueCertificate}
               disabled={isGenerating}
+              activeOpacity={0.8}
             >
-              <View style={styles.optionIconContainer}>
-                <Download size={24} color="#FFF" />
-              </View>
-              <View style={styles.optionTextContainer}>
-                <Text style={styles.optionTitle}>Gerar e Compartilhar</Text>
-                <Text style={styles.optionDescription}>
-                  Rápido • Apenas compartilhamento local
-                </Text>
-              </View>
+              {isGenerating ? (
+                <>
+                  <ActivityIndicator size="small" color="#FFF" />
+                  <Text style={styles.issueButtonText}>Emitindo Certificado...</Text>
+                </>
+              ) : (
+                <>
+                  <FileCheck size={22} color="#FFF" />
+                  <Text style={styles.issueButtonText}>Emitir Certificado Oficial</Text>
+                </>
+              )}
             </TouchableOpacity>
 
-            {/* OPÇÃO 2: Nuvem (Completo) */}
-            <TouchableOpacity
-              style={[styles.optionButton, styles.optionButtonCloud]}
-              onPress={handleGenerateCloud}
-              disabled={isGenerating}
-            >
-              <View style={styles.optionIconContainer}>
-                <Cloud size={24} color="#FFF" />
-              </View>
-              <View style={styles.optionTextContainer}>
-                <Text style={styles.optionTitle}>Salvar na Nuvem</Text>
-                <Text style={styles.optionDescription}>
-                  Backup • Validação online • Reemissão
-                </Text>
-              </View>
-            </TouchableOpacity>
-
-            {isGenerating && (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="small" color={theme.colors.primary} />
-                <Text style={styles.loadingText}>Gerando certificado da série...</Text>
-              </View>
-            )}
+            <Text style={styles.issueHintText}>
+              Gera seu documento oficial com selo digital e validação online.
+            </Text>
           </View>
         ) : (
-          <View style={styles.actionsContainer}>
-            <View style={styles.successContainer}>
-              <CheckCircle size={38} color={theme.colors.success} />
-              <Text style={styles.successText}>Certificado gerado com sucesso!</Text>
-              <Text style={styles.certNumber}>Nº {certificateNumber}</Text>
-
-              {validationCode && (
-                <View style={styles.validationContainer}>
-                  <Text style={styles.validationLabel}>Código de Validação:</Text>
-                  <Text style={styles.validationCode}>
-                    {validationCode.substring(0, 8).toUpperCase()}
-                  </Text>
-                  <Text style={styles.validationHint}>
-                    Use este código para validar o certificado online
-                  </Text>
-                </View>
-              )}
-            </View>
-
-            <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-              <ShareIcon size={20} color="#FFF" />
-              <Text style={styles.shareButtonText}>Compartilhar Novamente</Text>
+          /* Estado Emitido - Visualização e Compartilhamento */
+          <View style={styles.actionSection}>
+            <TouchableOpacity
+              style={styles.viewButton}
+              onPress={handleOpenViewer}
+              activeOpacity={0.8}
+            >
+              <Eye size={20} color="#FFF" />
+              <Text style={styles.viewButtonText}>Visualizar em Tela Cheia</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.homeButton} onPress={handleGoHome}>
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={handleShareCertificate}
+              activeOpacity={0.8}
+            >
+              <Share2 size={20} color={theme.colors.primary} />
+              <Text style={styles.secondaryButtonText}>Compartilhar Conquista</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.homeButton}
+              onPress={handleGoHome}
+              activeOpacity={0.8}
+            >
               <Home size={20} color={theme.colors.text} />
               <Text style={styles.homeButtonText}>Voltar ao Início</Text>
             </TouchableOpacity>

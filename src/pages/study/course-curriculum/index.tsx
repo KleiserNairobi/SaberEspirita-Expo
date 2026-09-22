@@ -285,8 +285,15 @@ export function CourseCurriculumScreen() {
     navigation.navigate("CourseDetails", { courseId });
   };
 
-  // ✅ NOVO: Handler para botão de certificado
+  // ✅ Handler para botão de certificado
   function handleGetCertificate() {
+    if (progress?.certificateIssued) {
+      if (course) {
+        navigation.navigate("CourseCertificate", { courseId: course.id });
+      }
+      return;
+    }
+
     if (!isReadyForCertificate) {
       if (!lessonsMet) {
         setMessageConfig({
@@ -925,13 +932,23 @@ export function CourseCurriculumScreen() {
           />
         )}
 
-        {/* ✅ NOVO: Botão de Certificado (aparece quando 100% aulas E certificado habilitado) */}
+        {/* ✅ Botão de Certificado (aparece quando 100% aulas E certificado habilitado) */}
         {lessonsProgress === 100 && certificateEnabled && (
           <View style={styles.certificateButtonContainer}>
             <Button
-              title={isReadyForCertificate ? "OBTER CERTIFICADO" : "COMPLETAR EXERCÍCIOS"}
+              title={
+                progress?.certificateIssued
+                  ? "VER MEU CERTIFICADO"
+                  : isReadyForCertificate
+                  ? "OBTER CERTIFICADO"
+                  : "COMPLETAR EXERCÍCIOS"
+              }
               onPress={handleGetCertificate}
-              variant={isReadyForCertificate ? "primary" : "outline"}
+              variant={
+                progress?.certificateIssued || isReadyForCertificate
+                  ? "primary"
+                  : "outline"
+              }
               fullWidth
             />
           </View>
