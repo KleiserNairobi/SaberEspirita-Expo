@@ -184,8 +184,10 @@ export interface ISubmitExerciseAnswer {
 }
 
 export interface ISubmitExercisePayload {
-  answers: ISubmitExerciseAnswer[];
+  score: number;
+  answersJson?: string;
   timeSpentSeconds?: number;
+  answers?: ISubmitExerciseAnswer[];
 }
 
 export interface IExerciseSubmissionResult {

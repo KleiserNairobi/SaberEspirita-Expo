@@ -16,8 +16,11 @@ import { Button } from "@/components/Button";
 import { QuizUI } from "@/components/QuizUI";
 import { ITheme } from "@/configs/theme/types";
 import { COURSE_PROGRESS_KEYS } from "@/hooks/queries/useCourseProgress";
+import { EXERCISES_KEYS } from "@/hooks/queries/useExercises";
+import { QUIZ_KEYS } from "@/hooks/queries/useQuiz";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
+import { exerciseApiService } from "@/services/api/exerciseApiService";
 import { quizApiService } from "@/services/api/quizApiService";
 import { statsApiService } from "@/services/api/statsApiService";
 import { useAuthStore } from "@/stores/authStore";
@@ -117,6 +120,35 @@ export function CourseQuizScreen() {
       const { user } = useAuthStore.getState();
 
       if (user?.uid) {
+        // 1. Submete resultado do exercício para persistir no curso e progresso
+        if (exerciseId) {
+          try {
+            await exerciseApiService.submitExercise(exerciseId, {
+              score: percentage,
+              answersJson: JSON.stringify(answers),
+            });
+          } catch (error) {
+            console.error("❌ Erro ao salvar exercício de curso:", error);
+          }
+        }
+
+        // 2. Submete tentativa do quiz para pontuação global / gamificação no ranking
+        if (quizId) {
+          try {
+            await quizApiService.submitQuiz(quiz.id, {
+              categoryId: categoryId || "COURSE",
+              subcategoryId: subcategoryName || exerciseId || lessonId || "COURSE_EXERCISE",
+              answers: answers.map((a, index) => ({
+                questionIndex: index,
+                selectedIndex: a.selectedAnswerIndex,
+              })),
+            });
+          } catch (error) {
+            console.warn("⚠️ Erro ao registrar pontuação do quiz:", error);
+          }
+        }
+
+        // 3. Analytics
         statsApiService.logEvent({
           eventName: "quiz_completed",
           category: "quiz",
@@ -124,6 +156,7 @@ export function CourseQuizScreen() {
           metadata: { score: percentage, passed: percentage >= 70 },
         });
 
+        // 4. Invalidação ampla de caches para atualizar telas de currículo, certificados e pontuação
         if (courseId) {
           queryClient.invalidateQueries({
             queryKey: COURSE_PROGRESS_KEYS.byUserAndCourse(user.uid, courseId),
@@ -140,7 +173,19 @@ export function CourseQuizScreen() {
           queryClient.invalidateQueries({
             queryKey: ["user-activity"],
           });
+          queryClient.invalidateQueries({
+            queryKey: EXERCISES_KEYS.byCourse(courseId),
+          });
         }
+        if (exerciseId) {
+          queryClient.invalidateQueries({
+            queryKey: EXERCISES_KEYS.attempts(exerciseId),
+          });
+        }
+        queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.userProgress(user.uid) });
+        queryClient.invalidateQueries({ queryKey: QUIZ_KEYS.detailedStats(user.uid) });
+        queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
+        queryClient.invalidateQueries({ queryKey: ["userScore", user.uid] });
       }
 
       navigation.navigate("QuizResult", {
@@ -159,7 +204,7 @@ export function CourseQuizScreen() {
         quizId,
       });
     } catch (error) {
-      console.error("Erro ao salvar progresso:", error);
+      console.error("Erro ao processar finalização do exercício:", error);
       navigation.navigate("QuizResult", {
         categoryId,
         categoryName: categoryName || "Erro",
