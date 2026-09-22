@@ -118,4 +118,37 @@ export const userActivityApiService = {
       pdfUrl: resolveCdnUrl(response.data.pdfUrl) || response.data.pdfUrl,
     };
   },
+
+  /**
+   * Realiza o upload do PDF do certificado gerado para o Cloudflare R2 / CDN.
+   */
+  async uploadCertificate(
+    courseId: string,
+    pdfUri: string,
+    fileName: string = "certificate.pdf"
+  ): Promise<ICertificate> {
+    const formData = new FormData();
+    formData.append("file", {
+      uri: pdfUri,
+      name: fileName,
+      type: "application/pdf",
+    } as unknown as Blob);
+
+    const response = await apiClient.post<ICertificate>(
+      `/user-activity/courses/certificates/${courseId}/upload`,
+      formData,
+      {
+        headers: {
+          Accept: "application/json",
+        },
+        transformRequest: (data) => data,
+      }
+    );
+
+    return {
+      ...response.data,
+      pdfUrl: resolveCdnUrl(response.data.pdfUrl) || response.data.pdfUrl,
+    };
+  },
 };
+

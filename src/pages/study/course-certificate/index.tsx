@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AppStackParamList } from "@/routers/types";
@@ -13,15 +13,24 @@ import {
   ArrowLeft,
 } from "lucide-react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import * as Print from "expo-print";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuthStore } from "@/stores/authStore";
 import { useCourse } from "@/hooks/queries/useCourses";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
-import { userActivityApiService, parseExerciseResults } from "@/services/api/userActivityApiService";
-import { shareCertificate } from "@/utils/sharing";
+import {
+  userActivityApiService,
+  parseExerciseResults,
+} from "@/services/api/userActivityApiService";
+import {
+  generateCertificateHTML,
+  CertificateData,
+} from "@/templates/certificateTemplate";
+import { shareCertificate, shareCertificateFile } from "@/utils/sharing";
 
-import { ActivityIndicator } from "react-native";
 import { Button } from "@/components/Button";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
@@ -79,6 +88,44 @@ export function CourseCertificateScreen() {
     lessonsProgress >= requiredLessonsPercent &&
     (totalExercises === 0 || exercisesProgress >= requiredExercisesPercent);
 
+  function buildCertificateData(
+    cert: {
+      certificateNumber: string;
+      validationCode?: string;
+      validationUrl?: string;
+      finalGrade?: number;
+    },
+    includeValidation: boolean
+  ): CertificateData {
+    const finalGrade =
+      cert.finalGrade ||
+      (exerciseResultsList.length > 0
+        ? Math.round(
+            exerciseResultsList.reduce(
+              (acc: number, curr: any) => acc + (curr?.bestScore || 0),
+              0
+            ) / exerciseResultsList.length
+          )
+        : 100);
+
+    const workloadHours = Math.round((course?.workloadMinutes || 60) / 60);
+
+    return {
+      studentName: user?.displayName || "Estudante Espírita",
+      studentEmail: user?.email || "",
+      courseTitle: course?.title || "Série Espírita",
+      courseAuthor: course?.author || "Saber Espírita",
+      workloadHours: workloadHours > 0 ? workloadHours : 1,
+      finalGrade,
+      completedLessons: completedLessonsCount > 0 ? completedLessonsCount : totalLessons,
+      completedExercises: completedExercises,
+      certificateNumber: cert.certificateNumber,
+      validationCode: includeValidation ? cert.validationCode : undefined,
+      issuedDate: format(new Date(), "d 'de' MMMM 'de' yyyy", { locale: ptBR }),
+      validationUrl: includeValidation ? cert.validationUrl : undefined,
+    };
+  }
+
   /**
    * OPÇÃO 1: Gerar e Compartilhar (Local - Rápido)
    */
@@ -88,14 +135,34 @@ export function CourseCertificateScreen() {
     setIsGenerating(true);
     try {
       const cert = await userActivityApiService.generateCertificate(course.id);
-      const uri = cert.pdfUrl || "";
       const certNum = cert.certificateNumber || cert.id;
+
+      const certData = buildCertificateData(
+        {
+          certificateNumber: certNum,
+          validationCode: cert.validationCode,
+          validationUrl: cert.validationUrl,
+          finalGrade: cert.finalGrade,
+        },
+        false
+      );
+      const html = generateCertificateHTML(certData);
+
+      const { uri } = await Print.printToFileAsync({
+        html,
+        base64: false,
+      });
 
       setCertificateUri(uri);
       setCertificateNumber(certNum);
 
-      // Compartilhar automaticamente
-      await shareCertificate(uri, course.title);
+      // Upload em background para garantir persistência no CDN
+      userActivityApiService.uploadCertificate(course.id, uri).catch((err) => {
+        console.warn("Upload de certificado em background:", err);
+      });
+
+      // Compartilhar arquivo PDF local diretamente
+      await shareCertificateFile(uri, course.title);
 
       setBottomSheetConfig({
         type: "success",
@@ -136,11 +203,31 @@ export function CourseCertificateScreen() {
 
     setIsGenerating(true);
     try {
-      const result = await userActivityApiService.generateCertificate(course.id);
+      const cert = await userActivityApiService.generateCertificate(course.id);
+      const certNum = cert.certificateNumber || cert.id;
 
-      setCertificateUri(result.pdfUrl || "");
-      setCertificateNumber(result.certificateNumber || result.id || "");
-      setValidationCode(result.validationCode || "");
+      const certData = buildCertificateData(
+        {
+          certificateNumber: certNum,
+          validationCode: cert.validationCode,
+          validationUrl: cert.validationUrl,
+          finalGrade: cert.finalGrade,
+        },
+        true
+      );
+      const html = generateCertificateHTML(certData);
+
+      const { uri } = await Print.printToFileAsync({
+        html,
+        base64: false,
+      });
+
+      const uploadedCert = await userActivityApiService.uploadCertificate(course.id, uri);
+      const finalPdfUrl = uploadedCert.pdfUrl || cert.pdfUrl || uri;
+
+      setCertificateUri(finalPdfUrl);
+      setCertificateNumber(certNum);
+      setValidationCode(cert.validationCode || "");
 
       setBottomSheetConfig({
         type: "success",
@@ -148,12 +235,12 @@ export function CourseCertificateScreen() {
         message:
           "Seu certificado foi gerado, salvo e está disponível para validação online.",
         primaryButton: {
-          label: "Compartilhar",
-          onPress: () => shareCertificate(result.pdfUrl || "", course.title),
+          label: "Compartilhar Link",
+          onPress: () => shareCertificate(finalPdfUrl, course.title),
         },
         secondaryButton: {
-          label: "Ok",
-          onPress: () => {},
+          label: "Compartilhar Arquivo PDF",
+          onPress: () => shareCertificateFile(uri, course.title),
         },
       });
       setTimeout(() => {

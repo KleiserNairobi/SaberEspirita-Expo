@@ -1,4 +1,5 @@
 import { Share } from "react-native";
+import * as Sharing from "expo-sharing";
 import { IPrayer } from "@/types/prayer";
 import { IReflection } from "@/types/reflection";
 import { SHARE_FOOTER } from "./constants";
@@ -47,12 +48,48 @@ export async function shareReflection(reflection: IReflection): Promise<void> {
     throw error;
   }
 }
+
 /**
- * Compartilha um certificado usando Share nativo do React Native
+ * Compartilha um arquivo PDF de certificado via sistema nativo de arquivos
  */
-export async function shareCertificate(url: string, courseTitle: string): Promise<void> {
+export async function shareCertificateFile(
+  fileUri: string,
+  courseTitle: string
+): Promise<void> {
   try {
-    const message = `Concluí o curso "${courseTitle}" no Saber Espírita!\nConfira meu certificado: ${url}${SHARE_FOOTER}`;
+    const isAvailable = await Sharing.isAvailableAsync();
+    if (isAvailable) {
+      await Sharing.shareAsync(fileUri, {
+        mimeType: "application/pdf",
+        dialogTitle: `Certificado - ${courseTitle}`,
+        UTI: "com.adobe.pdf",
+      });
+    } else {
+      await Share.share({
+        message: `Certificado de conclusão da série "${courseTitle}" no Saber Espírita.${SHARE_FOOTER}`,
+        title: `Certificado - ${courseTitle}`,
+      });
+    }
+  } catch (error) {
+    console.error("Erro ao compartilhar arquivo de certificado:", error);
+    throw error;
+  }
+}
+
+/**
+ * Compartilha um certificado usando Share nativo do React Native ou arquivo PDF
+ */
+export async function shareCertificate(
+  urlOrUri: string,
+  courseTitle: string
+): Promise<void> {
+  try {
+    if (urlOrUri.startsWith("file://") || urlOrUri.startsWith("/")) {
+      await shareCertificateFile(urlOrUri, courseTitle);
+      return;
+    }
+
+    const message = `Concluí a série "${courseTitle}" no Saber Espírita!\nConfira meu certificado: ${urlOrUri}${SHARE_FOOTER}`;
     await Share.share({
       message,
       title: `Certificado - ${courseTitle}`,
@@ -62,3 +99,4 @@ export async function shareCertificate(url: string, courseTitle: string): Promis
     throw error;
   }
 }
+

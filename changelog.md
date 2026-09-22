@@ -2,6 +2,16 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.22-ota.1] - 2026-09-22 (Hot-Update)
+
+### Corrigido / Aprimorado
+
+- **Emissão e Compartilhamento de Certificados (`CourseCertificateScreen`, `userActivityApiService`, `sharing`)**:
+  - Implementada a renderização real de PDF vetorial via `expo-print` utilizando o template canônico de certificados com selo digital e dados formatados.
+  - Integrado o upload multipart do PDF gerado diretamente para o Cloudflare R2 / CDN (`certificates/{userId}/{courseId}/{certificateNumber}.pdf`), eliminando completamente o erro 404 ao abrir links compartilhados.
+  - Suporte a compartilhamento nativo direto do arquivo PDF (`expo-sharing`) e links web validados no CDN do Saber Espírita.
+  - Incrementado o *React Query Cache Buster* para `"1.0.10"`.
+
 ## [2.0.22] - 2026-09-21 (Build 59)
 
 ### Adicionado / Aprimorado / Corrigido
