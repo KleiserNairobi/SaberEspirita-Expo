@@ -101,14 +101,9 @@ export const createStyles = (theme: ITheme) =>
       textAlign: "center",
     },
     certificateContainer: {
-      backgroundColor: "#FDFBF7", // Um leve tom de papel creme/off-white
+      backgroundColor: "#FDFBF7",
       width: "100%",
-      aspectRatio: 1.41, // A4 Landscape ratio approximation
-      elevation: 5,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.2,
-      shadowRadius: 8,
+      aspectRatio: 1.41,
       position: "relative",
     },
     // Borda Externa Dourada/Premium
@@ -116,7 +111,7 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
       margin: 10,
       borderWidth: 5,
-      borderColor: theme.colors.primary, // Ou um tom dourado se tiver
+      borderColor: theme.colors.primary,
       padding: 4,
     },
     // Borda Interna Fina
@@ -274,11 +269,6 @@ export const createStyles = (theme: ITheme) =>
       padding: theme.spacing.md,
       borderRadius: theme.radius.md,
       gap: theme.spacing.sm,
-      shadowColor: theme.colors.primary,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.3,
-      shadowRadius: 4,
-      elevation: 4,
     },
     shareButtonText: {
       ...theme.text("lg", "semibold"),
@@ -292,11 +282,6 @@ export const createStyles = (theme: ITheme) =>
       padding: theme.spacing.md,
       borderRadius: theme.radius.md,
       gap: theme.spacing.sm,
-      shadowColor: theme.colors.primary,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.3,
-      shadowRadius: 4,
-      elevation: 4,
     },
     viewButtonText: {
       ...theme.text("lg", "semibold"),
@@ -434,14 +419,9 @@ export const createStyles = (theme: ITheme) =>
       padding: theme.spacing.lg,
       width: "100%",
       alignItems: "center",
-      borderWidth: 1.5,
-      borderColor: theme.colors.primary + "30",
+      borderWidth: 1,
+      borderColor: theme.colors.border,
       marginBottom: theme.spacing.lg,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.08,
-      shadowRadius: 6,
-      elevation: 3,
     },
     meritHeader: {
       alignItems: "center",
@@ -512,11 +492,6 @@ export const createStyles = (theme: ITheme) =>
       paddingHorizontal: theme.spacing.lg,
       borderRadius: theme.radius.md,
       gap: theme.spacing.sm,
-      shadowColor: theme.colors.primary,
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.35,
-      shadowRadius: 6,
-      elevation: 5,
     },
     issueButtonText: {
       ...theme.text("lg", "bold"),
