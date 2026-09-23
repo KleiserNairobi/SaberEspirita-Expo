@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import { ActivityIndicator, Image, Platform, StyleSheet, View } from "react-native";
 
 import { Allura_400Regular } from "@expo-google-fonts/allura";
@@ -20,14 +21,11 @@ import {
 } from "@expo-google-fonts/oswald";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { HotUpdater } from "@hot-updater/react-native";
-import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
-import { QueryClient } from "@tanstack/react-query";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { registerRootComponent } from "expo";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { createMMKV } from "react-native-mmkv";
 import { LogLevel, OneSignal } from "react-native-onesignal";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import TrackPlayer from "react-native-track-player";
@@ -43,22 +41,8 @@ import {
   setupTrackPlayer,
 } from "./src/services/audio/trackPlayerService";
 
-// Configurar MMKV storage para cache do React Query
-const mmkvStorage = createMMKV({ id: "react-query-cache" });
-
 // Prevenir que o splash screen seja ocultado automaticamente
 SplashScreen.preventAutoHideAsync();
-
-// Criar persister usando MMKV
-const persister = createAsyncStoragePersister({
-  storage: {
-    getItem: (key) => mmkvStorage.getString(key) ?? null,
-    setItem: (key, value) => mmkvStorage.set(key, value),
-    removeItem: (key) => {
-      mmkvStorage.remove(key);
-    },
-  },
-});
 
 // Criar QueryClient fora do componente para evitar recriação
 const queryClient = new QueryClient({
@@ -161,7 +145,10 @@ function App() {
         const authState = useAuthStore.getState();
         if (authState.user?.uid && !authState.isGuest) {
           OneSignal.login(authState.user.uid);
-          console.log("OneSignal: Usuário identificado com External ID:", authState.user.uid);
+          console.log(
+            "OneSignal: Usuário identificado com External ID:",
+            authState.user.uid
+          );
         }
 
         const preferences = usePreferencesStore.getState();
@@ -173,7 +160,10 @@ function App() {
 
         // Log de diagnóstico da inscrição Push
         OneSignal.User.pushSubscription.getIdAsync().then((id) => {
-          console.log("OneSignal: Push Subscription ID:", id || "Aguardando token FCM/APNs...");
+          console.log(
+            "OneSignal: Push Subscription ID:",
+            id || "Aguardando token FCM/APNs..."
+          );
         });
         OneSignal.User.pushSubscription.getOptedInAsync().then((optedIn) => {
           console.log("OneSignal: Push Subscription OptedIn:", optedIn);
@@ -213,17 +203,14 @@ function AppContent() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <BottomSheetModalProvider>
-          <PersistQueryClientProvider
-            client={queryClient}
-            persistOptions={{ persister, buster: "1.0.10" }}
-          >
+          <QueryClientProvider client={queryClient}>
             <StatusBar
               style={resolvedThemeType === "dark" ? "light" : "dark"}
               translucent={true}
               backgroundColor="transparent"
             />
             <RootNavigator />
-          </PersistQueryClientProvider>
+          </QueryClientProvider>
         </BottomSheetModalProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

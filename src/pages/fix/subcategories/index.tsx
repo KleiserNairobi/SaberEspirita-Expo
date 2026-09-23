@@ -1,9 +1,9 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
-import { SectionList, Text, TouchableOpacity, View } from "react-native";
+import { RefreshControl, SectionList, Text, TouchableOpacity, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { RouteProp, useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
@@ -59,8 +59,24 @@ export function SubcategoriesScreen() {
   const setGlobalFilter = useQuizFilterStore((state) => state.setFilter);
 
   const { user } = useAuthStore();
-  const { data: subcategories } = useSubcategories(categoryId);
-  const { data: userProgress } = useUserQuizProgress(user?.uid || "");
+  const {
+    data: subcategories,
+    refetch: refetchSubcategories,
+    isFetching,
+  } = useSubcategories(categoryId);
+  const { data: userProgress, refetch: refetchUserProgress } = useUserQuizProgress(
+    user?.uid || ""
+  );
+
+  // Recarrega subcategorias e progresso sempre que a tela ganha foco
+  useFocusEffect(
+    useCallback(() => {
+      void refetchSubcategories();
+      if (user?.uid) {
+        void refetchUserProgress();
+      }
+    }, [refetchSubcategories, refetchUserProgress, user?.uid])
+  );
 
   // Wrapper para setFilter manter a assinatura
   const setFilterType = (type: SubcategoryFilterType) => {
@@ -279,6 +295,14 @@ export function SubcategoriesScreen() {
           contentContainerStyle={styles.list}
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isFetching}
+              onRefresh={() => void refetchSubcategories()}
+              colors={[theme.colors.primary]}
+              tintColor={theme.colors.primary}
+            />
+          }
         />
 
         {/* BottomSheet de Filtros */}
