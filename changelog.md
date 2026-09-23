@@ -2,6 +2,16 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.22-ota.2] - 2026-09-23 (Hot-Update)
+
+### Aprimorado / Refatorado
+
+- **Gerenciamento de Cache React Query (`App`)**:
+  - Migrado o provedor de consultas de `PersistQueryClientProvider` (MMKV) para `QueryClientProvider` em memória, simplificando o ciclo de vida do cache e assegurando dados sempre atualizados entre sessões sem retenção residual de estado obsoleto.
+- **Atualização Automática e Pull-to-Refresh em Subcategorias (`SubcategoriesScreen`)**:
+  - Adicionado recarregamento automático (`useFocusEffect`) de subcategorias e progresso do usuário ao navegar ou retornar para a tela.
+  - Implementado suporte a *pull-to-refresh* nativo via `RefreshControl` na listagem de subcategorias.
+
 ## [2.0.22-ota.1] - 2026-09-22 (Hot-Update)
 
 ### Corrigido / Aprimorado
