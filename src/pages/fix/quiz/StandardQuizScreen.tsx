@@ -4,7 +4,6 @@ import {
   ActivityIndicator,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 
@@ -12,11 +11,15 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
+import { StatusBar } from "expo-status-bar";
+import { ArrowLeft, BookOpen, Leaf } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
+import { Button } from "@/components/Button";
 import { QuizUI } from "@/components/QuizUI";
+import { ITheme } from "@/configs/theme/types";
 import { QUIZ_KEYS, useQuiz } from "@/hooks/queries/useQuiz";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
@@ -36,6 +39,7 @@ export function StandardQuizScreen() {
   const navigation = useNavigation<StandardQuizNavigationProp>();
   const queryClient = useQueryClient();
   const { theme } = useAppTheme();
+  const styles = createStyles(theme);
 
   const { subcategoryId, categoryId, categoryName, subcategoryName, subtitle } =
     route.params;
@@ -148,32 +152,37 @@ export function StandardQuizScreen() {
   }
 
   if (!isLoading && !quiz) {
+    const errorColor = theme.colors.error || "#C94B4B";
+    const bgIconColor = errorColor + "15";
+
     return (
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
-        <View style={styles.loadingContainer}>
-          <Text
-            style={[
-              styles.loadingText,
-              { color: theme.colors.error || "#FF6B6B", marginBottom: 16 },
-            ]}
-          >
-            Quiz não encontrado.
-          </Text>
-          <Text
-            style={[
-              styles.loadingText,
-              { fontSize: 14, marginBottom: 24, color: theme.colors.textSecondary },
-            ]}
-          >
-            Não foi possível carregar as questões deste quiz.
-          </Text>
-          <TouchableOpacity onPress={handleStop}>
-            <Text style={{ color: theme.colors.primary, fontWeight: "600" }}>
-              ← Voltar
+        <StatusBar style={theme.isDark ? "light" : "dark"} />
+        <View style={styles.errorContainer}>
+          <View style={styles.card}>
+            <Leaf size={140} color={theme.colors.primary} style={styles.bgLeaf} />
+
+            <View style={[styles.iconWrapper, { backgroundColor: bgIconColor }]}>
+              <BookOpen size={36} color={errorColor} />
+            </View>
+
+            <Text style={styles.title}>Quiz não encontrado</Text>
+
+            <Text style={styles.description}>
+              Não foi possível carregar as questões deste quiz. Por favor, retorne à tela
+              anterior e tente novamente.
             </Text>
-          </TouchableOpacity>
+
+            <Button
+              title="Voltar"
+              onPress={handleStop}
+              variant="primary"
+              fullWidth
+              icon={<ArrowLeft size={18} color="white" style={{ marginRight: 8 }} />}
+            />
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -184,16 +193,10 @@ export function StandardQuizScreen() {
       <SafeAreaView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
+        <StatusBar style={theme.isDark ? "light" : "dark"} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text
-            style={[
-              styles.loadingText,
-              { color: theme.colors.textSecondary, marginTop: 16 },
-            ]}
-          >
-            Carregando quiz...
-          </Text>
+          <Text style={styles.loadingText}>Carregando quiz...</Text>
         </View>
       </SafeAreaView>
     );
@@ -226,8 +229,63 @@ export function StandardQuizScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  loadingText: { fontSize: 16, fontWeight: "500" },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    loadingText: {
+      ...theme.text("md", "medium", theme.colors.textSecondary),
+      marginTop: 16,
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: theme.spacing.lg,
+    },
+    card: {
+      width: "100%",
+      maxWidth: 340,
+      backgroundColor: theme.colors.card,
+      borderRadius: theme.radius.lg,
+      padding: theme.spacing.xl,
+      alignItems: "center",
+      ...theme.shadows.md,
+      position: "relative",
+      overflow: "hidden",
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    iconWrapper: {
+      width: 72,
+      height: 72,
+      borderRadius: 36,
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: theme.spacing.lg,
+    },
+    title: {
+      ...theme.text("xl", "bold", theme.colors.text),
+      textAlign: "center",
+      marginBottom: theme.spacing.sm,
+    },
+    description: {
+      ...theme.text("sm", "regular", theme.colors.textSecondary),
+      textAlign: "center",
+      marginBottom: theme.spacing.xl,
+      lineHeight: 20,
+    },
+    bgLeaf: {
+      position: "absolute",
+      bottom: -30,
+      right: -30,
+      opacity: theme.isDark ? 0.03 : 0.06,
+      transform: [{ rotate: "45deg" }],
+    },
+  });

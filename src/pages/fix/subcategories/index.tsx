@@ -103,18 +103,20 @@ export function SubcategoriesScreen() {
     return false;
   }
 
-  // Filtrar subcategorias por busca e status
+  // Filtrar subcategorias por busca e status (com ordenação alfabética PT-BR preservando acentuação)
   const filteredSubcategories =
-    subcategories?.filter((sub) => {
-      const matchesSearch = sub.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const isCompleted = isSubcategoryCompleted(sub.id);
+    (subcategories || [])
+      .filter((sub) => {
+        const matchesSearch = sub.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const isCompleted = isSubcategoryCompleted(sub.id);
 
-      let matchesFilter = true;
-      if (filterType === "COMPLETED") matchesFilter = isCompleted;
-      if (filterType === "NOT_COMPLETED") matchesFilter = !isCompleted;
+        let matchesFilter = true;
+        if (filterType === "COMPLETED") matchesFilter = isCompleted;
+        if (filterType === "NOT_COMPLETED") matchesFilter = !isCompleted;
 
-      return matchesSearch && matchesFilter;
-    }) || [];
+        return matchesSearch && matchesFilter;
+      })
+      .sort((a, b) => a.name.localeCompare(b.name, "pt-BR", { sensitivity: "base" }));
 
   async function handleRetake() {
     if (!selectedQuiz) return;
