@@ -723,9 +723,10 @@ export function LessonPlayerScreen() {
 
       <PremiumContentNoticeModal
         ref={premiumModalRef}
+        type="trial_completed"
         title="Aula Demonstrativa Concluída!"
         itemName={course?.title || lesson?.title}
-        description="Parabéns por concluir a aula demonstrativa! Para continuar a jornada pelas próximas aulas e ter acesso irrestrito ao curso completo, torne-se um membro Premium."
+        description="Parabéns por concluir a aula de degustação! Para continuar a jornada pelas próximas aulas e ter acesso irrestrito ao curso completo, torne-se um membro Premium."
         onClose={navigateBackAfterCompletion}
       />
     </SafeAreaView>

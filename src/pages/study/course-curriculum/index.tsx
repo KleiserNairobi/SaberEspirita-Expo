@@ -89,10 +89,19 @@ export function CourseCurriculumScreen() {
 
   const [activeTab, setActiveTab] = useState<"lessons" | "materials">("lessons");
   const premiumModalRef = useRef<BottomSheetModal>(null);
-  const [selectedPremiumItem, setSelectedPremiumItem] = useState<string>("");
+  const [premiumModalConfig, setPremiumModalConfig] = useState<{
+    itemName: string;
+    type: "lesson" | "material" | "course";
+  }>({
+    itemName: "",
+    type: "material",
+  });
 
-  function handleOpenPremiumModal(itemName: string) {
-    setSelectedPremiumItem(itemName);
+  function handleOpenPremiumModal(
+    itemName: string,
+    type: "lesson" | "material" | "course" = "material"
+  ) {
+    setPremiumModalConfig({ itemName, type });
     premiumModalRef.current?.present();
   }
 
@@ -346,7 +355,7 @@ export function CourseCurriculumScreen() {
 
   async function handleLessonPress(lesson: ILesson, index: number, status: LessonStatus) {
     if (status === LessonStatus.LOCKED) {
-      handleOpenPremiumModal(lesson.title);
+      handleOpenPremiumModal(lesson.title, "lesson");
       return;
     }
 
@@ -985,7 +994,8 @@ export function CourseCurriculumScreen() {
       {/* ✅ Modal de Conteúdo Premium */}
       <PremiumContentNoticeModal
         ref={premiumModalRef}
-        itemName={selectedPremiumItem}
+        type={premiumModalConfig.type}
+        itemName={premiumModalConfig.itemName}
       />
     </SafeAreaView>
   );

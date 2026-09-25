@@ -78,10 +78,19 @@ export function CourseDetailsScreen() {
 
   const [activeTab, setActiveTab] = useState<"about" | "lessons" | "materials">("about");
   const premiumModalRef = useRef<BottomSheetModal>(null);
-  const [selectedPremiumItem, setSelectedPremiumItem] = useState<string>("");
+  const [premiumModalConfig, setPremiumModalConfig] = useState<{
+    itemName: string;
+    type: "lesson" | "material" | "course";
+  }>({
+    itemName: "",
+    type: "material",
+  });
 
-  function handleOpenPremiumModal(itemName: string) {
-    setSelectedPremiumItem(itemName);
+  function handleOpenPremiumModal(
+    itemName: string,
+    type: "lesson" | "material" | "course" = "material"
+  ) {
+    setPremiumModalConfig({ itemName, type });
     premiumModalRef.current?.present();
   }
 
@@ -471,7 +480,7 @@ export function CourseDetailsScreen() {
                   style={[styles.objectiveItem, { alignItems: "center" }]}
                   onPress={() => {
                     if (isLocked) {
-                      handleOpenPremiumModal(lesson.title);
+                      handleOpenPremiumModal(lesson.title, "lesson");
                     } else {
                       navigation.navigate("LessonPlayer", {
                         courseId,
@@ -612,7 +621,8 @@ export function CourseDetailsScreen() {
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
       <PremiumContentNoticeModal
         ref={premiumModalRef}
-        itemName={selectedPremiumItem}
+        type={premiumModalConfig.type}
+        itemName={premiumModalConfig.itemName}
       />
     </View>
   );
