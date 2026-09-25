@@ -65,8 +65,25 @@ export const userActivityApiService = {
    * Obtém o progresso de um curso específico.
    */
   async getCourseProgress(courseId: string): Promise<IUserCourseProgress | null> {
-    if (!courseId || !Storage.loadString("jwt_token")) return null;
+    if (!courseId) return null;
     const cleanCourseId = courseId.trim();
+    if (
+      cleanCourseId === "nosso-lar-estudo-guiado" ||
+      cleanCourseId.includes("nosso-lar")
+    ) {
+      return {
+        courseId: cleanCourseId,
+        userId: "mock-user",
+        completedLessons: [],
+        exerciseResults: [],
+        lastLessonId: "LESSON-NL-M1-A01",
+        certificateEligible: false,
+        certificateIssued: false,
+        startedAt: new Date(),
+        lastAccessedAt: new Date(),
+      };
+    }
+    if (!Storage.loadString("jwt_token")) return null;
     try {
       const response = await apiClient.get<any>(
         `/user-activity/courses/progress/${cleanCourseId}`
@@ -87,6 +104,27 @@ export const userActivityApiService = {
   ): Promise<IUserCourseProgress> {
     const cleanCourseId = courseId.trim();
     const cleanLessonId = lessonId.trim();
+
+    // Bypass de mock para permitir testes locais de conclusão das aulas mockadas
+    if (
+      cleanCourseId === "nosso-lar-estudo-guiado" ||
+      cleanCourseId.includes("nosso-lar") ||
+      cleanLessonId.includes("NL") ||
+      cleanLessonId.startsWith("LESSON-NL")
+    ) {
+      return {
+        courseId: cleanCourseId,
+        userId: "mock-user",
+        completedLessons: [cleanLessonId],
+        exerciseResults: [],
+        lastLessonId: cleanLessonId,
+        certificateEligible: false,
+        certificateIssued: false,
+        startedAt: new Date(),
+        lastAccessedAt: new Date(),
+      };
+    }
+
     const response = await apiClient.post<any>(
       `/user-activity/courses/progress/${cleanCourseId}/lessons/${cleanLessonId}/complete`
     );
