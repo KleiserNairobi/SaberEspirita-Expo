@@ -31,10 +31,11 @@ const DEFAULT_BENEFITS: Record<PremiumNoticeType, string[]> = {
     "Acesso ilimitado a todas as aulas e estudos guiados",
     "Análises comparadas com a Codificação Kardequiana",
     "Emissão de certificados oficiais de conclusão",
-    "Apostilas em PDF, podcasts e reflexões exclusivas",
+    "Infográficos doutrinários, obras de apoio e podcasts",
   ],
   material: [
-    "Apostilas completas em PDF de alta qualidade",
+    "Infográficos conceituais em alta resolução",
+    "Obras e textos de referência doutrinária",
     "Podcasts e reflexões em áudio exclusivas",
     "Contribua diretamente com a disseminação da Doutrina",
   ],
@@ -45,8 +46,8 @@ const DEFAULT_BENEFITS: Record<PremiumNoticeType, string[]> = {
   ],
   trial_completed: [
     "Acesso a todas as próximas aulas da série",
-    "Podcasts reflexivos e materiais complementares",
-    "Certificado de conclusão do estudo guiado",
+    "Infográficos e materiais de estudo aprofundado",
+    "Podcasts reflexivos e certificado de conclusão",
   ],
 };
 
@@ -61,7 +62,7 @@ const DEFAULT_DESCRIPTIONS: Record<PremiumNoticeType, string> = {
   lesson:
     "Esta aula faz parte dos Estudos Guiados Premium do Saber Espírita. Torne-se assinante para ter acesso irrestrito a todas as aulas, análises comparadas e materiais de apoio.",
   material:
-    "Este material complementar é reservado para apoiadores e membros premium. Apoie o Saber Espírita para ter acesso irrestrito a apostilas, podcasts e meditações exclusivas.",
+    "Este material complementar é reservado para apoiadores e membros premium. Apoie o Saber Espírita para ter acesso irrestrito a infográficos, livros de apoio, podcasts e reflexões exclusivas.",
   course:
     "Esta série de estudo é exclusiva para membros assinantes. Assine o Saber Espírita para desbloquear todas as aulas e certificados.",
   trial_completed:
