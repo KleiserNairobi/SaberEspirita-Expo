@@ -59,8 +59,13 @@ export function ReflectionScreen() {
       hasLogged.current = true;
     }
 
-    // Navega diretamente para a home principal do módulo Medite
-    navigation.navigate("MeditateHome");
+    // Retorna para a tela de onde o usuário veio
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      // Fallback caso não haja histórico na pilha
+      navigation.navigate("MeditateHome");
+    }
   }
 
   async function handleShare() {

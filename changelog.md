@@ -2,6 +2,14 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.22-ota.3] - 2026-09-25 (Hot-Update)
+
+### Corrigido
+
+- **Navegação e Conclusão de Leitura de Reflexões (`ReflectionScreen`)**:
+  - Corrigido o erro de navegação (*"The action 'NAVIGATE' with payload {'name':'MeditateHome'} was not handled by any navigator"*) ao acionar o botão "Finalizei a Leitura".
+  - Substituída a rota hardcoded por retorno dinâmico via `navigation.goBack()`, garantindo que o usuário retorne corretamente para a tela de onde veio (como a aba de Materiais Complementares de um curso, listagens ou home do Medite).
+
 ## [2.0.22-ota.2] - 2026-09-23 (Hot-Update)
 
 ### Aprimorado / Refatorado
