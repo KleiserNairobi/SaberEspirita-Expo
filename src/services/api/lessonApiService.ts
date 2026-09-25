@@ -1,6 +1,7 @@
+import { ILesson, IReflectionQuestion, ISupplementaryMaterial } from "@/types/course";
+
 import apiClient from "./apiClient";
 import { resolveCdnUrl } from "./courseApiService";
-import { ILesson, IReflectionQuestion, ISupplementaryMaterial } from "@/types/course";
 
 function normalizeLesson(raw: any): ILesson {
   const order = raw.order ?? raw.orderIndex ?? 1;
@@ -28,12 +29,18 @@ function normalizeLesson(raw: any): ILesson {
   };
 }
 
+import mockCursoNossoLar from "@/assets/mocks/lessons/CursoNossoLar.json";
+
 export const lessonApiService = {
   /**
    * Obtém todas as lições de um curso por courseId.
    */
   async getLessonsByCourseId(courseId: string): Promise<ILesson[]> {
     if (!courseId) return [];
+    const cleanCourseId = courseId.trim().toLowerCase();
+    if (cleanCourseId === "nosso-lar-estudo-guiado" || cleanCourseId.includes("nosso-lar")) {
+      return [normalizeLesson(mockCursoNossoLar)];
+    }
     const response = await apiClient.get<any[]>(`/courses/${courseId}/lessons`);
     return (response.data || []).map(normalizeLesson);
   },
@@ -43,6 +50,14 @@ export const lessonApiService = {
    */
   async getLessonById(lessonId: string): Promise<ILesson | null> {
     if (!lessonId) return null;
+    const cleanLessonId = lessonId.trim();
+    if (
+      cleanLessonId === "LESSON-NL-M1-A01" ||
+      cleanLessonId === "nosso-lar-estudo-guiado" ||
+      cleanLessonId.includes("NL")
+    ) {
+      return normalizeLesson(mockCursoNossoLar);
+    }
     const response = await apiClient.get<any>(`/lessons/${lessonId}`);
     if (!response.data) return null;
     return normalizeLesson(response.data);

@@ -79,12 +79,49 @@ export const courseApiService = {
    * Obtém a lista de cursos com suporte a filtros.
    */
   async getCourses(params?: GetCoursesParams): Promise<ICourse[]> {
-    const response = await apiClient.get<ICourse[]>("/courses", { params });
-    return (response.data || []).map((course) => ({
-      ...course,
-      imageUrl: typeof course.imageUrl === "string" ? resolveCdnUrl(course.imageUrl) : course.imageUrl,
-      certification: parseCertification(course.certification),
-    }));
+    const mockNossoLarCourse: ICourse = {
+      id: "nosso-lar-estudo-guiado",
+      title: "Nosso Lar — Estudo Guiado",
+      description:
+        "Estudo aprofundado da obra de André Luiz em diálogo permanente com a Codificação Kardequiana.",
+      order: 999,
+      workloadMinutes: 45,
+      difficultyLevel: "Intermediário",
+      author: "André Luiz / Chico Xavier",
+      lessonCount: 1,
+      isPremium: true,
+      status: "PUBLISHED",
+      allowNewEnrollments: true,
+      certification: {
+        enabled: true,
+        minimumGrade: 70,
+        requiredLessonsPercent: 100,
+        requiredExercisesPercent: 100,
+      },
+      hasForum: true,
+      stats: {
+        exerciseCount: 0,
+        totalDurationMinutes: 45,
+      },
+    };
+
+    try {
+      const response = await apiClient.get<ICourse[]>("/courses", { params });
+      const list: ICourse[] = (response.data || []).map((course) => ({
+        ...course,
+        imageUrl:
+          typeof course.imageUrl === "string" ? resolveCdnUrl(course.imageUrl) : course.imageUrl,
+        certification: parseCertification(course.certification),
+      }));
+
+      // Adiciona o curso mock de teste no catálogo se não existir
+      if (!list.some((c) => c.id === "nosso-lar-estudo-guiado")) {
+        list.push(mockNossoLarCourse);
+      }
+      return list;
+    } catch {
+      return [mockNossoLarCourse];
+    }
   },
 
   /**
@@ -104,6 +141,33 @@ export const courseApiService = {
    */
   async getCourseById(courseId: string): Promise<ICourse | null> {
     if (!courseId) return null;
+    if (courseId === "nosso-lar-estudo-guiado") {
+      return {
+        id: "nosso-lar-estudo-guiado",
+        title: "Nosso Lar — Estudo Guiado",
+        description:
+          "Estudo aprofundado da obra de André Luiz em diálogo permanente com a Codificação Kardequiana.",
+        order: 99,
+        workloadMinutes: 45,
+        difficultyLevel: "Intermediário",
+        author: "André Luiz / Chico Xavier",
+        lessonCount: 1,
+        isPremium: true,
+        status: "PUBLISHED",
+        allowNewEnrollments: true,
+        certification: {
+          enabled: true,
+          minimumGrade: 70,
+          requiredLessonsPercent: 100,
+          requiredExercisesPercent: 100,
+        },
+        hasForum: true,
+        stats: {
+          exerciseCount: 0,
+          totalDurationMinutes: 45,
+        },
+      };
+    }
     const response = await apiClient.get<any>(`/courses/${courseId}`);
     if (!response.data) return null;
 

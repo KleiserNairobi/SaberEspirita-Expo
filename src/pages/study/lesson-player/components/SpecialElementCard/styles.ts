@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { ITheme } from "@/configs/theme/types";
 
-export const createStyles = (theme: ITheme) =>
+export const createStyles = (theme: ITheme, accentColor: string, fontSize: number = 16) =>
   StyleSheet.create({
     container: {
       position: "relative",
@@ -11,9 +11,9 @@ export const createStyles = (theme: ITheme) =>
       paddingHorizontal: theme.spacing.md,
       paddingTop: theme.spacing.md + 6,
       paddingBottom: theme.spacing.md,
-      backgroundColor: `${theme.colors.primary}12`,
+      backgroundColor: `${accentColor}12`,
       borderWidth: 1,
-      borderColor: `${theme.colors.primary}40`,
+      borderColor: `${accentColor}40`,
       borderRadius: theme.radius.sm,
     },
     header: {
@@ -28,21 +28,19 @@ export const createStyles = (theme: ITheme) =>
       paddingVertical: 2,
       borderRadius: 6,
       borderWidth: 1,
-      borderColor: `${theme.colors.primary}50`,
+      borderColor: `${accentColor}50`,
     },
     headerTitle: {
-      ...theme.text("xs", "semibold", theme.colors.primary),
+      ...theme.text("xs", "semibold"),
+      color: accentColor,
       fontSize: 12,
     },
-    highlightItem: {
-      marginBottom: theme.spacing.sm + 4,
-    },
-    highlightTitle: {
-      ...theme.text("sm", "semibold"),
-      marginBottom: 2,
-    },
-    highlightContent: {
+    content: {
+      ...theme.text("sm", "regular"),
+      color: theme.colors.text,
+      fontSize: fontSize,
+      lineHeight: fontSize * 1.5,
+      textAlign: "justify",
       opacity: 0.95,
-      marginTop: 0,
     },
   });

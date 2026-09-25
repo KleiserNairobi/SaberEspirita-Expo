@@ -609,6 +609,8 @@ export function LessonPlayerScreen() {
             slide={item}
             fontSize={getFontSize()}
             isLastSlide={index === lesson.slides.length - 1}
+            source={lesson.source}
+            chapter={lesson.chapter}
             reflectionQuestions={lesson.reflectionQuestions}
             glossaryTerms={[]}
             onGlossaryTermPress={handleGlossaryTermPress}

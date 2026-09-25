@@ -1,20 +1,23 @@
 import React, { memo } from "react";
 import { View, ScrollView, StyleSheet, Dimensions } from "react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { ISlide, IReflectionQuestion } from "@/types/course";
+import { ISlide, IPremiumSlide, IReflectionQuestion } from "@/types/course";
 import { IGlossaryTerm } from "@/types/glossary";
 import { SlideContent } from "./SlideContent";
 import { HighlightCard } from "./HighlightCard";
 import { ReferenceCard } from "./ReferenceCard";
 import { ReflectionQuestionsCard } from "./ReflectionQuestionsCard";
+import { PremiumSlideRenderer } from "./PremiumSlideRenderer";
 import { ITheme } from "@/configs/theme/types";
 
 const { width } = Dimensions.get("window");
 
 interface LessonSlideProps {
-  slide: ISlide;
+  slide: ISlide | IPremiumSlide;
   fontSize: number;
   isLastSlide: boolean;
+  source?: string;
+  chapter?: string;
   reflectionQuestions?: IReflectionQuestion[];
   glossaryTerms?: IGlossaryTerm[];
   onGlossaryTermPress?: (termId: string, matchedWord?: string) => void;
@@ -26,12 +29,37 @@ export const LessonSlide = memo(
     slide,
     fontSize,
     isLastSlide,
+    source,
+    chapter,
     reflectionQuestions,
     onGlossaryTermPress,
     slideIndex,
   }: LessonSlideProps) => {
     const { theme } = useAppTheme();
     const styles = createStyles(theme);
+
+    // Detecta se é um slide estruturado com elementos premium
+    const isPremiumSlide =
+      !!(slide as IPremiumSlide).specialElement ||
+      !!(slide as IPremiumSlide).learningGoal ||
+      !!(slide as IPremiumSlide).commonMisunderstanding ||
+      !!(slide as IPremiumSlide).references?.obraPrincipal ||
+      !!(slide as IPremiumSlide).references?.codificacao;
+
+    if (isPremiumSlide) {
+      return (
+        <PremiumSlideRenderer
+          slide={slide as IPremiumSlide}
+          fontSize={fontSize}
+          isLastSlide={isLastSlide}
+          source={source}
+          chapter={chapter}
+          reflectionQuestions={reflectionQuestions}
+          onGlossaryTermPress={onGlossaryTermPress}
+          slideIndex={slideIndex}
+        />
+      );
+    }
 
     const hasLocalGlossary = !!slide.glossary && slide.glossary.length > 0;
     const termsForInjection: IGlossaryTerm[] = [];
@@ -84,7 +112,7 @@ export const LessonSlide = memo(
           {/* Referências e/ou Glossário fundidos no mesmo card */}
           {(slide.references || hasLocalGlossary) && (
             <ReferenceCard
-              references={slide.references}
+              references={slide.references as any}
               glossary={slide.glossary}
               fontSize={fontSize}
               onGlossaryTermPress={(termId) => onGlossaryTermPress?.(termId)}

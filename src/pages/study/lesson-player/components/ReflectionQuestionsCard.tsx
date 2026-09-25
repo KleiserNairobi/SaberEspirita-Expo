@@ -54,7 +54,7 @@ export function ReflectionQuestionsCard({
       ]}
     >
       <View style={styles.header}>
-        <Compass size={20} color={theme.colors.reflection} />
+        <Compass size={14} color={theme.colors.reflection} />
         <Text style={styles.headerTitle}>Para Refletir</Text>
       </View>
 
@@ -84,28 +84,40 @@ export function ReflectionQuestionsCard({
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
+      position: "relative",
       marginHorizontal: theme.spacing.md,
+      marginTop: theme.spacing.md + 6,
       marginBottom: theme.spacing.md,
-      padding: theme.spacing.md,
-      backgroundColor: `${theme.colors.reflection}15`, // Transparência de 15%
-      borderLeftWidth: 4,
-      borderLeftColor: theme.colors.reflection,
+      paddingHorizontal: theme.spacing.md,
+      paddingTop: theme.spacing.md + 6,
+      paddingBottom: theme.spacing.md,
+      backgroundColor: `${theme.colors.reflection}12`, // Transparência suave
+      borderWidth: 1,
+      borderColor: `${theme.colors.reflection}40`,
       borderRadius: theme.radius.sm,
-      // marginTop: 6,
     },
     header: {
+      position: "absolute",
+      top: -12,
+      left: 14,
       flexDirection: "row",
       alignItems: "center",
-      gap: theme.spacing.xs,
-      marginBottom: theme.spacing.sm,
+      gap: 6,
+      backgroundColor: theme.colors.background,
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+      borderRadius: 6,
+      borderWidth: 1,
+      borderColor: `${theme.colors.reflection}50`,
     },
     headerTitle: {
-      ...theme.text("sm", "semibold", theme.colors.reflection),
+      ...theme.text("xs", "semibold", theme.colors.reflection),
+      fontSize: 12,
     },
     subtitle: {
       ...theme.text("xs", "regular", theme.colors.textSecondary),
       textAlign: "justify",
-      marginBottom: 16,
+      marginBottom: 12,
       lineHeight: 18,
     },
     questionContainer: {

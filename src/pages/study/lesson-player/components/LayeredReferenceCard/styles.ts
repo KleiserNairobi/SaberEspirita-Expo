@@ -67,9 +67,9 @@ export const createStyles = (theme: ITheme, fontSize: number = 16) =>
       paddingHorizontal: 12,
       paddingVertical: 6,
       borderRadius: 16,
-      backgroundColor: `${theme.colors.warning}30`, // Tom ameno, mantendo harmonia moncromática mas com bom peso visual
+      backgroundColor: `${theme.colors.warning}30`,
       borderWidth: 1,
-      borderColor: `${theme.colors.warning}50`, // Borda suave na mesma família de cor
+      borderColor: `${theme.colors.warning}50`,
     },
     pillText: {
       ...theme.text("sm", "medium", theme.colors.textSecondary),
