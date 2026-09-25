@@ -35,6 +35,7 @@ import { parseExerciseResults } from "@/services/api/userActivityApiService";
 import { useAuthStore } from "@/stores/authStore";
 import { ILesson } from "@/types/course";
 import { loadBoolean, saveBoolean } from "@/utils/Storage";
+import { canAccessLesson, isLessonFreeTrial } from "@/utils/courseAccess";
 import { getLessonSlideProgress } from "@/utils/lessonProgressStorage";
 
 import { ProgressSummaryCard } from "./components/ProgressSummaryCard";
@@ -254,7 +255,13 @@ export function CourseCurriculumScreen() {
       return LessonStatus.COMPLETED;
     }
 
-    // 2. Se o usuário tem progresso de slide salvo > 0 (qualquer slide a partir do slide 2, incluindo o último)
+    // 2. Se a aula estiver bloqueada por regra de assinatura (Smart Gate)
+    const hasAccess = canAccessLesson(lesson, course, false);
+    if (!hasAccess) {
+      return LessonStatus.LOCKED;
+    }
+
+    // 3. Se o usuário tem progresso de slide salvo > 0 (qualquer slide a partir do slide 2, incluindo o último)
     const slideProg = getLessonSlideProgress(user?.uid, lesson.id);
     if (
       slideProg &&
@@ -264,12 +271,12 @@ export function CourseCurriculumScreen() {
       return LessonStatus.IN_PROGRESS;
     }
 
-    // 3. Se for a última aula acessada no backend
+    // 4. Se for a última aula acessada no backend
     if (progress?.lastLessonId === lesson.id) {
       return LessonStatus.IN_PROGRESS;
     }
 
-    // 4. Demais aulas ficam disponíveis (não iniciadas)
+    // 5. Demais aulas ficam disponíveis (não iniciadas)
     return LessonStatus.AVAILABLE;
   }
 
@@ -338,6 +345,11 @@ export function CourseCurriculumScreen() {
   }
 
   async function handleLessonPress(lesson: ILesson, index: number, status: LessonStatus) {
+    if (status === LessonStatus.LOCKED) {
+      handleOpenPremiumModal(lesson.title);
+      return;
+    }
+
     if (status === LessonStatus.AVAILABLE) {
       // Verifica se o aluno está pulando as lições essenciais
       const previousLesson = lessons[index - 1];
@@ -709,13 +721,17 @@ export function CourseCurriculumScreen() {
                   </>
                 )}
                 {!isComingSoon && status === LessonStatus.LOCKED && (
-                  <View style={styles.statusBadgeLocked}>
-                    <Text style={styles.statusBadgeTextLocked}>BLOQUEADA</Text>
+                  <View style={[styles.statusBadgeLocked, (item.isPremium || course?.isPremium) && { backgroundColor: `${theme.colors.warning}20` }]}>
+                    <Text style={[styles.statusBadgeTextLocked, (item.isPremium || course?.isPremium) && { color: theme.colors.warning }]}>
+                      {item.isPremium || course?.isPremium ? "PREMIUM" : "BLOQUEADA"}
+                    </Text>
                   </View>
                 )}
                 {!isComingSoon && status === LessonStatus.AVAILABLE && (
-                  <View style={styles.statusBadgeAvailable}>
-                    <Text style={styles.statusBadgeTextAvailable}>DISPONÍVEL</Text>
+                  <View style={[styles.statusBadgeAvailable, isLessonFreeTrial(item, course) && { backgroundColor: `${theme.colors.primary}20` }]}>
+                    <Text style={[styles.statusBadgeTextAvailable, isLessonFreeTrial(item, course) && { color: theme.colors.primary }]}>
+                      {isLessonFreeTrial(item, course) ? "DEGUSTAÇÃO" : "DISPONÍVEL"}
+                    </Text>
                   </View>
                 )}
               </View>
