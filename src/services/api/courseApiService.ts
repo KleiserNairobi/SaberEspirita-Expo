@@ -85,10 +85,10 @@ export const courseApiService = {
       description:
         "Estudo aprofundado da obra de André Luiz em diálogo permanente com a Codificação Kardequiana.",
       order: 999,
-      workloadMinutes: 45,
+      workloadMinutes: 65,
       difficultyLevel: "Intermediário",
       author: "André Luiz / Chico Xavier",
-      lessonCount: 1,
+      lessonCount: 2,
       isPremium: true,
       status: "PUBLISHED",
       allowNewEnrollments: true,
@@ -101,7 +101,7 @@ export const courseApiService = {
       hasForum: true,
       stats: {
         exerciseCount: 0,
-        totalDurationMinutes: 45,
+        totalDurationMinutes: 65,
       },
     };
 
@@ -148,10 +148,10 @@ export const courseApiService = {
         description:
           "Estudo aprofundado da obra de André Luiz em diálogo permanente com a Codificação Kardequiana.",
         order: 99,
-        workloadMinutes: 45,
+        workloadMinutes: 65,
         difficultyLevel: "Intermediário",
         author: "André Luiz / Chico Xavier",
-        lessonCount: 1,
+        lessonCount: 2,
         isPremium: true,
         status: "PUBLISHED",
         allowNewEnrollments: true,
@@ -164,7 +164,7 @@ export const courseApiService = {
         hasForum: true,
         stats: {
           exerciseCount: 0,
-          totalDurationMinutes: 45,
+          totalDurationMinutes: 65,
         },
       };
     }

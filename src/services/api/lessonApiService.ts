@@ -47,6 +47,7 @@ function normalizeLesson(raw: any): ILesson {
 }
 
 import mockCursoNossoLar from "@/assets/mocks/lessons/CursoNossoLar.json";
+import mockCursoNossoLarAula2 from "@/assets/mocks/lessons/CursoNossoLarAula2.json";
 
 export const lessonApiService = {
   /**
@@ -56,7 +57,10 @@ export const lessonApiService = {
     if (!courseId) return [];
     const cleanCourseId = courseId.trim().toLowerCase();
     if (cleanCourseId === "nosso-lar-estudo-guiado" || cleanCourseId.includes("nosso-lar")) {
-      return [normalizeLesson(mockCursoNossoLar)];
+      return [
+        normalizeLesson(mockCursoNossoLar),
+        normalizeLesson(mockCursoNossoLarAula2),
+      ];
     }
     const response = await apiClient.get<any[]>(`/courses/${courseId}/lessons`);
     return (response.data || []).map(normalizeLesson);
@@ -68,6 +72,9 @@ export const lessonApiService = {
   async getLessonById(lessonId: string): Promise<ILesson | null> {
     if (!lessonId) return null;
     const cleanLessonId = lessonId.trim();
+    if (cleanLessonId === "LESSON-NL-M1-A02") {
+      return normalizeLesson(mockCursoNossoLarAula2);
+    }
     if (
       cleanLessonId === "LESSON-NL-M1-A01" ||
       cleanLessonId === "nosso-lar-estudo-guiado" ||

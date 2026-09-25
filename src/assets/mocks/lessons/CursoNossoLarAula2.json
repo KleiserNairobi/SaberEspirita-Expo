@@ -1,0 +1,134 @@
+{
+  "id": "LESSON-NL-M1-A02",
+  "courseId": "nosso-lar-estudo-guiado",
+  "title": "Primeiras Impressões no Umbral",
+  "order": 2,
+  "source": "Nosso Lar",
+  "chapter": "Cap. 1 — No Umbral",
+  "durationMinutes": 35,
+  "forumEnabled": true,
+  "isPremium": true,
+  "subtitle": "A paisagem espiritual e os limites conceituais da dor",
+  "mainWork": {
+    "title": "Nosso Lar",
+    "author": "André Luiz",
+    "psychography": "Francisco Cândido Xavier"
+  },
+  "theme": "Região umbralina, sintonia mental e processo de purificação",
+  "objective": "Analisar as descrições da paisagem umbralina em Nosso Lar à luz das explicações de Allan Kardec em O Céu e o Inferno e O Livro dos Espíritos, compreendendo o Umbral não como lugar geográfico de punição eterna, mas como reflexo exteriorizado da sintonia mental dos Espíritos.",
+  "cognitiveIntensity": {
+    "level": "intermediário",
+    "description": "Exige análise comparada entre descrições visuais da psicografia e os princípios da lei de causa e efeito."
+  },
+  "premiumDifferential": "Estudo guiado sobre o Umbral com desmistificação de conceitos punitivos e correlação com a Codificação Kardequiana.",
+  "narrativeStrategy": "Examinar a sensação de solidão e busca de socorro de André Luiz para elucidar a mecânica da prece e da assistência espiritual.",
+  "slides": [
+    {
+      "slideType": "Fonte em Foco",
+      "slideNumber": 1,
+      "title": "O cenário do Umbral",
+      "learningGoal": "Apresentar a descrição de André Luiz sobre o ambiente umbralino.",
+      "content": "No relato de **André Luiz**, o **Umbral** surge como uma região de névoa densa, vegetação esparsa e sensação térmica desconfortável. Em **Nosso Lar**, a paisagem não é mero cenário de ficção, mas a correspondência fluídica dos pensamentos que ali gravitam. O autor descreve a angústia de caminhar sem rumo fixo, buscando entender as vozes e sombras que o cercavam.",
+      "highlights": [
+        {
+          "title": "Paisagem mental",
+          "content": "A matéria fluídica do ambiente molda-se pelas **criações mentais coletivas**."
+        },
+        {
+          "title": "Solidão e desorientação",
+          "content": "A sensação de desamparo decorre do **isolamento psíquico** do próprio Espírito."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 1 — No Umbral.",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "apreensão",
+      "commonMisunderstanding": "Pensar que o Umbral é um inferno físico criado por Deus para castigo.",
+      "microStory": "Alguém que caminha em uma névoa espessa guiado apenas por seus próprios receios.",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "O relato sensorial de André Luiz demonstra que o meio ambiente espiritual reflete diretamente a densidade vibratória de quem o habita."
+      }
+    },
+    {
+      "slideType": "Diálogo com a Codificação",
+      "slideNumber": 2,
+      "title": "Lugares de Sofrimento na Doutrina",
+      "learningGoal": "Contrapor a narrativa de lugares espirituais com a visão de Allan Kardec.",
+      "content": "Em **O Livro dos Espíritos** (q. 1011–1019), Kardec esclarece que as penas futuras não se circunscrevem a **lugares circunscritos**, mas decorrem da condição moral íntima. **Nosso Lar** traz detalhes topográficos do Umbral, os quais devem ser compreendidos como condensações fluídicas temporárias, sem anular o princípio de que a dor é um estado de consciência.",
+      "highlights": [
+        {
+          "title": "Sem circunscrição eterna",
+          "content": "A Doutrina Espírita refuta a ideia de **locais eternos de suplício**."
+        },
+        {
+          "title": "Ambientes fluídicos",
+          "content": "Espíritos de mesma vibração agrupam-se por **afinidade magnética**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 1 — No Umbral.",
+        "codificacao": "O Livro dos Espíritos, q. 1011–1019 — penas e gozos futuros.",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "discernimento",
+      "commonMisunderstanding": "Acreditar em uma geografia espiritual imutável.",
+      "microStory": "Pessoas que compartilham as mesmas dores e se reúnem espontaneamente no mesmo espaço.",
+      "specialElement": {
+        "type": "dialogue_with_codification",
+        "content": "A Codificação ensina que onde houver Espíritos em sofrimento, aí se manifestará o ambiente condizente com suas aflições."
+      }
+    },
+    {
+      "slideType": "Síntese",
+      "slideNumber": 3,
+      "title": "Síntese do Estudo",
+      "learningGoal": "Consolidar a compreensão do Umbral como processo pedagógico.",
+      "content": "A passagem pelo **Umbral** é uma etapa de **reajuste e conscientização**. A dor experimentada por André Luiz atua como força propulsora para o despertar da prece e da humildade, preparando-o para o socorro superior trazido por Clarêncio.",
+      "highlights": [
+        {
+          "title": "Função pedagógica",
+          "content": "O sofrimento desperta a necessidade de **renovação interior**."
+        },
+        {
+          "title": "Abertura à prece",
+          "content": "A oração sincera rompe a crosta de isolamento e **atrai o amparo**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 1 — No Umbral.",
+        "codificacao": "O Evangelho segundo o Espiritismo, cap. 27.",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "esperança",
+      "commonMisunderstanding": "Achar que a dor no plano espiritual é punitiva e sem redenção.",
+      "microStory": "O momento em que alguém esgota o orgulho e decide pedir ajuda de coração.",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "A humildade em reconhecer a própria fragilidade é o primeiro passo para receber auxílio nas crises materiais e espirituais."
+      }
+    }
+  ],
+  "reflectionQuestions": [
+    {
+      "question": "Como costumo reagir quando me sinto em um 'deserto interior' ou sem rumo claro?",
+      "focus": "Autoconhecimento"
+    },
+    {
+      "question": "De que forma posso ser um ponto de clareza e auxílio para quem está atravessando o seu próprio 'umbral' pessoal?",
+      "focus": "Aplicação prática"
+    },
+    {
+      "question": "O que muda em mim ao entender que o sofrimento não é castigo divino, mas pedagogia da alma?",
+      "focus": "Transformação moral"
+    }
+  ]
+}
