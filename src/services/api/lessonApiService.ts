@@ -5,9 +5,26 @@ import { resolveCdnUrl } from "./courseApiService";
 
 function normalizeLesson(raw: any): ILesson {
   const order = raw.order ?? raw.orderIndex ?? 1;
+  const rawReflections =
+    raw.reflectionQuestions ||
+    raw.reflections ||
+    raw.reflection_questions ||
+    raw.questions ||
+    [];
+
+  const reflectionQuestions: IReflectionQuestion[] = Array.isArray(rawReflections)
+    ? rawReflections.map((r: any, idx: number) => ({
+        id: r.id || `rq_${idx}`,
+        question: r.question || r.text || "",
+        focus: r.focus || r.tag || r.category || "Reflexão",
+        orderIndex: r.orderIndex ?? r.order ?? idx,
+      }))
+    : [];
+
   return {
     ...raw,
     order,
+    reflectionQuestions: reflectionQuestions.length > 0 ? reflectionQuestions : undefined,
     videoUrl: resolveCdnUrl(raw.videoUrl),
     audioUrl: resolveCdnUrl(raw.audioUrl),
     slides: (raw.slides || []).map((slide: any) => {
@@ -60,7 +77,21 @@ export const lessonApiService = {
     }
     const response = await apiClient.get<any>(`/lessons/${lessonId}`);
     if (!response.data) return null;
-    return normalizeLesson(response.data);
+    const lesson = normalizeLesson(response.data);
+
+    // Fallback: se não veio reflections no payload principal, busca do endpoint dedicado
+    if (!lesson.reflectionQuestions || lesson.reflectionQuestions.length === 0) {
+      try {
+        const reflections = await lessonApiService.getLessonReflections(lessonId);
+        if (reflections && reflections.length > 0) {
+          lesson.reflectionQuestions = reflections;
+        }
+      } catch (err) {
+        console.warn(`Erro ao buscar perguntas de reflexão para ${lessonId}:`, err);
+      }
+    }
+
+    return lesson;
   },
 
   /**
