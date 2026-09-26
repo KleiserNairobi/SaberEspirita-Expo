@@ -16,6 +16,24 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: 20,
       marginHorizontal: 20,
     },
+    headerTopRow: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: theme.spacing.md,
+    },
+    headerTextBlock: {
+      flex: 1,
+    },
+    shortcutButton: {
+      position: "relative",
+      width: 40,
+      height: 40,
+      borderRadius: theme.radius.full,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: `${theme.colors.primary}15`,
+    },
     greeting: {
       ...theme.text("xxxl", "semibold"),
     },
