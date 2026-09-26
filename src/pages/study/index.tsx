@@ -205,13 +205,17 @@ export function StudyScreen() {
   }
 
   function renderHeader() {
+    const firstName = user?.displayName
+      ? user.displayName.trim().split(/\s+/)[0]
+      : "Usuário";
+
     return (
       <View>
         <View style={styles.headerContainer}>
           <View style={styles.headerTopRow}>
             <View style={styles.headerTextBlock}>
               <Text style={styles.greetingText}>
-                Olá, {user?.displayName || "Usuário"}!
+                Olá, {firstName}!
               </Text>
               <Text style={styles.subtitleText}>
                 {lastAccessed
@@ -220,15 +224,14 @@ export function StudyScreen() {
               </Text>
             </View>
 
-            <View style={{ flexDirection: "row", gap: 12 }}>
+            <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
               <TouchableOpacity
                 style={styles.notificationButton}
-                onPress={handleOpenNotifications}
+                onPress={() => navigation.navigate("ScientificChat", { origin: "direct" })}
                 activeOpacity={0.8}
-                accessibilityLabel="Abrir Notificações"
+                accessibilityLabel="Pergunte ao Sr. Allan"
               >
-                <Bell size={20} color={theme.colors.primary} />
-                {hasUnreadNotifications && <View style={styles.notificationDot} />}
+                <Feather size={20} color={theme.colors.primary} />
               </TouchableOpacity>
 
               {!isGuest && communityProgress && (
@@ -249,6 +252,16 @@ export function StudyScreen() {
                   </View>
                 </TouchableOpacity>
               )}
+
+              <TouchableOpacity
+                style={styles.notificationButton}
+                onPress={handleOpenNotifications}
+                activeOpacity={0.8}
+                accessibilityLabel="Abrir Notificações"
+              >
+                <Bell size={20} color={theme.colors.primary} />
+                {hasUnreadNotifications && <View style={styles.notificationDot} />}
+              </TouchableOpacity>
             </View>
           </View>
         </View>

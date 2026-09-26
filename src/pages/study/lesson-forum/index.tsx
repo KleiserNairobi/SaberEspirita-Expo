@@ -66,16 +66,19 @@ export function LessonForumScreen({ route, navigation }: Props) {
   const { user, isGuest } = useAuthStore();
   const { mutate: touchAccess } = useTouchCourseAccess();
   const uid = user?.uid || null;
-
   const { courseId, lessonId, lessonTitle, anchorQuestion, focusTag } = route.params;
-
-  console.log(`[LessonForumScreen LOG] courseId="${courseId}", lessonId="${lessonId}", isGuest=${isGuest}, uid="${uid}"`);
-
   const { data: lesson } = useLesson(courseId, lessonId);
 
   const displayAnchorQuestion =
-    anchorQuestion || lesson?.forumPrompt || "Reflexão da Aula";
-  const displayFocusTag = focusTag || lesson?.forumFocusTag || "Reflexão";
+    anchorQuestion ||
+    lesson?.forumPrompt ||
+    lesson?.reflectionQuestions?.[0]?.question ||
+    "Reflexão da Aula";
+  const displayFocusTag =
+    focusTag ||
+    lesson?.forumFocusTag ||
+    lesson?.reflectionQuestions?.[0]?.focus ||
+    "Reflexão";
 
   useEffect(() => {
     if (lesson && lesson.forumEnabled === false) {
@@ -183,7 +186,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
   const comments = useMemo(() => {
     const pages = data?.pages ?? [];
     return pages
-      .flatMap((p) => (Array.isArray(p) ? p : p?.comments ?? []))
+      .flatMap((p) => (Array.isArray(p) ? p : (p?.comments ?? [])))
       .filter(
         (item): item is ForumComment =>
           !!item && typeof item === "object" && typeof item.id === "string"
@@ -312,7 +315,7 @@ export function LessonForumScreen({ route, navigation }: Props) {
     if (content.length === 0) return;
     if (content.length > 600) return;
 
-    const userName = user.displayName || "Estudante";
+    const userName = isAnonymous ? "Estudante Anônimo" : user.displayName || "Estudante";
     const userAvatar = null;
     const level = communityProgress?.communityLevelId ?? "sementeiro";
 

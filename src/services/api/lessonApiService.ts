@@ -4,9 +4,19 @@ import { ILesson, IReflectionQuestion, ISupplementaryMaterial } from "@/types/co
 
 function normalizeLesson(raw: any): ILesson {
   const order = raw.order ?? raw.orderIndex ?? 1;
+  const reflectionQuestions =
+    raw.reflectionQuestions ||
+    (raw.reflections || []).map((r: any) => ({
+      question: r.question,
+      focus: r.focus,
+    }));
+
   return {
     ...raw,
     order,
+    reflectionQuestions,
+    forumPrompt: raw.forumPrompt || reflectionQuestions?.[0]?.question || null,
+    forumFocusTag: raw.forumFocusTag || reflectionQuestions?.[0]?.focus || null,
     videoUrl: resolveCdnUrl(raw.videoUrl),
     audioUrl: resolveCdnUrl(raw.audioUrl),
     slides: (raw.slides || []).map((slide: any) => {
