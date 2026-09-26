@@ -99,6 +99,26 @@ function renderItemText(item: NotificationItem, styles: any) {
   }
 
   // forum_new_comment_thread
+  const isAnonymous =
+    !item.fromUserName ||
+    fromUser.toLowerCase().includes("anônimo") ||
+    fromUser.toLowerCase().includes("anonimo");
+
+  if (isAnonymous) {
+    if (lessonName) {
+      return (
+        <Text style={styles.rowSubtitle}>
+          <Text style={styles.boldText}>Um estudante anônimo</Text> comentou na aula <Text style={styles.boldText}>{lessonName}</Text>.
+        </Text>
+      );
+    }
+    return (
+      <Text style={styles.rowSubtitle}>
+        <Text style={styles.boldText}>Um estudante anônimo</Text> comentou em uma aula que você participou.
+      </Text>
+    );
+  }
+
   if (lessonName) {
     return (
       <Text style={styles.rowSubtitle}>
@@ -180,8 +200,14 @@ export function NotificationsScreen({ navigation }: Props) {
           return;
         }
 
-        const anchorQuestion = lesson.reflectionQuestions?.[0]?.question ?? "";
-        const focusTag = lesson.reflectionQuestions?.[0]?.focus ?? "Autoconhecimento";
+        const anchorQuestion =
+          lesson.forumPrompt ||
+          lesson.reflectionQuestions?.[0]?.question ||
+          "";
+        const focusTag =
+          lesson.forumFocusTag ||
+          lesson.reflectionQuestions?.[0]?.focus ||
+          "Autoconhecimento";
 
         navigation.navigate("LessonForum", {
           courseId: lesson.courseId,

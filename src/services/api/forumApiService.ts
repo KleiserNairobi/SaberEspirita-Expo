@@ -1,5 +1,6 @@
-import apiClient from "./apiClient";
 import { CommunityProgress, ForumComment, ForumReactionType } from "@/types/forum";
+
+import apiClient from "./apiClient";
 
 export interface CreateCommentPayload {
   content: string;
@@ -42,21 +43,19 @@ export const forumApiService = {
   ): Promise<ForumCommentsResponse> {
     if (!lessonId) return { comments: [], nextPage: null };
     const pageNum = typeof page === "number" && !isNaN(page) ? Math.max(0, page) : 0;
-    const response = await apiClient.get<any>(
-      `/forum/lessons/${lessonId}/comments`,
-      { params: { page: pageNum, size: limit, limit } }
-    );
+    const response = await apiClient.get<any>(`/forum/lessons/${lessonId}/comments`, {
+      params: { page: pageNum, size: limit, limit },
+    });
     const data = response.data;
-    console.log(`[forumApiService.getComments] lessonId="${lessonId}", page=${pageNum}, status=${response.status}`, "data:", data);
     if (!data) return { comments: [], nextPage: null };
 
     const rawComments = Array.isArray(data)
       ? data
       : Array.isArray(data.content)
-      ? data.content
-      : Array.isArray(data.comments)
-      ? data.comments
-      : [];
+        ? data.content
+        : Array.isArray(data.comments)
+          ? data.comments
+          : [];
 
     const comments: ForumComment[] = rawComments.map((item: any) => ({
       ...item,
@@ -72,8 +71,8 @@ export const forumApiService = {
     const nextPage = isLast
       ? null
       : data.number !== undefined
-      ? data.number + 1
-      : page + 1;
+        ? data.number + 1
+        : page + 1;
 
     return {
       comments,
@@ -115,10 +114,10 @@ export const forumApiService = {
     commentId: string,
     reactionType: ForumReactionType
   ): Promise<Record<ForumReactionType, number>> {
-    const response = await apiClient.post<any>(
-      `/forum/comments/${commentId}/reactions`,
-      { reactionType, type: reactionType }
-    );
+    const response = await apiClient.post<any>(`/forum/comments/${commentId}/reactions`, {
+      reactionType,
+      type: reactionType,
+    });
     if (response.data && typeof response.data === "object") {
       if (response.data.reactions) {
         return normalizeReactions(response.data.reactions);
@@ -148,7 +147,9 @@ export const forumApiService = {
    * Obtém o progresso do usuário no nível da comunidade.
    */
   async getCommunityProgress(): Promise<CommunityProgress | null> {
-    const response = await apiClient.get<CommunityProgress>("/forum/community-progress/me");
+    const response = await apiClient.get<CommunityProgress>(
+      "/forum/community-progress/me"
+    );
     return response.data || null;
   },
 

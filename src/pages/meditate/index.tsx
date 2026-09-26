@@ -124,8 +124,21 @@ export default function MeditateScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.greeting}>Medite</Text>
-          <Text style={styles.subtitle}>Encontre paz e orientação interior</Text>
+          <View style={styles.headerTopRow}>
+            <View style={styles.headerTextBlock}>
+              <Text style={styles.greeting}>Medite</Text>
+              <Text style={styles.subtitle}>Encontre paz e orientação interior</Text>
+            </View>
+
+            <TouchableOpacity
+              style={styles.shortcutButton}
+              onPress={() => navigation.navigate("EmotionalChat", { origin: "medite" })}
+              activeOpacity={0.8}
+              accessibilityLabel="Converse com o Guia"
+            >
+              <Compass size={20} color={theme.colors.primary} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Seção: Pensamento do Dia */}

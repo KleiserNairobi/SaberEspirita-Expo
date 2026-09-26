@@ -589,6 +589,14 @@ export function CourseCurriculumScreen() {
         courseId,
         lessonId: lesson.id,
         lessonTitle: lesson.title,
+        anchorQuestion:
+          lesson.forumPrompt ||
+          lesson.reflectionQuestions?.[0]?.question ||
+          undefined,
+        focusTag:
+          lesson.forumFocusTag ||
+          lesson.reflectionQuestions?.[0]?.focus ||
+          undefined,
       });
     };
 

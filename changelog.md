@@ -2,6 +2,27 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.22-ota.4] - 2026-09-26 (Hot-Update)
+
+### Adicionado
+
+- **Atalho para o Chat "Pergunte ao Sr. Allan" no Topo da Home Estude (`StudyScreen`)**:
+  - Adicionado botão circular de ação no cabeçalho com o ícone `Feather` (Pena), permitindo acesso instantâneo ao assistente de estudos.
+  - Ordem otimizada de UX: `[Chat Sr. Allan] [Jornada / Nível] [Notificações]`, mantendo o sininho no canto externo como convenção de plataforma.
+- **Atalho para o Chat "Converse com o Guia" no Topo da Home Medite (`MeditateScreen`)**:
+  - Adicionado botão de atalho circular no cabeçalho com o ícone `Compass` (Bússola) para abertura rápida do chat de acolhimento emocional.
+
+### Corrigido
+
+- **Pergunta de Reflexão no Fórum de Discussão (`LessonForumScreen`, `CourseCurriculumScreen`, `lessonApiService`)**:
+  - Corrigida a exibição da pergunta âncora de autoconhecimento no cabeçalho do fórum.
+  - Implementada a normalização de perguntas de reflexão (`reflections`/`reflectionQuestions`) e fallback robusto para a 1ª pergunta da aula.
+  - Repasse automático de `anchorQuestion` e `focusTag` ao navegar para o fórum a partir do currículo e do player.
+- **Privacidade e Anonimato nas Notificações (`NotificationsScreen`, `LessonForumScreen`)**:
+  - Blindada a privacidade de postagens anônimas no fórum: notificações agora exibem *"Um estudante anônimo comentou na aula..."*, evitando que nomes reais sejam expostos nas notificações de outros usuários.
+- **Formatação do Primeiro Nome na Saudação da Home Estude (`StudyScreen`)**:
+  - Ajustada a saudação para exibir apenas o primeiro nome do estudante (*"Olá, {firstName}!"*), mesmo para usuários cadastrados com nomes compostos.
+
 ## [2.0.22-ota.3] - 2026-09-25 (Hot-Update)
 
 ### Corrigido

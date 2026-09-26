@@ -465,8 +465,12 @@ export function LessonPlayerScreen() {
       return;
     }
 
-    const anchorQuestion = lesson.reflectionQuestions?.[0]?.question ?? "";
-    const focusTag = lesson.reflectionQuestions?.[0]?.focus ?? "Autoconhecimento";
+    const anchorQuestion =
+      lesson.forumPrompt || lesson.reflectionQuestions?.[0]?.question || "";
+    const focusTag =
+      lesson.forumFocusTag ||
+      lesson.reflectionQuestions?.[0]?.focus ||
+      "Autoconhecimento";
 
     navigation.navigate("LessonForum", {
       courseId: lesson.courseId || courseId,

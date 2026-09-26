@@ -25,6 +25,8 @@ function normalizeLesson(raw: any): ILesson {
     ...raw,
     order,
     reflectionQuestions: reflectionQuestions.length > 0 ? reflectionQuestions : undefined,
+    forumPrompt: raw.forumPrompt || reflectionQuestions?.[0]?.question || null,
+    forumFocusTag: raw.forumFocusTag || reflectionQuestions?.[0]?.focus || null,
     videoUrl: resolveCdnUrl(raw.videoUrl),
     audioUrl: resolveCdnUrl(raw.audioUrl),
     slides: (raw.slides || []).map((slide: any) => {
