@@ -19,7 +19,6 @@ import {
   CheckCircle2,
   Clock,
   FileText,
-  Lock,
   MessageCircle,
   PlayCircle,
   Star,
@@ -30,14 +29,12 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { ContentSheet } from "@/components/ContentSheet";
 import { HeroHeader } from "@/components/HeroHeader";
-import { PremiumContentNoticeModal } from "@/components/PremiumContentNoticeModal";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
 import { useCourse, useCourseMaterials } from "@/hooks/queries/useCourses";
 import { useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
-import { canAccessLesson, isLessonFreeTrial } from "@/utils/courseAccess";
 import { prefetchImages } from "@/utils/imagePrefetch";
 
 import { CourseMaterialsTab } from "./components/CourseMaterialsTab";
@@ -77,22 +74,6 @@ export function CourseDetailsScreen() {
   const isEnrolled = !!progress; // Se tem objeto de progresso, está matriculado
 
   const [activeTab, setActiveTab] = useState<"about" | "lessons" | "materials">("about");
-  const premiumModalRef = useRef<BottomSheetModal>(null);
-  const [premiumModalConfig, setPremiumModalConfig] = useState<{
-    itemName: string;
-    type: "lesson" | "material" | "course";
-  }>({
-    itemName: "",
-    type: "material",
-  });
-
-  function handleOpenPremiumModal(
-    itemName: string,
-    type: "lesson" | "material" | "course" = "material"
-  ) {
-    setPremiumModalConfig({ itemName, type });
-    premiumModalRef.current?.present();
-  }
 
   async function handleShare() {
     if (!course) return;
@@ -203,15 +184,6 @@ export function CourseDetailsScreen() {
 
   function handleStartCourse() {
     navigation.navigate("CourseCurriculum", { courseId, autoEnroll: true });
-  }
-
-  function handleStartTrialLesson() {
-    const firstLesson = lessons[0];
-    if (firstLesson) {
-      navigation.navigate("LessonPlayer", { courseId, lessonId: firstLesson.id });
-    } else {
-      handleStartCourse();
-    }
   }
 
   if (loading) {
@@ -467,98 +439,19 @@ export function CourseDetailsScreen() {
           </View>
         )}
 
-        {/* ABA AULAS */}
+        {/* ABA AULAS (CARDÁPIO DE LEITURA) */}
         {activeTab === "lessons" && (
           <View style={styles.objectivesList}>
-            {lessons.map((lesson, index) => {
-              const isLocked = !canAccessLesson(lesson, course, false);
-              const isTrial = isLessonFreeTrial(lesson, course);
-
-              return (
-                <TouchableOpacity
-                  key={`${lesson.id}_${index}`}
-                  style={[styles.objectiveItem, { alignItems: "center" }]}
-                  onPress={() => {
-                    if (isLocked) {
-                      handleOpenPremiumModal(lesson.title, "lesson");
-                    } else {
-                      navigation.navigate("LessonPlayer", {
-                        courseId,
-                        lessonId: lesson.id,
-                      });
-                    }
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <View style={styles.objectiveIcon}>
-                    {isLocked ? (
-                      <Lock size={18} color={theme.colors.warning} />
-                    ) : (
-                      <PlayCircle size={18} color={theme.colors.primary} />
-                    )}
-                  </View>
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Text
-                      style={[
-                        styles.objectiveText,
-                        { flex: 1 },
-                        isLocked && { color: theme.colors.textSecondary },
-                      ]}
-                      numberOfLines={2}
-                    >
-                      {index + 1}. {lesson.title} ({lesson.durationMinutes} min)
-                    </Text>
-                    {isTrial && (
-                      <View
-                        style={{
-                          backgroundColor: `${theme.colors.primary}20`,
-                          paddingHorizontal: 8,
-                          paddingVertical: 2,
-                          borderRadius: 4,
-                          marginLeft: 6,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            ...theme.text("xs", "semibold"),
-                            color: theme.colors.primary,
-                          }}
-                        >
-                          Degustação
-                        </Text>
-                      </View>
-                    )}
-                    {isLocked && (
-                      <View
-                        style={{
-                          backgroundColor: `${theme.colors.warning}20`,
-                          paddingHorizontal: 8,
-                          paddingVertical: 2,
-                          borderRadius: 4,
-                          marginLeft: 6,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            ...theme.text("xs", "semibold"),
-                            color: theme.colors.warning,
-                          }}
-                        >
-                          Premium
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
+            {lessons.map((lesson, index) => (
+              <View key={`${lesson.id}_${index}`} style={styles.objectiveItem}>
+                <View style={styles.objectiveIcon}>
+                  <PlayCircle size={18} color={theme.colors.primary} />
+                </View>
+                <Text style={styles.objectiveText}>
+                  {index + 1}. {lesson.title} ({lesson.durationMinutes} min)
+                </Text>
+              </View>
+            ))}
             {lessons.length === 0 && (
               <Text
                 style={{
@@ -578,7 +471,6 @@ export function CourseDetailsScreen() {
           <CourseMaterialsTab
             courseId={courseId}
             interactive={false}
-            onOpenPremiumModal={handleOpenPremiumModal}
           />
         )}
       </ContentSheet>
@@ -607,10 +499,6 @@ export function CourseDetailsScreen() {
               <Text style={styles.primaryButtonText}>IR PARA NOVA EDIÇÃO</Text>
             </TouchableOpacity>
           </View>
-        ) : course.isPremium ? (
-          <TouchableOpacity style={styles.primaryButton} onPress={handleStartTrialLesson}>
-            <Text style={styles.primaryButtonText}>ASSISTIR AULA DEMONSTRATIVA</Text>
-          </TouchableOpacity>
         ) : (
           <TouchableOpacity style={styles.primaryButton} onPress={handleStartCourse}>
             <Text style={styles.primaryButtonText}>INICIAR SÉRIE</Text>
@@ -619,11 +507,6 @@ export function CourseDetailsScreen() {
       </View>
 
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
-      <PremiumContentNoticeModal
-        ref={premiumModalRef}
-        type={premiumModalConfig.type}
-        itemName={premiumModalConfig.itemName}
-      />
     </View>
   );
 }
