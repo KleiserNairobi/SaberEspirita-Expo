@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-import { ActivityIndicator, Image, Platform, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  InteractionManager,
+  StyleSheet,
+  View,
+} from "react-native";
 
 import { Allura_400Regular } from "@expo-google-fonts/allura";
 import {
@@ -110,7 +116,6 @@ function App() {
       try {
         await setupTrackPlayer();
         if (fontsLoaded) {
-          await new Promise((resolve) => setTimeout(resolve, 500));
           setAppIsReady(true);
           // Ocultar splash screen após app estar pronto
           await SplashScreen.hideAsync();
@@ -122,55 +127,43 @@ function App() {
     prepare();
   }, [fontsLoaded]);
 
-  // Inicializar OneSignal
+  // Inicializar OneSignal em background após primeiro render
   useEffect(() => {
     if (appIsReady) {
-      // App ID unificado do OneSignal (iOS e Android)
-      const oneSignalAppId = "3c6a4e60-74c6-430f-8800-6917385cb9b8";
+      const task = InteractionManager.runAfterInteractions(() => {
+        try {
+          // App ID unificado do OneSignal (iOS e Android)
+          const oneSignalAppId = "3c6a4e60-74c6-430f-8800-6917385cb9b8";
 
-      // Configurar log level para debug
-      OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+          // Configurar log level apenas em desenvolvimento
+          OneSignal.Debug.setLogLevel(__DEV__ ? LogLevel.Verbose : LogLevel.None);
 
-      // Inicializar OneSignal
-      OneSignal.initialize(oneSignalAppId);
+          // Inicializar OneSignal
+          OneSignal.initialize(oneSignalAppId);
 
-      // Solicitar permissões de notificação
-      OneSignal.Notifications.requestPermission(true);
+          // Solicitar permissões de notificação
+          OneSignal.Notifications.requestPermission(true);
 
-      // Sincronizar usuário e tags de preferências
-      try {
-        const { useAuthStore } = require("./src/stores/authStore");
-        const { usePreferencesStore } = require("./src/stores/preferencesStore");
+          // Sincronizar usuário e tags de preferências
+          const { useAuthStore } = require("./src/stores/authStore");
+          const { usePreferencesStore } = require("./src/stores/preferencesStore");
 
-        const authState = useAuthStore.getState();
-        if (authState.user?.uid && !authState.isGuest) {
-          OneSignal.login(authState.user.uid);
-          console.log(
-            "OneSignal: Usuário identificado com External ID:",
-            authState.user.uid
-          );
+          const authState = useAuthStore.getState();
+          if (authState.user?.uid && !authState.isGuest) {
+            OneSignal.login(authState.user.uid);
+          }
+
+          const preferences = usePreferencesStore.getState();
+          OneSignal.User.addTags({
+            app_updates: preferences.appUpdateNotifications.toString(),
+            course_reminders: preferences.courseNotifications.toString(),
+          });
+        } catch (error) {
+          console.error("Erro ao sincronizar OneSignal na inicialização:", error);
         }
+      });
 
-        const preferences = usePreferencesStore.getState();
-        OneSignal.User.addTags({
-          app_updates: preferences.appUpdateNotifications.toString(),
-          course_reminders: preferences.courseNotifications.toString(),
-        });
-        console.log("OneSignal: Tags iniciais sincronizadas");
-
-        // Log de diagnóstico da inscrição Push
-        OneSignal.User.pushSubscription.getIdAsync().then((id) => {
-          console.log(
-            "OneSignal: Push Subscription ID:",
-            id || "Aguardando token FCM/APNs..."
-          );
-        });
-        OneSignal.User.pushSubscription.getOptedInAsync().then((optedIn) => {
-          console.log("OneSignal: Push Subscription OptedIn:", optedIn);
-        });
-      } catch (error) {
-        console.error("Erro ao sincronizar OneSignal na inicialização:", error);
-      }
+      return () => task.cancel();
     }
   }, [appIsReady]);
 

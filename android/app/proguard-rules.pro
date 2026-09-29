@@ -12,3 +12,10 @@
 -keep class com.facebook.react.turbomodule.** { *; }
 
 # Add any project specific keep options here:
+
+# @generated begin expo-build-properties - expo prebuild (DO NOT MODIFY)
+-keep public class com.horcrux.svg.** { *; }
+-keep class com.facebook.react.turbomodule.** { *; }
+-keep class com.margelo.nitro.** { *; }
+-keep class com.mrousavy.mmkv.** { *; }
+# @generated end expo-build-properties

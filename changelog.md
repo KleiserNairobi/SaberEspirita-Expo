@@ -2,6 +2,20 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.23] - 2026-09-29 (Build 60)
+
+### Otimizações e Conformidade Android (Google Play / Android Vitals)
+
+- **Otimização de Código DEX e Ofuscação R8 (`app.json`, `expo-build-properties`)**:
+  - Habilitados `enableProguardInReleaseBuilds` e `enableShrinkResourcesInReleaseBuilds` para builds de produção (AAB).
+  - Incluídas regras de preservação ProGuard (`extraProguardRules`) para TurboModules, MMKV, Nitro Modules e SVGs, reduzindo o tamanho do binário e superando as exigências do Google Play Console.
+- **Redução da Taxa de ANR e Otimização do Ciclo de Boot (`App`)**:
+  - Removido o delay artificial síncrono de 500ms no carregamento inicial, liberando a interface imediatamente após a montagem das fontes.
+  - Movida a inicialização e sincronização do OneSignal para `InteractionManager.runAfterInteractions`, executando em background sem bloquear a Main Thread.
+  - Desativado o `LogLevel.Verbose` do OneSignal em ambiente de produção para evitar gargalos de I/O de disco no Android.
+- **Consolidação de Recursos em Base Nativa**:
+  - Integrados na compilação nativa os atalhos de chat do Sr. Allan e Guia Espiritual nos cabeçalhos das abas Estude e Medite, além dos aprimoramentos de privacidade em fóruns e certificados digitais emitidos nos últimos hot-updates (OTAs 1 a 4).
+
 ## [2.0.22-ota.4] - 2026-09-26 (Hot-Update)
 
 ### Adicionado

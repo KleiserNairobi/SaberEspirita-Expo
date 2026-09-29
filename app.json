@@ -3,12 +3,12 @@
     "name": "Saber Espírita",
     "slug": "saber-espirita",
     "scheme": "saber-espirita",
-    "version": "2.0.22",
+    "version": "2.0.23",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/images/icon.png",
     "ios": {
-      "buildNumber": "59",
+      "buildNumber": "60",
       "supportsTablet": false,
       "bundleIdentifier": "app.saberespirita",
       "infoPlist": {
@@ -22,7 +22,7 @@
       "googleServicesFile": "./dev/configs/GoogleService-Info.plist"
     },
     "android": {
-      "versionCode": 59,
+      "versionCode": 60,
       "predictiveBackGestureEnabled": false,
       "package": "app.saberespirita",
       "softwareKeyboardLayoutMode": "pan",
@@ -64,7 +64,10 @@
             "usesGoogleServices": true,
             "compileSdkVersion": 36,
             "targetSdkVersion": 36,
-            "buildToolsVersion": "36.0.0"
+            "buildToolsVersion": "36.0.0",
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "extraProguardRules": "-keep public class com.horcrux.svg.** { *; }\n-keep class com.facebook.react.turbomodule.** { *; }\n-keep class com.margelo.nitro.** { *; }\n-keep class com.mrousavy.mmkv.** { *; }"
           }
         }
       ],
