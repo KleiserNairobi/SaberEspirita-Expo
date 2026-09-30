@@ -8,7 +8,7 @@ import { useRoute, RouteProp } from "@react-navigation/native";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useDeepSeekChat } from "@/hooks/useDeepSeekChat";
-import { Message, ChatType } from "@/types/chat";
+import { Message, ChatType, ChatConversationDetail } from "@/types/chat";
 import { AppStackParamList } from "@/routers/types";
 
 import { ChatHeader } from "../components/ChatHeader";
@@ -16,6 +16,8 @@ import { MessageBubble } from "../components/MessageBubble";
 import { ChatInput } from "../components/ChatInput";
 import { TypingIndicator } from "../components/TypingIndicator";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { ChatHistoryBottomSheet } from "@/components/chat/ChatHistoryBottomSheet";
+import { mapSavedMessagesToUiMessages } from "@/hooks/useChatHistory";
 
 import { createStyles } from "../components/styles";
 
@@ -23,13 +25,14 @@ import { useChatLimits, useIncrementChatUsage } from "@/hooks/queries/useChatLim
 import { ChatLimitIndicator } from "@/components/ChatLimitIndicator";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
-import { useAuth } from "@/stores/authStore";
+import { useAuth, useIsPremium } from "@/stores/authStore";
 import { statsApiService } from "@/services/api/statsApiService";
 
 type RouteParams = RouteProp<AppStackParamList, "ScientificChat">;
 
 export function ScientificChatScreen() {
   const { user } = useAuth();
+  const isPremium = useIsPremium();
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const flatListRef = useRef<FlatList>(null);
@@ -38,13 +41,28 @@ export function ScientificChatScreen() {
 
   const { initialMessage, origin, lessonId } = route.params || {};
 
-  const { messages, isLoading, error, sendMessage, clearChat } = useDeepSeekChat(
-    ChatType.SCIENTIFIC
-  );
+  const {
+    messages,
+    isLoading,
+    error,
+    conversationId,
+    sendMessage,
+    clearChat,
+    loadConversationSession,
+  } = useDeepSeekChat(ChatType.SCIENTIFIC);
 
   const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
+  const historyModalRef = React.useRef<BottomSheetModal>(null);
   const [bottomSheetConfig, setBottomSheetConfig] =
     React.useState<BottomSheetMessageConfig | null>(null);
+
+  const handleSelectConversation = useCallback(
+    (detail: ChatConversationDetail) => {
+      const uiMessages = mapSavedMessagesToUiMessages(detail);
+      loadConversationSession?.(detail.id, uiMessages);
+    },
+    [loadConversationSession]
+  );
 
   const { data: limits } = useChatLimits("scientific");
   const incrementUsage = useIncrementChatUsage();
@@ -121,7 +139,9 @@ export function ScientificChatScreen() {
   function renderEmpty() {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyIcon}>📚</Text>
+        <View style={styles.emptyIconContainer}>
+          <BookOpen size={48} color={theme.colors.primary} strokeWidth={1.5} />
+        </View>
         <Text style={styles.emptyTitle}>Bem-vindo, estudante</Text>
         <Text style={styles.emptyText}>
           Estou aqui para esclarecer suas dúvidas doutrinárias sobre o Espiritismo. Como posso ajudá-lo?
@@ -177,6 +197,7 @@ export function ScientificChatScreen() {
         <ChatHeader
           title="Pergunte ao Sr. Allan"
           subtitle="Esclarecimentos doutrinários"
+          onOpenHistory={isPremium ? () => historyModalRef.current?.present() : undefined}
           onClear={messages.length > 0 ? clearChat : undefined}
         />
 
@@ -220,6 +241,17 @@ export function ScientificChatScreen() {
 
         {/* Modal de Limite Atingido (BottomSheet) */}
         <BottomSheetMessage ref={bottomSheetModalRef} config={bottomSheetConfig} />
+
+        {/* Gaveta de Histórico de Conversas (Exclusivo Premium/Admin) */}
+        {isPremium && (
+          <ChatHistoryBottomSheet
+            ref={historyModalRef}
+            chatType="scientific"
+            currentConversationId={conversationId}
+            onSelectConversation={handleSelectConversation}
+            onNewChat={clearChat}
+          />
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

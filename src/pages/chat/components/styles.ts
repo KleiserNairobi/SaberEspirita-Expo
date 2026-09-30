@@ -21,9 +21,10 @@ export const createStyles = (theme: ITheme) =>
       justifyContent: "center",
       paddingHorizontal: 32,
     },
-    emptyIcon: {
-      fontSize: 64,
+    emptyIconContainer: {
       marginBottom: 16,
+      alignItems: "center",
+      justifyContent: "center",
     },
     emptyTitle: {
       ...theme.text("xl", "semibold"),

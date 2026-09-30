@@ -8,7 +8,7 @@ import { Compass } from "lucide-react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useDeepSeekChat } from "@/hooks/useDeepSeekChat";
-import { Message, ChatType } from "@/types/chat";
+import { Message, ChatType, ChatConversationDetail } from "@/types/chat";
 
 import { ChatHeader } from "../components/ChatHeader";
 import { MessageBubble } from "../components/MessageBubble";
@@ -17,32 +17,50 @@ import { TypingIndicator } from "../components/TypingIndicator";
 import { createStyles } from "../components/styles";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { ChatHistoryBottomSheet } from "@/components/chat/ChatHistoryBottomSheet";
+import { mapSavedMessagesToUiMessages } from "@/hooks/useChatHistory";
 
 import { useChatLimits, useIncrementChatUsage } from "@/hooks/queries/useChatLimits";
 import { ChatLimitIndicator } from "@/components/ChatLimitIndicator";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
-import { useAuth } from "@/stores/authStore";
+import { useAuth, useIsPremium } from "@/stores/authStore";
 import { statsApiService } from "@/services/api/statsApiService";
 
 export function EmotionalChatScreen() {
   const { user } = useAuth();
+  const isPremium = useIsPremium();
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const flatListRef = useRef<FlatList>(null);
   const queryClient = useQueryClient();
 
-  const { messages, isLoading, error, sendMessage, clearChat } = useDeepSeekChat(
-    ChatType.EMOTIONAL
-  );
+  const {
+    messages,
+    isLoading,
+    error,
+    conversationId,
+    sendMessage,
+    clearChat,
+    loadConversationSession,
+  } = useDeepSeekChat(ChatType.EMOTIONAL);
 
   const route = useRoute<any>();
   const initialMessage = route.params?.initialMessage;
   const origin = route.params?.origin;
 
   const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
+  const historyModalRef = React.useRef<BottomSheetModal>(null);
   const [bottomSheetConfig, setBottomSheetConfig] =
     React.useState<BottomSheetMessageConfig | null>(null);
+
+  const handleSelectConversation = useCallback(
+    (detail: ChatConversationDetail) => {
+      const uiMessages = mapSavedMessagesToUiMessages(detail);
+      loadConversationSession?.(detail.id, uiMessages);
+    },
+    [loadConversationSession]
+  );
 
   const { data: limits } = useChatLimits("emotional");
   const incrementUsage = useIncrementChatUsage();
@@ -118,7 +136,9 @@ export function EmotionalChatScreen() {
   function renderEmpty() {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyIcon}>🕊️</Text>
+        <View style={styles.emptyIconContainer}>
+          <Compass size={48} color={theme.colors.primary} strokeWidth={1.5} />
+        </View>
         <Text style={styles.emptyTitle}>Bem-vindo ao Guia</Text>
         <Text style={styles.emptyText}>
           Estou aqui para oferecer apoio emocional e consolo espiritual. Como posso ajudar seu coração hoje?
@@ -174,6 +194,7 @@ export function EmotionalChatScreen() {
         <ChatHeader
           title="Conversando com o Guia"
           subtitle="Apoio emocional e consolo"
+          onOpenHistory={isPremium ? () => historyModalRef.current?.present() : undefined}
           onClear={messages.length > 0 ? clearChat : undefined}
         />
 
@@ -213,6 +234,17 @@ export function EmotionalChatScreen() {
 
         {/* Modal de Limite Atingido (BottomSheet) */}
         <BottomSheetMessage ref={bottomSheetModalRef} config={bottomSheetConfig} />
+
+        {/* Gaveta de Histórico de Conversas (Exclusivo Premium/Admin) */}
+        {isPremium && (
+          <ChatHistoryBottomSheet
+            ref={historyModalRef}
+            chatType="emotional"
+            currentConversationId={conversationId}
+            onSelectConversation={handleSelectConversation}
+            onNewChat={clearChat}
+          />
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

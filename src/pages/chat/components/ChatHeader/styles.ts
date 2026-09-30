@@ -34,14 +34,23 @@ export const createStyles = (theme: ITheme) =>
       color: theme.colors.textSecondary,
       marginTop: 2,
     },
-    clearButton: {
+    actionsContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
       marginLeft: 12,
     },
+    actionButton: {
+      alignItems: "center",
+      justifyContent: "center",
+    },
     iconContainer: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: `${theme.colors.primary}15`,
+      width: 38,
+      height: 38,
+      borderRadius: 19,
+      backgroundColor: `${theme.colors.primary}12`,
+      borderWidth: 1,
+      borderColor: `${theme.colors.primary}25`,
       alignItems: "center",
       justifyContent: "center",
     },

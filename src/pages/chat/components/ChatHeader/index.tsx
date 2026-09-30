@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { ArrowLeft, Trash2 } from "lucide-react-native";
+import { ArrowLeft, Clock, Plus, Trash2 } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -10,9 +10,15 @@ interface ChatHeaderProps {
   title: string;
   subtitle: string;
   onClear?: () => void;
+  onOpenHistory?: () => void;
 }
 
-export function ChatHeader({ title, subtitle, onClear }: ChatHeaderProps) {
+export function ChatHeader({
+  title,
+  subtitle,
+  onClear,
+  onOpenHistory,
+}: ChatHeaderProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation();
@@ -32,17 +38,32 @@ export function ChatHeader({ title, subtitle, onClear }: ChatHeaderProps) {
         <Text style={styles.subtitle}>{subtitle}</Text>
       </View>
 
-      {onClear && (
-        <TouchableOpacity
-          style={styles.clearButton}
-          onPress={onClear}
-          activeOpacity={0.7}
-        >
-          <View style={styles.iconContainer}>
-            <Trash2 size={18} color={theme.colors.primary} />
-          </View>
-        </TouchableOpacity>
-      )}
+      <View style={styles.actionsContainer}>
+        {onOpenHistory && (
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={onOpenHistory}
+            activeOpacity={0.7}
+          >
+            <View style={styles.iconContainer}>
+              <Clock size={18} color={theme.colors.primary} />
+            </View>
+          </TouchableOpacity>
+        )}
+
+        {onClear && (
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={onClear}
+            activeOpacity={0.7}
+          >
+            <View style={styles.iconContainer}>
+              <Plus size={18} color={theme.colors.primary} />
+            </View>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 }
+

@@ -30,9 +30,9 @@ export function MessageBubble({ message, shareTitle }: MessageBubbleProps) {
 
   async function handleShare() {
     try {
-      const title = shareTitle || "Resposta do Sr. Allan";
+      const title = shareTitle || "Resposta do Assistente";
       await Share.share({
-        message: `📚 ${title}:\n\n${message.text}\n\n---${SHARE_FOOTER}`,
+        message: `${title}:\n\n${message.text}\n\n---${SHARE_FOOTER}`,
       });
     } catch (error) {
       Alert.alert("Erro", "Não foi possível compartilhar a mensagem");

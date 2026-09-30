@@ -66,6 +66,7 @@ export interface UseChatReturn {
   conversationId?: string | null;
   sendMessage: (message: string) => Promise<void>;
   clearChat: () => void;
+  loadConversationSession?: (conversationId: string, messages: Message[]) => void;
 }
 
 /**
