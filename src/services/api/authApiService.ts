@@ -25,6 +25,7 @@ export interface UserProfileDTO {
   photoURL?: string | null;
   photoUrl?: string | null;
   role?: string;
+  isPremium?: boolean;
   level?: number;
   totalAllTime?: number;
   totalThisWeek?: number;

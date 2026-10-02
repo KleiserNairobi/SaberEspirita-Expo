@@ -1,0 +1,185 @@
+import { StyleSheet } from "react-native";
+import { ITheme } from "@/configs/theme/types";
+
+export const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingHorizontal: theme.spacing.md,
+      backgroundColor: theme.colors.card,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: theme.spacing.sm,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+      marginBottom: theme.spacing.md,
+      gap: theme.spacing.sm,
+    },
+    headerTitle: {
+      ...theme.text("lg", "semibold"),
+      color: theme.colors.text,
+    },
+    closeButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: theme.colors.accent,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    newChatButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
+      backgroundColor: `${theme.colors.primary}20`,
+      borderRadius: theme.radius.md,
+      marginBottom: theme.spacing.md,
+    },
+    newChatButtonIcon: {
+      marginRight: theme.spacing.sm,
+    },
+    newChatButtonText: {
+      ...theme.text("md", "medium", theme.colors.primary),
+    },
+    sectionHeader: {
+      paddingVertical: 6,
+      marginBottom: 6,
+      marginTop: 8,
+    },
+    sectionHeaderText: {
+      ...theme.text("xs", "bold"),
+      color: theme.colors.textSecondary,
+      textTransform: "uppercase",
+      letterSpacing: 0.8,
+    },
+    conversationCard: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: theme.colors.background,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: theme.radius.sm,
+      padding: theme.spacing.md,
+      marginBottom: theme.spacing.sm,
+    },
+    conversationCardActive: {
+      borderColor: theme.colors.primary,
+      backgroundColor: `${theme.colors.primary}08`,
+    },
+    cardIconContainer: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: `${theme.colors.primary}15`,
+      alignItems: "center",
+      justifyContent: "center",
+      marginRight: theme.spacing.sm,
+    },
+    cardContent: {
+      flex: 1,
+      marginRight: theme.spacing.xs,
+    },
+    cardTitle: {
+      ...theme.text("sm", "semibold"),
+      color: theme.colors.text,
+      marginBottom: 4,
+    },
+    cardMetaRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    cardDate: {
+      ...theme.text("xs", "regular"),
+      color: theme.colors.textSecondary,
+    },
+    cardMessageBadge: {
+      ...theme.text("xs", "medium"),
+      color: theme.colors.primary,
+      backgroundColor: `${theme.colors.primary}15`,
+      paddingHorizontal: 6,
+      paddingVertical: 1,
+      borderRadius: 4,
+    },
+    cardActions: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    cardActionButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    emptyContainer: {
+      paddingVertical: theme.spacing.xl,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: theme.spacing.lg,
+    },
+    emptyIconContainer: {
+      marginBottom: theme.spacing.md,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    emptyTitle: {
+      ...theme.text("md", "bold"),
+      color: theme.colors.text,
+      textAlign: "center",
+      marginBottom: 6,
+    },
+    emptyText: {
+      ...theme.text("sm", "regular"),
+      color: theme.colors.textSecondary,
+      textAlign: "center",
+      lineHeight: 20,
+    },
+    // Modal / Painel de Edição de Título
+    renameModalOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: "rgba(0, 0, 0, 0.6)",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: theme.spacing.lg,
+      zIndex: 999,
+    },
+    renameModalCard: {
+      width: "100%",
+      backgroundColor: theme.colors.card,
+      borderRadius: theme.radius.md,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      padding: theme.spacing.lg,
+    },
+    renameModalTitle: {
+      ...theme.text("md", "bold"),
+      color: theme.colors.text,
+      marginBottom: 4,
+    },
+    renameModalSubtitle: {
+      ...theme.text("xs", "regular"),
+      color: theme.colors.textSecondary,
+      marginBottom: theme.spacing.md,
+    },
+    renameInput: {
+      backgroundColor: theme.colors.background,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: theme.radius.sm,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: 10,
+      color: theme.colors.text,
+      ...theme.text("sm", "regular"),
+      marginBottom: theme.spacing.md,
+    },
+    renameActionsRow: {
+      flexDirection: "row",
+      gap: theme.spacing.sm,
+    },
+  });

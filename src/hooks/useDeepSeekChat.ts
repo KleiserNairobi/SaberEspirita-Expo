@@ -171,6 +171,15 @@ export function useDeepSeekChat(chatType: ChatType | "emotional" | "scientific" 
     setConversationId(null);
   }, []);
 
+  /**
+   * Carrega uma sessão de conversa salva previamente
+   */
+  const loadConversationSession = useCallback((loadedConversationId: string, loadedMessages: Message[]) => {
+    setMessages(loadedMessages);
+    setError(null);
+    setConversationId(loadedConversationId);
+  }, []);
+
   return {
     messages,
     isLoading,
@@ -178,5 +187,6 @@ export function useDeepSeekChat(chatType: ChatType | "emotional" | "scientific" 
     conversationId,
     sendMessage,
     clearChat,
+    loadConversationSession,
   };
 }

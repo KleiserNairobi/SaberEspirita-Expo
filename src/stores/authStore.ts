@@ -27,6 +27,8 @@ export interface AppUser {
   email: string | null;
   displayName: string | null;
   photoURL: string | null;
+  role?: string;
+  isPremium?: boolean;
   emailVerified: boolean;
   reload?: () => Promise<void>;
 }
@@ -40,6 +42,8 @@ interface StoredUser {
   email: string | null;
   displayName: string | null;
   photoURL: string | null;
+  role?: string;
+  isPremium?: boolean;
   emailVerified: boolean;
 }
 
@@ -105,6 +109,8 @@ const profileToAppUser = (
     fallbackEmail?.split("@")[0] ||
     "Usuário",
   photoURL: profile?.photoUrl || profile?.photoURL || fallbackPhotoUrl || null,
+  role: profile?.role || "user",
+  isPremium: profile?.isPremium ?? false,
   emailVerified: emailVerified,
   reload: async () => {},
 });
@@ -115,6 +121,8 @@ const userToStoredUser = (user: AppUser): StoredUser => ({
   email: user.email,
   displayName: user.displayName,
   photoURL: user.photoURL,
+  role: user.role,
+  isPremium: user.isPremium,
   emailVerified: user.emailVerified,
 });
 
@@ -497,6 +505,8 @@ export const useAuthStore = create<AuthState>()(
                   email: profile.email ?? user.email,
                   displayName: profile.displayName ?? profile.userName ?? user.displayName,
                   photoURL: profile.photoUrl ?? profile.photoURL ?? user.photoURL,
+                  role: profile.role || user.role || "user",
+                  isPremium: profile.isPremium ?? user.isPremium ?? false,
                   emailVerified: true,
                 };
                 set({ user: updatedUser });
@@ -547,3 +557,13 @@ export const useAuthStore = create<AuthState>()(
 export function useAuth() {
   return useAuthStore();
 }
+
+/**
+ * Hook para checar se o usuário atual possui plano Premium ativo ou permissão de Administrador.
+ */
+export function useIsPremium(): boolean {
+  const user = useAuthStore((state) => state.user);
+  if (!user) return false;
+  return Boolean(user.isPremium || user.role === "admin");
+}
+
