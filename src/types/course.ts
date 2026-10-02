@@ -14,6 +14,7 @@ export interface ICourse {
   categoryId?: string;
   releaseYear?: number;
   featured?: boolean;
+  isPremium?: boolean;
   status: CourseStatus;
   allowNewEnrollments?: boolean;
   certification: {
@@ -34,6 +35,48 @@ export interface ICourse {
   };
 }
 
+export type SpecialElementType =
+  | "source_in_focus"
+  | "dialogue_with_codification"
+  | "comparative_study"
+  | "essential_distinction"
+  | "what_the_work_does_not_say"
+  | "practical_application"
+  | "guided_reflection";
+
+export interface ISpecialElement {
+  type: SpecialElementType;
+  content: string;
+}
+
+export interface IPremiumSlideReferences {
+  obraPrincipal?: string;
+  codificacao?: string;
+  complementar?: string;
+  biblica?: string;
+}
+
+export interface IPremiumSlide extends Omit<ISlide, "references"> {
+  slideNumber?: number;
+  learningGoal?: string;
+  emotion?: string;
+  commonMisunderstanding?: string;
+  microStory?: string;
+  specialElement?: ISpecialElement;
+  references?: IPremiumSlideReferences;
+}
+
+export interface IMainWorkInfo {
+  title: string;
+  author: string;
+  psychography?: string;
+}
+
+export interface ICognitiveIntensity {
+  level: "introdutório" | "intermediário" | "avançado";
+  description?: string;
+}
+
 export interface ILesson {
   id: string;
   courseId: string;
@@ -41,7 +84,8 @@ export interface ILesson {
   title: string;
   description?: string;
   order: number;
-  slides: ISlide[];
+  isPremium?: boolean;
+  slides: (ISlide | IPremiumSlide)[];
   durationMinutes: number;
   source?: string;
   chapter?: string;
@@ -54,6 +98,17 @@ export interface ILesson {
   supplementaryMaterials?: ISupplementaryMaterial[];
   reflectionQuestions?: IReflectionQuestion[];
   glossary?: IGlossaryTerm[];
+}
+
+export interface IPremiumLesson extends ILesson {
+  subtitle?: string;
+  mainWork?: IMainWorkInfo;
+  theme?: string;
+  objective?: string;
+  cognitiveIntensity?: ICognitiveIntensity;
+  premiumDifferential?: string;
+  narrativeStrategy?: string;
+  slides: IPremiumSlide[];
 }
 
 export interface ISlide {

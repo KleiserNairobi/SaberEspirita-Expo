@@ -29,7 +29,6 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { ContentSheet } from "@/components/ContentSheet";
 import { HeroHeader } from "@/components/HeroHeader";
-import { PremiumContentNoticeModal } from "@/components/PremiumContentNoticeModal";
 import { useCourseProgress } from "@/hooks/queries/useCourseProgress";
 import { useCourse, useCourseMaterials } from "@/hooks/queries/useCourses";
 import { useLessons } from "@/hooks/queries/useLessons";
@@ -75,13 +74,6 @@ export function CourseDetailsScreen() {
   const isEnrolled = !!progress; // Se tem objeto de progresso, está matriculado
 
   const [activeTab, setActiveTab] = useState<"about" | "lessons" | "materials">("about");
-  const premiumModalRef = useRef<BottomSheetModal>(null);
-  const [selectedPremiumItem, setSelectedPremiumItem] = useState<string>("");
-
-  function handleOpenPremiumModal(itemName: string) {
-    setSelectedPremiumItem(itemName);
-    premiumModalRef.current?.present();
-  }
 
   async function handleShare() {
     if (!course) return;
@@ -447,7 +439,7 @@ export function CourseDetailsScreen() {
           </View>
         )}
 
-        {/* ABA AULAS */}
+        {/* ABA AULAS (CARDÁPIO DE LEITURA) */}
         {activeTab === "lessons" && (
           <View style={styles.objectivesList}>
             {lessons.map((lesson, index) => (
@@ -479,7 +471,6 @@ export function CourseDetailsScreen() {
           <CourseMaterialsTab
             courseId={courseId}
             interactive={false}
-            onOpenPremiumModal={handleOpenPremiumModal}
           />
         )}
       </ContentSheet>
@@ -516,10 +507,6 @@ export function CourseDetailsScreen() {
       </View>
 
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
-      <PremiumContentNoticeModal
-        ref={premiumModalRef}
-        itemName={selectedPremiumItem}
-      />
     </View>
   );
 }

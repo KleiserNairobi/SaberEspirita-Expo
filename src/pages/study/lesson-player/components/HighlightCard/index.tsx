@@ -39,16 +39,23 @@ export function HighlightCard({
       textAlign: "justify",
       fontSize: fontSize,
       color: theme.colors.text,
-      lineHeight: fontSize * 1.5,
+      lineHeight: fontSize * 1.45,
       width: "100%",
+      marginTop: 0,
+      marginBottom: 0,
+      paddingTop: 0,
+      paddingBottom: 0,
     },
     paragraph: {
-      marginBottom: 0, // Destaques geralmente são compactos
+      marginTop: 0,
+      marginBottom: 0,
+      paddingTop: 0,
+      paddingBottom: 0,
       ...theme.text("md", "regular"),
       textAlign: "justify",
       fontSize: fontSize,
       color: theme.colors.text,
-      lineHeight: fontSize * 1.5,
+      lineHeight: fontSize * 1.45,
       width: "100%",
     },
     strong: {
@@ -79,13 +86,25 @@ export function HighlightCard({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Lightbulb size={20} color={theme.colors.primary} />
+        <Lightbulb size={14} color={theme.colors.primary} />
         <Text style={styles.headerTitle}>Destaques</Text>
       </View>
-      {highlights.map((highlight, index) => (
-        <View key={index} style={styles.highlightItem}>
-          <Text style={[styles.highlightTitle, { fontSize }]}>{highlight.title}</Text>
-          <View style={styles.highlightContent}>
+      {highlights.map((highlight, index) => {
+        const isLast = index === highlights.length - 1;
+        return (
+          <View
+            key={index}
+            style={[styles.highlightItem, isLast && { marginBottom: 0 }]}
+          >
+            <Text
+              style={[
+                styles.highlightTitle,
+                { fontSize: Math.max(14, fontSize * 0.95), lineHeight: fontSize * 1.3 },
+              ]}
+            >
+              {highlight.title}
+            </Text>
+            <View style={styles.highlightContent}>
             <Markdown
               style={markdownStyles}
               onLinkPress={(url) => {
@@ -149,7 +168,8 @@ export function HighlightCard({
             </Markdown>
           </View>
         </View>
-      ))}
-    </View>
+      );
+    })}
+  </View>
   );
 }

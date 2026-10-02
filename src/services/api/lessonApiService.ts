@@ -1,20 +1,30 @@
+import { ILesson, IReflectionQuestion, ISupplementaryMaterial } from "@/types/course";
+
 import apiClient from "./apiClient";
 import { resolveCdnUrl } from "./courseApiService";
-import { ILesson, IReflectionQuestion, ISupplementaryMaterial } from "@/types/course";
 
 function normalizeLesson(raw: any): ILesson {
   const order = raw.order ?? raw.orderIndex ?? 1;
-  const reflectionQuestions =
+  const rawReflections =
     raw.reflectionQuestions ||
-    (raw.reflections || []).map((r: any) => ({
-      question: r.question,
-      focus: r.focus,
-    }));
+    raw.reflections ||
+    raw.reflection_questions ||
+    raw.questions ||
+    [];
+
+  const reflectionQuestions: IReflectionQuestion[] = Array.isArray(rawReflections)
+    ? rawReflections.map((r: any, idx: number) => ({
+        id: r.id || `rq_${idx}`,
+        question: r.question || r.text || "",
+        focus: r.focus || r.tag || r.category || "Reflexão",
+        orderIndex: r.orderIndex ?? r.order ?? idx,
+      }))
+    : [];
 
   return {
     ...raw,
     order,
-    reflectionQuestions,
+    reflectionQuestions: reflectionQuestions.length > 0 ? reflectionQuestions : undefined,
     forumPrompt: raw.forumPrompt || reflectionQuestions?.[0]?.question || null,
     forumFocusTag: raw.forumFocusTag || reflectionQuestions?.[0]?.focus || null,
     videoUrl: resolveCdnUrl(raw.videoUrl),
@@ -38,12 +48,22 @@ function normalizeLesson(raw: any): ILesson {
   };
 }
 
+import mockCursoNossoLar from "@/assets/mocks/lessons/CursoNossoLar.json";
+import mockCursoNossoLarAula2 from "@/assets/mocks/lessons/CursoNossoLarAula2.json";
+
 export const lessonApiService = {
   /**
    * Obtém todas as lições de um curso por courseId.
    */
   async getLessonsByCourseId(courseId: string): Promise<ILesson[]> {
     if (!courseId) return [];
+    const cleanCourseId = courseId.trim().toLowerCase();
+    if (cleanCourseId === "nosso-lar-estudo-guiado" || cleanCourseId.includes("nosso-lar")) {
+      return [
+        normalizeLesson(mockCursoNossoLar),
+        normalizeLesson(mockCursoNossoLarAula2),
+      ];
+    }
     const response = await apiClient.get<any[]>(`/courses/${courseId}/lessons`);
     return (response.data || []).map(normalizeLesson);
   },
@@ -53,9 +73,34 @@ export const lessonApiService = {
    */
   async getLessonById(lessonId: string): Promise<ILesson | null> {
     if (!lessonId) return null;
+    const cleanLessonId = lessonId.trim();
+    if (cleanLessonId === "LESSON-NL-M1-A02") {
+      return normalizeLesson(mockCursoNossoLarAula2);
+    }
+    if (
+      cleanLessonId === "LESSON-NL-M1-A01" ||
+      cleanLessonId === "nosso-lar-estudo-guiado" ||
+      cleanLessonId.includes("NL")
+    ) {
+      return normalizeLesson(mockCursoNossoLar);
+    }
     const response = await apiClient.get<any>(`/lessons/${lessonId}`);
     if (!response.data) return null;
-    return normalizeLesson(response.data);
+    const lesson = normalizeLesson(response.data);
+
+    // Fallback: se não veio reflections no payload principal, busca do endpoint dedicado
+    if (!lesson.reflectionQuestions || lesson.reflectionQuestions.length === 0) {
+      try {
+        const reflections = await lessonApiService.getLessonReflections(lessonId);
+        if (reflections && reflections.length > 0) {
+          lesson.reflectionQuestions = reflections;
+        }
+      } catch (err) {
+        console.warn(`Erro ao buscar perguntas de reflexão para ${lessonId}:`, err);
+      }
+    }
+
+    return lesson;
   },
 
   /**

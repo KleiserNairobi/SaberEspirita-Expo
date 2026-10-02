@@ -3,29 +3,32 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { BookOpen, Library } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { createStyles } from "./styles";
 import { IGlossaryTerm } from "@/types/glossary";
+import { IPremiumSlideReferences } from "@/types/course";
+import { createStyles } from "./styles";
 
-interface ReferenceCardProps {
-  references?: {
-    kardeciana?: string;
-    biblica?: string;
-  };
+interface LayeredReferenceCardProps {
+  references?: (IPremiumSlideReferences & { kardeciana?: string }) | null;
   glossary?: IGlossaryTerm[];
   fontSize?: number;
   onGlossaryTermPress?: (termId: string) => void;
 }
 
-export function ReferenceCard({
+export const LayeredReferenceCard = React.memo(function LayeredReferenceCard({
   references,
-  glossary,
+  glossary = [],
   fontSize = 16,
   onGlossaryTermPress,
-}: ReferenceCardProps) {
+}: LayeredReferenceCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme, fontSize);
 
-  const hasReferences = !!references && (!!references.kardeciana || !!references.biblica);
+  const obraPrincipal = references?.obraPrincipal;
+  const codificacao = references?.codificacao || references?.kardeciana;
+  const complementar = references?.complementar;
+  const biblica = references?.biblica;
+
+  const hasReferences = !!(obraPrincipal || codificacao || complementar || biblica);
   const hasGlossary = !!glossary && glossary.length > 0;
 
   if (!hasReferences && !hasGlossary) {
@@ -48,20 +51,39 @@ export function ReferenceCard({
 
       {hasReferences && (
         <View style={styles.section}>
-          {references.kardeciana && (
+          {!!obraPrincipal && (
             <Text style={[styles.referenceText, { fontSize, lineHeight: fontSize * 1.5 }]}>
               <Text style={{ fontFamily: theme.typography.weights.semibold }}>
-                Kardeciana:{" "}
+                Obra Base:{" "}
               </Text>
-              {references.kardeciana}
+              {obraPrincipal}
             </Text>
           )}
-          {references.biblica && (
+
+          {!!codificacao && (
+            <Text style={[styles.referenceText, { fontSize, lineHeight: fontSize * 1.5 }]}>
+              <Text style={{ fontFamily: theme.typography.weights.semibold }}>
+                Codificação:{" "}
+              </Text>
+              {codificacao}
+            </Text>
+          )}
+
+          {!!complementar && (
+            <Text style={[styles.referenceText, { fontSize, lineHeight: fontSize * 1.5 }]}>
+              <Text style={{ fontFamily: theme.typography.weights.semibold }}>
+                Complementar:{" "}
+              </Text>
+              {complementar}
+            </Text>
+          )}
+
+          {!!biblica && (
             <Text style={[styles.referenceText, { fontSize, lineHeight: fontSize * 1.5 }]}>
               <Text style={{ fontFamily: theme.typography.weights.semibold }}>
                 Bíblica:{" "}
               </Text>
-              {references.biblica}
+              {biblica}
             </Text>
           )}
         </View>
@@ -83,6 +105,7 @@ export function ReferenceCard({
                 key={`${term.id}_${index}`}
                 style={styles.pill}
                 onPress={() => onGlossaryTermPress?.(term.id)}
+                activeOpacity={0.7}
               >
                 <Text style={styles.pillText}>{term.term}</Text>
               </TouchableOpacity>
@@ -92,4 +115,4 @@ export function ReferenceCard({
       )}
     </View>
   );
-}
+});

@@ -22,6 +22,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { CommunityLevelUpModal } from "@/components/CommunityLevelUpModal";
+import { PremiumContentNoticeModal } from "@/components/PremiumContentNoticeModal";
 import { RateAppBottomSheet } from "@/components/RateAppBottomSheet";
 import { ReadingToolbar } from "@/components/ReadingToolbar";
 import {
@@ -29,12 +30,14 @@ import {
   useCourseProgress,
   useTouchCourseAccess,
 } from "@/hooks/queries/useCourseProgress";
+import { useCourse } from "@/hooks/queries/useCourses";
 import { useExercises } from "@/hooks/queries/useExercises";
 import { useForumHasNewComments } from "@/hooks/queries/useLessonForum";
 import { LESSONS_KEYS, useLesson, useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useRateApp } from "@/hooks/useRateApp";
 import { AppStackParamList } from "@/routers/types";
+import { isLessonFreeTrial } from "@/utils/courseAccess";
 import {
   getLevelUpIfAny,
   getStoredCommunityLevelRaw,
@@ -147,8 +150,10 @@ export function LessonPlayerScreen() {
 
   // Ref para FlatList (Carrossel)
   const flatListRef = useRef<FlatList>(null);
+  const premiumModalRef = useRef<BottomSheetModal>(null);
 
-  // Fetch da aula
+  // Fetch da aula e curso
+  const { data: course } = useCourse(courseId);
   const { data: lesson, isLoading: isLoadingLesson } = useLesson(courseId, lessonId);
   const { data: hasNewForum } = useForumHasNewComments(lessonId);
 
@@ -367,6 +372,16 @@ export function LessonPlayerScreen() {
             }
           }
         } catch {}
+      }
+
+      // Se for aula de degustação em curso premium, convida o usuário para o plano Premium
+      const isTrial = lesson && isLessonFreeTrial(lesson, course);
+      if (isTrial) {
+        setIsProcessing(false);
+        setTimeout(() => {
+          premiumModalRef.current?.present();
+        }, 300);
+        return;
       }
 
       // Verificar se deve pedir avaliação
@@ -613,6 +628,8 @@ export function LessonPlayerScreen() {
             slide={item}
             fontSize={getFontSize()}
             isLastSlide={index === lesson.slides.length - 1}
+            source={lesson.source}
+            chapter={lesson.chapter}
             reflectionQuestions={lesson.reflectionQuestions}
             glossaryTerms={[]}
             onGlossaryTermPress={handleGlossaryTermPress}
@@ -706,6 +723,15 @@ export function LessonPlayerScreen() {
         onAskAI={handleAskAI}
         onOpenForum={handleOpenForum}
         forumEnabled={!!lesson.forumEnabled}
+      />
+
+      <PremiumContentNoticeModal
+        ref={premiumModalRef}
+        type="trial_completed"
+        title="Aula Demonstrativa Concluída!"
+        itemName={course?.title || lesson?.title}
+        description="Parabéns por concluir a aula de degustação! Para continuar a jornada pelas próximas aulas e ter acesso irrestrito ao curso completo, torne-se um membro Premium."
+        onClose={navigateBackAfterCompletion}
       />
     </SafeAreaView>
   );
