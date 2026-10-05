@@ -6,35 +6,42 @@ export const createStyles = (theme: ITheme) =>
     container: {
       backgroundColor: `${theme.colors.primary}15`,
       borderRadius: theme.radius.md,
-      padding: theme.spacing.md,
+      padding: theme.spacing.sm + 4, // 12px
       marginHorizontal: theme.spacing.lg,
       marginBottom: theme.spacing.lg,
-      // borderWidth: 1, // REMOVIDO para igualar ao estilo da imagem 2
-      // borderColor: theme.colors.border, // REMOVIDO
-      borderLeftWidth: 4,
+      borderLeftWidth: 3,
       borderLeftColor: theme.colors.primary,
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    thumbnail: {
+      width: 70,
+      height: 70,
+      borderRadius: theme.radius.sm,
+      backgroundColor: `${theme.colors.primary}10`,
+    },
+    infoContainer: {
+      flex: 1,
+      marginLeft: theme.spacing.sm + 4, // 12px
+      justifyContent: "center",
     },
     header: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: theme.spacing.xs,
+      marginBottom: 6,
     },
     label: {
       ...theme.text("xs", "bold"),
       color: theme.colors.primary,
       textTransform: "uppercase",
-      letterSpacing: 1,
+      letterSpacing: 0.8,
     },
     contentRow: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      marginTop: theme.spacing.xs,
     },
     textContainer: {
       flex: 1,
-      marginRight: theme.spacing.md,
+      marginRight: theme.spacing.sm,
     },
     courseTitle: {
       ...theme.text("md", "medium"),
@@ -45,20 +52,24 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("sm", "regular"),
       color: theme.colors.textSecondary,
     },
-    playButton: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: theme.colors.primary,
-      justifyContent: "center",
+    actionColumn: {
       alignItems: "center",
+      justifyContent: "center",
+      minWidth: 28,
+      marginLeft: theme.spacing.xs,
+    },
+    percentText: {
+      ...theme.text("xs", "bold"),
+      color: theme.colors.primary,
+      marginTop: 2,
     },
     progressBarBackground: {
       height: 4,
       backgroundColor: theme.colors.border,
       borderRadius: 2,
-      marginTop: theme.spacing.md,
+      marginTop: 8,
       width: "100%",
+      overflow: "hidden",
     },
     progressBarFill: {
       height: "100%",

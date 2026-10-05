@@ -10,11 +10,11 @@ export const createStyles = (theme: ITheme) =>
     },
     headerContainer: {
       marginHorizontal: theme.spacing.lg,
-      marginBottom: theme.spacing.xl,
+      marginBottom: theme.spacing.lg,
     },
     headerTopRow: {
       flexDirection: "row",
-      alignItems: "flex-start",
+      alignItems: "center",
       justifyContent: "space-between",
       gap: theme.spacing.md,
     },

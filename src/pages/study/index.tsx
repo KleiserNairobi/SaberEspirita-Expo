@@ -217,11 +217,11 @@ export function StudyScreen() {
               <Text style={styles.greetingText}>
                 Olá, {firstName}!
               </Text>
-              <Text style={styles.subtitleText}>
-                {lastAccessed
-                  ? "Vamos continuar sua jornada?"
-                  : "Vamos começar sua jornada?"}
-              </Text>
+              {!lastAccessed && (
+                <Text style={styles.subtitleText}>
+                  Vamos começar sua jornada?
+                </Text>
+              )}
             </View>
 
             <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
