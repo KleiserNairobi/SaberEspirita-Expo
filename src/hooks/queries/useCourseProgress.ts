@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { userActivityApiService } from "@/services/api/userActivityApiService";
 import { useAuthStore } from "@/stores/authStore";
+import { saveLastCourseAccess } from "@/utils/lessonProgressStorage";
 
 export const COURSE_PROGRESS_KEYS = {
   byUserAndCourse: (userId: string, courseId: string) =>
@@ -41,9 +42,19 @@ export function useTouchCourseAccess() {
   const userId = user?.uid || "";
 
   return useMutation({
-    mutationFn: async ({ courseId, lessonId }: TouchCourseAccessParams) => {
-      // O mero acesso à aula NÃO deve marcar a lição como concluída no backend.
-      // A lição só é concluída via useCompleteLesson() / handleFinish no botão de finalizar.
+    mutationFn: async ({
+      courseId,
+      lessonId,
+      userId: targetUserId,
+    }: TouchCourseAccessParams) => {
+      const uId = targetUserId || userId;
+      if (uId && courseId) {
+        saveLastCourseAccess(uId, {
+          courseId,
+          lessonId,
+          updatedAt: Date.now(),
+        });
+      }
       return null;
     },
     onSuccess: (_, variables) => {

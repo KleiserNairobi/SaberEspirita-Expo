@@ -5,6 +5,7 @@ import { lessonApiService } from "@/services/api/lessonApiService";
 import { userActivityApiService } from "@/services/api/userActivityApiService";
 import { useAuthStore } from "@/stores/authStore";
 import { ICourse, ILesson, IUserCourseProgress } from "@/types/course";
+import { getLastCourseAccess } from "@/utils/lessonProgressStorage";
 
 import { COURSES_KEYS } from "./useCourses";
 
@@ -36,8 +37,14 @@ export function useLastAccessedCourse() {
         // Busca o progresso fresco do usuário via API REST
         const progresses = await userActivityApiService.getCoursesProgress();
 
-        let targetCourse = courses[0];
+        // Busca também o último acesso registrado localmente no dispositivo (MMKV)
+        const localLastAccess = getLastCourseAccess(userId);
+
+        let targetCourse: ICourse | null = null;
         let targetProgress: IUserCourseProgress | null = null;
+
+        let latestBackendTime = 0;
+        let latestBackendProgress: IUserCourseProgress | null = null;
 
         if (progresses && progresses.length > 0) {
           const sortedProgresses = [...progresses].sort((a, b) => {
@@ -45,13 +52,53 @@ export function useLastAccessedCourse() {
             const dateB = b.lastAccessedAt ? new Date(b.lastAccessedAt).getTime() : 0;
             return dateB - dateA;
           });
+          latestBackendProgress = sortedProgresses[0];
+          latestBackendTime = latestBackendProgress.lastAccessedAt
+            ? new Date(latestBackendProgress.lastAccessedAt).getTime()
+            : 0;
+        }
 
-          const latestProgress = sortedProgresses[0];
-          const foundCourse = courses.find((c) => c.id === latestProgress.courseId);
+        const localTime = localLastAccess?.updatedAt || 0;
+
+        // Se o acesso local for mais recente que o backend (ex: começou uma aula mas não concluiu ainda)
+        if (localLastAccess && localTime > latestBackendTime) {
+          const localCourse = courses.find((c) => c.id === localLastAccess.courseId);
+          if (localCourse) {
+            targetCourse = localCourse;
+            // Verifica se já existia algum progresso no backend para este curso
+            const existingProg = progresses.find((p) => p.courseId === localCourse.id);
+            if (existingProg) {
+              targetProgress = {
+                ...existingProg,
+                lastAccessedAt: new Date(localTime),
+              };
+            } else {
+              targetProgress = {
+                userId,
+                courseId: localCourse.id,
+                completedLessons: [],
+                exerciseResults: [],
+                certificateEligible: false,
+                certificateIssued: false,
+                startedAt: new Date(localTime),
+                lastAccessedAt: new Date(localTime),
+              };
+            }
+          }
+        }
+
+        // Se não definiu pelo local, define pelo backend mais recente
+        if (!targetCourse && latestBackendProgress) {
+          const foundCourse = courses.find((c) => c.id === latestBackendProgress!.courseId);
           if (foundCourse) {
             targetCourse = foundCourse;
-            targetProgress = latestProgress;
+            targetProgress = latestBackendProgress;
           }
+        }
+
+        // Fallback para o primeiro curso da lista caso não haja nenhum histórico
+        if (!targetCourse) {
+          targetCourse = courses[0];
         }
 
         if (!targetProgress) {
@@ -70,7 +117,17 @@ export function useLastAccessedCourse() {
         const lessons = await lessonApiService.getLessonsByCourseId(targetCourse.id);
         const completedIds = targetProgress.completedLessons || [];
 
-        let nextLesson = lessons.find((l) => !completedIds.includes(l.id));
+        let nextLesson: ILesson | undefined;
+
+        // Se o último acesso local apontou para uma aula específica do curso
+        if (localLastAccess && localLastAccess.courseId === targetCourse.id && localLastAccess.lessonId) {
+          nextLesson = lessons.find((l) => l.id === localLastAccess.lessonId);
+        }
+
+        if (!nextLesson) {
+          nextLesson = lessons.find((l) => !completedIds.includes(l.id));
+        }
+
         if (!nextLesson && lessons.length > 0) {
           nextLesson = lessons[lessons.length - 1];
         }

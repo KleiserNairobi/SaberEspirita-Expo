@@ -37,28 +37,28 @@ import { LESSONS_KEYS, useLesson, useLessons } from "@/hooks/queries/useLessons"
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useRateApp } from "@/hooks/useRateApp";
 import { AppStackParamList } from "@/routers/types";
-import { isLessonFreeTrial } from "@/utils/courseAccess";
+import { forumApiService } from "@/services/api/forumApiService";
+import { glossaryApiService } from "@/services/api/glossaryApiService";
+import { lessonApiService } from "@/services/api/lessonApiService";
+import { statsApiService } from "@/services/api/statsApiService";
+import { userActivityApiService } from "@/services/api/userActivityApiService";
 import {
   getLevelUpIfAny,
   getStoredCommunityLevelRaw,
   setStoredCommunityLevel,
 } from "@/services/community/communityLevelService";
-import { forumApiService } from "@/services/api/forumApiService";
-import { glossaryApiService } from "@/services/api/glossaryApiService";
-import { lessonApiService } from "@/services/api/lessonApiService";
-import { userActivityApiService } from "@/services/api/userActivityApiService";
-import { statsApiService } from "@/services/api/statsApiService";
 import { useAuthStore } from "@/stores/authStore";
 import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
 import { IGlossaryTerm } from "@/types/glossary";
 import { SHARE_FOOTER } from "@/utils/constants";
-import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
-
+import { isLessonFreeTrial } from "@/utils/courseAccess";
 import {
-  saveLessonSlideProgress,
-  getLessonSlideProgress,
   clearLessonSlideProgress,
+  getLessonSlideProgress,
+  saveLastCourseAccess,
+  saveLessonSlideProgress,
 } from "@/utils/lessonProgressStorage";
+import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
 
 import { GlossaryTermBottomSheet } from "./components/GlossaryTermBottomSheet";
 import { LessonActionsFAB } from "./components/LessonActionsFAB";
@@ -177,6 +177,21 @@ export function LessonPlayerScreen() {
     isRestoredRef.current = true;
 
     const savedProgress = getLessonSlideProgress(user?.uid, lessonId);
+    const initialIndex =
+      savedProgress && typeof savedProgress.slideIndex === "number"
+        ? savedProgress.slideIndex
+        : 0;
+
+    saveLastCourseAccess(user?.uid, {
+      courseId,
+      lessonId,
+      lessonTitle: lesson?.title,
+      lessonOrder: (lesson as any)?.order ?? (lesson as any)?.orderIndex ?? 1,
+      slideIndex: initialIndex,
+      totalSlides,
+      updatedAt: Date.now(),
+    });
+
     if (
       savedProgress &&
       typeof savedProgress.slideIndex === "number" &&
@@ -189,7 +204,7 @@ export function LessonPlayerScreen() {
         flatListRef.current?.scrollToIndex({ index: targetIndex, animated: false });
       }, 100);
     }
-  }, [lesson, lessonId, totalSlides, user?.uid]);
+  }, [courseId, lesson, lessonId, totalSlides, user?.uid]);
 
   // ✅ Prefetch da próxima aula
   const { data: allLessons } = useLessons(courseId);
@@ -242,6 +257,15 @@ export function LessonPlayerScreen() {
 
         // Salva o progresso do slide atual
         saveLessonSlideProgress(user?.uid, lessonId, newIndex, totalSlides);
+        saveLastCourseAccess(user?.uid, {
+          courseId,
+          lessonId,
+          lessonTitle: lesson?.title,
+          lessonOrder: (lesson as any)?.order ?? (lesson as any)?.orderIndex ?? 1,
+          slideIndex: newIndex,
+          totalSlides,
+          updatedAt: Date.now(),
+        });
 
         // Para narração ao mudar de slide
         if (isNarrating) {
@@ -250,7 +274,15 @@ export function LessonPlayerScreen() {
         }
       }
     },
-    [currentSlideIndex, isNarrating, lessonId, totalSlides, user?.uid]
+    [
+      courseId,
+      currentSlideIndex,
+      isNarrating,
+      lesson?.title,
+      lessonId,
+      totalSlides,
+      user?.uid,
+    ]
   );
 
   async function handleFinish() {
@@ -496,7 +528,10 @@ export function LessonPlayerScreen() {
         try {
           term = (await glossaryApiService.getGlossaryTermById(cleanId)) || undefined;
         } catch (error) {
-          console.warn("[LessonPlayer] Erro ao buscar termo do glossário sob demanda:", error);
+          console.warn(
+            "[LessonPlayer] Erro ao buscar termo do glossário sob demanda:",
+            error
+          );
         }
       }
 

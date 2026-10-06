@@ -26,8 +26,12 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
 import { AppStackParamList } from "@/routers/types";
 import { useAuthStore } from "@/stores/authStore";
-import { ICourse } from "@/types/course";
+import { ICourse, IUserCourseProgress } from "@/types/course";
 import { prefetchImages } from "@/utils/imagePrefetch";
+import {
+  getCourseActiveLesson,
+  getLessonSlideProgress,
+} from "@/utils/lessonProgressStorage";
 
 import { ContinueStudyingSection, InProgressCourseItem } from "./components/ContinueStudyingSection";
 import { ExploreByTheme } from "./components/ExploreByTheme";
@@ -180,65 +184,124 @@ export function StudyScreen() {
   const inProgressCourses: InProgressCourseItem[] = React.useMemo(() => {
     const items: InProgressCourseItem[] = [];
 
-    // Se temos lastAccessed, garantimos que ele é o primeiro item
-    if (lastAccessed?.course && lastAccessed?.progress) {
-      const course = lastAccessed.course;
-      const progress = lastAccessed.progress;
+    // Helper para calcular porcentagem e texto do próximo passo levando em conta slides
+    const computeCourseProgress = (
+      course: ICourse,
+      progress: IUserCourseProgress,
+      nextLesson?: any
+    ) => {
       const totalLessons = course.lessonCount || (course as any).lessonsCount || 0;
       const completedCount = progress.completedLessons ? progress.completedLessons.length : 0;
-      const completionPercent =
-        totalLessons > 0
-          ? (completedCount / totalLessons) * 100
-          : (progress as any)?.progressPercentage ?? 0;
-      const displayPercent = Math.min(Math.round(completionPercent), 100);
 
-      const nextLessonTitle = lastAccessed.nextLesson
-        ? `Aula ${(lastAccessed.nextLesson as any).order ?? 1}: ${lastAccessed.nextLesson.title}`
-        : "Continuar estudo";
+      // Verifica se há progresso de slide salvo na aula ativa
+      const slideProg = nextLesson?.id ? getLessonSlideProgress(user?.uid, nextLesson.id) : null;
 
-      if (displayPercent < 100) {
+      let currentLessonFraction = 0;
+      if (slideProg && slideProg.totalSlides > 0 && slideProg.slideIndex > 0) {
+        currentLessonFraction = (slideProg.slideIndex + 1) / slideProg.totalSlides;
+      }
+
+      let completionPercent = 0;
+      if (totalLessons > 0) {
+        completionPercent = ((completedCount + currentLessonFraction) / totalLessons) * 100;
+      } else if ((progress as any)?.progressPercentage !== undefined) {
+        completionPercent = (progress as any).progressPercentage;
+      }
+
+      let displayPercent = Math.min(Math.round(completionPercent), 100);
+
+      // Se há slides lidos ou a aula foi iniciada, garante pelo menos 1% para feedback visual
+      const hasSlideProgress = Boolean(slideProg && slideProg.slideIndex > 0);
+      if (displayPercent === 0 && (hasSlideProgress || completedCount > 0)) {
+        displayPercent = Math.max(Math.round(completionPercent), 1);
+      }
+
+      let nextLessonTitle = "Continuar de onde parou";
+      if (nextLesson) {
+        const order = (nextLesson as any).order ?? (nextLesson as any).orderIndex ?? 1;
+        if (hasSlideProgress) {
+          nextLessonTitle = `Aula ${order}: ${nextLesson.title} • Slide ${slideProg!.slideIndex + 1} de ${slideProg!.totalSlides}`;
+        } else {
+          nextLessonTitle = `Aula ${order}: ${nextLesson.title}`;
+        }
+      }
+
+      const isActuallyInProgress =
+        (completedCount > 0 && displayPercent < 100) ||
+        hasSlideProgress ||
+        Boolean(progress.startedAt);
+
+      return {
+        displayPercent,
+        nextLessonTitle,
+        isActuallyInProgress,
+      };
+    };
+
+    // 1. Se temos lastAccessed, garantimos que ele é o primeiro item
+    if (lastAccessed?.course && lastAccessed?.progress) {
+      const { course, progress, nextLesson } = lastAccessed;
+      const computed = computeCourseProgress(course, progress, nextLesson);
+
+      if (computed.displayPercent < 100) {
         items.push({
           course,
           progress,
-          displayPercent,
-          nextLessonTitle,
+          displayPercent: Math.max(computed.displayPercent, 1),
+          nextLessonTitle: computed.nextLessonTitle,
         });
       }
     }
 
-    // Varre os demais cursos com progresso em andamento
-    if (allCourses && allCourses.length > 0 && allProgress) {
+    // 2. Varre os demais cursos com progresso em andamento
+    if (allCourses && allCourses.length > 0) {
       allCourses.forEach((course) => {
         if (lastAccessed?.course?.id === course.id) return;
 
         const progress =
-          allProgress[course.id] ||
-          allProgress[course.id?.toLowerCase()] ||
-          allProgress[course.id?.toUpperCase()];
+          allProgress?.[course.id] ||
+          allProgress?.[course.id?.toLowerCase()] ||
+          allProgress?.[course.id?.toUpperCase()];
 
-        if (!progress) return;
+        // Verifica se há aula ativa salva localmente para este curso
+        const activeLocal = getCourseActiveLesson(user?.uid, course.id);
 
-        const totalLessons = course.lessonCount || (course as any).lessonsCount || 0;
-        const completedCount = progress.completedLessons ? progress.completedLessons.length : 0;
-        const completionPercent =
-          totalLessons > 0
-            ? (completedCount / totalLessons) * 100
-            : (progress as any)?.progressPercentage ?? 0;
-        const displayPercent = Math.min(Math.round(completionPercent), 100);
+        if (!progress && !activeLocal) return;
 
-        if (displayPercent > 0 && displayPercent < 100) {
+        const effectiveProgress = progress || {
+          userId: user?.uid || "guest",
+          courseId: course.id,
+          completedLessons: [],
+          exerciseResults: [],
+          certificateEligible: false,
+          certificateIssued: false,
+          startedAt: activeLocal ? new Date(activeLocal.updatedAt) : new Date(),
+          lastAccessedAt: activeLocal ? new Date(activeLocal.updatedAt) : new Date(),
+        };
+
+        const mockNextLesson = activeLocal
+          ? {
+              id: activeLocal.lessonId,
+              title: activeLocal.lessonTitle || "Aula em andamento",
+              order: activeLocal.lessonOrder || 1,
+            }
+          : undefined;
+
+        const computed = computeCourseProgress(course, effectiveProgress, mockNextLesson);
+
+        if (computed.isActuallyInProgress && computed.displayPercent < 100) {
           items.push({
             course,
-            progress,
-            displayPercent,
-            nextLessonTitle: "Continuar de onde parou",
+            progress: effectiveProgress,
+            displayPercent: Math.max(computed.displayPercent, 1),
+            nextLessonTitle: computed.nextLessonTitle,
           });
         }
       });
     }
 
     return items;
-  }, [lastAccessed, allCourses, allProgress]);
+  }, [lastAccessed, allCourses, allProgress, user?.uid]);
 
   function handleContinueItemPress(item: InProgressCourseItem) {
     navigation.navigate("CourseCurriculum", { courseId: item.course.id });
