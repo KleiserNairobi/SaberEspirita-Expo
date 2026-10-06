@@ -1,7 +1,8 @@
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { Image } from "expo-image";
-import { Crown } from "lucide-react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Crown, Star } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { ICourse, IUserCourseProgress } from "@/types/course";
@@ -12,40 +13,35 @@ interface VerticalCourseCardProps {
   course: ICourse;
   progress?: IUserCourseProgress;
   isFeatured?: boolean;
+  width?: number;
   onPress: () => void;
 }
 
+const DIFFICULTY_MAP: Record<string, string> = {
+  beginner: "Iniciante",
+  intermediate: "Intermediário",
+  advanced: "Avançado",
+  INICIANTE: "Iniciante",
+  INTERMEDIARIO: "Intermediário",
+  AVANCADO: "Avançado",
+};
+
 export const VerticalCourseCard = React.memo(function VerticalCourseCard({
   course,
-  progress,
+  width,
   onPress,
 }: VerticalCourseCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
-  // Se o curso foi concluído pelo usuário (completedAt ou certificado ou flag)
-  const isCompleted =
-    Boolean(progress?.completedAt) ||
-    Boolean(progress?.certificateIssued) ||
-    (progress as any)?.isCompleted === true;
-
-  const totalLessons = course.lessonCount || (course as any).lessonsCount || 0;
-  const completedCount = progress?.completedLessons ? progress.completedLessons.length : 0;
-
-  let completionPercent = 0;
-  if (isCompleted) {
-    completionPercent = 100;
-  } else if (totalLessons > 0 && completedCount > 0) {
-    completionPercent = (completedCount / totalLessons) * 100;
-  } else if ((progress as any)?.progressPercentage !== undefined) {
-    completionPercent = (progress as any).progressPercentage;
-  } else if ((progress as any)?.progress_percentage !== undefined) {
-    completionPercent = (progress as any).progress_percentage;
-  }
-
-  const displayPercent = Math.min(Math.round(completionPercent), 100);
   const isComingSoon = course.status === "COMING_SOON";
   const finalRating = course.averageRating ?? course.rating;
+
+  const rawLevel = String(course.difficultyLevel || "").toLowerCase();
+  const displayLevel =
+    DIFFICULTY_MAP[course.difficultyLevel as string] ||
+    DIFFICULTY_MAP[rawLevel] ||
+    "Iniciante";
 
   const imageSource =
     typeof course.imageUrl === "string" && course.imageUrl.trim().length > 0
@@ -56,7 +52,7 @@ export const VerticalCourseCard = React.memo(function VerticalCourseCard({
 
   return (
     <TouchableOpacity
-      style={styles.card}
+      style={[styles.card, width ? { width } : undefined]}
       onPress={isComingSoon ? undefined : onPress}
       activeOpacity={isComingSoon ? 1 : 0.75}
       disabled={isComingSoon}
@@ -83,33 +79,28 @@ export const VerticalCourseCard = React.memo(function VerticalCourseCard({
           </View>
         ) : null}
 
-        {/* Topo Direito: Avaliação por estrelas */}
+        {/* Gradiente escuro na base da imagem para legibilidade do título */}
+        <LinearGradient
+          colors={["transparent", "rgba(0, 0, 0, 0.45)", "rgba(0, 0, 0, 0.88)"]}
+          locations={[0, 0.4, 1]}
+          style={styles.imageGradientOverlay}
+        >
+          <Text style={styles.imageTitle} numberOfLines={2} ellipsizeMode="tail">
+            {course.title}
+          </Text>
+        </LinearGradient>
+      </View>
+
+      {/* Faixa inferior limpa: [Nível] à esquerda e [Nota] à direita */}
+      <View style={styles.footerRow}>
+        <Text style={styles.levelText}>{displayLevel}</Text>
+
         {finalRating !== undefined && finalRating !== null && finalRating > 0 && (
-          <View style={styles.ratingBadge}>
-            <Text style={styles.starText}>★</Text>
+          <View style={styles.ratingBox}>
+            <Star size={11} color={theme.colors.warning} fill={theme.colors.warning} />
             <Text style={styles.ratingText}>{finalRating.toFixed(1)}</Text>
           </View>
         )}
-
-        {!isComingSoon && (
-          <View style={styles.imageProgressContainer}>
-            <View style={styles.imageProgressBackground}>
-              {displayPercent > 0 && (
-                <View style={[styles.imageProgressFill, { width: `${displayPercent}%` }]} />
-              )}
-            </View>
-            <Text style={styles.imageProgressText}>{displayPercent}%</Text>
-          </View>
-        )}
-      </View>
-
-      <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
-          {course.title}
-        </Text>
-        <Text style={styles.metadata} numberOfLines={1}>
-          {totalLessons > 0 ? `${totalLessons} aulas` : "Em breve"} • {course.difficultyLevel || "Geral"}
-        </Text>
       </View>
     </TouchableOpacity>
   );

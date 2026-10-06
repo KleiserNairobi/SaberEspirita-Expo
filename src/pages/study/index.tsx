@@ -15,7 +15,6 @@ import { AssistantCard } from "@/components/AssistantCard";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { JourneyBottomSheet } from "@/components/JourneyBottomSheet";
-import { ResumeCard } from "@/components/ResumeCard";
 import { Biblioteca } from "@/data/Biblioteca";
 import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
 import { COURSES_KEYS, useCourses, useFeaturedCourses } from "@/hooks/queries/useCourses";
@@ -30,7 +29,9 @@ import { useAuthStore } from "@/stores/authStore";
 import { ICourse } from "@/types/course";
 import { prefetchImages } from "@/utils/imagePrefetch";
 
+import { ContinueStudyingSection, InProgressCourseItem } from "./components/ContinueStudyingSection";
 import { ExploreByTheme } from "./components/ExploreByTheme";
+import { PremiumBanner } from "./components/PremiumBanner";
 import { createStyles } from "./styles";
 
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -175,11 +176,87 @@ export function StudyScreen() {
     });
   }, [glossaryTerms]);
 
-  function handleResumePress() {
-    if (lastAccessed) {
-      navigation.navigate("CourseCurriculum", { courseId: lastAccessed.course.id });
+  // Lista de cursos em andamento para o carrossel "Continue Estudando"
+  const inProgressCourses: InProgressCourseItem[] = React.useMemo(() => {
+    const items: InProgressCourseItem[] = [];
+
+    // Se temos lastAccessed, garantimos que ele é o primeiro item
+    if (lastAccessed?.course && lastAccessed?.progress) {
+      const course = lastAccessed.course;
+      const progress = lastAccessed.progress;
+      const totalLessons = course.lessonCount || (course as any).lessonsCount || 0;
+      const completedCount = progress.completedLessons ? progress.completedLessons.length : 0;
+      const completionPercent =
+        totalLessons > 0
+          ? (completedCount / totalLessons) * 100
+          : (progress as any)?.progressPercentage ?? 0;
+      const displayPercent = Math.min(Math.round(completionPercent), 100);
+
+      const nextLessonTitle = lastAccessed.nextLesson
+        ? `Aula ${(lastAccessed.nextLesson as any).order ?? 1}: ${lastAccessed.nextLesson.title}`
+        : "Continuar estudo";
+
+      if (displayPercent < 100) {
+        items.push({
+          course,
+          progress,
+          displayPercent,
+          nextLessonTitle,
+        });
+      }
     }
+
+    // Varre os demais cursos com progresso em andamento
+    if (allCourses && allCourses.length > 0 && allProgress) {
+      allCourses.forEach((course) => {
+        if (lastAccessed?.course?.id === course.id) return;
+
+        const progress =
+          allProgress[course.id] ||
+          allProgress[course.id?.toLowerCase()] ||
+          allProgress[course.id?.toUpperCase()];
+
+        if (!progress) return;
+
+        const totalLessons = course.lessonCount || (course as any).lessonsCount || 0;
+        const completedCount = progress.completedLessons ? progress.completedLessons.length : 0;
+        const completionPercent =
+          totalLessons > 0
+            ? (completedCount / totalLessons) * 100
+            : (progress as any)?.progressPercentage ?? 0;
+        const displayPercent = Math.min(Math.round(completionPercent), 100);
+
+        if (displayPercent > 0 && displayPercent < 100) {
+          items.push({
+            course,
+            progress,
+            displayPercent,
+            nextLessonTitle: "Continuar de onde parou",
+          });
+        }
+      });
+    }
+
+    return items;
+  }, [lastAccessed, allCourses, allProgress]);
+
+  function handleContinueItemPress(item: InProgressCourseItem) {
+    navigation.navigate("CourseCurriculum", { courseId: item.course.id });
   }
+
+  const handlePremiumPress = useCallback(() => {
+    setMessageConfig({
+      type: "info",
+      title: "Saber Espírita Premium",
+      message:
+        "O plano Premium oferece acesso ilimitado a todas as séries das Obras Complementares (André Luiz, Emmanuel, etc.), estudos guiados em áudio e certificados exclusivos.",
+      primaryButton: {
+        label: "Entendido",
+        onPress: () => bottomSheetRef.current?.dismiss(),
+      },
+    });
+    setTimeout(() => bottomSheetRef.current?.present(), 100);
+  }, []);
 
   function handleExploreCoursePress(course: ICourse, hasProgress: boolean) {
     if (course.status === "COMING_SOON") return;
@@ -229,7 +306,7 @@ export function StudyScreen() {
               <Text style={styles.greetingText}>
                 Olá, {firstName}!
               </Text>
-              {!lastAccessed && (
+              {inProgressCourses.length === 0 && (
                 <Text style={styles.subtitleText}>
                   Vamos começar sua jornada?
                 </Text>
@@ -278,17 +355,18 @@ export function StudyScreen() {
           </View>
         </View>
 
-        {/* Card de Continuar (Resume) */}
-        {lastAccessed && (
-          <ResumeCard
-            course={lastAccessed.course}
-            progress={lastAccessed.progress}
-            nextLesson={lastAccessed.nextLesson}
-            onPress={handleResumePress}
+        {/* Carrossel de Cursos em Andamento (com histórico real e barra de progresso verde fina) */}
+        {inProgressCourses.length > 0 && (
+          <ContinueStudyingSection
+            items={inProgressCourses}
+            onPressItem={handleContinueItemPress}
           />
         )}
 
-        {/* Seção Explore por tema */}
+        {/* Banner do Saber Espírita Premium (100% Flat com Floating Cutout Badge) */}
+        <PremiumBanner onPress={handlePremiumPress} />
+
+        {/* Seção Explore por tema (Trilhas em Carrossel Horizontal e Subcategorias) */}
         {allCourses.length > 0 && (
           <ExploreByTheme
             courses={allCourses}
