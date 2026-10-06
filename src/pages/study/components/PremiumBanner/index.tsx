@@ -1,5 +1,7 @@
 import React from "react";
+
 import { Text, TouchableOpacity, View } from "react-native";
+
 import { Crown } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -25,7 +27,8 @@ export function PremiumBanner({ onPress }: PremiumBannerProps) {
       <View style={styles.content}>
         <Text style={styles.title}>Aprofunde seus Estudos</Text>
         <Text style={styles.description}>
-          Acesso ilimitado às séries completas de André Luiz, Emmanuel e estudos guiados exclusivos.
+          Acesso ilimitado às séries completas de André Luiz, Emmanuel e estudos guiados
+          exclusivos.
         </Text>
 
         <TouchableOpacity

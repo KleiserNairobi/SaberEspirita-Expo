@@ -12,11 +12,10 @@ export const createStyles = (theme: ITheme) =>
       borderColor: theme.colors.border,
       marginBottom: theme.spacing.md,
       overflow: "hidden",
-      minHeight: 130, // Restaurado minHeight para consistência
+      minHeight: 130,
     },
     imagePlaceholder: {
       width: 100,
-      // height removido: Flexbox (alignItems: stretch) do pai cuidará da altura
       backgroundColor: theme.colors.accent,
       justifyContent: "center",
       alignItems: "center",
@@ -52,21 +51,19 @@ export const createStyles = (theme: ITheme) =>
       flexDirection: "row",
       alignItems: "center",
       flexWrap: "wrap",
-      gap: 6,
+      gap: theme.spacing.xs,
       marginBottom: theme.spacing.xs,
     },
     metadataItem: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 4,
+      gap: theme.spacing.xs,
     },
     metadataText: {
       ...theme.text("xs", "regular", theme.colors.muted),
-      fontSize: 11,
     },
     metadataSeparator: {
       ...theme.text("xs", "regular", theme.colors.muted),
-      fontSize: 11,
     },
     progressContainer: {
       marginTop: theme.spacing.xs,
@@ -83,37 +80,34 @@ export const createStyles = (theme: ITheme) =>
     },
     progressText: {
       ...theme.text("xs", "regular", theme.colors.primary),
-      fontSize: 10,
-      marginTop: 2,
+      marginTop: theme.spacing.xs / 2,
     },
     cardDisabled: {
       opacity: 0.6,
     },
     comingSoonBadge: {
       position: "absolute",
-      top: 8,
-      right: 8,
+      top: theme.spacing.sm,
+      right: theme.spacing.sm,
       backgroundColor: theme.colors.primary,
-      paddingHorizontal: 8,
-      paddingVertical: 4,
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
       borderRadius: theme.radius.sm,
     },
     comingSoonText: {
-      ...theme.text("xs", "semibold", theme.colors.background),
-      fontSize: 10,
+      ...theme.text("xs", "semibold", theme.colors.onPrimary),
       letterSpacing: 0.5,
     },
     comingSoonBadgeLarge: {
       alignSelf: "flex-start",
       backgroundColor: theme.colors.warning,
-      paddingHorizontal: 12,
-      paddingVertical: 6,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
       borderRadius: theme.radius.sm,
-      marginTop: 4,
+      marginTop: theme.spacing.xs,
     },
     comingSoonTextLarge: {
-      ...theme.text("sm", "semibold", theme.colors.background),
-      fontSize: 11,
+      ...theme.text("sm", "semibold", theme.colors.onPrimary),
       letterSpacing: 0.8,
     },
   });

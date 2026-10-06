@@ -1,5 +1,5 @@
-import { ITheme } from "@/configs/theme/types";
 import { StyleSheet } from "react-native";
+import { ITheme } from "@/configs/theme/types";
 
 export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
@@ -8,9 +8,9 @@ export const createStyles = (theme: ITheme) =>
       alignItems: "center",
       backgroundColor: theme.colors.card,
       borderRadius: theme.radius.md,
-      marginBottom: 12,
-      paddingVertical: 14,
-      paddingHorizontal: 16,
+      marginBottom: theme.spacing.sm,
+      paddingVertical: theme.spacing.md - 2,
+      paddingHorizontal: theme.spacing.md,
       borderWidth: 1,
       borderColor: theme.colors.border,
     },
@@ -21,11 +21,11 @@ export const createStyles = (theme: ITheme) =>
     iconContainer: {
       width: 40,
       height: 40,
-      borderRadius: 20,
+      borderRadius: theme.radius.full,
       backgroundColor: `${theme.colors.primary}15`,
       justifyContent: "center",
       alignItems: "center",
-      marginRight: 16,
+      marginRight: theme.spacing.md,
     },
     content: {
       flex: 1,
@@ -35,25 +35,23 @@ export const createStyles = (theme: ITheme) =>
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      marginBottom: 6,
+      marginBottom: theme.spacing.xs,
     },
     title: {
       ...theme.text("md", "medium"),
-      color: theme.colors.text,
       flex: 1,
-      marginRight: 8,
+      marginRight: theme.spacing.sm,
     },
     statusBadge: {
       flexDirection: "row",
       alignItems: "center",
-      paddingVertical: 2,
-      paddingHorizontal: 8,
+      paddingVertical: theme.spacing.xs / 2,
+      paddingHorizontal: theme.spacing.sm,
       borderRadius: theme.radius.sm,
       backgroundColor: `${theme.colors.success}20`,
     },
     statusText: {
-      ...theme.text("xs", "semibold"),
-      color: theme.colors.success,
+      ...theme.text("xs", "semibold", theme.colors.success),
       textTransform: "capitalize",
     },
     metaRow: {
@@ -63,28 +61,23 @@ export const createStyles = (theme: ITheme) =>
     metaItem: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 4,
+      gap: theme.spacing.xs,
     },
     metaText: {
-      ...theme.text("xs", "regular"),
-      color: theme.colors.primary,
-      fontFamily: "Oswald_400Regular",
+      ...theme.text("xs", "regular", theme.colors.primary),
     },
     metaTextAuthor: {
-      ...theme.text("xs", "regular"),
-      color: theme.colors.textSecondary,
+      ...theme.text("xs", "regular", theme.colors.textSecondary),
       maxWidth: 100,
     },
     metaTextDate: {
-      ...theme.text("xs", "regular"),
-      color: theme.colors.textSecondary,
-      fontFamily: "Oswald_400Regular",
+      ...theme.text("xs", "regular", theme.colors.textSecondary),
     },
     metaDivider: {
       width: 4,
       height: 4,
-      borderRadius: 2,
+      borderRadius: theme.radius.full,
       backgroundColor: theme.colors.border,
-      marginHorizontal: 8,
+      marginHorizontal: theme.spacing.sm,
     },
   });

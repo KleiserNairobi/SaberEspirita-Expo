@@ -10,7 +10,7 @@ export const createStyles = (theme: ITheme) =>
     },
     headerContainer: {
       marginHorizontal: theme.spacing.lg,
-      marginBottom: 20,
+      marginBottom: theme.spacing.md,
     },
     headerTopRow: {
       flexDirection: "row",
@@ -43,7 +43,7 @@ export const createStyles = (theme: ITheme) =>
       right: -2,
       width: 12,
       height: 12,
-      borderRadius: 6,
+      borderRadius: theme.radius.full,
       backgroundColor: theme.colors.success,
       borderWidth: 2,
       borderColor: theme.colors.background,
@@ -58,9 +58,9 @@ export const createStyles = (theme: ITheme) =>
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      marginTop: 20,
+      marginTop: theme.spacing.md,
       marginHorizontal: theme.spacing.lg,
-      marginBottom: 12,
+      marginBottom: theme.spacing.sm,
     },
     sectionTitle: {
       ...theme.text("xxl", "regular"),
@@ -76,14 +76,12 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "space-between", // Espaço entre conteúdo e seta
-
+      justifyContent: "space-between",
       backgroundColor: theme.colors.card,
       marginHorizontal: theme.spacing.lg,
       borderWidth: 1,
       borderColor: theme.colors.border,
       borderRadius: theme.radius.md,
-
       marginBottom: theme.spacing.sm,
       padding: theme.spacing.md,
       gap: theme.spacing.md,
@@ -96,18 +94,18 @@ export const createStyles = (theme: ITheme) =>
     iconContainer: {
       width: 40,
       height: 40,
-      borderRadius: 20,
+      borderRadius: theme.radius.full,
       backgroundColor: `${theme.colors.primary}15`,
       alignItems: "center",
       justifyContent: "center",
     },
     libraryItemText: {
-      ...theme.text("md", "medium"), // Fonte maior para lista
+      ...theme.text("md", "medium"),
       textAlign: "left",
       color: theme.colors.text,
     },
     contentContainer: {
-      paddingBottom: 200,
+      paddingBottom: theme.spacing.xxl * 3,
     },
     rightGroup: {
       flexDirection: "row",
@@ -117,14 +115,13 @@ export const createStyles = (theme: ITheme) =>
     statusBadge: {
       flexDirection: "row",
       alignItems: "center",
-      paddingVertical: 2,
-      paddingHorizontal: 8,
+      paddingVertical: theme.spacing.xs / 2,
+      paddingHorizontal: theme.spacing.sm,
       borderRadius: theme.radius.sm,
       backgroundColor: `${theme.colors.success}20`,
     },
     statusText: {
-      ...theme.text("xs", "semibold"),
-      color: theme.colors.success,
+      ...theme.text("xs", "semibold", theme.colors.success),
       textTransform: "capitalize",
     },
   });
