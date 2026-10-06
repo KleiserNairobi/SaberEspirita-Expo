@@ -10,7 +10,7 @@ export const createStyles = (theme: ITheme) =>
     },
     headerContainer: {
       marginHorizontal: theme.spacing.lg,
-      marginBottom: theme.spacing.lg,
+      marginBottom: 20,
     },
     headerTopRow: {
       flexDirection: "row",
@@ -49,7 +49,7 @@ export const createStyles = (theme: ITheme) =>
       borderColor: theme.colors.background,
     },
     greetingText: {
-      ...theme.text("xxxl", "semibold"),
+      ...theme.text("xxl", "medium"),
     },
     subtitleText: {
       ...theme.text("md", "regular", theme.colors.textSecondary),
@@ -58,9 +58,9 @@ export const createStyles = (theme: ITheme) =>
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      marginTop: theme.spacing.md,
+      marginTop: 20,
       marginHorizontal: theme.spacing.lg,
-      marginBottom: theme.spacing.md,
+      marginBottom: 12,
     },
     sectionTitle: {
       ...theme.text("xxl", "regular"),

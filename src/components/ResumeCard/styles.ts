@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+
 import { ITheme } from "@/configs/theme/types";
 
 export const createStyles = (theme: ITheme) =>
@@ -8,7 +9,7 @@ export const createStyles = (theme: ITheme) =>
       borderRadius: theme.radius.md,
       padding: theme.spacing.sm + 4, // 12px
       marginHorizontal: theme.spacing.lg,
-      marginBottom: theme.spacing.lg,
+      marginBottom: 20,
       borderLeftWidth: 3,
       borderLeftColor: theme.colors.primary,
       flexDirection: "row",
@@ -29,7 +30,7 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: 6,
     },
     label: {
-      ...theme.text("xs", "bold"),
+      ...theme.text("xs", "semibold"),
       color: theme.colors.primary,
       textTransform: "uppercase",
       letterSpacing: 0.8,

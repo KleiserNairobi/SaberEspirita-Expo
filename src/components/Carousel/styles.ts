@@ -1,148 +1,122 @@
 import { Dimensions, StyleSheet } from "react-native";
-
 import { ITheme } from "@/configs/theme/types";
 
 const { width } = Dimensions.get("window");
 
-export const SPACING = 10;
-export const ITEM_SIZE = width * 0.72;
+export const SPACING = 8;
+// Proporção retrato refinada (largura 56% da tela para presença visual harmônica)
+export const ITEM_SIZE = width * 0.56;
 export const SPACER_ITEM_SIZE = (width - ITEM_SIZE) / 2;
 
 export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     itemContainer: {
       marginHorizontal: SPACING,
-      borderRadius: 24,
+      borderRadius: 16,
       overflow: "hidden",
     },
     imageContainer: {
       width: "100%",
-      height: 240,
+      height: 195, // Altura reduzida em ~20% sobre o original, mantendo proporção vertical
       borderRadius: 16,
       overflow: "hidden",
-      alignSelf: "center",
+      position: "relative",
     },
     imageView: {
       width: "100%",
       height: "100%",
-      resizeMode: "cover",
-    },
-    overlay: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: "rgba(0,0,0,0.4)",
+      borderRadius: 16,
     },
     textOverlayContainer: {
       ...StyleSheet.absoluteFillObject,
       justifyContent: "flex-end",
-      padding: SPACING * 2,
+      paddingHorizontal: 12,
+      paddingBottom: 16,
     },
     title: {
-      fontFamily: "Oswald_300Light",
-      fontSize: 20,
-      marginBottom: 5,
-      color: "white",
-      textShadowColor: "rgba(0, 0, 0, 0.5)",
-      textShadowOffset: { width: 1, height: 1 },
-      textShadowRadius: 3,
-    },
-    description: {
-      fontFamily: "Oswald_300Light",
+      ...theme.text("md", "bold"),
       fontSize: 16,
-      color: "rgba(255, 255, 255, 0.9)",
-      marginBottom: 16,
-      textShadowColor: "rgba(0, 0, 0, 0.5)",
-      textShadowOffset: { width: 1, height: 1 },
-      textShadowRadius: 2,
+      lineHeight: 21,
+      color: "#FFFFFF",
+      textShadowColor: "rgba(0, 0, 0, 0.85)",
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 3,
     },
     progressBarContainer: {
       width: "100%",
-      height: 6,
-      backgroundColor: "rgba(255,255,255,0.3)",
-      borderRadius: 3,
-      marginTop: 10,
-      marginBottom: 12, // Espaço antes do botão
-      flexDirection: "row",
-      alignItems: "center",
+      height: 4,
+      backgroundColor: "rgba(255, 255, 255, 0.4)",
+      borderRadius: 2,
+      marginTop: 8,
+      overflow: "hidden",
     },
     progressBarFill: {
       height: "100%",
-      backgroundColor: "#FFF",
-      borderRadius: 3,
+      backgroundColor: theme.colors.primary,
+      borderRadius: 2,
     },
     percentText: {
       position: "absolute",
       right: 0,
-      top: -18,
+      top: -14,
       fontFamily: "BarlowCondensed_600SemiBold",
-      fontSize: 12,
+      fontSize: 10,
       color: "#FFF",
       textShadowColor: "rgba(0,0,0,0.8)",
       textShadowRadius: 2,
-    },
-    button: {
-      alignSelf: "stretch",
-      backgroundColor: theme.colors.primary + "CC", // 80% opacidade
-      paddingHorizontal: 16,
-      paddingVertical: 10,
-      borderRadius: 12,
-      borderWidth: 0,
-      marginTop: 4,
-    },
-    buttonContent: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    buttonComingSoon: {
-      backgroundColor: theme.colors.warning + "CC", // 80% opacidade
-      opacity: 1,
-    },
-    buttonCompleted: {
-      backgroundColor: "rgba(255, 255, 255, 0.15)",
-      borderWidth: 0,
-    },
-    buttonContinuing: {
-      backgroundColor: theme.colors.primary + "CC", // 80% opacidade
-      borderWidth: 0,
-    },
-    buttonDisabled: {
-      opacity: 0.5,
-      backgroundColor: "rgba(255, 255, 255, 0.1)",
-    },
-    buttonText: {
-      fontFamily: "Oswald_600SemiBold",
-      fontSize: 14,
-      color: "#FFFFFF",
-      letterSpacing: 0.8,
-      textAlign: "center",
-      textTransform: "uppercase",
     },
     ratingBadge: {
       position: "absolute",
       top: 12,
       right: 12,
-      backgroundColor: "rgba(255, 255, 255, 0.7)",
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 12,
+      backgroundColor: "rgba(0, 0, 0, 0.65)",
+      paddingHorizontal: 7,
+      paddingVertical: 2,
+      borderRadius: 6,
       flexDirection: "row",
       alignItems: "center",
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 3,
-      elevation: 2,
       zIndex: 10,
     },
     ratingBadgeStar: {
-      color: theme.colors.primary,
-      fontSize: 12,
+      color: "#FFD700",
+      fontSize: 10,
       marginRight: 2,
     },
     ratingBadgeText: {
       fontFamily: "BarlowCondensed_600SemiBold",
-      fontSize: 12,
-      color: "#1E1E1E", // Cor escura para contraste excelente no fundo branco
+      fontSize: 11,
+      color: "#FFFFFF",
       fontWeight: "bold",
+    },
+    rankBadge: {
+      position: "absolute",
+      top: 12,
+      left: 16,
+      zIndex: 10,
+    },
+    rankBadgeText: {
+      fontFamily: "Oswald_700Bold",
+      fontSize: 26,
+      lineHeight: 30,
+      color: "#FFFFFF",
+      textShadowColor: "rgba(0, 0, 0, 0.85)",
+      textShadowOffset: { width: 0, height: 2 },
+      textShadowRadius: 4,
+    },
+    comingSoonBadge: {
+      position: "absolute",
+      bottom: 10,
+      right: 10,
+      backgroundColor: theme.colors.warning,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 4,
+      zIndex: 10,
+    },
+    comingSoonBadgeText: {
+      fontFamily: "BarlowCondensed_600SemiBold",
+      fontSize: 10,
+      color: "#FFFFFF",
+      textTransform: "uppercase",
     },
   });

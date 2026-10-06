@@ -90,6 +90,7 @@ export const courseApiService = {
       author: "André Luiz / Chico Xavier",
       lessonCount: 2,
       isPremium: true,
+      categoryId: "LE",
       status: "PUBLISHED",
       allowNewEnrollments: true,
       certification: {
@@ -109,6 +110,10 @@ export const courseApiService = {
       const response = await apiClient.get<ICourse[]>("/courses", { params });
       const list: ICourse[] = (response.data || []).map((course) => ({
         ...course,
+        categoryId:
+          course.categoryId ||
+          (course as any).category?.id ||
+          (course as any).category_id,
         imageUrl:
           typeof course.imageUrl === "string" ? resolveCdnUrl(course.imageUrl) : course.imageUrl,
         certification: parseCertification(course.certification),
@@ -131,6 +136,10 @@ export const courseApiService = {
     const response = await apiClient.get<ICourse[]>("/courses/featured");
     return (response.data || []).map((course) => ({
       ...course,
+      categoryId:
+        course.categoryId ||
+        (course as any).category?.id ||
+        (course as any).category_id,
       imageUrl: typeof course.imageUrl === "string" ? resolveCdnUrl(course.imageUrl) : course.imageUrl,
       certification: parseCertification(course.certification),
     }));

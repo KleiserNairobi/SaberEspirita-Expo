@@ -14,12 +14,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AssistantCard } from "@/components/AssistantCard";
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
-import { Carousel } from "@/components/Carousel";
 import { JourneyBottomSheet } from "@/components/JourneyBottomSheet";
 import { ResumeCard } from "@/components/ResumeCard";
 import { Biblioteca } from "@/data/Biblioteca";
 import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
-import { COURSES_KEYS, useFeaturedCourses } from "@/hooks/queries/useCourses";
+import { COURSES_KEYS, useCourses, useFeaturedCourses } from "@/hooks/queries/useCourses";
 import { useLastAccessedCourse } from "@/hooks/queries/useLastAccessedCourse";
 import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
 import { NOTIFICATION_KEYS, useHasUnreadNotifications } from "@/hooks/queries/useNotifications";
@@ -28,8 +27,10 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
 import { AppStackParamList } from "@/routers/types";
 import { useAuthStore } from "@/stores/authStore";
+import { ICourse } from "@/types/course";
 import { prefetchImages } from "@/utils/imagePrefetch";
 
+import { ExploreByTheme } from "./components/ExploreByTheme";
 import { createStyles } from "./styles";
 
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -81,8 +82,16 @@ export function StudyScreen() {
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
 
+  // Fetching de todos os cursos para o Explore por tema
+  const { data: allCourses = [] } = useCourses();
+
   // Fetching de cursos populares via React Query
   const { data: featuredCourses = [] } = useFeaturedCourses();
+
+  // Ids dos cursos em destaque / populares
+  const featuredCourseIds = React.useMemo(() => {
+    return new Set((featuredCourses || []).map((c) => c.id));
+  }, [featuredCourses]);
 
   // Fetching de todos os progressos para o Carrossel Inteligente
   const { data: allProgress = {} } = useAllCoursesProgress();
@@ -125,7 +134,7 @@ export function StudyScreen() {
   const { data: podcasts = [] } = usePodcasts();
   const { data: glossaryTerms = [] } = useGlossaryTerms();
 
-  // Prefetch automático e deduplicado das capas dos podcasts e dos cursos Populares
+  // Prefetch automático e deduplicado das capas dos podcasts e dos cursos
   React.useEffect(() => {
     const urlsToPrefetch: (string | number | undefined | null)[] = [];
     if (podcasts && podcasts.length > 0) {
@@ -134,10 +143,13 @@ export function StudyScreen() {
     if (featuredCourses && featuredCourses.length > 0) {
       urlsToPrefetch.push(...featuredCourses.map((c) => c.imageUrl));
     }
+    if (allCourses && allCourses.length > 0) {
+      urlsToPrefetch.push(...allCourses.map((c) => c.imageUrl));
+    }
     if (urlsToPrefetch.length > 0) {
       prefetchImages(urlsToPrefetch);
     }
-  }, [podcasts, featuredCourses]);
+  }, [podcasts, featuredCourses, allCourses]);
 
   const hasNewPodcast = React.useMemo(() => {
     if (!podcasts || podcasts.length === 0) return false;
@@ -169,12 +181,12 @@ export function StudyScreen() {
     }
   }
 
-  function handleCoursePress(courseId: string) {
-    const progress = allProgress[courseId];
-    if (progress) {
-      navigation.navigate("CourseCurriculum", { courseId });
+  function handleExploreCoursePress(course: ICourse, hasProgress: boolean) {
+    if (course.status === "COMING_SOON") return;
+    if (hasProgress) {
+      navigation.navigate("CourseCurriculum", { courseId: course.id });
     } else {
-      navigation.navigate("CourseDetails", { courseId });
+      navigation.navigate("CourseDetails", { courseId: course.id });
     }
   }
 
@@ -276,29 +288,20 @@ export function StudyScreen() {
           />
         )}
 
-        {/* Seção Populares - Mostra apenas se tiver cursos carregados */}
-        {featuredCourses.length > 0 && (
-          <>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Populares</Text>
-              <TouchableOpacity onPress={() => navigation.navigate("CoursesCatalog")}>
-                <Text style={styles.seeAllText}>Ver todos</Text>
-              </TouchableOpacity>
-            </View>
-
-            <Carousel
-              data={featuredCourses}
-              onCoursePress={handleCoursePress}
-              progressMap={allProgress}
-            />
-          </>
+        {/* Seção Explore por tema */}
+        {allCourses.length > 0 && (
+          <ExploreByTheme
+            courses={allCourses}
+            progressMap={allProgress}
+            featuredCourseIds={featuredCourseIds}
+            onCoursePress={handleExploreCoursePress}
+            onSeeAllPress={() => navigation.navigate("CoursesCatalog")}
+          />
         )}
 
         {/* Seção Biblioteca */}
-        <View style={{ marginTop: featuredCourses.length > 0 ? 24 : 20 }}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Explore a Biblioteca</Text>
-          </View>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Explore a Biblioteca</Text>
         </View>
       </View>
     );

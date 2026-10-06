@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -10,7 +11,7 @@ import {
 
 import { useIsFocused } from "@react-navigation/native";
 import { Image } from "expo-image";
-import { CheckCircle2, Clock, Play, Plus } from "lucide-react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   Extrapolation,
   SharedValue,
@@ -34,22 +35,27 @@ interface CarouselProps {
   data: ICourse[];
   progressMap?: Record<string, IUserCourseProgress>;
   onCoursePress: (courseId: string) => void;
+  showRanking?: boolean;
 }
 
 interface CarouselItemProps {
   index: number;
+  rankIndex?: number;
   item: ICourse;
   progress?: IUserCourseProgress;
   scrollX: SharedValue<number>;
   onPress: (courseId: string) => void;
+  showRanking?: boolean;
 }
 
 const CarouselItem = React.memo(function CarouselItem({
   index,
+  rankIndex,
   item,
   progress,
   scrollX,
   onPress,
+  showRanking = false,
 }: CarouselItemProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -95,28 +101,21 @@ const CarouselItem = React.memo(function CarouselItem({
     item.lessonCount > 0
       ? ((progress?.completedLessons.length || 0) / item.lessonCount) * 100
       : 0;
-  const isCompleted = completionPercent >= 100;
 
-  // Apenas cursos COMING_SOON são travados de toque. Cursos LEGACY (Encerrados)
-  // devem permitir o toque para que o usuário veja a explicação e o botão de ir para a nova edição.
+  // Apenas cursos COMING_SOON são travados de toque.
   const isLocked = isComingSoon;
-
-  const buttonText = isComingSoon
-    ? "EM BREVE"
-    : isLegacy && !hasStarted
-      ? "ENCERRADO"
-      : isCompleted
-        ? "CONCLUÍDO"
-        : hasStarted
-          ? "CONTINUAR"
-          : "INICIAR";
 
   const displayPercent = Math.min(Math.round(completionPercent), 100);
 
   return (
     <View style={{ width: ITEM_SIZE }}>
       <Animated.View style={[styles.itemContainer, animatedStyle]}>
-        <View style={styles.imageContainer}>
+        <TouchableOpacity
+          activeOpacity={0.88}
+          onPress={isLocked ? undefined : () => onPress(item.id)}
+          disabled={isLocked}
+          style={styles.imageContainer}
+        >
           <Image
             source={imageSource}
             style={styles.imageView}
@@ -126,7 +125,19 @@ const CarouselItem = React.memo(function CarouselItem({
             placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
             priority={index <= 2 ? "high" : "normal"}
           />
-          <View style={styles.overlay} />
+
+          <LinearGradient
+            colors={["transparent", "rgba(0,0,0,0.35)", "rgba(0,0,0,0.88)"]}
+            locations={[0, 0.4, 1]}
+            style={[StyleSheet.absoluteFillObject, { borderRadius: 16 }]}
+          />
+
+          {/* RANKING TOP 5 - OPÇÃO A (Número puro grande) */}
+          {showRanking && rankIndex !== undefined && (
+            <View style={styles.rankBadge}>
+              <Text style={styles.rankBadgeText}>{rankIndex}</Text>
+            </View>
+          )}
 
           {/* BADGE DE AVALIAÇÃO */}
           {finalRating !== undefined && finalRating !== null && finalRating > 0 && (
@@ -136,15 +147,18 @@ const CarouselItem = React.memo(function CarouselItem({
             </View>
           )}
 
+          {/* BADGE EM BREVE */}
+          {isComingSoon && (
+            <View style={styles.comingSoonBadge}>
+              <Text style={styles.comingSoonBadgeText}>Em breve</Text>
+            </View>
+          )}
+
+          {/* TÍTULO E PROGRESSO NA BASE */}
           <View style={styles.textOverlayContainer}>
             <Text style={styles.title} numberOfLines={2}>
               {item.title}
             </Text>
-            {item.description && (
-              <Text style={styles.description} numberOfLines={2}>
-                {item.description}
-              </Text>
-            )}
 
             {hasStarted && !isComingSoon && (
               <View style={styles.progressBarContainer}>
@@ -152,39 +166,19 @@ const CarouselItem = React.memo(function CarouselItem({
                 <Text style={styles.percentText}>{displayPercent}%</Text>
               </View>
             )}
-
-            <TouchableOpacity
-              style={[
-                styles.button,
-                (isComingSoon || (isLegacy && !hasStarted)) && styles.buttonComingSoon,
-                isCompleted && styles.buttonCompleted,
-                hasStarted && !isCompleted && styles.buttonContinuing,
-              ]}
-              activeOpacity={isLocked ? 1 : 0.8}
-              onPress={isLocked ? undefined : () => onPress(item.id)}
-              disabled={isLocked}
-            >
-              <View style={styles.buttonContent}>
-                {isComingSoon || (isLegacy && !hasStarted) ? (
-                  <Clock size={14} color="#FFF" style={{ marginRight: 6 }} />
-                ) : isCompleted ? (
-                  <CheckCircle2 size={14} color="#FFF" style={{ marginRight: 6 }} />
-                ) : hasStarted ? (
-                  <Play size={12} color="#FFF" fill="#FFF" style={{ marginRight: 6 }} />
-                ) : (
-                  <Plus size={14} color="#FFF" style={{ marginRight: 6 }} />
-                )}
-                <Text style={styles.buttonText}>{buttonText}</Text>
-              </View>
-            </TouchableOpacity>
           </View>
-        </View>
+        </TouchableOpacity>
       </Animated.View>
     </View>
   );
 });
 
-export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
+export function Carousel({
+  data,
+  progressMap,
+  onCoursePress,
+  showRanking = false,
+}: CarouselProps) {
   const isFocused = useIsFocused();
   const scrollX = useSharedValue(0);
   const flatListRef = useRef<Animated.FlatList<any>>(null);
@@ -304,6 +298,8 @@ export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
       snapToAlignment="center"
       contentContainerStyle={{
         paddingHorizontal: SPACER_ITEM_SIZE,
+        paddingVertical: 12,
+        alignItems: "center",
       }}
       bounces={false}
       decelerationRate={"fast"}
@@ -315,7 +311,7 @@ export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
       initialNumToRender={5}
       maxToRenderPerBatch={5}
       windowSize={5}
-      removeClippedSubviews={true}
+      removeClippedSubviews={false}
       // Começar no meio da lista para permitir rolagem infinita inicial para ambos os lados
       initialScrollIndex={initialIndex}
       getItemLayout={(_, index) => ({
@@ -326,15 +322,18 @@ export function Carousel({ data, progressMap, onCoursePress }: CarouselProps) {
       renderItem={({ item, index }) => {
         const courseItem = item as ICourse;
         const progress = progressMap ? progressMap[courseItem.id] : undefined;
+        const rankIndex = data.length > 0 ? (index % data.length) + 1 : undefined;
 
         return (
           <CarouselItem
             key={item.uniqueKey}
             index={index}
+            rankIndex={rankIndex}
             item={courseItem}
             progress={progress}
             scrollX={scrollX}
             onPress={onCoursePress}
+            showRanking={showRanking}
           />
         );
       }}

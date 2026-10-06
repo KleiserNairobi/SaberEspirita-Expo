@@ -42,8 +42,12 @@ export function useAllCoursesProgress() {
       const progressMap: Record<string, IUserCourseProgress> = {};
       if (Array.isArray(list)) {
         list.forEach((item) => {
-          if (item.courseId) {
-            progressMap[item.courseId] = item;
+          const cId = item.courseId || (item as any).course_id || (item as any).course?.id;
+          if (cId) {
+            const rawId = String(cId);
+            progressMap[rawId] = item;
+            progressMap[rawId.toLowerCase()] = item;
+            progressMap[rawId.toUpperCase()] = item;
           }
         });
       }

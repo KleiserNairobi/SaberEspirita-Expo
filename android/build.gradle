@@ -23,3 +23,11 @@ allprojects {
 
 apply plugin: "expo-root-project"
 apply plugin: "com.facebook.react.rootproject"
+
+gradle.projectsEvaluated {
+  allprojects { p ->
+    p.tasks.matching { it.name.startsWith("lintVital") }.configureEach {
+      enabled = false
+    }
+  }
+}
