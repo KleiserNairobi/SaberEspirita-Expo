@@ -31,9 +31,7 @@ export const createStyles = (theme: ITheme) =>
       zIndex: 2,
     },
     comingSoonText: {
-      fontFamily: "BarlowCondensed_600SemiBold",
-      fontSize: 10,
-      color: "#FFFFFF",
+      ...theme.text("xs", "semibold", "#FFFFFF"),
       textTransform: "uppercase",
       letterSpacing: 0.5,
     },
@@ -51,9 +49,7 @@ export const createStyles = (theme: ITheme) =>
       zIndex: 2,
     },
     premiumBadgeText: {
-      fontFamily: "BarlowCondensed_600SemiBold",
-      fontSize: 10,
-      color: "#FFD700",
+      ...theme.text("xs", "semibold", "#FFD700"),
       textTransform: "uppercase",
       letterSpacing: 0.5,
     },
@@ -69,10 +65,8 @@ export const createStyles = (theme: ITheme) =>
       zIndex: 1,
     },
     imageTitle: {
-      fontFamily: "BarlowCondensed_600SemiBold",
-      fontSize: 13,
-      lineHeight: 16,
-      color: "#FFFFFF",
+      ...theme.text("sm", "semibold", "#FFFFFF"),
+      lineHeight: 18,
       textShadowColor: "rgba(0, 0, 0, 0.75)",
       textShadowOffset: { width: 0, height: 1 },
       textShadowRadius: 3,
@@ -96,8 +90,6 @@ export const createStyles = (theme: ITheme) =>
       gap: 3,
     },
     ratingText: {
-      fontFamily: "BarlowCondensed_600SemiBold",
-      fontSize: 11,
-      color: theme.colors.text,
+      ...theme.text("xs", "semibold", theme.colors.text),
     },
   });

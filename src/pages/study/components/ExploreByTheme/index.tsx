@@ -1,17 +1,11 @@
 import React, { useMemo, useState } from "react";
-import {
-  FlatList,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+
 import {
   Book,
   BookMarked,
   BookOpen,
-  ChevronRight,
-  Compass,
   Heart,
   Library,
   Scale,
