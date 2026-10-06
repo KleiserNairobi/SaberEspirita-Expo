@@ -34,8 +34,13 @@ import { useCourse, useCourseMaterials } from "@/hooks/queries/useCourses";
 import { useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
+import { useAuthStore } from "@/stores/authStore";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
 import { prefetchImages } from "@/utils/imagePrefetch";
+import {
+  getCourseActiveLesson,
+  getLessonSlideProgress,
+} from "@/utils/lessonProgressStorage";
 
 import { CourseMaterialsTab } from "./components/CourseMaterialsTab";
 import { createStyles } from "./styles";
@@ -71,7 +76,13 @@ export function CourseDetailsScreen() {
   // Queries para a aba de currículo
   const { data: lessons = [], isLoading: isLoadingLessons } = useLessons(courseId);
 
-  const isEnrolled = !!progress; // Se tem objeto de progresso, está matriculado
+  const { user } = useAuthStore();
+  const activeLocal = getCourseActiveLesson(user?.uid, courseId);
+  const isEnrolled =
+    Boolean(progress) ||
+    Boolean(activeLocal) ||
+    Boolean(progress?.startedAt) ||
+    Boolean((progress as any)?.enrolledAt);
 
   const [activeTab, setActiveTab] = useState<"about" | "lessons" | "materials">("about");
 
@@ -164,8 +175,26 @@ export function CourseDetailsScreen() {
   const completedCount = progress?.completedLessons?.length || 0;
   const totalLessons = course?.lessonCount || 0;
 
-  const userProgress =
-    totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+  const slideProg = activeLocal?.lessonId
+    ? getLessonSlideProgress(user?.uid, activeLocal.lessonId)
+    : null;
+  const currentFraction =
+    slideProg && slideProg.totalSlides > 0 && slideProg.slideIndex > 0
+      ? (slideProg.slideIndex + 1) / slideProg.totalSlides
+      : 0;
+
+  let userProgress = 0;
+  if (totalLessons > 0) {
+    userProgress = Math.min(
+      Math.round(((completedCount + currentFraction) / totalLessons) * 100),
+      100
+    );
+  } else if ((progress as any)?.progressPercentage !== undefined) {
+    userProgress = (progress as any).progressPercentage;
+  }
+  if (userProgress === 0 && (Boolean(slideProg?.slideIndex) || completedCount > 0)) {
+    userProgress = 1;
+  }
 
   // Dados de certificação, exercícios e fórum
   const hasCertification = course?.certification?.enabled || false;

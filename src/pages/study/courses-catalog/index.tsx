@@ -24,6 +24,8 @@ import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { ICourse, IUserCourseProgress } from "@/types/course";
 import { ContentFilterType } from "@/types/prayer";
 
+import { useAuthStore } from "@/stores/authStore";
+import { getCourseActiveLesson } from "@/utils/lessonProgressStorage";
 import { CourseCard } from "./components/CourseCard";
 import { prefetchImages } from "@/utils/imagePrefetch";
 import { createStyles } from "./styles";
@@ -49,6 +51,9 @@ const CatalogCourseItem = React.memo(
     onPress: (course: ICourse, hasProgress: boolean) => void;
     theme: any;
   }) => {
+    const { user } = useAuthStore();
+    const activeLocal = getCourseActiveLesson(user?.uid, course.id);
+
     // Calcular progresso real localmente para garantir consistência com a tela de detalhes
     const completedCount = progressData?.completedLessons?.length || 0;
     const totalLessons = course.lessonCount || 0;
@@ -56,8 +61,14 @@ const CatalogCourseItem = React.memo(
     const progressPercent =
       totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
-    // Verifica se o curso tem progresso (foi iniciado)
-    const hasProgress = !!progressData;
+    // Verifica se o curso tem progresso (foi iniciado ou tem aula ativa)
+    const hasProgress =
+      Boolean(activeLocal) ||
+      Boolean(progressData?.startedAt) ||
+      Boolean(progressData?.completedLessons && progressData.completedLessons.length > 0) ||
+      Boolean(progressData?.completedAt) ||
+      ((progressData as any)?.progressPercentage !== undefined &&
+        (progressData as any).progressPercentage > 0);
 
     return (
       <View style={{ paddingHorizontal: theme.spacing.lg }}>
@@ -76,6 +87,7 @@ export function CoursesCatalogScreen({ navigation }: any) {
   const styles = createStyles(theme);
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const queryClient = useQueryClient();
+  const { user } = useAuthStore();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<ContentFilterType>("ALL");
@@ -135,9 +147,10 @@ export function CoursesCatalogScreen({ navigation }: any) {
   }, [courses, searchQuery, filterType]);
 
   function handleCoursePress(course: ICourse, hasProgress: boolean) {
-    // Se o curso tem progresso (foi iniciado), vai direto para o currículo
+    // Se o curso tem progresso (foi iniciado ou tem aula ativa), vai direto para o currículo
     // Caso contrário, vai para os detalhes
-    if (hasProgress) {
+    const activeLocal = getCourseActiveLesson(user?.uid, course.id);
+    if (hasProgress || Boolean(activeLocal)) {
       navigation.navigate("CourseCurriculum", { courseId: course.id });
     } else {
       navigation.navigate("CourseDetails", { courseId: course.id });

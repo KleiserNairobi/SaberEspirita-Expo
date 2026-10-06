@@ -323,7 +323,8 @@ export function StudyScreen() {
 
   function handleExploreCoursePress(course: ICourse, hasProgress: boolean) {
     if (course.status === "COMING_SOON") return;
-    if (hasProgress) {
+    const activeLocal = getCourseActiveLesson(user?.uid, course.id);
+    if (hasProgress || Boolean(activeLocal)) {
       navigation.navigate("CourseCurriculum", { courseId: course.id });
     } else {
       navigation.navigate("CourseDetails", { courseId: course.id });

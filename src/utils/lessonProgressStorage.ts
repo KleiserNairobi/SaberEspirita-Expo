@@ -129,13 +129,29 @@ export function getCourseActiveLesson(
 ): ILastCourseAccess | null {
   if (!courseId) return null;
   const userKey = userId || "guest";
-  const key = `${PREFIX_COURSE_ACTIVE_LESSON}${userKey}_${courseId}`;
-  const raw = loadString(key);
-  if (!raw) return null;
 
-  try {
-    return JSON.parse(raw) as ILastCourseAccess;
-  } catch {
-    return null;
+  const raw =
+    loadString(`${PREFIX_COURSE_ACTIVE_LESSON}${userKey}_${courseId}`) ||
+    loadString(`${PREFIX_COURSE_ACTIVE_LESSON}${userKey}_${courseId.toLowerCase()}`) ||
+    loadString(`${PREFIX_COURSE_ACTIVE_LESSON}${userKey}_${courseId.toUpperCase()}`);
+
+  if (raw) {
+    try {
+      return JSON.parse(raw) as ILastCourseAccess;
+    } catch {
+      // continua para fallback
+    }
   }
+
+  // Fallback: se o último curso acessado globalmente corresponder a este curso
+  const lastGlobal = getLastCourseAccess(userId);
+  if (
+    lastGlobal &&
+    lastGlobal.courseId &&
+    lastGlobal.courseId.toLowerCase() === courseId.toLowerCase()
+  ) {
+    return lastGlobal;
+  }
+
+  return null;
 }

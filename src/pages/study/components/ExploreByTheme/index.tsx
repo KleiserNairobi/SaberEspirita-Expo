@@ -15,7 +15,9 @@ import {
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
+import { useAuthStore } from "@/stores/authStore";
 import { ICourse, IUserCourseProgress } from "@/types/course";
+import { getCourseActiveLesson } from "@/utils/lessonProgressStorage";
 
 import { VerticalCourseCard } from "../VerticalCourseCard";
 import { createStyles } from "./styles";
@@ -94,6 +96,7 @@ export const ExploreByTheme = React.memo(function ExploreByTheme({
 }: ExploreByThemeProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
+  const { user } = useAuthStore();
 
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [selectedSubtag, setSelectedSubtag] = useState<string>("ALL");
@@ -166,9 +169,14 @@ export const ExploreByTheme = React.memo(function ExploreByTheme({
       progressMap[courseId] ||
       progressMap[courseId?.toLowerCase()] ||
       progressMap[courseId?.toUpperCase()];
+    const activeLocal = getCourseActiveLesson(user?.uid, course.id);
     const hasProgress =
-      (progress?.completedLessons && progress.completedLessons.length > 0) ||
+      Boolean(activeLocal) ||
+      Boolean(progress?.startedAt) ||
+      Boolean((progress as any)?.enrolledAt) ||
       Boolean(progress?.completedAt) ||
+      Boolean(progress?.lastAccessedAt) ||
+      (Array.isArray(progress?.completedLessons) && progress.completedLessons.length > 0) ||
       ((progress as any)?.progressPercentage !== undefined &&
         (progress as any).progressPercentage > 0);
 
@@ -178,7 +186,7 @@ export const ExploreByTheme = React.memo(function ExploreByTheme({
           course={course}
           progress={progress}
           width={168}
-          onPress={() => onCoursePress(course, !!hasProgress)}
+          onPress={() => onCoursePress(course, Boolean(hasProgress))}
         />
       </View>
     );
