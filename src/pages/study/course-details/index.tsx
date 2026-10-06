@@ -1,13 +1,7 @@
 import React from "react";
 import { useEffect, useRef, useState } from "react";
 
-import {
-  ActivityIndicator,
-  Share,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Share, Text, TouchableOpacity, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -198,8 +192,11 @@ export function CourseDetailsScreen() {
 
   // Dados de certificação, exercícios e fórum
   const hasCertification = course?.certification?.enabled || false;
-  const exerciseCount = course?.stats?.exerciseCount ?? (course as any)?.exerciseCount ?? 0;
-  const hasForum = Boolean(course?.hasForum || lessons.some((l) => Boolean(l.forumEnabled)));
+  const exerciseCount =
+    course?.stats?.exerciseCount ?? (course as any)?.exerciseCount ?? 0;
+  const hasForum = Boolean(
+    course?.hasForum || lessons.some((l) => Boolean(l.forumEnabled))
+  );
 
   // Formatação de duração (igual ao CourseCard)
   const workloadMinutes = course?.workloadMinutes || 0;
@@ -419,7 +416,11 @@ export function CourseDetailsScreen() {
                   <Star
                     size={16}
                     color={theme.colors.primary}
-                    fill={(course.averageRating ?? course.rating) ? theme.colors.primary : "none"}
+                    fill={
+                      (course.averageRating ?? course.rating)
+                        ? theme.colors.primary
+                        : "none"
+                    }
                   />
                 </View>
                 <Text style={styles.statText}>
@@ -441,13 +442,15 @@ export function CourseDetailsScreen() {
                   <View style={styles.requirementItem}>
                     <Text style={styles.requirementBullet}>•</Text>
                     <Text style={styles.requirementText}>
-                      {course.certification?.requiredLessonsPercent ?? 100}% das aulas concluídas
+                      {course.certification?.requiredLessonsPercent ?? 100}% das aulas
+                      concluídas
                     </Text>
                   </View>
                   <View style={styles.requirementItem}>
                     <Text style={styles.requirementBullet}>•</Text>
                     <Text style={styles.requirementText}>
-                      {course.certification?.requiredExercisesPercent ?? 100}% dos exercícios com nota ≥ {course.certification?.minimumGrade ?? 70}
+                      {course.certification?.requiredExercisesPercent ?? 100}% dos
+                      exercícios com nota ≥ {course.certification?.minimumGrade ?? 70}
                     </Text>
                   </View>
                 </View>
@@ -456,12 +459,18 @@ export function CourseDetailsScreen() {
               <View style={[styles.requirementsCard, styles.noCertificateCard]}>
                 <View style={styles.requirementsHeader}>
                   <Award size={20} color={theme.colors.textSecondary} />
-                  <Text style={[styles.requirementsTitle, { color: theme.colors.textSecondary }]}>
+                  <Text
+                    style={[
+                      styles.requirementsTitle,
+                      { color: theme.colors.textSecondary },
+                    ]}
+                  >
                     Não Emite Certificado
                   </Text>
                 </View>
                 <Text style={styles.noCertificateText}>
-                  Esta série é livre e voltada para estudo reflexivo, sem emissão de certificado formal de conclusão.
+                  Esta série é livre e voltada para estudo reflexivo, sem emissão de
+                  certificado formal de conclusão.
                 </Text>
               </View>
             )}
@@ -497,10 +506,7 @@ export function CourseDetailsScreen() {
 
         {/* ABA MATERIAIS */}
         {activeTab === "materials" && (
-          <CourseMaterialsTab
-            courseId={courseId}
-            interactive={false}
-          />
+          <CourseMaterialsTab courseId={courseId} interactive={false} />
         )}
       </ContentSheet>
 
