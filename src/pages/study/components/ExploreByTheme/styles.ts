@@ -16,11 +16,9 @@ export const createStyles = (theme: ITheme) =>
     },
     sectionTitle: {
       ...theme.text("md", "bold"),
-      color: theme.colors.text,
     },
     seeAllText: {
-      ...theme.text("xs", "semibold"),
-      color: theme.colors.primary,
+      ...theme.text("xs", "semibold", theme.colors.primary),
     },
     searchContainer: {
       paddingHorizontal: theme.spacing.md,
@@ -28,15 +26,15 @@ export const createStyles = (theme: ITheme) =>
     },
     pillScrollView: {
       paddingHorizontal: theme.spacing.md,
-      gap: 8,
-      paddingBottom: 4,
+      gap: theme.spacing.sm,
+      paddingBottom: theme.spacing.xs,
     },
     pill: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 6,
-      paddingHorizontal: 12,
-      paddingVertical: 7,
+      gap: theme.spacing.xs,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.xs + 2,
       borderRadius: theme.radius.full,
       backgroundColor: theme.colors.card,
       borderWidth: 1,
@@ -47,22 +45,20 @@ export const createStyles = (theme: ITheme) =>
       borderColor: theme.colors.primary,
     },
     pillText: {
-      ...theme.text("xs", "medium"),
-      color: theme.colors.textSecondary,
+      ...theme.text("xs", "medium", theme.colors.textSecondary),
     },
     pillTextActive: {
-      color: theme.colors.onPrimary,
-      fontWeight: "bold",
+      ...theme.text("xs", "semibold", theme.colors.onPrimary),
     },
     subPillScrollView: {
       paddingHorizontal: theme.spacing.md,
-      gap: 6,
-      marginTop: 8,
-      paddingBottom: 2,
+      gap: theme.spacing.xs,
+      marginTop: theme.spacing.sm,
+      paddingBottom: theme.spacing.xs / 2,
     },
     subPill: {
-      paddingHorizontal: 10,
-      paddingVertical: 5,
+      paddingHorizontal: theme.spacing.sm + 2,
+      paddingVertical: theme.spacing.xs,
       borderRadius: theme.radius.full,
       backgroundColor: `${theme.colors.primary}10`,
       borderWidth: 1,
@@ -73,52 +69,41 @@ export const createStyles = (theme: ITheme) =>
       borderColor: theme.colors.primary,
     },
     subPillText: {
-      ...theme.text("xs", "regular"),
-      color: theme.colors.textSecondary,
-      fontSize: 11,
+      ...theme.text("xs", "regular", theme.colors.textSecondary),
     },
     subPillTextActive: {
-      color: theme.colors.onPrimary,
-      fontWeight: "bold",
+      ...theme.text("xs", "semibold", theme.colors.onPrimary),
     },
     tracksWrapper: {
       marginTop: theme.spacing.md,
-      gap: 24,
+      gap: theme.spacing.lg,
     },
-    trackSection: {
-      // Container da trilha
-    },
+    trackSection: {},
     trackHeader: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "flex-end",
       paddingHorizontal: theme.spacing.md,
-      marginBottom: 10,
+      marginBottom: theme.spacing.sm,
     },
     trackTitleBlock: {
       flex: 1,
-      marginRight: 8,
+      marginRight: theme.spacing.sm,
     },
     trackTitle: {
       ...theme.text("sm", "semibold"),
-      color: theme.colors.text,
-      fontSize: 15,
-      marginBottom: 2,
+      marginBottom: theme.spacing.xs / 2,
     },
     trackSubtitle: {
-      ...theme.text("xs", "regular"),
-      color: theme.colors.textSecondary,
-      fontSize: 11,
+      ...theme.text("xs", "regular", theme.colors.textSecondary),
     },
     trackCountText: {
-      ...theme.text("xs", "medium"),
-      color: theme.colors.textSecondary,
-      fontSize: 11,
+      ...theme.text("xs", "medium", theme.colors.textSecondary),
     },
     carouselTrackContent: {
       paddingHorizontal: theme.spacing.md,
-      gap: 12,
-      paddingVertical: 2,
+      gap: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs / 2,
     },
     carouselItemWrapper: {
       width: 168,
@@ -130,11 +115,10 @@ export const createStyles = (theme: ITheme) =>
       padding: theme.spacing.xl,
       alignItems: "center",
       justifyContent: "center",
-      gap: 12,
+      gap: theme.spacing.sm,
     },
     emptyText: {
-      ...theme.text("sm", "regular"),
-      color: theme.colors.textSecondary,
+      ...theme.text("sm", "regular", theme.colors.textSecondary),
       textAlign: "center",
     },
   });

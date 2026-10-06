@@ -74,7 +74,7 @@ export const VerticalCourseCard = React.memo(function VerticalCourseCard({
           </View>
         ) : course.isPremium ? (
           <View style={styles.premiumBadge}>
-            <Crown size={11} color="#FFD700" />
+            <Crown size={11} color={theme.colors.warning} />
             <Text style={styles.premiumBadgeText}>Premium</Text>
           </View>
         ) : null}

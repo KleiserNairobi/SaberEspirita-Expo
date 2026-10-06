@@ -17,19 +17,17 @@ export const createStyles = (theme: ITheme) =>
     titleTouchable: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 4,
+      gap: theme.spacing.xs,
     },
     sectionTitle: {
       ...theme.text("md", "bold"),
-      color: theme.colors.text,
     },
     counterText: {
-      ...theme.text("xs", "medium"),
-      color: theme.colors.textSecondary,
+      ...theme.text("xs", "medium", theme.colors.textSecondary),
     },
     listContent: {
       paddingHorizontal: theme.spacing.md,
-      gap: 12,
+      gap: theme.spacing.sm,
     },
     card: {
       width: 280,
@@ -37,10 +35,10 @@ export const createStyles = (theme: ITheme) =>
       borderRadius: theme.radius.sm,
       borderWidth: 1,
       borderColor: `${theme.colors.primary}18`,
-      padding: 10,
+      padding: theme.spacing.sm,
       flexDirection: "row",
       alignItems: "center",
-      gap: 12,
+      gap: theme.spacing.sm,
     },
     thumbnail: {
       width: 60,
@@ -56,39 +54,32 @@ export const createStyles = (theme: ITheme) =>
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      marginBottom: 2,
+      marginBottom: theme.spacing.xs / 2,
     },
     kicker: {
-      ...theme.text("xs", "semibold"),
-      color: theme.colors.primary,
-      fontSize: 10,
+      ...theme.text("xs", "semibold", theme.colors.primary),
       letterSpacing: 0.5,
     },
     percentText: {
-      ...theme.text("xs", "semibold"),
-      color: theme.colors.textSecondary,
-      fontSize: 10,
+      ...theme.text("xs", "semibold", theme.colors.textSecondary),
     },
     courseTitle: {
       ...theme.text("sm", "semibold"),
-      color: theme.colors.text,
-      marginBottom: 2,
+      marginBottom: theme.spacing.xs / 2,
     },
     lessonTitle: {
-      ...theme.text("xs", "regular"),
-      color: theme.colors.textSecondary,
-      fontSize: 11,
-      marginBottom: 6,
+      ...theme.text("xs", "regular", theme.colors.textSecondary),
+      marginBottom: theme.spacing.xs,
     },
     progressBarBackground: {
       height: 3,
       backgroundColor: `${theme.colors.primary}18`,
-      borderRadius: 2,
+      borderRadius: theme.radius.xs,
       overflow: "hidden",
     },
     progressBarFill: {
       height: "100%",
       backgroundColor: theme.colors.primary,
-      borderRadius: 2,
+      borderRadius: theme.radius.xs,
     },
   });
