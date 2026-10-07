@@ -5,9 +5,9 @@ export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     card: {
       backgroundColor: theme.colors.card,
-      borderRadius: theme.radius.sm,
+      borderRadius: theme.radius.md,
       borderWidth: 1,
-      borderColor: `${theme.colors.primary}18`,
+      borderColor: theme.colors.border,
       overflow: "hidden",
     },
     imageWrapper: {
@@ -31,7 +31,7 @@ export const createStyles = (theme: ITheme) =>
       zIndex: 2,
     },
     comingSoonText: {
-      ...theme.text("xs", "semibold", theme.colors.onPrimary),
+      ...theme.text("xs", "semibold", theme.colors.onSecondary),
       textTransform: "uppercase",
       letterSpacing: 0.5,
     },
@@ -58,25 +58,25 @@ export const createStyles = (theme: ITheme) =>
       bottom: 0,
       left: 0,
       right: 0,
-      height: "62%",
+      height: "40%",
       justifyContent: "flex-end",
-      paddingHorizontal: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.sm + theme.spacing.xs, // 12px
       paddingBottom: theme.spacing.sm,
       zIndex: 1,
     },
     imageTitle: {
-      ...theme.text("sm", "semibold", theme.colors.onPrimary),
+      ...theme.text("sm", "semibold", theme.colors.onSecondary),
       lineHeight: 18,
-      textShadowColor: "rgba(0, 0, 0, 0.75)",
+      textShadowColor: "rgba(0, 0, 0, 0.50)",
       textShadowOffset: { width: 0, height: 1 },
-      textShadowRadius: 3,
+      textShadowRadius: 2,
     },
     footerRow: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      paddingHorizontal: theme.spacing.sm,
-      paddingVertical: theme.spacing.xs,
+      paddingHorizontal: theme.spacing.sm + theme.spacing.xs, // 12px
+      paddingVertical: theme.spacing.xs + 2, // 6px
       backgroundColor: theme.colors.card,
     },
     levelText: {

@@ -63,7 +63,7 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.sm,
     },
     sectionTitle: {
-      ...theme.text("xxl", "regular"),
+      ...theme.text("xl", "regular"),
     },
     seeAllText: {
       ...theme.text("md", "medium", theme.colors.primary),
@@ -123,5 +123,10 @@ export const createStyles = (theme: ITheme) =>
     statusText: {
       ...theme.text("xs", "semibold", theme.colors.success),
       textTransform: "capitalize",
+    },
+    assistantCardContainer: {
+      marginHorizontal: theme.spacing.lg,
+      marginBottom: theme.spacing.lg,
+      marginTop: theme.spacing.sm,
     },
   });

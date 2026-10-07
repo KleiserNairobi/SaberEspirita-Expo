@@ -51,7 +51,7 @@ const TRACK_SECTIONS = [
   {
     id: "LE",
     title: "O Livro dos Espíritos",
-    subtitle: "Filosofia fundamental e as 4 partes da Codificação",
+    subtitle: "A obra basilar e os fundamentos da Doutrina Espírita",
     categoryIds: ["LE"],
   },
   {
@@ -69,13 +69,13 @@ const TRACK_SECTIONS = [
   {
     id: "LM_CI",
     title: "Mediunidade & Imortalidade",
-    subtitle: "O Livro dos Médiuns e O Céu e o Inferno",
+    subtitle: "A prática mediúnica e a justiça divina segundo o Espiritismo",
     categoryIds: ["LM", "CI"],
   },
   {
     id: "COMP",
     title: "Obras Complementares",
-    subtitle: "Séries psicografadas por Chico Xavier e outros médiuns",
+    subtitle: "Estudos temáticos e obras subsidiárias que complementam a Doutrina",
     categoryIds: ["COMP"],
   },
 ];
@@ -162,6 +162,57 @@ export const ExploreByTheme = React.memo(function ExploreByTheme({
 
     return list;
   }, [courses, selectedCategory, selectedSubtag, searchQuery]);
+
+  // Metadados do cabeçalho da visualização filtrada (Título, Subtítulo e Contagem)
+  const filteredHeaderInfo = useMemo(() => {
+    if (searchQuery.trim().length > 0) {
+      return {
+        title: "Resultados da Busca",
+        subtitle: `Séries encontradas para "${searchQuery.trim()}"`,
+      };
+    }
+
+    if (selectedCategory === "COMP" && selectedSubtag !== "ALL") {
+      const sub = COMPLEMENTARY_SUBTAGS.find((s) => s.id === selectedSubtag);
+      if (sub) {
+        return {
+          title: `Obras Complementares • ${sub.label}`,
+          subtitle: "Estudos temáticos e obras subsidiárias",
+        };
+      }
+    }
+
+    // Busca nas trilhas principais
+    const directTrack = TRACK_SECTIONS.find(
+      (t) => t.id === selectedCategory || t.categoryIds.some((cid) => cid === selectedCategory)
+    );
+    if (directTrack) {
+      return {
+        title: directTrack.title,
+        subtitle: directTrack.subtitle,
+      };
+    }
+
+    if (selectedCategory === "LM") {
+      return {
+        title: "O Livro dos Médiuns",
+        subtitle: "A prática e a ciência das manifestações mediúnicas",
+      };
+    }
+
+    if (selectedCategory === "CI") {
+      return {
+        title: "O Céu e o Inferno",
+        subtitle: "A justiça divina segundo o Espiritismo",
+      };
+    }
+
+    const pill = THEME_CATEGORIES.find((p) => p.id === selectedCategory);
+    return {
+      title: pill?.label || "Séries",
+      subtitle: "Cursos disponíveis nesta categoria",
+    };
+  }, [searchQuery, selectedCategory, selectedSubtag]);
 
   const renderHorizontalCourseItem = (course: ICourse) => {
     const courseId = course.id;
@@ -276,13 +327,25 @@ export const ExploreByTheme = React.memo(function ExploreByTheme({
       {(searchQuery.trim().length > 0 || selectedCategory !== "ALL") && (
         <View style={styles.filteredContainer}>
           {filteredCourses.length > 0 ? (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.carouselTrackContent}
-            >
-              {filteredCourses.map((c) => renderHorizontalCourseItem(c))}
-            </ScrollView>
+            <View style={styles.trackSection}>
+              <View style={styles.trackHeader}>
+                <View style={styles.trackTitleBlock}>
+                  <Text style={styles.trackTitle}>{filteredHeaderInfo.title}</Text>
+                  <Text style={styles.trackSubtitle}>{filteredHeaderInfo.subtitle}</Text>
+                </View>
+                <Text style={styles.trackCountText}>
+                  {filteredCourses.length} {filteredCourses.length === 1 ? "série" : "séries"}
+                </Text>
+              </View>
+
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.carouselTrackContent}
+              >
+                {filteredCourses.map((c) => renderHorizontalCourseItem(c))}
+              </ScrollView>
+            </View>
           ) : (
             <View style={styles.emptyContainer}>
               <BookOpen size={36} color={theme.colors.muted} />

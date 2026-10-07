@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+
 import { ITheme } from "@/configs/theme/types";
 
 export const createStyles = (theme: ITheme) =>
@@ -11,21 +12,21 @@ export const createStyles = (theme: ITheme) =>
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      paddingHorizontal: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       marginBottom: theme.spacing.sm,
     },
     sectionTitle: {
-      ...theme.text("md", "bold"),
+      ...theme.text("xl", "regular"),
     },
     seeAllText: {
       ...theme.text("xs", "semibold", theme.colors.primary),
     },
     searchContainer: {
-      paddingHorizontal: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       marginBottom: theme.spacing.sm,
     },
     pillScrollView: {
-      paddingHorizontal: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       gap: theme.spacing.sm,
       paddingBottom: theme.spacing.xs,
     },
@@ -51,7 +52,7 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("xs", "semibold", theme.colors.onPrimary),
     },
     subPillScrollView: {
-      paddingHorizontal: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       gap: theme.spacing.xs,
       marginTop: theme.spacing.sm,
       paddingBottom: theme.spacing.xs / 2,
@@ -83,7 +84,7 @@ export const createStyles = (theme: ITheme) =>
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "flex-end",
-      paddingHorizontal: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       marginBottom: theme.spacing.sm,
     },
     trackTitleBlock: {
@@ -101,7 +102,7 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("xs", "medium", theme.colors.textSecondary),
     },
     carouselTrackContent: {
-      paddingHorizontal: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       gap: theme.spacing.sm,
       paddingVertical: theme.spacing.xs / 2,
     },

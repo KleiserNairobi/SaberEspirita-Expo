@@ -427,9 +427,6 @@ export function StudyScreen() {
           />
         )}
 
-        {/* Banner do Saber Espírita Premium (100% Flat com Floating Cutout Badge) */}
-        <PremiumBanner onPress={handlePremiumPress} />
-
         {/* Seção Explore por tema (Trilhas em Carrossel Horizontal e Subcategorias) */}
         {allCourses.length > 0 && (
           <ExploreByTheme
@@ -441,6 +438,9 @@ export function StudyScreen() {
           />
         )}
 
+        {/* Banner do Saber Espírita Premium (100% Flat com Floating Cutout Badge) */}
+        <PremiumBanner onPress={handlePremiumPress} />
+
         {/* Seção Biblioteca */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Explore a Biblioteca</Text>
@@ -451,7 +451,7 @@ export function StudyScreen() {
 
   function renderFooter() {
     return (
-      <View style={{ marginHorizontal: 20, marginBottom: 20, marginTop: 10 }}>
+      <View style={styles.assistantCardContainer}>
         <AssistantCard
           title="Pergunte ao Sr. Allan"
           description="Tire suas dúvidas científicas e filosóficas com base nas obras básicas."

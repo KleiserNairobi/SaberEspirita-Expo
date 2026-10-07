@@ -6,8 +6,8 @@ export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
       position: "relative",
-      marginHorizontal: theme.spacing.md,
-      marginTop: theme.spacing.lg,
+      marginHorizontal: theme.spacing.lg,
+      marginTop: theme.spacing.sm,
       marginBottom: theme.spacing.md,
       backgroundColor: `${theme.colors.warning}10`,
       borderRadius: theme.radius.sm,

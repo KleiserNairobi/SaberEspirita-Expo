@@ -79,10 +79,10 @@ export const VerticalCourseCard = React.memo(function VerticalCourseCard({
           </View>
         ) : null}
 
-        {/* Gradiente escuro na base da imagem para legibilidade do título */}
+        {/* Gradiente suave na base da imagem para legibilidade do título */}
         <LinearGradient
-          colors={["transparent", "rgba(0, 0, 0, 0.45)", "rgba(0, 0, 0, 0.88)"]}
-          locations={[0, 0.4, 1]}
+          colors={["transparent", "rgba(0, 0, 0, 0.22)", "rgba(0, 0, 0, 0.62)"]}
+          locations={[0, 0.45, 1]}
           style={styles.imageGradientOverlay}
         >
           <Text style={styles.imageTitle} numberOfLines={2} ellipsizeMode="tail">

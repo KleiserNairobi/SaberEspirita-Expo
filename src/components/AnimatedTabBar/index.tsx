@@ -3,6 +3,8 @@ import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useAppTheme } from "@/hooks/useAppTheme";
+
 interface TabBarProps {
   state: {
     index: number;
@@ -96,6 +98,7 @@ const TabItem: React.FC<TabItemProps> = ({ route, options, isFocused, onPress })
 
 export const AnimatedTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
   const insets = useSafeAreaInsets();
+  const { theme } = useAppTheme();
   const BASE_HEIGHT = 78;
   const safeBottom =
     insets.bottom > 0
@@ -115,6 +118,8 @@ export const AnimatedTabBar = ({ state, descriptors, navigation }: TabBarProps) 
       style={[
         styles.container,
         {
+          left: theme.spacing.lg,
+          right: theme.spacing.lg,
           height: BASE_HEIGHT + safeBottom,
           paddingBottom: safeBottom,
         },
@@ -159,8 +164,8 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute",
     bottom: 0,
-    left: 20,
-    right: 20,
+    left: 24,
+    right: 24,
     overflow: "hidden",
   },
   blurContainer: {

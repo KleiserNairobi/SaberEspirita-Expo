@@ -10,7 +10,6 @@ import {
 } from "react-native";
 
 import { Image } from "expo-image";
-import { ChevronRight } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { ICourse, IUserCourseProgress } from "@/types/course";
@@ -45,7 +44,7 @@ export const ContinueStudyingSection = React.memo(function ContinueStudyingSecti
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.round(offsetX / 300);
+    const index = Math.round(offsetX / 293);
     setActiveIndex(Math.max(0, Math.min(index, items.length - 1)));
   };
 
@@ -59,9 +58,6 @@ export const ContinueStudyingSection = React.memo(function ContinueStudyingSecti
           disabled={!onSeeAllPress}
         >
           <Text style={styles.sectionTitle}>Continue Estudando</Text>
-          {items.length > 1 && (
-            <ChevronRight size={18} color={theme.colors.textSecondary} />
-          )}
         </TouchableOpacity>
 
         {items.length > 1 && (
@@ -75,7 +71,7 @@ export const ContinueStudyingSection = React.memo(function ContinueStudyingSecti
         data={items}
         horizontal
         showsHorizontalScrollIndicator={false}
-        snapToInterval={296} // 280 (card width) + 16 (gap)
+        snapToInterval={293} // 285 (card width) + 8 (gap)
         decelerationRate="fast"
         onScroll={handleScroll}
         scrollEventThrottle={16}
@@ -96,14 +92,16 @@ export const ContinueStudyingSection = React.memo(function ContinueStudyingSecti
               onPress={() => onPressItem(item)}
               activeOpacity={0.8}
             >
-              <Image
-                source={imageSource}
-                placeholder={require("@/assets/images/placeholder.jpeg")}
-                style={styles.thumbnail}
-                contentFit="cover"
-                transition={200}
-                cachePolicy="memory-disk"
-              />
+              <View style={styles.imagePlaceholder}>
+                <Image
+                  source={imageSource}
+                  placeholder={require("@/assets/images/placeholder.jpeg")}
+                  style={styles.courseImage}
+                  contentFit="cover"
+                  transition={200}
+                  cachePolicy="memory-disk"
+                />
+              </View>
 
               <View style={styles.infoContainer}>
                 <View style={styles.cardTopRow}>

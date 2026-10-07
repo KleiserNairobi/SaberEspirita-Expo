@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+
 import { ITheme } from "@/configs/theme/types";
 
 export const createStyles = (theme: ITheme) =>
@@ -11,7 +12,7 @@ export const createStyles = (theme: ITheme) =>
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      paddingHorizontal: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       marginBottom: theme.spacing.sm,
     },
     titleTouchable: {
@@ -20,34 +21,41 @@ export const createStyles = (theme: ITheme) =>
       gap: theme.spacing.xs,
     },
     sectionTitle: {
-      ...theme.text("md", "bold"),
+      ...theme.text("xl", "regular"),
     },
     counterText: {
       ...theme.text("xs", "medium", theme.colors.textSecondary),
     },
     listContent: {
-      paddingHorizontal: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       gap: theme.spacing.sm,
     },
     card: {
-      width: 280,
+      width: 285,
       backgroundColor: theme.colors.card,
-      borderRadius: theme.radius.sm,
+      borderRadius: theme.radius.md,
       borderWidth: 1,
-      borderColor: `${theme.colors.primary}18`,
-      padding: theme.spacing.sm,
+      borderColor: theme.colors.border,
+      overflow: "hidden",
       flexDirection: "row",
-      alignItems: "center",
-      gap: theme.spacing.sm,
+      minHeight: 88,
     },
-    thumbnail: {
-      width: 60,
-      height: 60,
-      borderRadius: theme.radius.xs,
+    imagePlaceholder: {
+      width: 86,
       backgroundColor: `${theme.colors.primary}10`,
+      justifyContent: "center",
+      alignItems: "center",
+      position: "relative",
+    },
+    courseImage: {
+      ...StyleSheet.absoluteFillObject,
+      width: undefined,
+      height: undefined,
     },
     infoContainer: {
       flex: 1,
+      padding: theme.spacing.sm,
+      paddingLeft: theme.spacing.md,
       justifyContent: "center",
     },
     cardTopRow: {
