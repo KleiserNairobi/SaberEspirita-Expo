@@ -20,7 +20,10 @@ import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
 import { COURSES_KEYS, useCourses, useFeaturedCourses } from "@/hooks/queries/useCourses";
 import { useLastAccessedCourse } from "@/hooks/queries/useLastAccessedCourse";
 import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
-import { NOTIFICATION_KEYS, useHasUnreadNotifications } from "@/hooks/queries/useNotifications";
+import {
+  NOTIFICATION_KEYS,
+  useHasUnreadNotifications,
+} from "@/hooks/queries/useNotifications";
 import { usePodcasts } from "@/hooks/queries/usePodcasts";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
@@ -33,7 +36,10 @@ import {
   getLessonSlideProgress,
 } from "@/utils/lessonProgressStorage";
 
-import { ContinueStudyingSection, InProgressCourseItem } from "./components/ContinueStudyingSection";
+import {
+  ContinueStudyingSection,
+  InProgressCourseItem,
+} from "./components/ContinueStudyingSection";
 import { ExploreByTheme } from "./components/ExploreByTheme";
 import { PremiumBanner } from "./components/PremiumBanner";
 import { createStyles } from "./styles";
@@ -126,8 +132,12 @@ export function StudyScreen() {
         queryClient.invalidateQueries({ queryKey: ["coursesProgressList"] }),
         queryClient.invalidateQueries({ queryKey: ["podcasts"] }),
         queryClient.invalidateQueries({ queryKey: ["glossaryTerms"] }),
-        queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.hasUnread(currentUserId) }),
-        queryClient.invalidateQueries({ queryKey: NOTIFICATION_KEYS.list(currentUserId) }),
+        queryClient.invalidateQueries({
+          queryKey: NOTIFICATION_KEYS.hasUnread(currentUserId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: NOTIFICATION_KEYS.list(currentUserId),
+        }),
         queryClient.invalidateQueries({ queryKey: ["communityProgress", currentUserId] }),
       ]);
     } finally {
@@ -191,10 +201,14 @@ export function StudyScreen() {
       nextLesson?: any
     ) => {
       const totalLessons = course.lessonCount || (course as any).lessonsCount || 0;
-      const completedCount = progress.completedLessons ? progress.completedLessons.length : 0;
+      const completedCount = progress.completedLessons
+        ? progress.completedLessons.length
+        : 0;
 
       // Verifica se há progresso de slide salvo na aula ativa
-      const slideProg = nextLesson?.id ? getLessonSlideProgress(user?.uid, nextLesson.id) : null;
+      const slideProg = nextLesson?.id
+        ? getLessonSlideProgress(user?.uid, nextLesson.id)
+        : null;
 
       let currentLessonFraction = 0;
       if (slideProg && slideProg.totalSlides > 0 && slideProg.slideIndex > 0) {
@@ -203,7 +217,8 @@ export function StudyScreen() {
 
       let completionPercent = 0;
       if (totalLessons > 0) {
-        completionPercent = ((completedCount + currentLessonFraction) / totalLessons) * 100;
+        completionPercent =
+          ((completedCount + currentLessonFraction) / totalLessons) * 100;
       } else if ((progress as any)?.progressPercentage !== undefined) {
         completionPercent = (progress as any).progressPercentage;
       }
@@ -367,20 +382,18 @@ export function StudyScreen() {
         <View style={styles.headerContainer}>
           <View style={styles.headerTopRow}>
             <View style={styles.headerTextBlock}>
-              <Text style={styles.greetingText}>
-                Olá, {firstName}!
-              </Text>
+              <Text style={styles.greetingText}>Olá, {firstName}!</Text>
               {inProgressCourses.length === 0 && (
-                <Text style={styles.subtitleText}>
-                  Vamos começar sua jornada?
-                </Text>
+                <Text style={styles.subtitleText}>Vamos começar sua jornada?</Text>
               )}
             </View>
 
             <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
               <TouchableOpacity
                 style={styles.notificationButton}
-                onPress={() => navigation.navigate("ScientificChat", { origin: "direct" })}
+                onPress={() =>
+                  navigation.navigate("ScientificChat", { origin: "direct" })
+                }
                 activeOpacity={0.8}
                 accessibilityLabel="Pergunte ao Sr. Allan"
               >
@@ -439,7 +452,7 @@ export function StudyScreen() {
         )}
 
         {/* Banner do Saber Espírita Premium (100% Flat com Floating Cutout Badge) */}
-        <PremiumBanner onPress={handlePremiumPress} />
+        {/* <PremiumBanner onPress={handlePremiumPress} /> */}
 
         {/* Seção Biblioteca */}
         <View style={styles.sectionHeader}>

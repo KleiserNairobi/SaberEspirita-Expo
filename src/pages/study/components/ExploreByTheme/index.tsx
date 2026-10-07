@@ -9,7 +9,6 @@ import {
   Heart,
   Library,
   Scale,
-  Sparkles,
   Star,
 } from "lucide-react-native";
 
@@ -23,7 +22,6 @@ import { VerticalCourseCard } from "../VerticalCourseCard";
 import { createStyles } from "./styles";
 
 export const THEME_CATEGORIES = [
-  { id: "ALL", label: "Todos", icon: Sparkles },
   { id: "INIC", label: "Iniciação", icon: BookOpen },
   { id: "LE", label: "Livro dos Espíritos", icon: Book },
   { id: "ESE", label: "Evangelho", icon: Heart },
@@ -98,7 +96,7 @@ export const ExploreByTheme = React.memo(function ExploreByTheme({
   const styles = createStyles(theme);
   const { user } = useAuthStore();
 
-  const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
+  const [selectedCategory, setSelectedCategory] = useState<string>("INIC");
   const [selectedSubtag, setSelectedSubtag] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -138,10 +136,6 @@ export const ExploreByTheme = React.memo(function ExploreByTheme({
           c.description?.toLowerCase().includes(q) ||
           c.author?.toLowerCase().includes(q)
       );
-    }
-
-    if (selectedCategory === "ALL") {
-      return list;
     }
 
     // Filtrar pela categoria selecionada
@@ -298,8 +292,8 @@ export const ExploreByTheme = React.memo(function ExploreByTheme({
         })}
       </ScrollView>
 
-      {/* Subcategorias quando "Complementares" está ativo */}
-      {selectedCategory === "COMP" && searchQuery.trim().length === 0 && (
+      {/* Subcategorias quando "Complementares" está ativo (comentado temporariamente até o lançamento do recurso Premium) */}
+      {/* {selectedCategory === "COMP" && searchQuery.trim().length === 0 && (
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -321,78 +315,41 @@ export const ExploreByTheme = React.memo(function ExploreByTheme({
             );
           })}
         </ScrollView>
-      )}
+      )} */}
 
-      {/* VISÃO 1: BUSCA OU FILTRO ESPECÍFICO */}
-      {(searchQuery.trim().length > 0 || selectedCategory !== "ALL") && (
-        <View style={styles.filteredContainer}>
-          {filteredCourses.length > 0 ? (
-            <View style={styles.trackSection}>
-              <View style={styles.trackHeader}>
-                <View style={styles.trackTitleBlock}>
-                  <Text style={styles.trackTitle}>{filteredHeaderInfo.title}</Text>
-                  <Text style={styles.trackSubtitle}>{filteredHeaderInfo.subtitle}</Text>
-                </View>
-                <Text style={styles.trackCountText}>
-                  {filteredCourses.length} {filteredCourses.length === 1 ? "série" : "séries"}
-                </Text>
+      {/* Trilha do tema selecionado ou resultados da busca */}
+      <View style={styles.filteredContainer}>
+        {filteredCourses.length > 0 ? (
+          <View style={styles.trackSection}>
+            <View style={styles.trackHeader}>
+              <View style={styles.trackTitleBlock}>
+                <Text style={styles.trackTitle}>{filteredHeaderInfo.title}</Text>
+                <Text style={styles.trackSubtitle}>{filteredHeaderInfo.subtitle}</Text>
               </View>
-
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.carouselTrackContent}
-              >
-                {filteredCourses.map((c) => renderHorizontalCourseItem(c))}
-              </ScrollView>
-            </View>
-          ) : (
-            <View style={styles.emptyContainer}>
-              <BookOpen size={36} color={theme.colors.muted} />
-              <Text style={styles.emptyText}>
-                {searchQuery.trim()
-                  ? "Nenhum curso encontrado para este termo de busca."
-                  : "Nenhum curso cadastrado nesta seção no momento."}
+              <Text style={styles.trackCountText}>
+                {filteredCourses.length} {filteredCourses.length === 1 ? "série" : "séries"}
               </Text>
             </View>
-          )}
-        </View>
-      )}
 
-      {/* VISÃO 2: "TODOS" -> TRILHAS EM CARROSSÉIS HORIZONTAIS */}
-      {selectedCategory === "ALL" && searchQuery.trim().length === 0 && (
-        <View style={styles.tracksWrapper}>
-          {TRACK_SECTIONS.map((track) => {
-            const trackCourses = courses.filter((c) =>
-              track.categoryIds.some((catId) => courseMatchesCategory(c, catId))
-            );
-
-            if (trackCourses.length === 0) return null;
-
-            return (
-              <View key={track.id} style={styles.trackSection}>
-                <View style={styles.trackHeader}>
-                  <View style={styles.trackTitleBlock}>
-                    <Text style={styles.trackTitle}>{track.title}</Text>
-                    <Text style={styles.trackSubtitle}>{track.subtitle}</Text>
-                  </View>
-                  <Text style={styles.trackCountText}>
-                    {trackCourses.length} {trackCourses.length === 1 ? "série" : "séries"}
-                  </Text>
-                </View>
-
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.carouselTrackContent}
-                >
-                  {trackCourses.map((c) => renderHorizontalCourseItem(c))}
-                </ScrollView>
-              </View>
-            );
-          })}
-        </View>
-      )}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.carouselTrackContent}
+            >
+              {filteredCourses.map((c) => renderHorizontalCourseItem(c))}
+            </ScrollView>
+          </View>
+        ) : (
+          <View style={styles.emptyContainer}>
+            <BookOpen size={36} color={theme.colors.muted} />
+            <Text style={styles.emptyText}>
+              {searchQuery.trim()
+                ? "Nenhum curso encontrado para este termo de busca."
+                : "Nenhum curso cadastrado nesta seção no momento."}
+            </Text>
+          </View>
+        )}
+      </View>
     </View>
   );
 });
