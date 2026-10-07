@@ -106,6 +106,7 @@ export interface IQuizSubmitAnswer {
 export interface IQuizSubmitPayload {
   categoryId?: string;
   subcategoryId?: string;
+  quizType?: "lesson" | "general" | "daily" | string;
   timeSpentSeconds?: number;
   answers: IQuizSubmitAnswer[];
 }

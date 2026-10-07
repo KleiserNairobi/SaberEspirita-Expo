@@ -73,10 +73,18 @@ export function CourseQuizScreen() {
       const percentage = Math.floor((correctAnswers / totalQuestions) * 100);
 
       statsApiService.logEvent({
-        eventName: "quiz_attempt",
-        category: "quiz",
-        label: subcategoryName || quiz.id,
-        metadata: { score: percentage, passed: percentage >= 70 },
+        eventName: "lesson_quiz_attempt",
+        category: "lesson_quiz",
+        label: subcategoryName || subtitle || quiz.id,
+        metadata: {
+          quizType: "lesson",
+          quizId: quiz.id,
+          exerciseId,
+          courseId,
+          lessonId,
+          score: percentage,
+          passed: percentage >= 70,
+        },
       });
 
       setMessageConfig({
@@ -138,6 +146,7 @@ export function CourseQuizScreen() {
             await quizApiService.submitQuiz(quiz.id, {
               categoryId: categoryId || "COURSE",
               subcategoryId: subcategoryName || exerciseId || lessonId || "COURSE_EXERCISE",
+              quizType: "lesson",
               answers: answers.map((a, index) => ({
                 questionIndex: index,
                 selectedIndex: a.selectedAnswerIndex,
@@ -150,10 +159,18 @@ export function CourseQuizScreen() {
 
         // 3. Analytics
         statsApiService.logEvent({
-          eventName: "quiz_completed",
-          category: "quiz",
-          label: subcategoryName || quiz.id,
-          metadata: { score: percentage, passed: percentage >= 70 },
+          eventName: "lesson_quiz_completed",
+          category: "lesson_quiz",
+          label: subcategoryName || subtitle || quiz.id,
+          metadata: {
+            quizType: "lesson",
+            quizId: quiz.id,
+            exerciseId,
+            courseId,
+            lessonId,
+            score: percentage,
+            passed: percentage >= 70,
+          },
         });
 
         // 4. Invalidação ampla de caches para atualizar telas de currículo, certificados e pontuação
