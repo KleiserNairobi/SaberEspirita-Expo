@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -65,10 +65,16 @@ const TRACK_SECTIONS = [
     categoryIds: ["AG"],
   },
   {
-    id: "LM_CI",
-    title: "Mediunidade & Imortalidade",
-    subtitle: "A prática mediúnica e a justiça divina segundo o Espiritismo",
-    categoryIds: ["LM", "CI"],
+    id: "LM",
+    title: "O Livro dos Médiuns",
+    subtitle: "A prática e a ciência das manifestações mediúnicas",
+    categoryIds: ["LM", "MEDIUNIDADE"],
+  },
+  {
+    id: "CI",
+    title: "O Céu e o Inferno",
+    subtitle: "A justiça divina e a imortalidade da alma segundo o Espiritismo",
+    categoryIds: ["CI", "CEU_E_INFERNO"],
   },
   {
     id: "COMP",
@@ -99,6 +105,13 @@ export const ExploreByTheme = React.memo(function ExploreByTheme({
   const [selectedCategory, setSelectedCategory] = useState<string>("INIC");
   const [selectedSubtag, setSelectedSubtag] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const carouselScrollRef = useRef<ScrollView>(null);
+
+  // Reseta a rolagem do carrossel para o início sempre que o filtro de categoria, subtag ou busca mudar
+  useEffect(() => {
+    carouselScrollRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+  }, [selectedCategory, selectedSubtag, searchQuery]);
 
   const courseMatchesCategory = (course: ICourse, targetCatId: string): boolean => {
     const cat = (
@@ -187,19 +200,6 @@ export const ExploreByTheme = React.memo(function ExploreByTheme({
       };
     }
 
-    if (selectedCategory === "LM") {
-      return {
-        title: "O Livro dos Médiuns",
-        subtitle: "A prática e a ciência das manifestações mediúnicas",
-      };
-    }
-
-    if (selectedCategory === "CI") {
-      return {
-        title: "O Céu e o Inferno",
-        subtitle: "A justiça divina segundo o Espiritismo",
-      };
-    }
 
     const pill = THEME_CATEGORIES.find((p) => p.id === selectedCategory);
     return {
@@ -275,8 +275,12 @@ export const ExploreByTheme = React.memo(function ExploreByTheme({
               key={cat.id}
               style={[styles.pill, isActive && styles.pillActive]}
               onPress={() => {
-                setSelectedCategory(cat.id);
-                setSelectedSubtag("ALL");
+                if (selectedCategory === cat.id) {
+                  carouselScrollRef.current?.scrollTo({ x: 0, y: 0, animated: true });
+                } else {
+                  setSelectedCategory(cat.id);
+                  setSelectedSubtag("ALL");
+                }
               }}
               activeOpacity={0.7}
             >
@@ -332,6 +336,8 @@ export const ExploreByTheme = React.memo(function ExploreByTheme({
             </View>
 
             <ScrollView
+              ref={carouselScrollRef}
+              key={`carousel-${selectedCategory}-${selectedSubtag}`}
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.carouselTrackContent}

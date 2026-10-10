@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
 
-import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
+import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
@@ -116,8 +116,6 @@ export function StudyScreen() {
       queryClient.invalidateQueries({ queryKey: ["lastAccessedCourse"] });
       queryClient.invalidateQueries({ queryKey: ["coursesProgressList"] });
       queryClient.invalidateQueries({ queryKey: ["allCoursesProgress"] });
-      queryClient.invalidateQueries({ queryKey: COURSES_KEYS.featured });
-      queryClient.invalidateQueries({ queryKey: COURSES_KEYS.all });
     }, [queryClient])
   );
 
@@ -372,13 +370,28 @@ export function StudyScreen() {
     }
   }
 
-  function renderHeader() {
-    const firstName = user?.displayName
-      ? user.displayName.trim().split(/\s+/)[0]
-      : "Usuário";
+  const firstName = user?.displayName
+    ? user.displayName.trim().split(/\s+/)[0]
+    : "Usuário";
 
-    return (
-      <View>
+  const handleSeeAllCourses = useCallback(() => {
+    navigation.navigate("CoursesCatalog");
+  }, [navigation]);
+
+  return (
+    <SafeAreaView style={styles.container} edges={["top"]}>
+      <ScrollView
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[theme.colors.primary]}
+            tintColor={theme.colors.primary}
+          />
+        }
+      >
         <View style={styles.headerContainer}>
           <View style={styles.headerTopRow}>
             <View style={styles.headerTextBlock}>
@@ -447,7 +460,7 @@ export function StudyScreen() {
             progressMap={allProgress}
             featuredCourseIds={featuredCourseIds}
             onCoursePress={handleExploreCoursePress}
-            onSeeAllPress={() => navigation.navigate("CoursesCatalog")}
+            onSeeAllPress={handleSeeAllCourses}
           />
         )}
 
@@ -458,48 +471,15 @@ export function StudyScreen() {
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Explore a Biblioteca</Text>
         </View>
-      </View>
-    );
-  }
 
-  function renderFooter() {
-    return (
-      <View style={styles.assistantCardContainer}>
-        <AssistantCard
-          title="Pergunte ao Sr. Allan"
-          description="Tire suas dúvidas científicas e filosóficas com base nas obras básicas."
-          buttonText="Perguntar"
-          icon={Feather}
-          onPress={() => navigation.navigate("ScientificChat", { origin: "direct" })}
-        />
-      </View>
-    );
-  }
-
-  return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      <FlatList
-        data={Biblioteca}
-        numColumns={1}
-        keyExtractor={(item) => item.id}
-        ListHeaderComponent={renderHeader}
-        ListFooterComponent={renderFooter}
-        contentContainerStyle={styles.contentContainer}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            colors={[theme.colors.primary]}
-            tintColor={theme.colors.primary}
-          />
-        }
-        renderItem={({ item }) => {
+        {Biblioteca.map((item) => {
           const IconComponent = item.icon;
           const isItemNew =
             (item.id === "3" && hasNewPodcast) || (item.id === "2" && hasNewGlossaryTerm);
 
           return (
             <TouchableOpacity
+              key={item.id}
               style={styles.libraryItem}
               onPress={() => handleLibraryItemPress(item.id)}
               activeOpacity={0.7}
@@ -523,8 +503,19 @@ export function StudyScreen() {
               </View>
             </TouchableOpacity>
           );
-        }}
-      />
+        })}
+
+        {/* Assistente Sr. Allan */}
+        <View style={styles.assistantCardContainer}>
+          <AssistantCard
+            title="Pergunte ao Sr. Allan"
+            description="Tire suas dúvidas científicas e filosóficas com base nas obras básicas."
+            buttonText="Perguntar"
+            icon={Feather}
+            onPress={() => navigation.navigate("ScientificChat", { origin: "direct" })}
+          />
+        </View>
+      </ScrollView>
 
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />
       <JourneyBottomSheet
