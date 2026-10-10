@@ -2,6 +2,19 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.23-ota.1] - 2026-10-10 (Hot-Update)
+
+### Corrigido / Aprimorado
+
+- **Preservação de Rolagem na Home Estude (`StudyScreen`, `ExploreByTheme`)**:
+  - Migrada a estrutura da tela de `FlatList` com `ListHeaderComponent` dinâmico para `ScrollView` contínuo, preservando integralmente o scroll vertical ao navegar para o currículo de cursos e retornar.
+  - Implementada `key` dinâmica e reset de rolagem com `ref` no carrossel de cursos ao alternar entre categorias ou termos de busca, garantindo exibição imediata das séries sem dependência de toque ou gesto.
+  - Otimizada a revalidação de foco (`useFocusEffect`) para focar exclusivamente no progresso do usuário sem refetch desnecessário do catálogo de cursos.
+- **Separação de Filtros Doutrinários (`ExploreByTheme`)**:
+  - Separadas as categorias *O Livro dos Médiuns* (`LM`) e *O Céu e o Inferno* (`CI`), conferindo títulos, descrições e trilhas individuais para cada obra da Codificação.
+- **Gestão de Séries do Catálogo (`courseApiService`)**:
+  - Desativado temporariamente o mock da série premium *Nosso Lar — Estudo Guiado* para este release Over-The-Air.
+
 ## [2.0.23] - 2026-09-29 (Build 60)
 
 ### Otimizações e Conformidade Android (Google Play / Android Vitals)
