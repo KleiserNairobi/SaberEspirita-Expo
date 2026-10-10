@@ -23,6 +23,7 @@
     "rename:aab": "node dev/scripts/rename-aab.js",
     "predeploy:ota": "npm run validate",
     "deploy:ota": "hot-updater deploy -f",
+    "postdeploy:ota": "node dev/scripts/sync-ota-fingerprints.js",
     "console:ota": "hot-updater console",
     "postinstall": "patch-package"
   },
