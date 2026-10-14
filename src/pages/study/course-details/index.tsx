@@ -133,6 +133,7 @@ export function CourseDetailsScreen() {
     bottomSheetRef.current?.present();
   }
 
+  const isComingSoon = course?.status === "COMING_SOON";
   const isLegacy = course?.status === "LEGACY" || course?.allowNewEnrollments === false;
 
   useEffect(() => {
@@ -209,6 +210,7 @@ export function CourseDetailsScreen() {
   }
 
   function handleStartCourse() {
+    if (isComingSoon) return;
     navigation.navigate("CourseCurriculum", { courseId, autoEnroll: true });
   }
 
@@ -517,7 +519,11 @@ export function CourseDetailsScreen() {
           { paddingBottom: insets.bottom > 0 ? insets.bottom + 10 : theme.spacing.md },
         ]}
       >
-        {isEnrolled ? (
+        {isComingSoon ? (
+          <View style={styles.disabledButton}>
+            <Text style={styles.disabledButtonText}>EM BREVE</Text>
+          </View>
+        ) : isEnrolled ? (
           <TouchableOpacity style={styles.primaryButton} onPress={handleStartCourse}>
             <Text style={styles.primaryButtonText}>
               {userProgress === 100 ? "VER CURRÍCULO" : "CONTINUAR SÉRIE"}

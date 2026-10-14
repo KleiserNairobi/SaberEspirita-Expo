@@ -252,11 +252,11 @@ export function CourseCurriculumScreen() {
     if (!user?.uid || isGuest || !courseId) return;
     if (lastTouchedCourseIdRef.current === courseId) return;
 
-    if (autoEnroll) {
+    if (autoEnroll && course?.status !== "COMING_SOON") {
       lastTouchedCourseIdRef.current = courseId;
       touchAccess({ courseId, userId: user.uid });
     }
-  }, [courseId, isGuest, user?.uid, autoEnroll, touchAccess]);
+  }, [courseId, isGuest, user?.uid, autoEnroll, touchAccess, course?.status]);
 
   function getLessonStatus(lesson: ILesson, _index: number): LessonStatus {
     // 1. Se a aula já foi concluída ativamente pelo usuário no backend
@@ -354,6 +354,23 @@ export function CourseCurriculumScreen() {
   }
 
   async function handleLessonPress(lesson: ILesson, index: number, status: LessonStatus) {
+    if (course?.status === "COMING_SOON") {
+      setMessageConfig({
+        type: "info",
+        title: "Série Em Breve",
+        message:
+          "Esta série espiritual ainda está em preparação e estará disponível em breve.",
+        primaryButton: {
+          label: "ENTENDI",
+          onPress: () => {
+            bottomSheetRef.current?.dismiss();
+          },
+        },
+      });
+      bottomSheetRef.current?.present();
+      return;
+    }
+
     if (status === LessonStatus.LOCKED) {
       handleOpenPremiumModal(lesson.title, "lesson");
       return;

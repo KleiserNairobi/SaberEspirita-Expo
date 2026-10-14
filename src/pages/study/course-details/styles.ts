@@ -258,6 +258,18 @@ export const createStyles = (theme: ITheme) =>
       ...theme.text("md", "bold"),
       color: theme.colors.background,
     },
+    disabledButton: {
+      backgroundColor: `${theme.colors.muted}40`,
+      borderRadius: theme.radius.md,
+      paddingVertical: theme.spacing.md,
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    disabledButtonText: {
+      ...theme.text("md", "bold", theme.colors.textSecondary),
+    },
     secondaryButton: {
       backgroundColor: "transparent",
       borderRadius: theme.radius.md,
