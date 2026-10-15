@@ -1,6 +1,8 @@
 import React, { memo } from "react";
-import { View, ScrollView, StyleSheet, Dimensions } from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
+import { AdaptiveReadingContainer } from "@/components/AdaptiveReadingContainer";
 import { IPremiumSlide, IReflectionQuestion } from "@/types/course";
 import { IGlossaryTerm } from "@/types/glossary";
 import { ITheme } from "@/configs/theme/types";
@@ -11,8 +13,6 @@ import { ReflectionQuestionsCard } from "./ReflectionQuestionsCard";
 import { SpecialElementCard } from "./SpecialElementCard";
 import { CommonMisunderstandingCard } from "./CommonMisunderstandingCard";
 import { LayeredReferenceCard } from "./LayeredReferenceCard";
-
-const { width } = Dimensions.get("window");
 
 interface PremiumSlideRendererProps {
   slide: IPremiumSlide;
@@ -35,6 +35,7 @@ export const PremiumSlideRenderer = memo(function PremiumSlideRenderer({
   slideIndex,
 }: PremiumSlideRendererProps) {
   const { theme } = useAppTheme();
+  const { width } = useResponsiveLayout();
   const styles = createStyles(theme);
 
   const slideType =
@@ -49,71 +50,73 @@ export const PremiumSlideRenderer = memo(function PremiumSlideRenderer({
   const termsForInjection: IGlossaryTerm[] = [];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { width }]}>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Conteúdo Principal do Slide (com Badge do tipo no topo) */}
-        <SlideContent
-          title={slide.title}
-          content={slide.content}
-          imagePrompt={slide.imagePrompt}
-          fontSize={fontSize}
-          slideType={slideType}
-          glossaryTerms={termsForInjection}
-          onGlossaryTermPress={onGlossaryTermPress}
-          slideIndex={slideIndex}
-        />
-
-        {/* Card de Elemento Especial (Flat, integrado e sem sombras) */}
-        {!!slide.specialElement && (
-          <SpecialElementCard
-            specialElement={slide.specialElement}
+        <AdaptiveReadingContainer>
+          {/* Conteúdo Principal do Slide (com Badge do tipo no topo) */}
+          <SlideContent
+            title={slide.title}
+            content={slide.content}
+            imagePrompt={slide.imagePrompt}
             fontSize={fontSize}
-          />
-        )}
-
-        {/* Card de Equívoco Frequente a Evitar (Flat, âmbar suave) */}
-        {!!slide.commonMisunderstanding && (
-          <CommonMisunderstandingCard
-            misunderstanding={slide.commonMisunderstanding}
-            fontSize={fontSize}
-          />
-        )}
-
-        {/* Destaques Conceituais (mesmo padrão da aula free) */}
-        {!!slide.highlights && slide.highlights.length > 0 && (
-          <HighlightCard
-            highlights={slide.highlights}
-            fontSize={fontSize}
+            slideType={slideType}
             glossaryTerms={termsForInjection}
             onGlossaryTermPress={onGlossaryTermPress}
             slideIndex={slideIndex}
           />
-        )}
 
-        {/* Perguntas Reflexivas — Apenas no último slide */}
-        {isLastSlide && reflectionQuestions && reflectionQuestions.length > 0 && (
-          <ReflectionQuestionsCard
-            questions={reflectionQuestions}
-            fontSize={fontSize}
-          />
-        )}
+          {/* Card de Elemento Especial (Flat, integrado e sem sombras) */}
+          {!!slide.specialElement && (
+            <SpecialElementCard
+              specialElement={slide.specialElement}
+              fontSize={fontSize}
+            />
+          )}
 
-        {/* Referências em Camadas e/ou Glossário (Flat, paridade com ReferenceCard) */}
-        {(slide.references || (slide.glossary && slide.glossary.length > 0)) && (
-          <LayeredReferenceCard
-            references={slide.references as any}
-            glossary={slide.glossary}
-            fontSize={fontSize}
-            onGlossaryTermPress={(termId) => onGlossaryTermPress?.(termId)}
-          />
-        )}
+          {/* Card de Equívoco Frequente a Evitar (Flat, âmbar suave) */}
+          {!!slide.commonMisunderstanding && (
+            <CommonMisunderstandingCard
+              misunderstanding={slide.commonMisunderstanding}
+              fontSize={fontSize}
+            />
+          )}
 
-        {/* Espaço extra inferior para navegação */}
-        <View style={styles.footerSpace} />
+          {/* Destaques Conceituais (mesmo padrão da aula free) */}
+          {!!slide.highlights && slide.highlights.length > 0 && (
+            <HighlightCard
+              highlights={slide.highlights}
+              fontSize={fontSize}
+              glossaryTerms={termsForInjection}
+              onGlossaryTermPress={onGlossaryTermPress}
+              slideIndex={slideIndex}
+            />
+          )}
+
+          {/* Perguntas Reflexivas — Apenas no último slide */}
+          {isLastSlide && reflectionQuestions && reflectionQuestions.length > 0 && (
+            <ReflectionQuestionsCard
+              questions={reflectionQuestions}
+              fontSize={fontSize}
+            />
+          )}
+
+          {/* Referências em Camadas e/ou Glossário (Flat, paridade com ReferenceCard) */}
+          {(slide.references || (slide.glossary && slide.glossary.length > 0)) && (
+            <LayeredReferenceCard
+              references={slide.references as any}
+              glossary={slide.glossary}
+              fontSize={fontSize}
+              onGlossaryTermPress={(termId) => onGlossaryTermPress?.(termId)}
+            />
+          )}
+
+          {/* Espaço extra inferior para navegação */}
+          <View style={styles.footerSpace} />
+        </AdaptiveReadingContainer>
       </ScrollView>
     </View>
   );
@@ -122,7 +125,6 @@ export const PremiumSlideRenderer = memo(function PremiumSlideRenderer({
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
-      width: width,
       flex: 1,
     },
     scrollView: {

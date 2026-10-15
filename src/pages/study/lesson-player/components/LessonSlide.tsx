@@ -1,6 +1,8 @@
 import React, { memo } from "react";
-import { View, ScrollView, StyleSheet, Dimensions } from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
+import { AdaptiveReadingContainer } from "@/components/AdaptiveReadingContainer";
 import { ISlide, IPremiumSlide, IReflectionQuestion } from "@/types/course";
 import { IGlossaryTerm } from "@/types/glossary";
 import { SlideContent } from "./SlideContent";
@@ -9,8 +11,6 @@ import { ReferenceCard } from "./ReferenceCard";
 import { ReflectionQuestionsCard } from "./ReflectionQuestionsCard";
 import { PremiumSlideRenderer } from "./PremiumSlideRenderer";
 import { ITheme } from "@/configs/theme/types";
-
-const { width } = Dimensions.get("window");
 
 interface LessonSlideProps {
   slide: ISlide | IPremiumSlide;
@@ -36,6 +36,7 @@ export const LessonSlide = memo(
     slideIndex,
   }: LessonSlideProps) => {
     const { theme } = useAppTheme();
+    const { width } = useResponsiveLayout();
     const styles = createStyles(theme);
 
     // Detecta se é um slide estruturado com elementos premium
@@ -74,53 +75,55 @@ export const LessonSlide = memo(
       undefined;
 
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { width }]}>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <SlideContent
-            title={slide.title}
-            content={slide.content}
-            imagePrompt={slide.imagePrompt}
-            fontSize={fontSize}
-            slideType={slideType}
-            glossaryTerms={termsForInjection}
-            onGlossaryTermPress={onGlossaryTermPress}
-            slideIndex={slideIndex}
-          />
-
-          {slide.highlights && slide.highlights.length > 0 && (
-            <HighlightCard
-              highlights={slide.highlights}
+          <AdaptiveReadingContainer>
+            <SlideContent
+              title={slide.title}
+              content={slide.content}
+              imagePrompt={slide.imagePrompt}
               fontSize={fontSize}
+              slideType={slideType}
               glossaryTerms={termsForInjection}
               onGlossaryTermPress={onGlossaryTermPress}
               slideIndex={slideIndex}
             />
-          )}
 
-          {/* Perguntas Reflexivas - Apenas no último slide (antes das referências) */}
-          {isLastSlide && reflectionQuestions && reflectionQuestions.length > 0 && (
-            <ReflectionQuestionsCard
-              questions={reflectionQuestions}
-              fontSize={fontSize}
-            />
-          )}
+            {slide.highlights && slide.highlights.length > 0 && (
+              <HighlightCard
+                highlights={slide.highlights}
+                fontSize={fontSize}
+                glossaryTerms={termsForInjection}
+                onGlossaryTermPress={onGlossaryTermPress}
+                slideIndex={slideIndex}
+              />
+            )}
 
-          {/* Referências e/ou Glossário fundidos no mesmo card */}
-          {(slide.references || hasLocalGlossary) && (
-            <ReferenceCard
-              references={slide.references as any}
-              glossary={slide.glossary}
-              fontSize={fontSize}
-              onGlossaryTermPress={(termId) => onGlossaryTermPress?.(termId)}
-            />
-          )}
+            {/* Perguntas Reflexivas - Apenas no último slide (antes das referências) */}
+            {isLastSlide && reflectionQuestions && reflectionQuestions.length > 0 && (
+              <ReflectionQuestionsCard
+                questions={reflectionQuestions}
+                fontSize={fontSize}
+              />
+            )}
 
-          {/* Espaço extra no final para não ficar colado no botão */}
-          <View style={styles.footerSpace} />
+            {/* Referências e/ou Glossário fundidos no mesmo card */}
+            {(slide.references || hasLocalGlossary) && (
+              <ReferenceCard
+                references={slide.references as any}
+                glossary={slide.glossary}
+                fontSize={fontSize}
+                onGlossaryTermPress={(termId) => onGlossaryTermPress?.(termId)}
+              />
+            )}
+
+            {/* Espaço extra no final para não ficar colado no botão */}
+            <View style={styles.footerSpace} />
+          </AdaptiveReadingContainer>
         </ScrollView>
       </View>
     );
@@ -130,7 +133,6 @@ export const LessonSlide = memo(
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
-      width: width, // Ocupa toda a largura da tela
       flex: 1,
     },
     scrollView: {

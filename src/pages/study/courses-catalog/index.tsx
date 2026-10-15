@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from "react";
 
 import {
   ActivityIndicator,
-  SectionList,
+  FlatList,
   Text,
   TouchableOpacity,
   View,
@@ -19,6 +19,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAllCoursesProgress } from "@/hooks/queries/useAllCoursesProgress";
 import { COURSES_KEYS, useCourses } from "@/hooks/queries/useCourses";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { ICourse, IUserCourseProgress } from "@/types/course";
@@ -84,6 +85,7 @@ const CatalogCourseItem = React.memo(
 
 export function CoursesCatalogScreen({ navigation }: any) {
   const { theme } = useAppTheme();
+  const { suggestedColumns } = useResponsiveLayout();
   const styles = createStyles(theme);
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const queryClient = useQueryClient();
@@ -230,12 +232,17 @@ export function CoursesCatalogScreen({ navigation }: any) {
       />
 
       <View style={styles.container}>
-        {/* Lista de séries - Header e SearchBar agora rolam junto */}
-        <SectionList
-          sections={[{ data: filteredCourses }]}
-          renderItem={renderCourse}
+        {/* Lista de séries com grid adaptativo */}
+        <FlatList
+          key={`catalog-grid-${suggestedColumns}`}
+          data={filteredCourses}
+          numColumns={suggestedColumns > 1 ? 2 : 1}
+          renderItem={({ item }) => (
+            <View style={{ flex: 1, paddingHorizontal: theme.spacing.xs }}>
+              {renderCourse({ item })}
+            </View>
+          )}
           keyExtractor={(item) => item.id}
-          stickySectionHeadersEnabled={true}
           ListHeaderComponent={
             <>
               {/* Header: Layout de 3 Colunas (Voltar | Ícone | Filtro) */}
@@ -294,20 +301,19 @@ export function CoursesCatalogScreen({ navigation }: any) {
                   </Text>
                 </View>
               </View>
+
+              {/* SearchBar Header Wrapper */}
+              <View style={styles.stickyHeader}>
+                <View style={styles.searchContainer}>
+                  <SearchBar
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                    placeholder="Buscar série..."
+                  />
+                </View>
+              </View>
             </>
           }
-          renderSectionHeader={() => (
-            /* SearchBar Sticky Header Wrapper */
-            <View style={styles.stickyHeader}>
-              <View style={styles.searchContainer}>
-                <SearchBar
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  placeholder="Buscar série..."
-                />
-              </View>
-            </View>
-          )}
           contentContainerStyle={styles.list}
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}

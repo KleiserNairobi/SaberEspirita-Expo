@@ -77,3 +77,17 @@ export interface ITheme {
     color?: string
   ) => TextStyle;
 }
+
+export type WindowWidthSizeClass = "compact" | "medium" | "expanded";
+
+export type ResponsiveLayoutConfig = {
+  widthSizeClass: WindowWidthSizeClass;
+  isCompact: boolean;
+  isMedium: boolean;
+  isExpanded: boolean;
+  isLandscape: boolean;
+  width: number;
+  height: number;
+  suggestedColumns: number;
+  maxReadingWidth: number;
+};

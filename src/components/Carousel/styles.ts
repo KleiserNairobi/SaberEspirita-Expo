@@ -1,12 +1,14 @@
-import { Dimensions, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { ITheme } from "@/configs/theme/types";
 
-const { width } = Dimensions.get("window");
-
 export const SPACING = 8;
-// Proporção retrato refinada (largura 56% da tela para presença visual harmônica)
-export const ITEM_SIZE = width * 0.56;
-export const SPACER_ITEM_SIZE = (width - ITEM_SIZE) / 2;
+
+export const getCarouselDimensions = (width: number) => {
+  // Proporção retrato refinada (largura 56% da tela para smartphones, com teto de 280dp para telas médias/grandes)
+  const itemSize = Math.min(Math.round(width * 0.56), 280);
+  const spacerSize = Math.max((width - itemSize) / 2, 0);
+  return { itemSize, spacerSize };
+};
 
 export const createStyles = (theme: ITheme) =>
   StyleSheet.create({

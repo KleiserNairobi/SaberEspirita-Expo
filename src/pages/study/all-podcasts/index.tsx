@@ -19,6 +19,7 @@ import {
 
 import { PODCAST_KEYS, usePodcasts } from "@/hooks/queries/usePodcasts";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 import { FilterBottomSheet } from "@/pages/pray/components/FilterBottomSheet";
 import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { podcastApiService } from "@/services/api/podcastApiService";
@@ -40,6 +41,7 @@ type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
 export function AllPodcastsScreen() {
   const { theme } = useAppTheme();
+  const { suggestedColumns } = useResponsiveLayout();
   const styles = createStyles(theme);
   const navigation = useNavigation<NavigationProp>();
   const queryClient = useQueryClient();
@@ -140,7 +142,9 @@ export function AllPodcastsScreen() {
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <View style={styles.container}>
         <FlatList
+          key={`podcasts-grid-${suggestedColumns}`}
           data={filteredPodcasts}
+          numColumns={suggestedColumns > 1 ? 2 : 1}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={
             <>
@@ -210,7 +214,10 @@ export function AllPodcastsScreen() {
             </>
           }
           renderItem={({ item }) => (
-            <View onTouchStart={() => prefetchPodcast(item.id, item.imageUrl)}>
+            <View
+              style={{ flex: 1, paddingHorizontal: theme.spacing.xs }}
+              onTouchStart={() => prefetchPodcast(item.id, item.imageUrl)}
+            >
               <PodcastCard
                 podcast={item}
                 onPress={() => handlePodcastPress(item.id)}

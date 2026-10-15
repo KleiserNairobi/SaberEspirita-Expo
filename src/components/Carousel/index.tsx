@@ -22,9 +22,10 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 import type { ICourse, IUserCourseProgress } from "@/types/course";
 
-import { ITEM_SIZE, SPACER_ITEM_SIZE, createStyles } from "./styles";
+import { getCarouselDimensions, createStyles } from "./styles";
 
 // Fator de multiplicação para simular loop infinito
 // Reduzido para 10 para evitar avisos de VirtualizedList e economizar memória.
@@ -46,6 +47,7 @@ interface CarouselItemProps {
   scrollX: SharedValue<number>;
   onPress: (courseId: string) => void;
   showRanking?: boolean;
+  itemSize: number;
 }
 
 const CarouselItem = React.memo(function CarouselItem({
@@ -56,15 +58,16 @@ const CarouselItem = React.memo(function CarouselItem({
   scrollX,
   onPress,
   showRanking = false,
+  itemSize,
 }: CarouselItemProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const finalRating = item.averageRating ?? item.rating;
 
   const inputRange = [
-    (index - 1) * ITEM_SIZE,
-    index * ITEM_SIZE,
-    (index + 1) * ITEM_SIZE,
+    (index - 1) * itemSize,
+    index * itemSize,
+    (index + 1) * itemSize,
   ];
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -108,7 +111,7 @@ const CarouselItem = React.memo(function CarouselItem({
   const displayPercent = Math.min(Math.round(completionPercent), 100);
 
   return (
-    <View style={{ width: ITEM_SIZE }}>
+    <View style={{ width: itemSize }}>
       <Animated.View style={[styles.itemContainer, animatedStyle]}>
         <TouchableOpacity
           activeOpacity={0.88}
@@ -179,6 +182,12 @@ export function Carousel({
   onCoursePress,
   showRanking = false,
 }: CarouselProps) {
+  const { width } = useResponsiveLayout();
+  const { itemSize, spacerSize } = React.useMemo(
+    () => getCarouselDimensions(width),
+    [width]
+  );
+
   const isFocused = useIsFocused();
   const scrollX = useSharedValue(0);
   const flatListRef = useRef<Animated.FlatList<any>>(null);
@@ -251,7 +260,7 @@ export function Carousel({
   const handleMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     // Sincroniza a referência do índice com a posição atual após scroll manual
     const offset = event.nativeEvent.contentOffset.x;
-    const index = Math.round(offset / ITEM_SIZE);
+    const index = Math.round(offset / itemSize);
 
     // TÉCNICA SEAMLESS JUMP:
     // Se o usuário chegar perto das bordas (primeiro ou último conjunto),
@@ -294,10 +303,10 @@ export function Carousel({
       data={expandedData}
       keyExtractor={(item) => item.uniqueKey}
       showsHorizontalScrollIndicator={false}
-      snapToInterval={ITEM_SIZE}
+      snapToInterval={itemSize}
       snapToAlignment="center"
       contentContainerStyle={{
-        paddingHorizontal: SPACER_ITEM_SIZE,
+        paddingHorizontal: spacerSize,
         paddingVertical: 12,
         alignItems: "center",
       }}
@@ -315,8 +324,8 @@ export function Carousel({
       // Começar no meio da lista para permitir rolagem infinita inicial para ambos os lados
       initialScrollIndex={initialIndex}
       getItemLayout={(_, index) => ({
-        length: ITEM_SIZE,
-        offset: ITEM_SIZE * index,
+        length: itemSize,
+        offset: itemSize * index,
         index,
       })}
       renderItem={({ item, index }) => {
@@ -334,6 +343,7 @@ export function Carousel({
             scrollX={scrollX}
             onPress={onCoursePress}
             showRanking={showRanking}
+            itemSize={itemSize}
           />
         );
       }}

@@ -4,12 +4,12 @@
     "slug": "saber-espirita",
     "scheme": "saber-espirita",
     "version": "2.0.23",
-    "orientation": "portrait",
+    "orientation": "default",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/images/icon.png",
     "ios": {
       "buildNumber": "60",
-      "supportsTablet": false,
+      "supportsTablet": true,
       "bundleIdentifier": "app.saberespirita",
       "infoPlist": {
         "UIBackgroundModes": ["remote-notification", "audio"],

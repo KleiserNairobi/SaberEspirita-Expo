@@ -35,6 +35,7 @@ import { useExercises } from "@/hooks/queries/useExercises";
 import { useForumHasNewComments } from "@/hooks/queries/useLessonForum";
 import { LESSONS_KEYS, useLesson, useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 import { useRateApp } from "@/hooks/useRateApp";
 import { AppStackParamList } from "@/routers/types";
 import { forumApiService } from "@/services/api/forumApiService";
@@ -69,10 +70,9 @@ import { createStyles } from "./styles";
 type LessonPlayerRouteProp = RouteProp<AppStackParamList, "LessonPlayer">;
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
-const { width } = Dimensions.get("window");
-
 export function LessonPlayerScreen() {
   const { theme } = useAppTheme();
+  const { width } = useResponsiveLayout();
   const { user, isGuest } = useAuthStore();
   const styles = createStyles(theme);
   const route = useRoute<LessonPlayerRouteProp>();
