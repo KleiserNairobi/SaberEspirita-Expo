@@ -4,6 +4,8 @@ export interface BottomSheetMessageConfig {
   type: MessageType;
   title: string;
   message: string;
+  textAlign?: "left" | "center" | "justify" | "right";
+  maxDynamicContentSize?: number;
   primaryButton?: {
     label: string;
     onPress: () => void;

@@ -2,6 +2,17 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.23-ota.2] - 2026-10-16 (Hot-Update)
+
+### Aprimorado
+
+- **Transparência Pedagógica e Metodologia de Cursos (`CourseDetailsScreen`, `ICourse`)**:
+  - Implementado texto de apoio dinâmico na seção "Como vamos estudar" baseado no perfil da série (Reflexivo/Introdutório, Misto, Formativo/Aprofundado ou explícito via `pedagogicalProfile`).
+  - Reformulada a mensagem explicativa do modal "Entenda nossa pedagogia" para esclarecer a intencionalidade didática e acolhedora dos diferentes formatos das 25 séries e o ritmo das pausas reflexivas (...).
+  - Ajustado o modal `BottomSheetMessage` para limitar a altura em 82% da tela com rolagem vertical ativa (`BottomSheetScrollView`), alinhamento de texto à esquerda e espaçamento de linha confortável para telas de diversos tamanhos.
+- **Progresso de Estudos no Currículo (`ProgressSummaryCard`)**:
+  - Condicionada a barra de progresso de "Exercícios Completos" para ser exibida apenas em séries que contêm exercícios (`totalExercises > 0`), omitindo-a em cursos reflexivos e introdutórios para evitar a falsa impressão de conteúdo pendente.
+
 ## [2.0.23-ota.1] - 2026-10-10 (Hot-Update)
 
 ### Corrigido / Aprimorado

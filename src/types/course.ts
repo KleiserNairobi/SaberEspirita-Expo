@@ -33,7 +33,15 @@ export interface ICourse {
     enrolledStudents?: number;
     completionRate?: number;
   };
+  pedagogicalProfile?: PedagogicalProfileType | string;
 }
+
+export type PedagogicalProfileType =
+  | "introductory"
+  | "reflective"
+  | "mixed"
+  | "formative"
+  | "advanced";
 
 export type SpecialElementType =
   | "source_in_focus"

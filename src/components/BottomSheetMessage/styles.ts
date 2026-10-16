@@ -31,6 +31,9 @@ export const createStyles = (theme: ITheme) =>
     message: {
       ...theme.text("md", "regular"),
       fontSize: theme.typography.sizes.md + 1,
+      lineHeight: 23,
+      width: "100%",
+      alignSelf: "stretch",
       color: theme.colors.textSecondary,
       textAlign: "center",
       marginBottom: 32,
