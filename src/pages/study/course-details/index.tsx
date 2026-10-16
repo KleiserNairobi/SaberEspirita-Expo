@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import { ActivityIndicator, Share, Text, TouchableOpacity, View } from "react-native";
 
@@ -121,8 +120,14 @@ export function CourseDetailsScreen() {
     setMessageConfig({
       type: "info",
       title: "Entenda nossa pedagogia",
+      textAlign: "left",
       message:
-        "Nossas séries espirituais foram desenvolvidas com uma metodologia própria, pensada para transformar o estudo em uma experiência ativa e envolvente.\n\nAo longo das aulas, você perceberá que alguns textos terminam com reticências (...). Isso é intencional. Esses momentos funcionam como pausas reflexivas, convidando você a pensar, internalizar e conectar o conteúdo com sua própria vida.\n\nAs aulas seguem uma progressão estruturada — da pergunta inicial à aplicação prática — como uma jornada de descoberta. Por isso, recomendamos que você avance slide a slide, respeitando esse ritmo.\n\nAqui, você não apenas lê:\n você reflete, compreende e transforma.",
+        "Nossas séries espirituais foram desenvolvidas com uma metodologia própria, pensada para transformar o estudo em uma experiência reflexiva, ativa e acolhedora.\n\n" +
+        "Como cada curso atende a um público e a um momento diferente da jornada — desde o primeiro contato até estudos temáticos mais aprofundados —, cada série possui sua própria proposta pedagógica:\n\n" +
+        "• Formatos sob medida: Recursos como materiais complementares, atividades de fixação, emissão de certificado ou fórum reflexivo variam conforme os objetivos da série, permitindo que cada tema seja vivenciado com a leveza ou a densidade adequada.\n\n" +
+        "• Pausas reflexivas (...): Textos que terminam em reticências são intencionais. Funcionam como convites para respirar, interiorizar o conteúdo e conectá-lo à sua própria vida no ritmo de cada slide.\n\n" +
+        "• Jornada no seu ritmo: As aulas seguem uma progressão pensada para que você descubra os ensinamentos com serenidade e liberdade de consciência.\n\n" +
+        "Aqui, você não apenas lê:\nvocê reflete, compreende e transforma.",
       primaryButton: {
         label: "FECHAR",
         onPress: () => {
@@ -198,6 +203,41 @@ export function CourseDetailsScreen() {
   const hasForum = Boolean(
     course?.hasForum || lessons.some((l) => Boolean(l.forumEnabled))
   );
+
+  // Texto dinâmico de apoio pedagógico baseado nas características da série
+  const pedagogicalSupportText = useMemo(() => {
+    const profile = course?.pedagogicalProfile;
+
+    // 1. Perfil explícito (se configurado no curso)
+    if (profile === "introductory" || profile === "reflective") {
+      return "Esta série prioriza a reflexão pessoal e a escuta sensível, sem avaliações formais.";
+    }
+    if (profile === "formative" || profile === "advanced") {
+      return "Esta série conta com atividades práticas de fixação e fórum reflexivo de autoconhecimento.";
+    }
+    if (profile === "mixed") {
+      return "Esta série combina pausas reflexivas com atividades práticas e fórum de autoconhecimento.";
+    }
+
+    // 2. Inferência por regras de negócio:
+    // Regra 1: Perfil Reflexivo / Introdutório (sem exercícios de fixação)
+    if (exerciseCount === 0) {
+      return "Esta série prioriza a reflexão pessoal e a escuta sensível, sem avaliações formais.";
+    }
+
+    // Regra 3: Perfil Formativo / Aprofundado (estudo formal com exercícios e avaliações/certificação)
+    if (exerciseCount > 0 && hasCertification) {
+      return "Esta série conta com atividades práticas de fixação e fórum reflexivo de autoconhecimento.";
+    }
+
+    // Regra 2: Perfil Misto (combina reflexão com exercícios e/ou fórum)
+    if (exerciseCount > 0) {
+      return "Esta série combina pausas reflexivas com atividades práticas e fórum de autoconhecimento.";
+    }
+
+    // Regra 4: Fallback / Padrão
+    return "Esta série utiliza uma metodologia ativa com foco em pausas reflexivas.";
+  }, [course?.pedagogicalProfile, exerciseCount, hasCertification]);
 
   // Formatação de duração (igual ao CourseCard)
   const workloadMinutes = course?.workloadMinutes || 0;
@@ -342,7 +382,7 @@ export function CourseDetailsScreen() {
             <View style={styles.methodologySection}>
               <Text style={styles.methodologyTitle}>Como vamos estudar</Text>
               <Text style={styles.methodologyText}>
-                Esta série utiliza uma metodologia ativa de pausas reflexivas.{" "}
+                {pedagogicalSupportText}{" "}
                 <Text style={styles.methodologyLink} onPress={handleOpenMethodology}>
                   Saiba mais
                 </Text>

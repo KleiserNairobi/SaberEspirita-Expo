@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import { View, Text } from "react-native";
+import { Dimensions, KeyboardAvoidingView, Platform, Text, View } from "react-native";
 import {
   BottomSheetModal,
   BottomSheetBackdrop,
@@ -14,7 +14,6 @@ import {
   HelpCircle,
 } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { KeyboardAvoidingView, Platform } from "react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Button } from "@/components/Button";
@@ -109,6 +108,10 @@ export const BottomSheetMessage = forwardRef<BottomSheetModal, BottomSheetMessag
       <BottomSheetModal
         ref={ref}
         enableDynamicSizing={true}
+        maxDynamicContentSize={
+          config?.maxDynamicContentSize ?? Dimensions.get("window").height * 0.82
+        }
+        topInset={insets.top + 16}
         enablePanDownToClose
         backgroundStyle={styles.bottomSheetBackground}
         handleIndicatorStyle={styles.handleIndicator}
@@ -137,7 +140,20 @@ export const BottomSheetMessage = forwardRef<BottomSheetModal, BottomSheetMessag
 
                 {/* Mensagem e View Condicional (Children) */}
                 {config.message ? (
-                  <Text style={styles.message}>{config.message}</Text>
+                  <View style={{ width: "100%", alignSelf: "stretch" }}>
+                    <Text
+                      style={[
+                        styles.message,
+                        {
+                          textAlign: config.textAlign || "center",
+                          alignSelf: "stretch",
+                          width: "100%",
+                        },
+                      ]}
+                    >
+                      {config.message}
+                    </Text>
+                  </View>
                 ) : null}
 
                 {children && (

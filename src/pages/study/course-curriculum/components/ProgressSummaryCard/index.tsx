@@ -65,30 +65,32 @@ export function ProgressSummaryCard({
         </View>
       </View>
 
-      {/* Progresso de Exercícios */}
-      <View style={styles.progressSection}>
-        <View style={styles.progressIconContainer}>
-          <Pencil size={22} color="#6B7A5F" />
-        </View>
-        <View style={styles.progressContent}>
-          <View style={styles.progressHeader}>
-            <Text style={styles.progressLabel}>Exercícios Completos</Text>
-            <Text style={styles.progressPercent}>{exercisesProgress}%</Text>
+      {/* Progresso de Exercícios (exibido apenas se a série possuir exercícios) */}
+      {totalExercises > 0 && (
+        <View style={styles.progressSection}>
+          <View style={styles.progressIconContainer}>
+            <Pencil size={22} color="#6B7A5F" />
           </View>
-          <View style={styles.progressBarBg}>
-            <View
-              style={[
-                styles.progressBarFill,
-                styles.progressBarExercises,
-                { width: `${exercisesProgress}%`, backgroundColor: "#6B7A5F" },
-              ]}
-            />
+          <View style={styles.progressContent}>
+            <View style={styles.progressHeader}>
+              <Text style={styles.progressLabel}>Exercícios Completos</Text>
+              <Text style={styles.progressPercent}>{exercisesProgress}%</Text>
+            </View>
+            <View style={styles.progressBarBg}>
+              <View
+                style={[
+                  styles.progressBarFill,
+                  styles.progressBarExercises,
+                  { width: `${exercisesProgress}%`, backgroundColor: "#6B7A5F" },
+                ]}
+              />
+            </View>
+            <Text style={styles.progressFooter}>
+              {completedExercises} de {totalExercises} exercícios completos
+            </Text>
           </View>
-          <Text style={styles.progressFooter}>
-            {completedExercises} de {totalExercises} exercícios completos
-          </Text>
         </View>
-      </View>
+      )}
 
       {/* Botões de Ação */}
       {onRateCourse && completedLessons > 0 && (
