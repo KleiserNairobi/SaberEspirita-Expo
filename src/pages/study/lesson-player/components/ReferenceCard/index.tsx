@@ -50,7 +50,7 @@ export function ReferenceCard({
         <View style={styles.section}>
           {references.kardeciana && (
             <Text style={[styles.referenceText, { fontSize, lineHeight: fontSize * 1.5 }]}>
-              <Text style={{ fontFamily: theme.typography.weights.semibold }}>
+              <Text style={{ fontFamily: theme.typography.reading.semibold }}>
                 Kardeciana:{" "}
               </Text>
               {references.kardeciana}
@@ -58,7 +58,7 @@ export function ReferenceCard({
           )}
           {references.biblica && (
             <Text style={[styles.referenceText, { fontSize, lineHeight: fontSize * 1.5 }]}>
-              <Text style={{ fontFamily: theme.typography.weights.semibold }}>
+              <Text style={{ fontFamily: theme.typography.reading.semibold }}>
                 Bíblica:{" "}
               </Text>
               {references.biblica}

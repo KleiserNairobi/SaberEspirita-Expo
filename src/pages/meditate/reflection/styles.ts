@@ -19,7 +19,7 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.md,
     },
     title: {
-      ...theme.text("xxxl", "semibold"),
+      ...theme.readingText("xxxl", "bold"),
       marginBottom: theme.spacing.sm,
       textAlign: "center",
       color: theme.colors.text,
@@ -70,10 +70,9 @@ export const createStyles = (theme: ITheme) =>
       marginVertical: 10,
     },
     bodyText: {
-      ...theme.text("md", "regular"),
+      ...theme.readingText("md", "regular"),
       color: theme.colors.text,
-      lineHeight: 28,
-      textAlign: "justify",
+      textAlign: "left",
     },
     tagsContainer: {
       flexDirection: "row",

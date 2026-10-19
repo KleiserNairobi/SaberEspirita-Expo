@@ -17,7 +17,7 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.md,
     },
     title: {
-      ...theme.text("xxxl", "semibold"),
+      ...theme.readingText("xxxl", "bold"),
       marginBottom: theme.spacing.sm,
       textAlign: "center",
     },
@@ -61,12 +61,11 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.sm,
     },
     content: {
-      ...theme.text("lg", "regular"),
-      lineHeight: 28,
+      ...theme.readingText("lg", "regular"),
       textAlign: "left",
     },
     reference: {
-      ...theme.text("md", "regular", theme.colors.textSecondary),
+      ...theme.readingText("md", "regular", theme.colors.textSecondary),
       lineHeight: 24,
       marginBottom: theme.spacing.xs,
     },

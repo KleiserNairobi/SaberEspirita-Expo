@@ -115,8 +115,8 @@ const createStyles = (theme: ITheme) =>
       fontSize: 12,
     },
     subtitle: {
-      ...theme.text("xs", "regular", theme.colors.textSecondary),
-      textAlign: "justify",
+      ...theme.readingText("xs", "regular", theme.colors.textSecondary),
+      textAlign: "left",
       marginBottom: 12,
       lineHeight: 18,
     },
@@ -124,9 +124,8 @@ const createStyles = (theme: ITheme) =>
       marginBottom: 8,
     },
     questionText: {
-      ...theme.text("sm", "regular"),
-      // textAlign removido: Esquerda é melhor para perguntas curtas
-      // lineHeight removido aqui pois é controlado dinamicamente
+      ...theme.readingText("sm", "regular"),
+      textAlign: "left",
       marginBottom: 8,
       opacity: 0.9,
     },

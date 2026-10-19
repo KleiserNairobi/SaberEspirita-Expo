@@ -38,7 +38,7 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.sm + 4,
     },
     highlightTitle: {
-      ...theme.text("sm", "semibold"),
+      ...theme.readingText("sm", "bold"),
       marginBottom: 2,
     },
     highlightContent: {

@@ -1,25 +1,34 @@
-import React, { useState, useEffect, useRef } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
+import {
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import TrackPlayer from "react-native-track-player";
-import { PrayStackParamList } from "@/routers/types";
-
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
-import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
-import { usePrayer } from "@/pages/pray/hooks/usePrayer";
-import { statsApiService } from "@/services/api/statsApiService";
-import { createStyles } from "@/pages/pray/prayer/styles";
-import { sharePrayer } from "@/utils/sharing";
 import { useQueryClient } from "@tanstack/react-query";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import TrackPlayer from "react-native-track-player";
 
-import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
-import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
+import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
 import { ReadingToolbar } from "@/components/ReadingToolbar";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { AmbientPlayerControls } from "@/pages/pray/components/AmbientPlayerControls";
+import { usePrayer } from "@/pages/pray/hooks/usePrayer";
+import { createStyles } from "@/pages/pray/prayer/styles";
+import { PrayStackParamList } from "@/routers/types";
+import { statsApiService } from "@/services/api/statsApiService";
+import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
+import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
+import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
+import { sharePrayer } from "@/utils/sharing";
+import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
 
 export function PrayerScreen() {
   const { theme } = useAppTheme();
@@ -34,7 +43,12 @@ export function PrayerScreen() {
 
   const { data: prayer, isLoading } = usePrayer(id);
   const { isFavorite, toggleFavorite } = usePrayerFavoritesStore();
-  const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } = usePrayerPreferencesStore();
+  const { getFontSize, getLineHeight } = useReaderPreferencesStore();
+  const readerPreferencesRef = useRef<BottomSheetModal>(null);
+
+  const handleOpenPreferences = useCallback(() => {
+    readerPreferencesRef.current?.present();
+  }, []);
   const queryClient = useQueryClient();
   const { setPlaying, setCurrentTrack } = useAmbientPlayerStore();
 
@@ -172,28 +186,32 @@ export function PrayerScreen() {
           onShare={handleShare}
           onNarrate={handleNarrate}
           isNarrating={isNarrating}
-          onIncreaseFontSize={increaseFontSize}
-          onDecreaseFontSize={decreaseFontSize}
-          canIncreaseFontSize={fontSizeLevel < 4}
-          canDecreaseFontSize={fontSizeLevel > 0}
+          onPreferences={handleOpenPreferences}
           showFavorite={true}
           isFavorite={isFav}
           onFavorite={handleToggleFavorite}
         />
 
         {/* Conteúdo */}
-        <Text style={[styles.content, { fontSize: getFontSize() }]}>
+        <Text
+          style={[
+            styles.content,
+            { fontSize: getFontSize(), lineHeight: getLineHeight() },
+          ]}
+        >
           {prayer.content}
         </Text>
       </ScrollView>
 
-      <View style={[
-        styles.fixedFooter, 
-        { paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : 32 }
-      ]}>
+      <View
+        style={[
+          styles.fixedFooter,
+          { paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : 32 },
+        ]}
+      >
         <AmbientPlayerControls />
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.finishButton}
           onPress={handleFinishPrayer}
           activeOpacity={0.8}
@@ -201,6 +219,8 @@ export function PrayerScreen() {
           <Text style={styles.finishButtonText}>Finalizei Minha Prece</Text>
         </TouchableOpacity>
       </View>
+
+      <ReaderPreferencesBottomSheet ref={readerPreferencesRef} />
     </SafeAreaView>
   );
 }

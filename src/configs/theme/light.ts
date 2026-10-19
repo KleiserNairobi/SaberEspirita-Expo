@@ -58,6 +58,13 @@ export const LightTheme: ITheme = {
       semibold: "BarlowCondensed_600SemiBold",
       bold: "Oswald_700Bold",
     },
+    reading: {
+      regular: "Barlow_400Regular",
+      medium: "Barlow_500Medium",
+      semibold: "Barlow_600SemiBold",
+      bold: "Barlow_700Bold",
+      italic: "Barlow_400Regular_Italic",
+    },
     sizes: {
       xs: 12,
       sm: 14,
@@ -95,5 +102,11 @@ export const LightTheme: ITheme = {
     fontSize: LightTheme.typography.sizes[size],
     fontFamily: LightTheme.typography.weights[weight],
     color: color || LightTheme.colors.text,
+  }),
+  readingText: (size, weight = "regular", color, lineHeight) => ({
+    fontSize: typeof size === "number" ? size : LightTheme.typography.sizes[size],
+    fontFamily: LightTheme.typography.reading[weight],
+    color: color || LightTheme.colors.text,
+    lineHeight,
   }),
 };

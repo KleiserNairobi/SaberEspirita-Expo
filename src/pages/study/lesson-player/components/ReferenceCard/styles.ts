@@ -53,7 +53,8 @@ export const createStyles = (theme: ITheme, fontSize: number = 16) =>
       fontSize: 12,
     },
     referenceText: {
-      ...theme.text("sm", "regular"),
+      ...theme.readingText("sm", "regular"),
+      textAlign: "left",
       lineHeight: fontSize * 1.5,
       marginBottom: 6,
     },

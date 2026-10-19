@@ -53,7 +53,7 @@ export const LayeredReferenceCard = React.memo(function LayeredReferenceCard({
         <View style={styles.section}>
           {!!obraPrincipal && (
             <Text style={[styles.referenceText, { fontSize, lineHeight: fontSize * 1.5 }]}>
-              <Text style={{ fontFamily: theme.typography.weights.semibold }}>
+              <Text style={{ fontFamily: theme.typography.reading.semibold }}>
                 Obra Base:{" "}
               </Text>
               {obraPrincipal}
@@ -62,7 +62,7 @@ export const LayeredReferenceCard = React.memo(function LayeredReferenceCard({
 
           {!!codificacao && (
             <Text style={[styles.referenceText, { fontSize, lineHeight: fontSize * 1.5 }]}>
-              <Text style={{ fontFamily: theme.typography.weights.semibold }}>
+              <Text style={{ fontFamily: theme.typography.reading.semibold }}>
                 Codificação:{" "}
               </Text>
               {codificacao}
@@ -71,7 +71,7 @@ export const LayeredReferenceCard = React.memo(function LayeredReferenceCard({
 
           {!!complementar && (
             <Text style={[styles.referenceText, { fontSize, lineHeight: fontSize * 1.5 }]}>
-              <Text style={{ fontFamily: theme.typography.weights.semibold }}>
+              <Text style={{ fontFamily: theme.typography.reading.semibold }}>
                 Complementar:{" "}
               </Text>
               {complementar}
@@ -80,7 +80,7 @@ export const LayeredReferenceCard = React.memo(function LayeredReferenceCard({
 
           {!!biblica && (
             <Text style={[styles.referenceText, { fontSize, lineHeight: fontSize * 1.5 }]}>
-              <Text style={{ fontFamily: theme.typography.weights.semibold }}>
+              <Text style={{ fontFamily: theme.typography.reading.semibold }}>
                 Bíblica:{" "}
               </Text>
               {biblica}

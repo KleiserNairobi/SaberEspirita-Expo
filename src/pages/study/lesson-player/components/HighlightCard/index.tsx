@@ -35,12 +35,8 @@ export function HighlightCard({
 
   const markdownStyles = {
     body: {
-      ...theme.text("md", "regular"),
-      textAlign: "justify",
-      fontSize: fontSize,
-      color: theme.colors.text,
-      lineHeight: fontSize * 1.45,
-      width: "100%",
+      ...theme.readingText(fontSize, "regular", theme.colors.text, fontSize * 1.5),
+      textAlign: "left",
       marginTop: 0,
       marginBottom: 0,
       paddingTop: 0,
@@ -51,31 +47,22 @@ export function HighlightCard({
       marginBottom: 0,
       paddingTop: 0,
       paddingBottom: 0,
-      ...theme.text("md", "regular"),
-      textAlign: "justify",
-      fontSize: fontSize,
-      color: theme.colors.text,
-      lineHeight: fontSize * 1.45,
-      width: "100%",
+      ...theme.readingText(fontSize, "regular", theme.colors.text, fontSize * 1.5),
+      textAlign: "left",
     },
     strong: {
-      ...theme.text("md", "medium"),
-      fontSize: fontSize,
+      ...theme.readingText(fontSize, "semibold", theme.colors.text),
       fontWeight: "normal",
-      color: theme.colors.text,
     },
     em: {
-      ...theme.text("md", "regular"),
+      ...theme.readingText(fontSize, "italic", theme.colors.text),
       fontStyle: "italic",
-      fontSize: fontSize,
-      color: theme.colors.text,
     },
     link: {
-      color: theme.colors.text,
+      ...theme.readingText(fontSize, "regular", theme.colors.text),
       textDecorationLine: "underline",
       textDecorationStyle: "dotted",
       textDecorationColor: theme.colors.error,
-      fontSize: fontSize,
     },
   } as any;
 
@@ -142,7 +129,7 @@ export function HighlightCard({
                           textDecorationLine: "underline",
                           textDecorationStyle: "dotted",
                           textDecorationColor: theme.colors.error,
-                          fontFamily: theme.typography.weights.regular,
+                          fontFamily: theme.typography.reading.regular,
                           fontSize: fontSize,
                         }}
                         suppressHighlighting={true}

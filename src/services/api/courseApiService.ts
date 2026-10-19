@@ -79,7 +79,6 @@ export const courseApiService = {
    * Obtém a lista de cursos com suporte a filtros.
    */
   async getCourses(params?: GetCoursesParams): Promise<ICourse[]> {
-    /* MOCK PREMIUM TEMPORARIAMENTE DESATIVADO PARA O RELEASE OTA:
     const mockNossoLarCourse: ICourse = {
       id: "nosso-lar-estudo-guiado",
       title: "Nosso Lar — Estudo Guiado",
@@ -91,7 +90,7 @@ export const courseApiService = {
       author: "André Luiz / Chico Xavier",
       lessonCount: 2,
       isPremium: true,
-      categoryId: "LE",
+      categoryId: "COMP",
       status: "PUBLISHED",
       allowNewEnrollments: true,
       certification: {
@@ -106,7 +105,6 @@ export const courseApiService = {
         totalDurationMinutes: 65,
       },
     };
-    */
 
     try {
       const response = await apiClient.get<ICourse[]>("/courses", { params });
@@ -121,15 +119,13 @@ export const courseApiService = {
         certification: parseCertification(course.certification),
       }));
 
-      /* MOCK PREMIUM - Desativado para o release OTA
       // Adiciona o curso mock de teste no catálogo se não existir
       if (!list.some((c) => c.id === "nosso-lar-estudo-guiado")) {
         list.push(mockNossoLarCourse);
       }
-      */
-      return list.filter((c) => c.id !== "nosso-lar-estudo-guiado");
+      return list;
     } catch {
-      return [];
+      return [mockNossoLarCourse];
     }
   },
 
@@ -166,6 +162,7 @@ export const courseApiService = {
         author: "André Luiz / Chico Xavier",
         lessonCount: 2,
         isPremium: true,
+        categoryId: "COMP",
         status: "PUBLISHED",
         allowNewEnrollments: true,
         certification: {

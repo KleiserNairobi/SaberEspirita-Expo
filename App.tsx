@@ -9,6 +9,14 @@ import {
 } from "react-native";
 
 import { Allura_400Regular } from "@expo-google-fonts/allura";
+import { Baskervville_400Regular_Italic } from "@expo-google-fonts/baskervville";
+import {
+  Barlow_400Regular,
+  Barlow_400Regular_Italic,
+  Barlow_500Medium,
+  Barlow_600SemiBold,
+  Barlow_700Bold,
+} from "@expo-google-fonts/barlow";
 import {
   BarlowCondensed_300Light,
   BarlowCondensed_400Regular,
@@ -16,19 +24,18 @@ import {
   BarlowCondensed_600SemiBold,
   BarlowCondensed_700Bold,
 } from "@expo-google-fonts/barlow-condensed";
-import { Baskervville_400Regular_Italic } from "@expo-google-fonts/baskervville";
 import {
   Oswald_300Light,
   Oswald_400Regular,
   Oswald_500Medium,
   Oswald_600SemiBold,
   Oswald_700Bold,
-  useFonts,
 } from "@expo-google-fonts/oswald";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { HotUpdater } from "@hot-updater/react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { registerRootComponent } from "expo";
+import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -97,16 +104,21 @@ function App() {
   const [fontsLoaded] = useFonts({
     Allura_400Regular,
     Baskervville_400Regular_Italic,
-    Oswald_300Light,
-    Oswald_400Regular,
-    Oswald_500Medium,
-    Oswald_600SemiBold,
-    Oswald_700Bold,
+    Barlow_400Regular,
+    Barlow_400Regular_Italic,
+    Barlow_500Medium,
+    Barlow_600SemiBold,
+    Barlow_700Bold,
     BarlowCondensed_300Light,
     BarlowCondensed_400Regular,
     BarlowCondensed_500Medium,
     BarlowCondensed_600SemiBold,
     BarlowCondensed_700Bold,
+    Oswald_300Light,
+    Oswald_400Regular,
+    Oswald_500Medium,
+    Oswald_600SemiBold,
+    Oswald_700Bold,
   });
 
   const { modalVisible, modalConfig, hideModal } = useCheckUpdate(appIsReady);

@@ -36,11 +36,11 @@ export const createStyles = (theme: ITheme, accentColor: string, fontSize: numbe
       fontSize: 12,
     },
     content: {
-      ...theme.text("sm", "regular"),
+      ...theme.readingText("sm", "regular"),
       color: theme.colors.text,
       fontSize: fontSize,
       lineHeight: fontSize * 1.5,
-      textAlign: "justify",
+      textAlign: "left",
       opacity: 0.95,
     },
   });

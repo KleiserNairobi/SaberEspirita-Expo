@@ -5,6 +5,7 @@ import Markdown from "react-native-markdown-display";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { IGlossaryTerm } from "@/types/glossary";
 import { injectGlossaryLinks } from "@/utils/glossaryParser";
+import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
 import { createStyles } from "./styles";
 
 interface SlideContentProps {
@@ -21,7 +22,7 @@ interface SlideContentProps {
 export function SlideContent({
   title,
   content,
-  fontSize = 16,
+  fontSize: propFontSize,
   slideType,
   glossaryTerms = [],
   onGlossaryTermPress,
@@ -29,49 +30,43 @@ export function SlideContent({
 }: SlideContentProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
+  const { getFontSize, getTitleSize, getQuoteSize, getLineHeight } =
+    useReaderPreferencesStore();
+
+  const fontSize = propFontSize ?? getFontSize();
+  const calculatedLineHeight = getLineHeight();
+  const titleSize = getTitleSize();
+  const quoteSize = getQuoteSize();
 
   // Memoiza a injeção do glossário para não reprocessar à toa a cada re-render
   const parsedContent = useMemo(() => {
     return injectGlossaryLinks(content, glossaryTerms);
   }, [content, glossaryTerms]);
 
-  // Estilos markdown (reutilizando padrão do Chat)
+  // Estilos markdown com tipografia de leitura (Barlow normal)
   const markdownStyles = {
     body: {
-      ...theme.text("md", "regular"),
-      textAlign: "justify",
-      fontSize: fontSize,
-      color: theme.colors.text,
-      lineHeight: fontSize * 1.5,
-      width: "100%", // Fix para justificação no Android
+      ...theme.readingText(fontSize, "regular", theme.colors.text, calculatedLineHeight),
+      textAlign: "left",
     },
     paragraph: {
       marginBottom: theme.spacing.md,
-      ...theme.text("md", "regular"),
-      textAlign: "justify",
-      fontSize: fontSize,
-      color: theme.colors.text,
-      lineHeight: fontSize * 1.5,
-      width: "100%",
+      ...theme.readingText(fontSize, "regular", theme.colors.text, calculatedLineHeight),
+      textAlign: "left",
     },
     strong: {
-      ...theme.text("md", "medium"),
-      fontSize: fontSize,
+      ...theme.readingText(fontSize, "semibold", theme.colors.text),
       fontWeight: "normal", // Override default bold
-      color: theme.colors.text,
     },
     em: {
-      ...theme.text("md", "regular"),
+      ...theme.readingText(fontSize, "italic", theme.colors.text),
       fontStyle: "italic",
-      fontSize: fontSize,
-      color: theme.colors.text,
     },
     link: {
-      color: theme.colors.text,
+      ...theme.readingText(fontSize, "regular", theme.colors.text),
       textDecorationLine: "underline",
       textDecorationStyle: "dotted",
       textDecorationColor: theme.colors.error,
-      fontSize: fontSize,
     },
     bullet_list: {
       marginBottom: theme.spacing.md,
@@ -99,6 +94,7 @@ export function SlideContent({
       paddingVertical: theme.spacing.sm,
       marginBottom: theme.spacing.md,
       borderRadius: theme.radius.xs,
+      ...theme.readingText(quoteSize, "italic", theme.colors.text, Math.round(quoteSize * 1.5)),
     },
     // heading1: {
     //   ...theme.text("md", "medium"),
@@ -156,8 +152,8 @@ export function SlideContent({
         style={[
           styles.slideTitle,
           {
-            fontSize: fontSize * 1.2,
-            lineHeight: fontSize * 1.6,
+            fontSize: titleSize,
+            lineHeight: Math.round(titleSize * 1.35),
             textAlign: "left",
           },
         ]}
@@ -204,8 +200,9 @@ export function SlideContent({
                     textDecorationLine: "underline",
                     textDecorationStyle: "dotted",
                     textDecorationColor: theme.colors.error,
-                    fontFamily: theme.typography.weights.regular,
+                    fontFamily: theme.typography.reading.regular,
                     fontSize: fontSize,
+                    lineHeight: calculatedLineHeight,
                   }}
                   suppressHighlighting={true}
                   onPress={() => onLinkPress?.(href)}

@@ -17,12 +17,14 @@ import { MessageCircle } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useGlossaryFavoritesStore } from "@/stores/glossaryFavoritesStore";
-import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
+import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
 import { useGlossaryTerm } from "../hooks/useGlossaryTerms";
 import { GLOSSARY_CATEGORIES } from "@/types/glossary";
 import { createStyles } from "./styles";
 import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
 import { ReadingToolbar } from "@/components/ReadingToolbar";
+import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { SHARE_FOOTER } from "@/utils/constants";
 
 export function TermDetailScreen() {
@@ -37,8 +39,12 @@ export function TermDetailScreen() {
   const { data: term, isLoading } = useGlossaryTerm(id);
   const isFavorite = useGlossaryFavoritesStore((s) => s.isFavorite(id));
   const toggleFavorite = useGlossaryFavoritesStore((s) => s.toggleFavorite);
-  const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } =
-    usePrayerPreferencesStore();
+  const { getFontSize, getLineHeight } = useReaderPreferencesStore();
+  const readerPreferencesRef = React.useRef<BottomSheetModal>(null);
+
+  const handleOpenPreferences = () => {
+    readerPreferencesRef.current?.present();
+  };
 
   async function handleShare() {
     if (!term) return;
@@ -143,10 +149,7 @@ export function TermDetailScreen() {
           onShare={handleShare}
           onNarrate={handleNarrate}
           isNarrating={isNarrating}
-          onIncreaseFontSize={increaseFontSize}
-          onDecreaseFontSize={decreaseFontSize}
-          canIncreaseFontSize={fontSizeLevel < 4}
-          canDecreaseFontSize={fontSizeLevel > 0}
+          onPreferences={handleOpenPreferences}
           showFavorite={true}
           isFavorite={isFavorite}
           onFavorite={handleToggleFavorite}
@@ -155,7 +158,12 @@ export function TermDetailScreen() {
         {/* Definição */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Definição</Text>
-          <Text style={[styles.content, { fontSize: getFontSize() }]}>
+          <Text
+            style={[
+              styles.content,
+              { fontSize: getFontSize(), lineHeight: getLineHeight() },
+            ]}
+          >
             {term.definition}
           </Text>
         </View>
@@ -200,6 +208,8 @@ export function TermDetailScreen() {
           <Text style={styles.askButtonText}>Perguntar ao Sr. Allan</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      <ReaderPreferencesBottomSheet ref={readerPreferencesRef} />
     </SafeAreaView>
   );
 }

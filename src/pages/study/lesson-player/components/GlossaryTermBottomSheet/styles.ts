@@ -49,10 +49,10 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.md,
     },
     definitionText: {
-      ...theme.text("md", "regular"),
+      ...theme.readingText("md", "regular"),
       color: theme.colors.textSecondary,
       lineHeight: 24,
-      textAlign: "justify",
+      textAlign: "left",
     },
     buttonContainer: {
       marginTop: "auto",

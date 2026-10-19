@@ -25,6 +25,7 @@ import { CommunityLevelUpModal } from "@/components/CommunityLevelUpModal";
 import { PremiumContentNoticeModal } from "@/components/PremiumContentNoticeModal";
 import { RateAppBottomSheet } from "@/components/RateAppBottomSheet";
 import { ReadingToolbar } from "@/components/ReadingToolbar";
+import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
 import {
   COURSE_PROGRESS_KEYS,
   useCourseProgress,
@@ -49,7 +50,7 @@ import {
   setStoredCommunityLevel,
 } from "@/services/community/communityLevelService";
 import { useAuthStore } from "@/stores/authStore";
-import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
+import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
 import { IGlossaryTerm } from "@/types/glossary";
 import { SHARE_FOOTER } from "@/utils/constants";
 import { isLessonFreeTrial } from "@/utils/courseAccess";
@@ -86,9 +87,13 @@ export function LessonPlayerScreen() {
   );
   const [matchedGlossaryWord, setMatchedGlossaryWord] = useState<string | undefined>();
 
-  // Controle de Fonte
-  const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } =
-    usePrayerPreferencesStore();
+  // Controle de Fonte e Preferências de Leitura
+  const { getFontSize } = useReaderPreferencesStore();
+  const readerPreferencesRef = useRef<BottomSheetModal>(null);
+
+  const handleOpenPreferences = useCallback(() => {
+    readerPreferencesRef.current?.present();
+  }, []);
 
   // Estado para configuração do BottomSheet genérico
   const [messageConfig, setMessageConfig] = useState<BottomSheetMessageConfig | null>(
@@ -634,10 +639,7 @@ export function LessonPlayerScreen() {
         onShare={handleShare}
         onNarrate={handleNarrate}
         isNarrating={isNarrating}
-        onIncreaseFontSize={increaseFontSize}
-        onDecreaseFontSize={decreaseFontSize}
-        canIncreaseFontSize={fontSizeLevel < 4}
-        canDecreaseFontSize={fontSizeLevel > 0}
+        onPreferences={handleOpenPreferences}
         showFavorite={false}
       />
 
@@ -768,6 +770,7 @@ export function LessonPlayerScreen() {
         description="Parabéns por concluir a aula de degustação! Para continuar a jornada pelas próximas aulas e ter acesso irrestrito ao curso completo, torne-se um membro Premium."
         onClose={navigateBackAfterCompletion}
       />
+      <ReaderPreferencesBottomSheet ref={readerPreferencesRef} />
     </SafeAreaView>
   );
 }

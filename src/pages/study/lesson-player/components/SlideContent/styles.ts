@@ -22,7 +22,7 @@ export const createStyles = (theme: ITheme) =>
       letterSpacing: 0.5,
     },
     slideTitle: {
-      ...theme.text("xl", "bold"),
+      ...theme.readingText("xl", "bold"),
       textAlign: "left",
       marginBottom: theme.spacing.xs,
       marginTop: theme.spacing.xs,
