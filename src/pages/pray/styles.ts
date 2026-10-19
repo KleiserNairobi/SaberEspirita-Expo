@@ -101,4 +101,35 @@ export const createStyles = (theme: ITheme) =>
       borderColor: theme.colors.card,
       zIndex: 10,
     },
+    // Estilos específicos para Tablet
+    tabletHeader: {
+      paddingHorizontal: 20,
+      paddingVertical: theme.spacing.lg,
+    },
+    tabletRow: {
+      flexDirection: "row",
+      paddingHorizontal: 20,
+      gap: theme.spacing.xl,
+      alignItems: "flex-start",
+    },
+    tabletLeftColumn: {
+      flex: 48,
+    },
+    tabletRightColumn: {
+      flex: 52,
+    },
+    tabletFirstCard: {
+      marginTop: 0,
+      marginHorizontal: 0,
+      paddingHorizontal: theme.spacing.md,
+    },
+    tabletCard: {
+      marginHorizontal: 0,
+      paddingHorizontal: theme.spacing.md,
+    },
+    tabletTrendingContainer: {
+      marginTop: 0,
+      marginHorizontal: 0,
+      paddingHorizontal: 0,
+    },
   });

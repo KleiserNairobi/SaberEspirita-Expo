@@ -1,5 +1,5 @@
 import React from "react";
-import { ImageBackground, Text, TouchableOpacity, View, Share } from "react-native";
+import { ImageBackground, StyleProp, Text, TouchableOpacity, View, ViewStyle, Share } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Share2 } from "lucide-react-native";
 
@@ -8,7 +8,11 @@ import { getDailyThought } from "@/utils/dailyThought";
 import { SHARE_FOOTER } from "@/utils/constants";
 import { createStyles } from "./styles";
 
-export function DailyThoughtCard() {
+interface DailyThoughtCardProps {
+  style?: StyleProp<ViewStyle>;
+}
+
+export function DailyThoughtCard({ style }: DailyThoughtCardProps = {}) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
@@ -25,7 +29,7 @@ export function DailyThoughtCard() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <ImageBackground
         source={backgroundImage}
         style={styles.imageBackground}

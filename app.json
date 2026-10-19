@@ -10,6 +10,7 @@
     "ios": {
       "buildNumber": "60",
       "supportsTablet": true,
+      "requireFullScreen": true,
       "bundleIdentifier": "app.saberespirita",
       "infoPlist": {
         "UIBackgroundModes": ["remote-notification", "audio"],

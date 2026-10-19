@@ -26,6 +26,7 @@ import {
 } from "@/hooks/queries/useNotifications";
 import { usePodcasts } from "@/hooks/queries/usePodcasts";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 import { useGlossaryTerms } from "@/pages/glossary/hooks/useGlossaryTerms";
 import { AppStackParamList } from "@/routers/types";
 import { useAuthStore } from "@/stores/authStore";
@@ -48,6 +49,8 @@ type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
 export function StudyScreen() {
   const { theme } = useAppTheme();
+  const { isCompact } = useResponsiveLayout();
+  const isTablet = !isCompact;
   const styles = createStyles(theme);
   const { user, isGuest } = useAuthStore();
   const navigation = useNavigation<NavigationProp>();
@@ -445,76 +448,119 @@ export function StudyScreen() {
           </View>
         </View>
 
-        {/* Carrossel de Cursos em Andamento (com histórico real e barra de progresso verde fina) */}
-        {inProgressCourses.length > 0 && (
-          <ContinueStudyingSection
-            items={inProgressCourses}
-            onPressItem={handleContinueItemPress}
-          />
-        )}
+        {/* Conteúdo Adaptativo: Duas colunas em Tablet, Coluna Única em Smartphone */}
+        {(() => {
+          const studyContent = (
+            <>
+              {/* Carrossel de Cursos em Andamento (com histórico real e barra de progresso verde fina) */}
+              {inProgressCourses.length > 0 && (
+                <ContinueStudyingSection
+                  items={inProgressCourses}
+                  onPressItem={handleContinueItemPress}
+                />
+              )}
 
-        {/* Seção Explore por tema (Trilhas em Carrossel Horizontal e Subcategorias) */}
-        {allCourses.length > 0 && (
-          <ExploreByTheme
-            courses={allCourses}
-            progressMap={allProgress}
-            featuredCourseIds={featuredCourseIds}
-            onCoursePress={handleExploreCoursePress}
-            onSeeAllPress={handleSeeAllCourses}
-          />
-        )}
+              {/* Seção Explore por tema (Trilhas em Carrossel Horizontal e Subcategorias) */}
+              {allCourses.length > 0 && (
+                <ExploreByTheme
+                  courses={allCourses}
+                  progressMap={allProgress}
+                  featuredCourseIds={featuredCourseIds}
+                  onCoursePress={handleExploreCoursePress}
+                  onSeeAllPress={handleSeeAllCourses}
+                />
+              )}
+            </>
+          );
 
-        {/* Banner do Saber Espírita Premium (100% Flat com Floating Cutout Badge) */}
-        {/* <PremiumBanner onPress={handlePremiumPress} /> */}
+          const librarySubtitles: Record<string, string> = {
+            "3": "Episódios e reflexões em áudio",
+            "2": "Conceitos e termos doutrinários",
+          };
 
-        {/* Seção Biblioteca */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Explore a Biblioteca</Text>
-        </View>
+          const libraryAndAssistant = (
+            <>
+              {/* Seção Biblioteca */}
+              <View style={[styles.sectionHeader, isTablet && styles.sectionHeaderNoMargin]}>
+                <Text style={styles.sectionTitle}>Explore a Biblioteca</Text>
+              </View>
 
-        {Biblioteca.map((item) => {
-          const IconComponent = item.icon;
-          const isItemNew =
-            (item.id === "3" && hasNewPodcast) || (item.id === "2" && hasNewGlossaryTerm);
+              {Biblioteca.map((item) => {
+                const IconComponent = item.icon;
+                const isItemNew =
+                  (item.id === "3" && hasNewPodcast) || (item.id === "2" && hasNewGlossaryTerm);
+
+                return (
+                  <TouchableOpacity
+                    key={item.id}
+                    style={[styles.libraryItem, isTablet && styles.libraryItemNoMargin]}
+                    onPress={() => handleLibraryItemPress(item.id)}
+                    activeOpacity={0.7}
+                  >
+                    <View style={styles.libraryContentGroup}>
+                      <View style={styles.iconContainer}>
+                        <IconComponent size={20} color={theme.colors.primary} />
+                      </View>
+                      <View>
+                        <Text style={styles.libraryItemText}>
+                          {item.title.replace("\n", " ")}
+                        </Text>
+                        {isTablet && librarySubtitles[item.id] && (
+                          <Text style={styles.libraryItemSubtitle}>
+                            {librarySubtitles[item.id]}
+                          </Text>
+                        )}
+                      </View>
+                    </View>
+
+                    <View style={styles.rightGroup}>
+                      {isItemNew && (
+                        <View style={styles.statusBadge}>
+                          <Text style={styles.statusText}>Novo</Text>
+                        </View>
+                      )}
+                      <ChevronRight size={20} color={theme.colors.textSecondary} />
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+
+              {/* Assistente Sr. Allan */}
+              <View
+                style={[
+                  styles.assistantCardContainer,
+                  isTablet && styles.assistantCardNoMargin,
+                ]}
+              >
+                <AssistantCard
+                  title="Pergunte ao Sr. Allan"
+                  description="Tire suas dúvidas científicas e filosóficas com base nas obras básicas da codificação espírita."
+                  buttonText="PERGUNTAR"
+                  icon={Feather}
+                  onPress={() =>
+                    navigation.navigate("ScientificChat", { origin: "direct" })
+                  }
+                />
+              </View>
+            </>
+          );
+
+          if (isTablet) {
+            return (
+              <View style={styles.tabletRow}>
+                <View style={styles.tabletLeftColumn}>{studyContent}</View>
+                <View style={styles.tabletRightColumn}>{libraryAndAssistant}</View>
+              </View>
+            );
+          }
 
           return (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.libraryItem}
-              onPress={() => handleLibraryItemPress(item.id)}
-              activeOpacity={0.7}
-            >
-              <View style={styles.libraryContentGroup}>
-                <View style={styles.iconContainer}>
-                  <IconComponent size={20} color={theme.colors.primary} />
-                </View>
-                <Text style={styles.libraryItemText}>
-                  {item.title.replace("\n", " ")}
-                </Text>
-              </View>
-
-              <View style={styles.rightGroup}>
-                {isItemNew && (
-                  <View style={styles.statusBadge}>
-                    <Text style={styles.statusText}>Novo</Text>
-                  </View>
-                )}
-                <ChevronRight size={20} color={theme.colors.textSecondary} />
-              </View>
-            </TouchableOpacity>
+            <>
+              {studyContent}
+              {libraryAndAssistant}
+            </>
           );
-        })}
-
-        {/* Assistente Sr. Allan */}
-        <View style={styles.assistantCardContainer}>
-          <AssistantCard
-            title="Pergunte ao Sr. Allan"
-            description="Tire suas dúvidas científicas e filosóficas com base nas obras básicas."
-            buttonText="Perguntar"
-            icon={Feather}
-            onPress={() => navigation.navigate("ScientificChat", { origin: "direct" })}
-          />
-        </View>
+        })()}
       </ScrollView>
 
       <BottomSheetMessage ref={bottomSheetRef} config={messageConfig} />

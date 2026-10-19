@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 import { ChevronRight, HandHeart } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -7,9 +7,10 @@ import { createStyles } from "./styles";
 
 interface AIChatCardProps {
   onPress: () => void;
+  style?: StyleProp<ViewStyle>;
 }
 
-export function AIChatCard({ onPress }: AIChatCardProps) {
+export function AIChatCard({ onPress, style }: AIChatCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
 
@@ -25,6 +26,7 @@ export function AIChatCard({ onPress }: AIChatCardProps) {
           backgroundColor: containerBg,
           borderColor: containerBorder,
         },
+        style,
       ]}
       onPress={onPress}
       activeOpacity={0.9}

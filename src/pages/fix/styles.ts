@@ -33,5 +33,15 @@ export function createStyles(theme: ITheme) {
       paddingHorizontal: theme.spacing.lg,
       gap: theme.spacing.sm,
     },
+    tabletBannersRow: {
+      flexDirection: "row",
+      paddingHorizontal: theme.spacing.lg,
+      gap: theme.spacing.md,
+      marginBottom: theme.spacing.lg,
+    },
+    tabletBannerItem: {
+      flex: 1,
+      marginHorizontal: 0,
+    },
   });
 }

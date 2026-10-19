@@ -17,6 +17,7 @@ import {
   useUserQuizProgress,
 } from "@/hooks/queries/useQuiz";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 import { FixStackParamList } from "@/routers/types";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -31,6 +32,8 @@ type FixHomeNavigationProp = NativeStackNavigationProp<FixStackParamList, "FixHo
 
 export default function FixHomeScreen() {
   const { theme } = useAppTheme();
+  const { isCompact } = useResponsiveLayout();
+  const isTablet = !isCompact;
   const styles = createStyles(theme);
   const navigation = useNavigation<FixHomeNavigationProp>();
   const user = useAuthStore((s) => s.user);
@@ -183,15 +186,22 @@ export default function FixHomeScreen() {
           <Text style={styles.subtitle}>Explore e teste seus conhecimentos</Text>
         </View>
 
-        {/* Desafio Diário Banner */}
-        <View style={{ marginBottom: theme.spacing.md }}>
-          <DailyChallengeBanner />
-        </View>
-
-        {/* Banner Verdade ou Mentira */}
-        <View style={{ marginBottom: theme.spacing.lg }}>
-          <TruthOrFalseBanner />
-        </View>
+        {/* Banners: Lado a Lado em Tablet, Empilhados em Smartphone */}
+        {isTablet ? (
+          <View style={styles.tabletBannersRow}>
+            <DailyChallengeBanner style={styles.tabletBannerItem} />
+            <TruthOrFalseBanner style={styles.tabletBannerItem} />
+          </View>
+        ) : (
+          <>
+            <View style={{ marginBottom: theme.spacing.md }}>
+              <DailyChallengeBanner />
+            </View>
+            <View style={{ marginBottom: theme.spacing.lg }}>
+              <TruthOrFalseBanner />
+            </View>
+          </>
+        )}
 
         {/* Meu Progresso Section */}
         <ProgressSummary />
@@ -207,8 +217,9 @@ export default function FixHomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
+        key={isTablet ? "fix-grid-tablet-3" : "fix-grid-phone-2"}
         data={categoriesWithProgress}
-        numColumns={2}
+        numColumns={isTablet ? 3 : 2}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={renderHeader}
         contentContainerStyle={[

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View, Animated } from "react-native";
+import { ActivityIndicator, Animated, ScrollView, StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 import { ChevronDown, Compass, ChevronRight } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -10,7 +10,11 @@ import { useSuggestedContent } from "@/pages/pray/hooks/useSuggestedContent";
 import { AppStackParamList, PrayStackParamList } from "@/routers/types";
 import { createStyles } from "./styles";
 
-export function WelcomingHero() {
+interface WelcomingHeroProps {
+  style?: StyleProp<ViewStyle>;
+}
+
+export function WelcomingHero({ style }: WelcomingHeroProps = {}) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const navigation =
@@ -80,7 +84,7 @@ export function WelcomingHero() {
   const hasMood = !!currentMood;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <TouchableOpacity
         style={styles.headerRow}
         onPress={() => setExpanded(!expanded)}

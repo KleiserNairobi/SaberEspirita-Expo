@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import {
@@ -25,6 +25,7 @@ import { Button } from "@/components/Button";
 import { SettingsItem } from "@/components/SettingsItem";
 import { SettingsSection } from "@/components/SettingsSection";
 import { useCommunityProgress } from "@/hooks/queries/useLessonForum";
+import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 import { authApiService } from "@/services/api/authApiService";
 import { AccountHeader } from "@/pages/account/components/AccountHeader";
 import { CommunityLevelInfoBottomSheet } from "@/pages/account/components/CommunityLevelInfoBottomSheet";
@@ -58,6 +59,8 @@ export function AccountScreen() {
   } = useAccountScreen();
 
   const { data: communityProgress } = useCommunityProgress();
+  const { isCompact } = useResponsiveLayout();
+  const isTablet = !isCompact;
 
   const styles = createStyles(theme);
 
@@ -195,167 +198,263 @@ export function AccountScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <AccountHeader
-            displayName={displayName}
-            email={email}
-            photoURL={photoURL}
-            onEditPress={handleEditProfilePress}
-            communityLevelId={
-              (communityProgress?.communityLevelId as any) || "sementeiro"
+          {(() => {
+            const preferencesSection = (
+              <SettingsSection title="Preferências">
+                <SettingsItem
+                  icon={themeIcon}
+                  title="Tema"
+                  subtitle={themeLabel}
+                  onPress={handleThemeChange}
+                  showDivider
+                  isFirst
+                />
+                <SettingsItem
+                  icon={Volume2}
+                  title="Efeitos Sonoros"
+                  isSwitch
+                  switchValue={preferences.soundEffects}
+                  onSwitchChange={preferences.setSoundEffects}
+                  showDivider
+                  isLast
+                />
+              </SettingsSection>
+            );
+
+            const notificationsSection = (
+              <SettingsSection title="Notificações">
+                <SettingsItem
+                  icon={Bell}
+                  title="Atualizações do App"
+                  subtitle="Receba notificações sobre novas versões"
+                  isSwitch
+                  switchValue={preferences.appUpdateNotifications}
+                  onSwitchChange={preferences.setAppUpdateNotifications}
+                  showDivider
+                  isFirst
+                />
+                <SettingsItem
+                  icon={BellRing}
+                  title="Notificações de Curso"
+                  subtitle="Lembretes sobre seus cursos em andamento"
+                  isSwitch
+                  switchValue={preferences.courseNotifications}
+                  onSwitchChange={preferences.setCourseNotifications}
+                  showDivider
+                  isLast
+                />
+              </SettingsSection>
+            );
+
+            const supportSection = (
+              <SettingsSection title="Suporte">
+                <SettingsItem
+                  icon={Mail}
+                  title="Fale Conosco"
+                  subtitle="Envie suas dúvidas ou sugestões"
+                  onPress={handleContactUs}
+                  showDivider
+                  isFirst
+                />
+                <SettingsItem
+                  icon={HelpCircle}
+                  title="Como funciona meu nível?"
+                  subtitle="Critérios de reconhecimento simbólico"
+                  onPress={handleCommunityLevelInfoPress}
+                  showDivider
+                />
+                <SettingsItem
+                  icon={HelpCircle}
+                  title="Perguntas Frequentes"
+                  onPress={handleFAQ}
+                  showDivider
+                  isLast
+                />
+              </SettingsSection>
+            );
+
+            const legalSection = (
+              <SettingsSection title="Legal">
+                <SettingsItem
+                  icon={FileText}
+                  title="Termos de Uso"
+                  onPress={handleTerms}
+                  showDivider
+                  isFirst
+                />
+                <SettingsItem
+                  icon={Shield}
+                  title="Política de Privacidade"
+                  onPress={handlePrivacy}
+                  showDivider
+                  isLast
+                />
+              </SettingsSection>
+            );
+
+            const actionsSection = (
+              <SettingsSection title="Ações">
+                <SettingsItem
+                  icon={Star}
+                  title="Avaliar App"
+                  subtitle="Ajude-nos com sua avaliação"
+                  onPress={handleRateApp}
+                  showDivider
+                  isFirst
+                />
+                <SettingsItem
+                  icon={Instagram}
+                  title="Siga-nos"
+                  subtitle="@comunidade.saberespirita"
+                  onPress={handleInstagram}
+                  showDivider
+                />
+                <SettingsItem
+                  icon={Share2}
+                  title="Compartilhar App"
+                  subtitle="Indique para seus amigos"
+                  onPress={handleShareApp}
+                  showDivider
+                  isLast
+                />
+              </SettingsSection>
+            );
+
+            const dangerZoneAndLogout = (
+              <>
+                {!isGuest && (
+                  <SettingsSection title="Zona de Perigo">
+                    <SettingsItem
+                      icon={Trash}
+                      title="Excluir Conta"
+                      subtitle="Solicitar exclusão de conta e dados"
+                      onPress={handleDeleteAccountPress}
+                      showDivider={false}
+                      titleStyle={{ color: theme.colors.error }}
+                      isFirst
+                      isLast
+                    />
+                  </SettingsSection>
+                )}
+
+                {isGuest ? (
+                  <View style={{ marginBottom: 24 }}>
+                    <Button
+                      title="Criar Conta / Entrar"
+                      onPress={handleLogoutPress}
+                      fullWidth
+                    />
+                  </View>
+                ) : (
+                  <LogoutButton onPress={handleLogoutPress} />
+                )}
+              </>
+            );
+
+            const versionBadge = (
+              <View style={styles.versionBadge}>
+                <View style={styles.versionDot} />
+                <Text style={styles.versionBadgeText}>Saber Espírita v{APP_VERSION}</Text>
+              </View>
+            );
+
+            if (isTablet) {
+              return (
+                <>
+                  {/* Cabeçalho de Tablet Limpo */}
+                  <View style={styles.tabletHeader}>
+                    <View>
+                      <Text style={styles.tabletTitle}>Minha Conta</Text>
+                      <Text style={styles.tabletSubtitle}>
+                        Gerencie suas preferências, avisos e detalhes de usuário.
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.tabletMainRow}>
+                    {/* Coluna da Esquerda (~32%) */}
+                    <View style={styles.tabletLeftColumn}>
+                      <View style={styles.profileCard}>
+                        <View style={{ width: "100%", alignItems: "center" }}>
+                          <AccountHeader
+                            displayName={displayName}
+                            email={email}
+                            photoURL={photoURL}
+                            onEditPress={handleEditProfilePress}
+                            communityLevelId={
+                              (communityProgress?.communityLevelId as any) || "sementeiro"
+                            }
+                          />
+                          <Text style={styles.profileBioText}>
+                            Membro da comunidade Saber Espírita. Pratique orações, acompanhe estudos e fortaleça seu aprendizado diário.
+                          </Text>
+                        </View>
+                        <TouchableOpacity
+                          style={styles.editProfileButton}
+                          onPress={handleEditProfilePress}
+                          activeOpacity={0.8}
+                        >
+                          <Text style={styles.editProfileButtonText}>
+                            Editar Informações Pessoais
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+
+                      {dangerZoneAndLogout}
+
+                      {/* Versão realocada abaixo do botão Sair da Conta */}
+                      <View style={styles.tabletVersionContainer}>
+                        {versionBadge}
+                      </View>
+                    </View>
+
+                    {/* Coluna da Direita (~68%) */}
+                    <View style={styles.tabletRightColumn}>
+                      {/* Preferências e Notificações (altura combinada alinha perfeitamente com ProfileCard) */}
+                      {preferencesSection}
+                      {notificationsSection}
+
+                      {/* Linha Central: Suporte em largura total */}
+                      {supportSection}
+
+                      {/* Ações e Legal em 1 coluna completa cada */}
+                      {actionsSection}
+                      {legalSection}
+                    </View>
+                  </View>
+                </>
+              );
             }
-          />
 
-          {/* Grupo 1: Preferências */}
-          <SettingsSection title="Preferências">
-            <SettingsItem
-              icon={themeIcon}
-              title="Tema"
-              subtitle={themeLabel}
-              onPress={handleThemeChange}
-              showDivider
-              isFirst
-            />
-            <SettingsItem
-              icon={Volume2}
-              title="Efeitos Sonoros"
-              isSwitch
-              switchValue={preferences.soundEffects}
-              onSwitchChange={preferences.setSoundEffects}
-              showDivider
-              isLast
-            />
-          </SettingsSection>
+            return (
+              <>
+                <AccountHeader
+                  displayName={displayName}
+                  email={email}
+                  photoURL={photoURL}
+                  onEditPress={handleEditProfilePress}
+                  communityLevelId={
+                    (communityProgress?.communityLevelId as any) || "sementeiro"
+                  }
+                />
+                {preferencesSection}
+                {notificationsSection}
+                {supportSection}
+                {legalSection}
+                {actionsSection}
+                {dangerZoneAndLogout}
 
-          {/* Grupo 2: Notificações */}
-          <SettingsSection title="Notificações">
-            <SettingsItem
-              icon={Bell}
-              title="Atualizações do App"
-              subtitle="Receba notificações sobre novas versões"
-              isSwitch
-              switchValue={preferences.appUpdateNotifications}
-              onSwitchChange={preferences.setAppUpdateNotifications}
-              showDivider
-              isFirst
-            />
-            <SettingsItem
-              icon={BellRing}
-              title="Notificações de Curso"
-              subtitle="Lembretes sobre seus cursos em andamento"
-              isSwitch
-              switchValue={preferences.courseNotifications}
-              onSwitchChange={preferences.setCourseNotifications}
-              showDivider
-              isLast
-            />
-          </SettingsSection>
-
-          {/* Grupo 3: Suporte */}
-          <SettingsSection title="Suporte">
-            <SettingsItem
-              icon={Mail}
-              title="Fale Conosco"
-              subtitle="Envie suas dúvidas ou sugestões"
-              onPress={handleContactUs}
-              showDivider
-              isFirst
-            />
-            <SettingsItem
-              icon={HelpCircle}
-              title="Como funciona meu nível?"
-              subtitle="Critérios de reconhecimento simbólico"
-              onPress={handleCommunityLevelInfoPress}
-              showDivider
-            />
-            <SettingsItem
-              icon={HelpCircle}
-              title="Perguntas Frequentes"
-              onPress={handleFAQ}
-              showDivider
-              isLast
-            />
-          </SettingsSection>
-
-          {/* Grupo 4: Legal */}
-          <SettingsSection title="Legal">
-            <SettingsItem
-              icon={FileText}
-              title="Termos de Uso"
-              onPress={handleTerms}
-              showDivider
-              isFirst
-            />
-            <SettingsItem
-              icon={Shield}
-              title="Política de Privacidade"
-              onPress={handlePrivacy}
-              showDivider
-              isLast
-            />
-          </SettingsSection>
-
-          {/* Grupo 5: Ações */}
-          <SettingsSection title="Ações">
-            <SettingsItem
-              icon={Star}
-              title="Avaliar App"
-              subtitle="Ajude-nos com sua avaliação"
-              onPress={handleRateApp}
-              showDivider
-              isFirst
-            />
-            <SettingsItem
-              icon={Instagram}
-              title="Siga-nos"
-              subtitle="@comunidade.saberespirita"
-              onPress={handleInstagram}
-              showDivider
-            />
-            <SettingsItem
-              icon={Share2}
-              title="Compartilhar App"
-              subtitle="Indique para seus amigos"
-              onPress={handleShareApp}
-              showDivider
-              isLast
-            />
-          </SettingsSection>
-
-          {!isGuest && (
-            <SettingsSection title="Zona de Perigo">
-              <SettingsItem
-                icon={Trash}
-                title="Excluir Conta"
-                subtitle="Solicitar exclusão de conta e dados"
-                onPress={handleDeleteAccountPress}
-                showDivider={false}
-                titleStyle={{ color: theme.colors.error }}
-                isFirst
-                isLast
-              />
-            </SettingsSection>
-          )}
-
-          {isGuest ? (
-            <View style={{ paddingHorizontal: 24, marginBottom: 24 }}>
-              <Button
-                title="Criar Conta / Entrar"
-                onPress={handleLogoutPress}
-                fullWidth
-              />
-            </View>
-          ) : (
-            <LogoutButton onPress={handleLogoutPress} />
-          )}
-
-          <Text
-            style={[
-              theme.text("sm", "regular", theme.colors.muted),
-              { textAlign: "center", marginBottom: 20 },
-            ]}
-          >
-            Saber Espírita v{APP_VERSION}
-          </Text>
+                <Text
+                  style={[
+                    theme.text("sm", "regular", theme.colors.muted),
+                    { textAlign: "center", marginBottom: 20 },
+                  ]}
+                >
+                  Saber Espírita v{APP_VERSION}
+                </Text>
+              </>
+            );
+          })()}
         </ScrollView>
       </AppBackground>
 

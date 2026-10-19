@@ -1,7 +1,7 @@
 import { useWindowDimensions } from "react-native";
 import { ResponsiveLayoutConfig, WindowWidthSizeClass } from "@/configs/theme";
 
-const COMPACT_MAX_WIDTH = 599;
+const COMPACT_MAX_WIDTH = 699;
 const MEDIUM_MAX_WIDTH = 839;
 const MAX_READING_WIDTH = 680;
 

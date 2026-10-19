@@ -4,6 +4,7 @@ import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 
 interface TabBarProps {
   state: {
@@ -99,6 +100,9 @@ const TabItem: React.FC<TabItemProps> = ({ route, options, isFocused, onPress })
 export const AnimatedTabBar = ({ state, descriptors, navigation }: TabBarProps) => {
   const insets = useSafeAreaInsets();
   const { theme } = useAppTheme();
+  const { isCompact } = useResponsiveLayout();
+  const isTablet = !isCompact;
+
   const BASE_HEIGHT = 78;
   const safeBottom =
     insets.bottom > 0
@@ -114,58 +118,64 @@ export const AnimatedTabBar = ({ state, descriptors, navigation }: TabBarProps) 
   }
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          left: theme.spacing.lg,
-          right: theme.spacing.lg,
-          height: BASE_HEIGHT + safeBottom,
-          paddingBottom: safeBottom,
-        },
-        // @ts-ignore
-        focusedOptions.tabBarStyle,
-      ]}
-    >
-      <BlurView intensity={60} tint="dark" style={styles.blurContainer}>
-        <View style={styles.items}>
-          {state.routes.map((route, index) => {
-            const { options } = descriptors[route.key];
-            const isFocused = state.index === index;
+    <View style={styles.outerWrapper} pointerEvents="box-none">
+      <View
+        style={[
+          styles.container,
+          {
+            height: BASE_HEIGHT + safeBottom,
+            paddingBottom: safeBottom,
+            width: isTablet ? 540 : "100%",
+            maxWidth: "94%",
+            paddingHorizontal: isTablet ? 0 : theme.spacing.lg,
+          },
+          // @ts-ignore
+          focusedOptions.tabBarStyle,
+        ]}
+      >
+        <BlurView intensity={60} tint="dark" style={styles.blurContainer}>
+          <View style={styles.items}>
+            {state.routes.map((route, index) => {
+              const { options } = descriptors[route.key];
+              const isFocused = state.index === index;
 
-            function onPress() {
-              const event = navigation.emit({
-                type: "tabPress",
-                target: route.key,
-              });
+              function onPress() {
+                const event = navigation.emit({
+                  type: "tabPress",
+                  target: route.key,
+                });
 
-              if (!isFocused && !event.defaultPrevented) {
-                navigation.navigate(route.name);
+                if (!isFocused && !event.defaultPrevented) {
+                  navigation.navigate(route.name);
+                }
               }
-            }
 
-            return (
-              <TabItem
-                key={route.key}
-                route={route}
-                options={options}
-                isFocused={isFocused}
-                onPress={onPress}
-              />
-            );
-          })}
-        </View>
-      </BlurView>
+              return (
+                <TabItem
+                  key={route.key}
+                  route={route}
+                  options={options}
+                  isFocused={isFocused}
+                  onPress={onPress}
+                />
+              );
+            })}
+          </View>
+        </BlurView>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  outerWrapper: {
     position: "absolute",
     bottom: 0,
-    left: 24,
-    right: 24,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  container: {
     overflow: "hidden",
   },
   blurContainer: {

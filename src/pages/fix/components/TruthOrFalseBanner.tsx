@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Text, TouchableOpacity, View } from "react-native";
+import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -9,7 +9,11 @@ import { ChevronRight, HelpCircle } from "lucide-react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
 
-export function TruthOrFalseBanner() {
+interface TruthOrFalseBannerProps {
+  style?: StyleProp<ViewStyle>;
+}
+
+export function TruthOrFalseBanner({ style }: TruthOrFalseBannerProps) {
   const { theme } = useAppTheme();
   const navigation = useNavigation<NativeStackNavigationProp<FixStackParamList>>();
 
@@ -17,17 +21,20 @@ export function TruthOrFalseBanner() {
     <TouchableOpacity
       onPress={() => navigation.navigate("TruthOrFalseHome")}
       activeOpacity={0.7}
-      style={{
-        marginHorizontal: theme.spacing.lg,
-        backgroundColor: theme.colors.card,
-        borderRadius: theme.radius.md,
-        padding: theme.spacing.lg,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderWidth: 1,
-        borderColor: theme.colors.border,
-      }}
+      style={[
+        {
+          marginHorizontal: theme.spacing.lg,
+          backgroundColor: theme.colors.card,
+          borderRadius: theme.radius.md,
+          padding: theme.spacing.lg,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          borderWidth: 1,
+          borderColor: theme.colors.border,
+        },
+        style,
+      ]}
     >
       <View
         style={{

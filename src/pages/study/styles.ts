@@ -10,6 +10,7 @@ export const createStyles = (theme: ITheme) =>
     },
     headerContainer: {
       marginHorizontal: theme.spacing.lg,
+      marginTop: theme.spacing.sm,
       marginBottom: theme.spacing.md,
     },
     headerTopRow: {
@@ -73,7 +74,6 @@ export const createStyles = (theme: ITheme) =>
       gap: theme.spacing.sm,
     },
     libraryItem: {
-      flex: 1,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
@@ -83,13 +83,15 @@ export const createStyles = (theme: ITheme) =>
       borderColor: theme.colors.border,
       borderRadius: theme.radius.md,
       marginBottom: theme.spacing.sm,
-      padding: theme.spacing.md,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
       gap: theme.spacing.md,
     },
     libraryContentGroup: {
       flexDirection: "row",
       alignItems: "center",
       gap: theme.spacing.md,
+      flex: 1,
     },
     iconContainer: {
       width: 40,
@@ -128,5 +130,35 @@ export const createStyles = (theme: ITheme) =>
       marginHorizontal: theme.spacing.lg,
       marginBottom: theme.spacing.lg,
       marginTop: theme.spacing.sm,
+    },
+    // Estilos específicos para Tablet
+    tabletRow: {
+      flexDirection: "row",
+      paddingLeft: 0,
+      paddingRight: theme.spacing.lg,
+      gap: theme.spacing.lg,
+      alignItems: "flex-start",
+    },
+    tabletLeftColumn: {
+      flex: 62,
+    },
+    tabletRightColumn: {
+      flex: 38,
+    },
+    libraryItemNoMargin: {
+      marginHorizontal: 0,
+    },
+    sectionHeaderNoMargin: {
+      marginHorizontal: 0,
+      marginTop: theme.spacing.md,
+      marginBottom: theme.spacing.sm,
+    },
+    assistantCardNoMargin: {
+      marginHorizontal: 0,
+      marginTop: theme.spacing.sm,
+    },
+    libraryItemSubtitle: {
+      ...theme.text("xs", "regular", theme.colors.textSecondary),
+      marginTop: 2,
     },
   });

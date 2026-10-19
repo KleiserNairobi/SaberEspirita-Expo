@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import {
   Smile,
@@ -12,9 +12,11 @@ import { useMoodStore } from "@/stores/moodStore";
 import { MoodSelectionBottomSheet } from "./MoodSelectionBottomSheet";
 import { createStyles } from "./styles";
 
+interface MoodSelectorProps {
+  style?: StyleProp<ViewStyle>;
+}
 
-
-export function MoodSelector() {
+export function MoodSelector({ style }: MoodSelectorProps = {}) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const { currentMood } = useMoodStore();
@@ -30,7 +32,7 @@ export function MoodSelector() {
   return (
     <View>
       <TouchableOpacity
-        style={styles.container}
+        style={[styles.container, style]}
         onPress={handleOpenSelector}
         activeOpacity={0.8}
       >

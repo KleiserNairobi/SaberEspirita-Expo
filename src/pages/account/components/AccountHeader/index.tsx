@@ -1,6 +1,6 @@
 import { Leaf, Pencil, Sprout, TreePalm } from "lucide-react-native";
 import React from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { createStyles } from "./styles";
@@ -11,6 +11,7 @@ interface AccountHeaderProps {
   photoURL?: string | null;
   onEditPress?: () => void;
   communityLevelId?: "sementeiro" | "cultivador" | "arvore_frondosa";
+  style?: StyleProp<ViewStyle>;
 }
 
 const levelConfig = {
@@ -24,6 +25,7 @@ export function AccountHeader({
   photoURL,
   onEditPress,
   communityLevelId,
+  style,
 }: AccountHeaderProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -56,7 +58,7 @@ export function AccountHeader({
       : null;
 
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, style]}>
       <TouchableOpacity
         style={styles.avatarSection}
         onPress={onEditPress}

@@ -15,6 +15,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Heart, BookOpen } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 import { MoodSelector } from "@/pages/pray/components/MoodSelector";
 import { WelcomingHero } from "@/pages/pray/components/WelcomingHero";
 import { AIChatCard } from "@/pages/pray/components/AIChatCard";
@@ -29,6 +30,8 @@ import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
 
 export default function PrayScreen() {
   const { theme } = useAppTheme();
+  const { isCompact } = useResponsiveLayout();
+  const isTablet = !isCompact;
   const styles = createStyles(theme);
   const navigation = useNavigation<NativeStackNavigationProp<PrayStackParamList>>();
   const { user } = useAuth();
@@ -94,7 +97,7 @@ export default function PrayScreen() {
         }
       >
         {/* Header com Atalhos */}
-        <View style={styles.header}>
+        <View style={[styles.header, isTablet && styles.tabletHeader]}>
           <View style={styles.headerTextContainer}>
             <Text style={styles.greeting}>Ore</Text>
             <Text style={styles.subtitle}>Você e Deus: em sintonia para o bem.</Text>
@@ -121,12 +124,33 @@ export default function PrayScreen() {
           </View>
         </View>
 
-        {/* Fluxo de Acolhimento: Identificação -> Sugestão -> Assistência */}
-        <MoodSelector />
-        <WelcomingHero />
-        <AIChatCard onPress={handleAIChatPress} />
-
-        <TrendingPrayers />
+        {/* Conteúdo Adaptativo: Duas colunas em Tablet, Coluna Única em Smartphone */}
+        {isTablet ? (
+          <View style={styles.tabletRow}>
+            <View style={styles.tabletLeftColumn}>
+              <MoodSelector style={styles.tabletFirstCard} />
+              <WelcomingHero style={styles.tabletCard} />
+              <AIChatCard
+                onPress={handleAIChatPress}
+                style={styles.tabletCard}
+              />
+            </View>
+            <View style={styles.tabletRightColumn}>
+              <TrendingPrayers
+                defaultExpanded={true}
+                style={styles.tabletTrendingContainer}
+              />
+            </View>
+          </View>
+        ) : (
+          <>
+            {/* Fluxo de Acolhimento Smartphone: Identificação -> Sugestão -> Assistência */}
+            <MoodSelector />
+            <WelcomingHero />
+            <AIChatCard onPress={handleAIChatPress} />
+            <TrendingPrayers />
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

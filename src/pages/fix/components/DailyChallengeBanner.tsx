@@ -1,12 +1,16 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { FixStackParamList } from "@/routers/types";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Trophy, ChevronRight } from "lucide-react-native";
 
-export function DailyChallengeBanner() {
+interface DailyChallengeBannerProps {
+  style?: StyleProp<ViewStyle>;
+}
+
+export function DailyChallengeBanner({ style }: DailyChallengeBannerProps) {
   const { theme } = useAppTheme();
   const navigation = useNavigation<NativeStackNavigationProp<FixStackParamList>>();
 
@@ -14,17 +18,20 @@ export function DailyChallengeBanner() {
     <TouchableOpacity
       onPress={() => navigation.navigate("DailyQuizHome")}
       activeOpacity={0.7}
-      style={{
-        marginHorizontal: theme.spacing.lg,
-        backgroundColor: theme.colors.card,
-        borderRadius: theme.radius.md,
-        padding: theme.spacing.lg,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderWidth: 1,
-        borderColor: theme.colors.border,
-      }}
+      style={[
+        {
+          marginHorizontal: theme.spacing.lg,
+          backgroundColor: theme.colors.card,
+          borderRadius: theme.radius.md,
+          padding: theme.spacing.lg,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          borderWidth: 1,
+          borderColor: theme.colors.border,
+        },
+        style,
+      ]}
     >
       <View
         style={{

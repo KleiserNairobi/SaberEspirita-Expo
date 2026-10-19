@@ -16,6 +16,7 @@ import { AssistantCard } from "@/components/AssistantCard";
 import { DailyThoughtCard } from "@/components/DailyThoughtCard";
 import { MEDITATION_KEYS, useFeaturedMeditations } from "@/hooks/queries/useMeditations";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 import { MeditateStackParamList } from "@/routers/types";
 import { meditationApiService } from "@/services/api/meditationApiService";
 import { reflectionApiService } from "@/services/api/reflectionApiService";
@@ -35,6 +36,8 @@ type TabType = "REFLECTIONS" | "MEDITATIONS";
 
 export default function MeditateScreen() {
   const { theme } = useAppTheme();
+  const { isCompact } = useResponsiveLayout();
+  const isTablet = !isCompact;
   const styles = createStyles(theme);
   const { user } = useAuthStore();
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
@@ -141,139 +144,183 @@ export default function MeditateScreen() {
           </View>
         </View>
 
-        {/* Seção: Pensamento do Dia */}
-        <Text style={styles.sectionTitle}>Pensamento do Dia</Text>
-        <DailyThoughtCard />
-
-        {/* Tabs de Seleção */}
-        <View style={styles.segmentContainer}>
-          <TouchableOpacity
-            style={[
-              styles.segmentButton,
-              activeTab === "REFLECTIONS" && styles.segmentButtonActive,
-            ]}
-            onPress={() => setActiveTab("REFLECTIONS")}
-            activeOpacity={0.8}
-          >
-            <Text
-              style={[
-                styles.segmentText,
-                activeTab === "REFLECTIONS" && styles.segmentTextActive,
-              ]}
-            >
-              Leitura Diária
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.segmentButton,
-              activeTab === "MEDITATIONS" && styles.segmentButtonActive,
-            ]}
-            onPress={() => setActiveTab("MEDITATIONS")}
-            activeOpacity={0.8}
-          >
-            <Text
-              style={[
-                styles.segmentText,
-                activeTab === "MEDITATIONS" && styles.segmentTextActive,
-              ]}
-            >
-              Meditações
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Seção: Favoritos (Apenas na aba Reflexões) */}
-        {activeTab === "REFLECTIONS" && (
-          <View style={{ marginHorizontal: 20, marginTop: 10 }}>
-            <AssistantCard
-              title="Minhas Reflexões"
-              description="Suas reflexões favoritas em um só lugar"
-              buttonText="Ver todas"
-              icon={Heart}
-              onPress={() =>
-                navigation.navigate("AllReflections", {
-                  id: "FAVORITES",
-                })
-              }
-            />
-          </View>
-        )}
-
-        {/* Seção Dinâmica (Reflexões ou Meditações) */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitleInHeader}>
-            {activeTab === "REFLECTIONS" ? "Textos para Reflexão" : "Meditação Guiada"}
-          </Text>
-          <TouchableOpacity
-            onPress={() =>
-              activeTab === "REFLECTIONS"
-                ? navigation.navigate("AllReflections", {})
-                : navigation.navigate("AllMeditations")
-            }
-          >
-            <Text style={styles.viewAllButton}>Ver todos</Text>
-          </TouchableOpacity>
-        </View>
-
-        {activeTab === "REFLECTIONS" ? (
-          reflectionsLoading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={theme.colors.primary} />
+        {/* Conteúdo Adaptativo: Duas colunas em Tablet, Coluna Única em Smartphone */}
+        {(() => {
+          const thoughtOfTheDay = (
+            <View>
+              <Text style={[styles.sectionTitle, isTablet && styles.noMarginHorizontal]}>
+                Pensamento do Dia
+              </Text>
+              <DailyThoughtCard style={isTablet ? styles.noMarginHorizontal : undefined} />
             </View>
-          ) : featuredReflections && featuredReflections.length > 0 ? (
-            <View style={styles.reflectionsContainer}>
-              {featuredReflections.slice(0, 3).map((reflection) => (
-                <ReflectionCard
-                  key={reflection.id}
-                  reflection={reflection}
-                  onPress={() => handleReflectionPress(reflection.id)}
-                  onPressIn={() => prefetchReflection(reflection.id)}
-                />
-              ))}
-            </View>
-          ) : (
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>Nenhuma reflexão disponível</Text>
-            </View>
-          )
-        ) : meditationsLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={theme.colors.primary} />
-          </View>
-        ) : featuredMeditations && featuredMeditations.length > 0 ? (
-          <View style={styles.reflectionsContainer}>
-            {featuredMeditations.slice(0, 3).map((meditation) => (
-              <View
-                key={meditation.id}
-                onTouchStart={() =>
-                  prefetchMeditation(meditation.id, meditation.imageUrl)
-                }
-              >
-                <MeditationCard
-                  meditation={meditation}
-                  onPress={() => handleMeditationPress(meditation.id)}
+          );
+
+          const spiritualAssistant = (
+            <View>
+              <Text style={[styles.sectionTitle, isTablet && styles.noMarginHorizontal]}>
+                Assistente Espiritual
+              </Text>
+              <View style={isTablet ? { marginBottom: 20 } : { marginHorizontal: 20, marginBottom: 20 }}>
+                <AssistantCard
+                  title="Converse com o Guia"
+                  description="Converse com nosso assistente espiritual baseado nos ensinamentos de Kardec."
+                  buttonText="Conversar"
+                  icon={Compass}
+                  onPress={() => navigation.navigate("EmotionalChat", { origin: "medite" })}
                 />
               </View>
-            ))}
-          </View>
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Em breve novas meditações</Text>
-          </View>
-        )}
+            </View>
+          );
 
-        {/* Seção: Pergunte ao Guia */}
-        <Text style={styles.sectionTitle}>Assistente Espiritual</Text>
-        <View style={{ marginHorizontal: 20, marginBottom: 20 }}>
-          <AssistantCard
-            title="Converse com o Guia"
-            description="Converse com nosso assistente espiritual baseado nos ensinamentos de Kardec."
-            buttonText="Conversar"
-            icon={Compass}
-            onPress={() => navigation.navigate("EmotionalChat", { origin: "medite" })}
-          />
-        </View>
+          const favoritesCard = (
+            <View style={isTablet ? { marginTop: 16 } : { marginHorizontal: 20, marginTop: 10 }}>
+              <AssistantCard
+                title="Minhas Reflexões"
+                description="Suas reflexões favoritas em um só lugar"
+                buttonText="Ver todas"
+                icon={Heart}
+                onPress={() =>
+                  navigation.navigate("AllReflections", {
+                    id: "FAVORITES",
+                  })
+                }
+              />
+            </View>
+          );
+
+          const segmentTabs = (
+            <View style={[styles.segmentContainer, isTablet && styles.tabletSegmentContainer]}>
+              <TouchableOpacity
+                style={[
+                  styles.segmentButton,
+                  activeTab === "REFLECTIONS" && styles.segmentButtonActive,
+                ]}
+                onPress={() => setActiveTab("REFLECTIONS")}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={[
+                    styles.segmentText,
+                    activeTab === "REFLECTIONS" && styles.segmentTextActive,
+                  ]}
+                >
+                  Leitura Diária
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.segmentButton,
+                  activeTab === "MEDITATIONS" && styles.segmentButtonActive,
+                ]}
+                onPress={() => setActiveTab("MEDITATIONS")}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={[
+                    styles.segmentText,
+                    activeTab === "MEDITATIONS" && styles.segmentTextActive,
+                  ]}
+                >
+                  Meditações
+                </Text>
+              </TouchableOpacity>
+            </View>
+          );
+
+          const dynamicContent = (
+            <View>
+              {/* Seção Dinâmica (Reflexões ou Meditações) */}
+              <View style={[styles.sectionHeader, isTablet ? styles.tabletSectionHeader : undefined]}>
+                <Text style={styles.sectionTitleInHeader}>
+                  {activeTab === "REFLECTIONS" ? "Textos para Reflexão" : "Meditação Guiada"}
+                </Text>
+
+                <TouchableOpacity
+                  onPress={() =>
+                    activeTab === "REFLECTIONS"
+                      ? navigation.navigate("AllReflections", {})
+                      : navigation.navigate("AllMeditations")
+                  }
+                >
+                  <Text style={styles.viewAllButton}>Ver todos</Text>
+                </TouchableOpacity>
+              </View>
+
+              {activeTab === "REFLECTIONS" ? (
+                reflectionsLoading ? (
+                  <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color={theme.colors.primary} />
+                  </View>
+                ) : featuredReflections && featuredReflections.length > 0 ? (
+                  <View style={[styles.reflectionsContainer, isTablet && { paddingHorizontal: 0 }]}>
+                    {featuredReflections.slice(0, 3).map((reflection) => (
+                      <ReflectionCard
+                        key={reflection.id}
+                        reflection={reflection}
+                        onPress={() => handleReflectionPress(reflection.id)}
+                        onPressIn={() => prefetchReflection(reflection.id)}
+                      />
+                    ))}
+                  </View>
+                ) : (
+                  <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>Nenhuma reflexão disponível</Text>
+                  </View>
+                )
+              ) : meditationsLoading ? (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="large" color={theme.colors.primary} />
+                </View>
+              ) : featuredMeditations && featuredMeditations.length > 0 ? (
+                <View style={[styles.reflectionsContainer, isTablet && { paddingHorizontal: 0 }]}>
+                  {featuredMeditations.slice(0, 3).map((meditation) => (
+                    <View
+                      key={meditation.id}
+                      onTouchStart={() =>
+                        prefetchMeditation(meditation.id, meditation.imageUrl)
+                      }
+                    >
+                      <MeditationCard
+                        meditation={meditation}
+                        onPress={() => handleMeditationPress(meditation.id)}
+                      />
+                    </View>
+                  ))}
+                </View>
+              ) : (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>Em breve novas meditações</Text>
+                </View>
+              )}
+            </View>
+          );
+
+          if (isTablet) {
+            return (
+              <View style={styles.tabletRow}>
+                <View style={styles.tabletLeftColumn}>
+                  {thoughtOfTheDay}
+                  {spiritualAssistant}
+                </View>
+                <View style={styles.tabletRightColumn}>
+                  {segmentTabs}
+                  {dynamicContent}
+                  {activeTab === "REFLECTIONS" && favoritesCard}
+                </View>
+              </View>
+            );
+          }
+
+          return (
+            <>
+              {thoughtOfTheDay}
+              {segmentTabs}
+              {activeTab === "REFLECTIONS" && favoritesCard}
+              {dynamicContent}
+              {spiritualAssistant}
+            </>
+          );
+        })()}
       </ScrollView>
     </SafeAreaView>
   );
