@@ -238,7 +238,7 @@ export default function AllReflectionsScreen() {
               {/* Título e Subtítulo */}
               <View style={styles.headerTextContainer}>
                 <Text style={styles.title}>
-                  {isFavoritesPage ? "Minhas Reflexões" : "Textos para Reflexão"}
+                  {isFavoritesPage ? "Minhas Reflexões" : "Páginas do Saber"}
                 </Text>
                 <Text style={styles.subtitle}>
                   {isFavoritesPage

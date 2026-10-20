@@ -87,6 +87,7 @@ export type AppStackParamList = {
     subtitle?: string;
   };
   Reflection: { id: string };
+  DailyWisdom: { id?: string; moment?: string; openMomentSelector?: boolean } | undefined;
   MeditationPlayer: { id: string };
 };
 
@@ -113,6 +114,7 @@ export type PrayStackParamList = {
 
 export type MeditateStackParamList = {
   MeditateHome: undefined;
+  DailyWisdom: { id?: string; moment?: string; openMomentSelector?: boolean } | undefined;
   AllReflections: { id?: string };
   Reflection: { id: string };
   AllMeditations: undefined;

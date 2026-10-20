@@ -13,7 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AssistantCard } from "@/components/AssistantCard";
-import { DailyThoughtCard } from "@/components/DailyThoughtCard";
+import { DailyWisdomCard } from "@/components/DailyWisdomCard";
 import { MEDITATION_KEYS, useFeaturedMeditations } from "@/hooks/queries/useMeditations";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
@@ -148,10 +148,7 @@ export default function MeditateScreen() {
         {(() => {
           const thoughtOfTheDay = (
             <View>
-              <Text style={[styles.sectionTitle, isTablet && styles.noMarginHorizontal]}>
-                Pensamento do Dia
-              </Text>
-              <DailyThoughtCard style={isTablet ? styles.noMarginHorizontal : undefined} />
+              <DailyWisdomCard style={isTablet ? styles.noMarginHorizontal : undefined} />
             </View>
           );
 
@@ -232,7 +229,7 @@ export default function MeditateScreen() {
               {/* Seção Dinâmica (Reflexões ou Meditações) */}
               <View style={[styles.sectionHeader, isTablet ? styles.tabletSectionHeader : undefined]}>
                 <Text style={styles.sectionTitleInHeader}>
-                  {activeTab === "REFLECTIONS" ? "Textos para Reflexão" : "Meditação Guiada"}
+                  {activeTab === "REFLECTIONS" ? "Páginas do Saber" : "Meditação Guiada"}
                 </Text>
 
                 <TouchableOpacity

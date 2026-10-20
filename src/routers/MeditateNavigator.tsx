@@ -5,6 +5,7 @@ import MeditateScreen from "@/pages/meditate";
 import AllMeditationsScreen from "@/pages/meditate/all-meditations";
 import AllReflectionsScreen from "@/pages/meditate/all-reflections";
 import ReflectionScreen from "@/pages/meditate/reflection";
+import DailyWisdomScreen from "@/pages/meditate/daily-wisdom";
 import MeditationPlayerScreen from "@/pages/meditate/meditation-player";
 import { EmotionalChatScreen } from "@/pages/chat/emotional";
 import { MeditateStackParamList } from "./types";
@@ -19,6 +20,7 @@ export function MeditateNavigator() {
       }}
     >
       <Stack.Screen name="MeditateHome" component={MeditateScreen} />
+      <Stack.Screen name="DailyWisdom" component={DailyWisdomScreen} />
       <Stack.Screen name="AllReflections" component={AllReflectionsScreen} />
       <Stack.Screen name="Reflection" component={ReflectionScreen} />
       <Stack.Screen name="AllMeditations" component={AllMeditationsScreen} />
