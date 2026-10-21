@@ -99,7 +99,6 @@ export const ReaderPreferencesBottomSheet = forwardRef<
           <View style={styles.headerTextContainer}>
             <View style={styles.titleRow}>
               <Text style={styles.title}>Preferências de Leitura</Text>
-              <View style={styles.titleBullet} />
             </View>
             <Text style={styles.subtitle}>Personalize para o seu conforto visual</Text>
           </View>
@@ -241,7 +240,7 @@ export const ReaderPreferencesBottomSheet = forwardRef<
               <View style={[styles.themeIconCircle, styles.themeIconCircleDark]}>
                 <Text style={styles.themeIconTextDark}>Aa</Text>
               </View>
-              <Text style={styles.themeTitleDark}>Noturno</Text>
+              <Text style={styles.themeTitleDark}>Escuro</Text>
               <Text style={styles.themeSubtitleDark}>Descanso</Text>
             </TouchableOpacity>
           </View>

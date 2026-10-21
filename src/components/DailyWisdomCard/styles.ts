@@ -48,7 +48,7 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: `${theme.colors.primary}18`,
     },
     title: {
-      ...theme.text("md", "bold", theme.colors.text),
+      ...theme.text("md", "semibold", theme.colors.text),
       marginBottom: 2,
       paddingRight: 36, // Espaço para não colidir com o readFullButton
     },
@@ -71,19 +71,21 @@ export const createStyles = (theme: ITheme) =>
     quoteContainer: {
       backgroundColor: `${theme.colors.background}80`,
       paddingHorizontal: theme.spacing.sm + 2,
-      paddingVertical: theme.spacing.xs + 2,
+      paddingVertical: theme.spacing.xs + 3,
       borderRadius: theme.radius.xs,
       marginBottom: theme.spacing.sm,
       borderLeftWidth: 2,
       borderLeftColor: theme.colors.primary,
     },
     quoteText: {
-      ...theme.text("xs", "medium", theme.colors.text),
-      fontStyle: "italic",
+      fontFamily: "Baskervville_400Regular_Italic",
+      fontSize: 15,
+      lineHeight: 22,
+      color: theme.colors.text,
     },
     contentSnippet: {
-      ...theme.text("sm", "regular", theme.colors.text),
-      lineHeight: 20,
+      ...theme.text("md", "regular", theme.colors.text),
+      lineHeight: 22,
       marginBottom: theme.spacing.md,
       opacity: 0.9,
     },
@@ -91,8 +93,8 @@ export const createStyles = (theme: ITheme) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      paddingVertical: theme.spacing.xs + 2,
-      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.sm + 2,
       backgroundColor: `${theme.colors.primary}08`,
       borderRadius: theme.radius.xs,
       borderWidth: 1,
@@ -100,7 +102,7 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: 0,
     },
     moodPromptLabel: {
-      ...theme.text("xs", "regular", theme.colors.textSecondary),
+      ...theme.text("sm", "regular", theme.colors.textSecondary),
     },
     moodPromptButton: {
       flexDirection: "row",
@@ -108,6 +110,6 @@ export const createStyles = (theme: ITheme) =>
       gap: 4,
     },
     moodPromptButtonText: {
-      ...theme.text("xs", "semibold", theme.colors.primary),
+      ...theme.text("sm", "semibold", theme.colors.primary),
     },
   });

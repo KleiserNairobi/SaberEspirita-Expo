@@ -130,13 +130,6 @@ export function useWisdomById(id?: string) {
     queryFn: async () => {
       if (!id) return null;
 
-      // Se for um item do seed local embutido, retorna direto sem requisição de rede
-      if (id.startsWith("seed-")) {
-        const seeds = seedMessages as IDailyWisdom[];
-        const found = seeds.find((s) => s.id === id);
-        if (found) return found;
-      }
-
       try {
         const remote = await dailyWisdomApiService.getWisdomById(id);
         if (remote) {
@@ -156,11 +149,10 @@ export function useWisdomById(id?: string) {
     },
     initialData: () => {
       if (!id) return null;
-      if (id.startsWith("seed-")) {
-        const seeds = seedMessages as IDailyWisdom[];
-        return seeds.find((s) => s.id === id) || null;
-      }
-      return Storage.load<IDailyWisdom>(STORAGE_KEYS.byId(id)) || null;
+      const cached = Storage.load<IDailyWisdom>(STORAGE_KEYS.byId(id));
+      if (cached) return cached;
+      const seeds = seedMessages as IDailyWisdom[];
+      return seeds.find((s) => s.id === id) || null;
     },
     enabled: Boolean(id),
     staleTime: 1000 * 60 * 60,

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   StyleProp,
   Text,
@@ -6,6 +6,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { ArrowUpRight, ChevronDown, Sparkles } from "lucide-react-native";
@@ -38,11 +39,19 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
 
   const activeWisdom = selectedWisdom || todayWisdom;
 
+  // Pré-carrega a imagem da sabedoria do dia em segundo plano
+  useEffect(() => {
+    if (activeWisdom?.imageUrl && typeof activeWisdom.imageUrl === "string") {
+      Image.prefetch(activeWisdom.imageUrl);
+    }
+  }, [activeWisdom?.imageUrl]);
+
   function handleOpenReading() {
     if (!activeWisdom) return;
     navigation.navigate("DailyWisdom", {
       id: activeWisdom.id,
       moment: activeWisdom.moment,
+      wisdom: activeWisdom,
     });
   }
 
@@ -133,14 +142,14 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
           {activeWisdom.openingQuote ? (
             <View style={styles.quoteContainer}>
               <Text style={styles.quoteText} numberOfLines={2}>
-                "{activeWisdom.openingQuote}"
+                "{activeWisdom.openingQuote.replace(/\\n/g, "\n")}"
               </Text>
             </View>
           ) : null}
 
           {/* Prévia textual */}
           <Text style={styles.contentSnippet} numberOfLines={3}>
-            {activeWisdom.content}
+            {activeWisdom.content?.replace(/\\n/g, "\n")}
           </Text>
         </TouchableOpacity>
 
@@ -155,7 +164,7 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
           <Text style={styles.moodPromptLabel}>Sentindo algo específico?</Text>
           <View style={styles.moodPromptButton}>
             <Text style={styles.moodPromptButtonText}>{momentLabel}</Text>
-            <ChevronDown size={14} color={theme.colors.primary} />
+            <ChevronDown size={16} color={theme.colors.primary} />
           </View>
         </TouchableOpacity>
       </View>

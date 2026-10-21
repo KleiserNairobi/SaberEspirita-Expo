@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+
 import { ITheme } from "@/configs/theme/types";
 
 export const createStyles = (theme: ITheme) =>
@@ -41,12 +42,7 @@ export const createStyles = (theme: ITheme) =>
     title: {
       ...theme.text("xl", "bold", theme.colors.text),
     },
-    titleBullet: {
-      width: 8,
-      height: 8,
-      borderRadius: theme.radius.full,
-      backgroundColor: theme.colors.primary,
-    },
+
     subtitle: {
       ...theme.text("sm", "regular", theme.colors.textSecondary),
       marginTop: 2,

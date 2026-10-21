@@ -14,6 +14,8 @@ function formatDailyWisdom(item: IDailyWisdom): IDailyWisdom {
   if (!item) return item;
   return {
     ...item,
+    content: item.content ? item.content.replace(/\\n/g, "\n") : item.content,
+    openingQuote: item.openingQuote ? item.openingQuote.replace(/\\n/g, "\n") : item.openingQuote,
     imageUrl: item.imageUrl ? resolveCdnUrl(item.imageUrl) : undefined,
   };
 }

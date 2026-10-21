@@ -8,6 +8,9 @@ export const createStyles = (theme: ITheme) =>
       flex: 1,
       backgroundColor: theme.colors.background,
     },
+    animatedContainer: {
+      flex: 1,
+    },
     // Botões de ação flutuantes no topo direito da capa
     headerActionsRow: {
       flexDirection: "row",
@@ -32,7 +35,7 @@ export const createStyles = (theme: ITheme) =>
     contentSheetScroll: {
       paddingHorizontal: theme.spacing.md,
       paddingTop: theme.spacing.md + 4,
-      paddingBottom: 250, // Respiro generoso para que o final do texto não fique colado no rodapé fixo
+      paddingBottom: 120, // Respiro confortável para o botão fixo no rodapé
     },
     // Metadados com simbologia de ícones (cada item em sua linha)
     metadataList: {
@@ -63,9 +66,10 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.md,
     },
     openingQuoteText: {
-      ...theme.text("sm", "regular", theme.colors.text),
-      fontStyle: "italic",
-      lineHeight: 22,
+      fontFamily: "Baskervville_400Regular_Italic",
+      fontSize: 16,
+      lineHeight: 24,
+      color: theme.colors.text,
     },
     bodyContainer: {
       paddingTop: theme.spacing.xs,
@@ -76,7 +80,7 @@ export const createStyles = (theme: ITheme) =>
       color: theme.colors.text,
       textAlign: "left",
     },
-    // Rodapé Fixo na Thumb Zone (idêntico à tela de Oração)
+    // Rodapé Fixo com Botão de Conclusão de Leitura
     fixedFooter: {
       position: "absolute",
       bottom: 0,
@@ -87,46 +91,6 @@ export const createStyles = (theme: ITheme) =>
       borderTopColor: theme.colors.border,
       paddingHorizontal: theme.spacing.lg,
       paddingTop: theme.spacing.md,
-      gap: theme.spacing.md,
-    },
-    // Seletor de Escopo / Momento em formato Pill Shape (idêntico ao AmbientPlayerControls de Oração)
-    momentBottomChip: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      backgroundColor: `${theme.colors.primary}10`,
-      borderRadius: 28, // Pill shape perfeitamente arredondada para 56px
-      height: 56, // Força a barra a manter a exata mesma altura de Oração
-      paddingHorizontal: 16,
-      borderWidth: 1,
-      borderColor: `${theme.colors.primary}20`,
-    },
-    momentInfoSection: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 12,
-      flex: 1,
-    },
-    momentIconCircle: {
-      width: 28,
-      height: 28,
-      borderRadius: 14,
-      backgroundColor: theme.colors.primary,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    momentPrefix: {
-      ...theme.text("sm", "regular", theme.colors.textSecondary),
-    },
-    momentTitle: {
-      ...theme.text("sm", "medium", theme.colors.text),
-      flex: 1,
-    },
-    momentActionCircle: {
-      width: 32,
-      height: 32,
-      alignItems: "center",
-      justifyContent: "center",
     },
     finishButton: {
       backgroundColor: theme.colors.primary,
