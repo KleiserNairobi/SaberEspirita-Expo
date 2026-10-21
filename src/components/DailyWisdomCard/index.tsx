@@ -145,17 +145,19 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
         </TouchableOpacity>
 
         {/* Gatilho de Sintonia Emocional (Subtle Mood Prompt) */}
-        <View style={styles.moodPromptContainer}>
+        <TouchableOpacity
+          style={styles.moodPromptContainer}
+          onPress={handleOpenMomentSelection}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel={`Sentindo algo específico? ${momentLabel}`}
+        >
           <Text style={styles.moodPromptLabel}>Sentindo algo específico?</Text>
-          <TouchableOpacity
-            style={styles.moodPromptButton}
-            onPress={handleOpenMomentSelection}
-            activeOpacity={0.7}
-          >
+          <View style={styles.moodPromptButton}>
             <Text style={styles.moodPromptButtonText}>{momentLabel}</Text>
             <ChevronDown size={14} color={theme.colors.primary} />
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableOpacity>
       </View>
 
       {/* BottomSheet de seleção de momento renderizado localmente sem navegar */}
