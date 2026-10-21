@@ -1,5 +1,7 @@
-import React, { forwardRef, useCallback } from "react";
+import React, { forwardRef, useCallback, useMemo } from "react";
+
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
 import {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
@@ -10,19 +12,20 @@ import {
   Compass,
   Heart,
   HeartHandshake,
+  RotateCcw,
   ShieldAlert,
+  Shuffle,
   Smile,
   Sparkles,
   Sunrise,
   Wind,
   X,
-  Shuffle,
 } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useAppTheme } from "@/hooks/useAppTheme";
 import { ITheme } from "@/configs/theme/types";
-import { WisdomMoment, WISDOM_MOMENTS } from "@/types/dailyWisdom";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { WISDOM_MOMENTS, WisdomMoment } from "@/types/dailyWisdom";
 
 export interface WisdomMomentBottomSheetProps {
   currentMoment?: WisdomMoment | string;
@@ -41,117 +44,139 @@ const ICON_MAP: Record<string, React.ComponentType<{ size: number; color: string
   Compass,
 };
 
-export const WisdomMomentBottomSheet = forwardRef<BottomSheetModal, WisdomMomentBottomSheetProps>(
-  ({ currentMoment, onSelectMoment, onDismiss }, ref) => {
-    const { theme } = useAppTheme();
-    const insets = useSafeAreaInsets();
-    const styles = createStyles(theme);
+export const WisdomMomentBottomSheet = forwardRef<
+  BottomSheetModal,
+  WisdomMomentBottomSheetProps
+>(({ currentMoment, onSelectMoment, onDismiss }, ref) => {
+  const { theme } = useAppTheme();
+  const insets = useSafeAreaInsets();
+  const styles = createStyles(theme);
+  const snapPoints = useMemo(() => ["80%"], []);
 
-    const renderBackdrop = useCallback(
-      (props: BottomSheetBackdropProps) => (
-        <BottomSheetBackdrop
-          {...props}
-          disappearsOnIndex={-1}
-          appearsOnIndex={0}
-          opacity={0.5}
-        />
-      ),
-      []
-    );
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.5}
+        pressBehavior="close"
+      />
+    ),
+    []
+  );
 
-    const handleSelect = (moment: WisdomMoment | "RANDOM" | "GERAL") => {
-      onSelectMoment(moment);
-      (ref as any)?.current?.dismiss();
-    };
+  const handleSelect = (moment: WisdomMoment | "RANDOM" | "GERAL") => {
+    onSelectMoment(moment);
+    (ref as any)?.current?.dismiss();
+  };
 
-    return (
-      <BottomSheetModal
-        ref={ref}
-        snapPoints={["75%"]}
-        backdropComponent={renderBackdrop}
-        backgroundStyle={styles.bottomSheetBackground}
-        handleIndicatorStyle={styles.handleIndicator}
-        onDismiss={onDismiss}
+  return (
+    <BottomSheetModal
+      ref={ref}
+      snapPoints={snapPoints}
+      enableDynamicSizing={false}
+      topInset={insets.top}
+      enablePanDownToClose={true}
+      backdropComponent={renderBackdrop}
+      backgroundStyle={styles.bottomSheetBackground}
+      handleIndicatorStyle={styles.handleIndicator}
+      onDismiss={onDismiss}
+    >
+      <View style={styles.header}>
+        <View style={styles.headerTextBlock}>
+          <Text style={styles.title}>O que seu coração busca hoje?</Text>
+          <Text style={styles.subtitle}>
+            Selecione o momento da sua alma para acolhimento espiritual
+          </Text>
+        </View>
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={() => (ref as any)?.current?.dismiss()}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityLabel="Fechar"
+          accessibilityRole="button"
+        >
+          <X size={20} color={theme.colors.textSecondary} />
+        </TouchableOpacity>
+      </View>
+
+      <BottomSheetScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: Math.max(insets.bottom, 24) + 48 },
+        ]}
+        showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.title}>O que seu coração busca hoje?</Text>
-            <Text style={styles.subtitle}>
-              Selecione o momento da sua alma para acolhimento espiritual
+        {/* Card de Gotas ao Acaso */}
+        <TouchableOpacity
+          style={[styles.momentCard, styles.randomCard]}
+          onPress={() => handleSelect("RANDOM")}
+          activeOpacity={0.7}
+        >
+          <View style={styles.iconContainerSpecial}>
+            <Shuffle size={20} color={theme.colors.primary} />
+          </View>
+          <View style={styles.cardContent}>
+            <Text style={styles.cardTitleSpecial}>Gotas ao Acaso (Sorteio)</Text>
+            <Text style={styles.cardSubtitle}>
+              Abra uma página ao acaso buscando uma orientação espontânea
             </Text>
           </View>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => (ref as any)?.current?.dismiss()}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            <X size={20} color={theme.colors.textSecondary} />
-          </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
 
-        <BottomSheetScrollView
-          contentContainerStyle={[
-            styles.scrollContent,
-            { paddingBottom: Math.max(insets.bottom, 24) },
-          ]}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Card de Gotas ao Acaso */}
+        {/* 8 Momentos da Alma */}
+        {WISDOM_MOMENTS.map((m) => {
+          const IconComponent = ICON_MAP[m.iconName] || Sparkles;
+          const isSelected = currentMoment === m.key;
+
+          return (
+            <TouchableOpacity
+              key={m.key}
+              style={[styles.momentCard, isSelected && styles.momentCardSelected]}
+              onPress={() => handleSelect(m.key)}
+              activeOpacity={0.7}
+            >
+              <View
+                style={[styles.iconContainer, isSelected && styles.iconContainerSelected]}
+              >
+                <IconComponent
+                  size={20}
+                  color={isSelected ? theme.colors.background : theme.colors.primary}
+                />
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={[styles.cardTitle, isSelected && styles.cardTitleSelected]}>
+                  {m.label}
+                </Text>
+                <Text style={styles.cardSubtitle}>{m.subtitle}</Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+
+        {/* Botão de Restaurar Lição Diária */}
+        {currentMoment && currentMoment !== "GERAL" && (
           <TouchableOpacity
-            style={[styles.momentCard, styles.randomCard]}
-            onPress={() => handleSelect("RANDOM")}
+            style={styles.resetButton}
+            onPress={() => handleSelect("GERAL")}
             activeOpacity={0.7}
           >
-            <View style={styles.iconContainerSpecial}>
-              <Shuffle size={20} color={theme.colors.primary} />
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardTitleSpecial}>Gotas ao Acaso (Sorteio)</Text>
-              <Text style={styles.cardSubtitle}>
-                Abra uma página ao acaso buscando uma orientação espontânea
-              </Text>
-            </View>
+            <RotateCcw size={18} color={theme.colors.primary} />
+            <Text style={styles.resetButtonText}>Restabelecer lição do dia</Text>
           </TouchableOpacity>
-
-          {/* 8 Momentos da Alma */}
-          {WISDOM_MOMENTS.map((m) => {
-            const IconComponent = ICON_MAP[m.iconName] || Sparkles;
-            const isSelected = currentMoment === m.key;
-
-            return (
-              <TouchableOpacity
-                key={m.key}
-                style={[styles.momentCard, isSelected && styles.momentCardSelected]}
-                onPress={() => handleSelect(m.key)}
-                activeOpacity={0.7}
-              >
-                <View style={[styles.iconContainer, isSelected && styles.iconContainerSelected]}>
-                  <IconComponent
-                    size={20}
-                    color={isSelected ? theme.colors.background : theme.colors.primary}
-                  />
-                </View>
-                <View style={styles.cardContent}>
-                  <Text style={[styles.cardTitle, isSelected && styles.cardTitleSelected]}>
-                    {m.label}
-                  </Text>
-                  <Text style={styles.cardSubtitle}>{m.subtitle}</Text>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </BottomSheetScrollView>
-      </BottomSheetModal>
-    );
-  }
-);
+        )}
+      </BottomSheetScrollView>
+    </BottomSheetModal>
+  );
+});
 
 WisdomMomentBottomSheet.displayName = "WisdomMomentBottomSheet";
 
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     bottomSheetBackground: {
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.card,
       borderTopLeftRadius: theme.radius.lg,
       borderTopRightRadius: theme.radius.lg,
     },
@@ -168,6 +193,10 @@ const createStyles = (theme: ITheme) =>
       paddingBottom: theme.spacing.md,
       borderBottomWidth: 1,
       borderBottomColor: `${theme.colors.primary}15`,
+    },
+    headerTextBlock: {
+      flex: 1,
+      marginRight: theme.spacing.sm,
     },
     title: {
       ...theme.text("md", "bold", theme.colors.text),
@@ -239,5 +268,19 @@ const createStyles = (theme: ITheme) =>
     cardSubtitle: {
       ...theme.text("xs", "regular", theme.colors.textSecondary),
       lineHeight: 16,
+    },
+    resetButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
+      backgroundColor: `${theme.colors.primary}15`,
+      borderRadius: theme.radius.md,
+      gap: theme.spacing.sm,
+      marginTop: theme.spacing.sm,
+    },
+    resetButtonText: {
+      ...theme.text("md", "medium", theme.colors.primary),
     },
   });

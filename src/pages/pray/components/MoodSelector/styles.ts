@@ -1,5 +1,6 @@
-import { ITheme } from "@/configs/theme/types";
 import { StyleSheet } from "react-native";
+
+import { ITheme } from "@/configs/theme/types";
 
 export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
@@ -57,40 +58,60 @@ export const createStyles = (theme: ITheme) =>
     // Bottom Sheet Styles
     bottomSheetBackground: {
       backgroundColor: theme.colors.card,
-      borderTopLeftRadius: 24,
-      borderTopRightRadius: 24,
+      borderTopLeftRadius: theme.radius.lg,
+      borderTopRightRadius: theme.radius.lg,
     },
     handleIndicator: {
-      backgroundColor: theme.colors.border,
-    },
-    modalContent: {
-      paddingHorizontal: 24,
-      paddingTop: 8,
+      backgroundColor: `${theme.colors.textSecondary}40`,
+      width: 40,
     },
     modalHeader: {
-      marginBottom: 20,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.sm,
+      paddingBottom: theme.spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: `${theme.colors.primary}15`,
+    },
+    headerTextBlock: {
+      flex: 1,
+      marginRight: theme.spacing.sm,
     },
     modalTitle: {
-      ...theme.text("xl", "semibold", theme.colors.text),
+      ...theme.text("md", "bold", theme.colors.text),
     },
-    moodList: {
-      // Aberto para altura dinâmica total
+    modalSubtitle: {
+      ...theme.text("xs", "regular", theme.colors.textSecondary),
+      marginTop: 2,
+    },
+    closeButton: {
+      padding: theme.spacing.xs,
+    },
+    scrollContent: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.md,
+      gap: theme.spacing.sm,
     },
     moodOption: {
       flexDirection: "row",
       alignItems: "center",
-      paddingVertical: 16,
-      gap: 16,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border,
+      padding: theme.spacing.md,
+      backgroundColor: `${theme.colors.primary}08`,
+      borderWidth: 1,
+      borderColor: `${theme.colors.primary}25`,
+      borderRadius: theme.radius.sm,
+      gap: theme.spacing.md,
     },
     moodOptionSelected: {
-      // Estilo de selecionado se necessário
+      backgroundColor: `${theme.colors.primary}18`,
+      borderColor: theme.colors.primary,
     },
     optionIconContainer: {
       width: 40,
       height: 40,
-      borderRadius: 20,
+      borderRadius: theme.radius.full,
       backgroundColor: `${theme.colors.primary}15`,
       alignItems: "center",
       justifyContent: "center",
@@ -98,29 +119,32 @@ export const createStyles = (theme: ITheme) =>
     optionIconContainerSelected: {
       backgroundColor: theme.colors.primary,
     },
-    optionLabel: {
+    optionContent: {
       flex: 1,
-      ...theme.text("md", "medium", theme.colors.text),
+    },
+    optionLabel: {
+      ...theme.text("sm", "semibold", theme.colors.text),
+      marginBottom: 2,
     },
     optionLabelSelected: {
-      ...theme.text("md", "semibold", theme.colors.text),
+      color: theme.colors.primary,
     },
-    selectionDot: {
-      width: 8,
-      height: 8,
-      borderRadius: 4,
-      backgroundColor: theme.colors.success || "#5C8A5C",
+    optionSubtitle: {
+      ...theme.text("xs", "regular", theme.colors.textSecondary),
+      lineHeight: 16,
     },
     clearButton: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      paddingVertical: 14,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
       backgroundColor: `${theme.colors.primary}15`,
-      borderRadius: 12,
-      gap: 8,
+      borderRadius: theme.radius.md,
+      gap: theme.spacing.sm,
+      marginTop: theme.spacing.sm,
     },
     clearButtonText: {
-      ...theme.text("md", "medium", theme.colors.textSecondary),
+      ...theme.text("md", "medium", theme.colors.primary),
     },
   });

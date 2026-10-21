@@ -1,24 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  StyleProp,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from "react-native";
-import { Image } from "expo-image";
-import { useNavigation } from "@react-navigation/native";
+
+import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native";
+
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useNavigation } from "@react-navigation/native";
+import { Image } from "expo-image";
 import { ArrowUpRight, ChevronDown, Sparkles } from "lucide-react-native";
 
+import { WisdomMomentBottomSheet } from "@/components/WisdomMomentBottomSheet";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
   getLocalSeedWisdom,
   useTodayWisdom,
 } from "@/pages/meditate/hooks/useDailyWisdom";
 import { dailyWisdomApiService } from "@/services/api/dailyWisdomApiService";
-import { IDailyWisdom, WisdomMoment, WISDOM_MOMENTS } from "@/types/dailyWisdom";
-import { WisdomMomentBottomSheet } from "@/components/WisdomMomentBottomSheet";
+import { useMoodStore } from "@/stores/moodStore";
+import { IDailyWisdom, WISDOM_MOMENTS, WisdomMoment } from "@/types/dailyWisdom";
+
 import { createStyles } from "./styles";
 
 interface DailyWisdomCardProps {
@@ -33,9 +31,43 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
 
   const momentBottomSheetRef = useRef<BottomSheetModal>(null);
 
+  const { currentMoment, setMoment } = useMoodStore();
   const { data: todayWisdom } = useTodayWisdom();
   const [selectedWisdom, setSelectedWisdom] = useState<IDailyWisdom | null>(null);
-  const [currentMoment, setCurrentMoment] = useState<string | undefined>(undefined);
+
+  // Sincroniza a lição exibida com o currentMoment do store (que pode ter sido alterado em Ore ou Medite)
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function syncWisdomWithMoment() {
+      if (!currentMoment || currentMoment === "GERAL") {
+        if (!isCancelled) setSelectedWisdom(null);
+        return;
+      }
+
+      if (currentMoment === "RANDOM") {
+        return;
+      }
+
+      try {
+        const items = await dailyWisdomApiService.getWisdomByMoment(currentMoment);
+        if (!isCancelled && items && items.length > 0) {
+          const randomIndex = Math.floor(Math.random() * items.length);
+          setSelectedWisdom(items[randomIndex]);
+        } else if (!isCancelled) {
+          setSelectedWisdom(getLocalSeedWisdom(currentMoment));
+        }
+      } catch (err) {
+        if (!isCancelled) setSelectedWisdom(getLocalSeedWisdom(currentMoment));
+      }
+    }
+
+    syncWisdomWithMoment();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [currentMoment]);
 
   const activeWisdom = selectedWisdom || todayWisdom;
 
@@ -70,7 +102,11 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
         const randomItem =
           (await dailyWisdomApiService.getRandomWisdom()) || getLocalSeedWisdom();
         setSelectedWisdom(randomItem);
-        setCurrentMoment(randomItem.moment);
+        // Atualiza o store com o momento da sabedoria sorteada, refletindo em Ore
+        setMoment(randomItem.moment as WisdomMoment);
+      } else if (moment === "GERAL") {
+        setSelectedWisdom(null);
+        setMoment("GERAL");
       } else {
         const items = await dailyWisdomApiService.getWisdomByMoment(moment);
         if (items && items.length > 0) {
@@ -79,19 +115,23 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
         } else {
           setSelectedWisdom(getLocalSeedWisdom(moment));
         }
-        setCurrentMoment(moment);
+        setMoment(moment);
       }
     } catch (error) {
       console.warn("DailyWisdomCard: falha ao atualizar momento no card", error);
-      const fallback = getLocalSeedWisdom(moment === "RANDOM" ? undefined : moment);
+      const fallback = getLocalSeedWisdom(
+        moment === "RANDOM" || moment === "GERAL" ? undefined : moment
+      );
       setSelectedWisdom(fallback);
-      if (moment !== "RANDOM") setCurrentMoment(moment);
+      setMoment(moment);
     }
   }
 
   if (!activeWisdom) return null;
 
-  const momentMeta = WISDOM_MOMENTS.find((m) => m.key === (currentMoment || activeWisdom.moment));
+  const momentMeta = WISDOM_MOMENTS.find(
+    (m) => m.key === (currentMoment || activeWisdom.moment)
+  );
   const momentLabel = momentMeta ? momentMeta.label : "Momento da Alma";
 
   return (
