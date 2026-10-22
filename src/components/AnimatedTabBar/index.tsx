@@ -126,7 +126,7 @@ export const AnimatedTabBar = ({ state, descriptors, navigation }: TabBarProps) 
             height: BASE_HEIGHT + safeBottom,
             paddingBottom: safeBottom,
             width: isTablet ? 540 : "100%",
-            maxWidth: "94%",
+            maxWidth: isTablet ? "94%" : "100%",
             paddingHorizontal: isTablet ? 0 : theme.spacing.lg,
           },
           // @ts-ignore

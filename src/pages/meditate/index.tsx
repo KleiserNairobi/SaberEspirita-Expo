@@ -133,14 +133,29 @@ export default function MeditateScreen() {
               <Text style={styles.subtitle}>Encontre paz e orientação interior</Text>
             </View>
 
-            <TouchableOpacity
-              style={styles.shortcutButton}
-              onPress={() => navigation.navigate("EmotionalChat", { origin: "medite" })}
-              activeOpacity={0.8}
-              accessibilityLabel="Converse com o Guia"
-            >
-              <Compass size={20} color={theme.colors.primary} />
-            </TouchableOpacity>
+            <View style={styles.headerActions}>
+              <TouchableOpacity
+                style={styles.headerAction}
+                onPress={() =>
+                  navigation.navigate("AllReflections", {
+                    id: "FAVORITES",
+                  })
+                }
+                activeOpacity={0.7}
+                accessibilityLabel="Minhas Reflexões Favoritas"
+              >
+                <Heart size={20} color={theme.colors.primary} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.headerAction}
+                onPress={() => navigation.navigate("EmotionalChat", { origin: "medite" })}
+                activeOpacity={0.7}
+                accessibilityLabel="Converse com o Guia"
+              >
+                <Compass size={20} color={theme.colors.primary} />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
@@ -166,22 +181,6 @@ export default function MeditateScreen() {
                   onPress={() => navigation.navigate("EmotionalChat", { origin: "medite" })}
                 />
               </View>
-            </View>
-          );
-
-          const favoritesCard = (
-            <View style={isTablet ? { marginTop: 16 } : { marginHorizontal: 20, marginTop: 10 }}>
-              <AssistantCard
-                title="Minhas Reflexões"
-                description="Suas reflexões favoritas em um só lugar"
-                buttonText="Ver todas"
-                icon={Heart}
-                onPress={() =>
-                  navigation.navigate("AllReflections", {
-                    id: "FAVORITES",
-                  })
-                }
-              />
             </View>
           );
 
@@ -302,7 +301,6 @@ export default function MeditateScreen() {
                 <View style={styles.tabletRightColumn}>
                   {segmentTabs}
                   {dynamicContent}
-                  {activeTab === "REFLECTIONS" && favoritesCard}
                 </View>
               </View>
             );
@@ -312,7 +310,6 @@ export default function MeditateScreen() {
             <>
               {thoughtOfTheDay}
               {segmentTabs}
-              {activeTab === "REFLECTIONS" && favoritesCard}
               {dynamicContent}
               {spiritualAssistant}
             </>

@@ -167,7 +167,7 @@ export const createStyles = (theme: ITheme) =>
     segmentContainer: {
       flexDirection: "row",
       backgroundColor: `${theme.colors.primary}08`,
-      borderRadius: theme.radius.md,
+      borderRadius: theme.radius.sm,
       padding: theme.spacing.xs,
       gap: theme.spacing.xs,
       borderWidth: 1,
@@ -176,7 +176,7 @@ export const createStyles = (theme: ITheme) =>
     segmentButton: {
       flex: 1,
       paddingVertical: theme.spacing.sm,
-      borderRadius: theme.radius.sm,
+      borderRadius: theme.radius.xs,
       alignItems: "center",
       justifyContent: "center",
     },
@@ -261,26 +261,7 @@ export const createStyles = (theme: ITheme) =>
 
     // Ações do Rodapé
     actionsContainer: {
-      marginTop: theme.spacing.sm,
-      gap: theme.spacing.md,
-      alignItems: "center",
-    },
-    applyButton: {
-      width: "100%",
-      backgroundColor: theme.colors.primary,
-      paddingVertical: theme.spacing.md,
-      borderRadius: theme.radius.md,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    applyButtonText: {
-      ...theme.text("md", "semibold", theme.colors.onPrimary),
-    },
-    resetButton: {
-      paddingVertical: theme.spacing.xs,
-      paddingHorizontal: theme.spacing.md,
-    },
-    resetButtonText: {
-      ...theme.text("sm", "regular", theme.colors.textSecondary),
+      marginTop: theme.spacing.md,
+      gap: theme.spacing.sm,
     },
   });

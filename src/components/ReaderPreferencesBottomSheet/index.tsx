@@ -11,6 +11,7 @@ import {
 import { X } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { Button } from "@/components/Button";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
   FONT_SCALES,
@@ -248,21 +249,13 @@ export const ReaderPreferencesBottomSheet = forwardRef<
 
         {/* Rodapé de Ações */}
         <View style={styles.actionsContainer}>
-          <TouchableOpacity
-            style={styles.applyButton}
-            onPress={handleApply}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.applyButtonText}>Aplicar na Leitura ✓</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.resetButton}
+          <Button
+            title="Restaurar preferências padrão"
             onPress={handleReset}
-            activeOpacity={0.6}
-          >
-            <Text style={styles.resetButtonText}>Restaurar preferências padrão</Text>
-          </TouchableOpacity>
+            variant="outline"
+            fullWidth
+          />
+          <Button title="Aplicar na Leitura" onPress={handleApply} fullWidth />
         </View>
       </BottomSheetScrollView>
     </BottomSheetModal>

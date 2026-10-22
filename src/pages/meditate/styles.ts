@@ -25,8 +25,12 @@ export const createStyles = (theme: ITheme) =>
     headerTextBlock: {
       flex: 1,
     },
-    shortcutButton: {
-      position: "relative",
+    headerActions: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.sm,
+    },
+    headerAction: {
       width: 40,
       height: 40,
       borderRadius: theme.radius.full,

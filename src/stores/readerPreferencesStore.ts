@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+
 import * as Storage from "@/utils/Storage";
 
 const zustandStorage = {
@@ -96,7 +97,7 @@ export const useReaderPreferencesStore = create<ReaderPreferencesState>()(
   persist(
     (set, get) => ({
       fontSizeLevel: 1, // A2 Padrão (17px)
-      lineSpacing: "confortavel", // 1.7x conforto visual
+      lineSpacing: "padrao", // 1.5x padrão
 
       setFontSizeLevel: (level: FontSizeLevel) => {
         const clamped = Math.max(0, Math.min(3, level)) as FontSizeLevel;
