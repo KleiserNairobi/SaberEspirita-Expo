@@ -55,12 +55,12 @@ Usar apenas para **autenticação** e **providers globais**, evitando armazenar 
 Todo data fetching remoto (API, Firebase, etc.) **DEVE** ser feito utilizando **TanStack Query (React Query)**.
 **NÃO** use `useEffect` + `useState` para buscar dados manualmente.
 
-### Regra de Arquitetura: Firebase SDKs
+### Regra de Arquitetura: Backend Hostinger & Firebase
 
-No projeto **SaberEspirita-Expo**, temos a seguinte regra ESTRITA para os SDKs do Firebase:
+No projeto **SaberEspirita-Expo**, temos a seguinte regra ESTRITA para dados e Firebase:
 
-- **Firebase Web SDK (`firebase`)**: OBRIGATÓRIO para **todo o backend, banco de dados e lógica da aplicação** (Firestore, Storage, Auth, Functions). Use sempre as importações modulares da web (`"firebase/firestore"`, etc). Todos os **Tipos** (como `Timestamp`, `DocumentData`, `QuerySnapshot`) devem vir exclusivamente desta biblioteca.
-- **React Native Firebase (`@react-native-firebase/...`)**: Utilizado **EXCLUSIVAMENTE PARA ANALYTICS**. Não utilize seus módulos de firestore ou auth para consultas de dados, e **NUNCA IMPORT TIPOS OU VARIÁVEIS DELE** (como `FirebaseFirestoreTypes`).
+- **Backend Próprio (Spring Boot Java + PostgreSQL na Hostinger)**: Toda a inteligência, dados, cursos, quizzes, lições e persistência de usuário residem no nosso backend próprio (`SaberEspirita-Back`). A comunicação no frontend é realizada via serviços de API REST (`src/services/api/`) utilizando Axios.
+- **Firebase (`@react-native-firebase/...`)**: Utilizado **EXCLUSIVAMENTE PARA ANALYTICS** (`@react-native-firebase/analytics`). Não usamos mais Firebase para Firestore, Storage, Auth ou Database. É expressamente proibido importar qualquer módulo ou tipo de dados do Firebase.
 
 ### Padrão de Custom Hooks
 
@@ -69,12 +69,12 @@ Crie custom hooks para encapsular as queries e mutações:
 ```typescript
 // Hook de Query
 import { useQuery } from "@tanstack/react-query";
-import { getCourses } from "@/services/firebase/courseService";
+import { courseApiService } from "@/services/api/courseApiService";
 
 export function useCourses() {
   return useQuery({
     queryKey: ["courses"],
-    queryFn: getCourses,
+    queryFn: () => courseApiService.getCourses(),
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 }

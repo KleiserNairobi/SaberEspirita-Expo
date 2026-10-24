@@ -13,21 +13,41 @@ export const createStyles = (theme: ITheme) =>
       justifyContent: "space-between",
       paddingBottom: theme.spacing.xl,
     },
-    welcomeWrapper: {
-      paddingHorizontal: theme.spacing.lg,
-      paddingTop: theme.spacing.md,
-      alignItems: "center",
+    // Header com Imagem de Jesus (Step 0)
+    welcomeHeader: {
+      position: "relative",
+      width: "100%",
+      height: 270,
     },
-    imageContainer: {
-      width: 140,
-      height: 170,
-      borderRadius: theme.radius.lg,
-      overflow: "hidden",
-      marginBottom: theme.spacing.md,
-    },
-    kardecImage: {
+    welcomeCoverImage: {
       width: "100%",
       height: "100%",
+    },
+    welcomeImageOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: "rgba(0, 0, 0, 0.12)",
+    },
+
+    // Área central com cantos arredondados estabelecida no design do app (ContentSheet / Step 0)
+    welcomeSheet: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+      borderTopLeftRadius: 32,
+      borderTopRightRadius: 32,
+      marginTop: -32,
+      overflow: "hidden",
+    },
+    welcomeScroll: {
+      flex: 1,
+    },
+    welcomeScrollContent: {
+      flexGrow: 1,
+      justifyContent: "space-between",
+    },
+    welcomeWrapper: {
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.lg,
+      alignItems: "center",
     },
     titleContainer: {
       alignItems: "center",
@@ -50,14 +70,14 @@ export const createStyles = (theme: ITheme) =>
     bodyText: {
       ...theme.text("md", "regular", theme.colors.textSecondary),
       textAlign: "justify",
-      lineHeight: 24,
+      lineHeight: 22,
       marginBottom: theme.spacing.sm,
     },
     quoteContainer: {
       backgroundColor: `${theme.colors.primary}10`,
       borderLeftWidth: 3,
       borderLeftColor: theme.colors.primary,
-      padding: theme.spacing.md,
+      padding: theme.spacing.sm,
       borderRadius: theme.radius.sm,
       marginTop: theme.spacing.sm,
       elevation: 0,
@@ -70,7 +90,8 @@ export const createStyles = (theme: ITheme) =>
     },
     quoteAuthor: {
       ...theme.text("xs", "semibold", theme.colors.primary),
-      textAlign: "right",
+      textAlign: "left",
+      marginTop: 2,
     },
     buttonContainer: {
       paddingHorizontal: theme.spacing.lg,
@@ -116,14 +137,16 @@ export const createStyles = (theme: ITheme) =>
       justifyContent: "center",
       paddingHorizontal: theme.spacing.xl,
     },
-    transitionIconWrapper: {
-      width: 72,
-      height: 72,
-      borderRadius: theme.radius.full,
-      backgroundColor: `${theme.colors.primary}15`,
+    transitionLogoWrapper: {
+      width: 80,
+      height: 80,
       alignItems: "center",
       justifyContent: "center",
       marginBottom: theme.spacing.lg,
+    },
+    transitionLogo: {
+      width: 80,
+      height: 80,
     },
     transitionTitle: {
       ...theme.text("xl", "bold", theme.colors.text),
