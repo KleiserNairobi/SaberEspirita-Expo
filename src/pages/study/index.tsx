@@ -3,7 +3,7 @@ import React, { useCallback, useRef, useState } from "react";
 import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { differenceInDays } from "date-fns";
@@ -54,6 +54,8 @@ export function StudyScreen() {
   const styles = createStyles(theme);
   const { user, isGuest } = useAuthStore();
   const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<any>();
+  const initialCategory = route.params?.initialCategory;
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const journeySheetRef = useRef<BottomSheetModal>(null);
@@ -466,6 +468,7 @@ export function StudyScreen() {
                   courses={allCourses}
                   progressMap={allProgress}
                   featuredCourseIds={featuredCourseIds}
+                  initialCategory={initialCategory}
                   onCoursePress={handleExploreCoursePress}
                   onSeeAllPress={handleSeeAllCourses}
                 />

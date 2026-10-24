@@ -99,7 +99,7 @@ export type GlossaryStackParamList = {
 };
 
 export type TabParamList = {
-  StudyTab: undefined;
+  StudyTab: { initialCategory?: string } | undefined;
   FixTab: undefined;
   MeditateTab: undefined;
   PrayTab: undefined;

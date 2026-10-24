@@ -14,21 +14,17 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Image } from "expo-image";
-import {
-  BookOpen,
-  Share2,
-  User,
-  Volume2,
-  VolumeX,
-} from "lucide-react-native";
+import { BookOpen, Share2, User, Volume2, VolumeX } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ContentSheet } from "@/components/ContentSheet";
 import { HeroHeader } from "@/components/HeroHeader";
 import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { OnboardingCompletionPromptModal } from "@/pages/onboarding/components/OnboardingCompletionPromptModal";
 import { MeditateStackParamList } from "@/routers/types";
 import { statsApiService } from "@/services/api/statsApiService";
+import { useOnboardingStore } from "@/stores/onboardingStore";
 import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
 import { IDailyWisdom } from "@/types/dailyWisdom";
 import { SHARE_FOOTER } from "@/utils/constants";
@@ -65,6 +61,8 @@ export function DailyWisdomScreen() {
   const readerPreferencesRef = useRef<BottomSheetModal>(null);
   const hasLogged = useRef(false);
 
+  const { answers } = useOnboardingStore();
+  const [showPromptModal, setShowPromptModal] = useState(false);
   const [isNarrating, setIsNarrating] = useState(false);
   const [isInitialImageReady, setIsInitialImageReady] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -188,6 +186,16 @@ export function DailyWisdomScreen() {
       hasLogged.current = true;
     }
 
+    // Se o usuário ainda não respondeu ao convite de notificação diária, abre o modal contextual
+    if (!answers.notificationTime) {
+      setShowPromptModal(true);
+      return;
+    }
+
+    proceedNavigationAfterReading();
+  }
+
+  function proceedNavigationAfterReading() {
     if (navigation.canGoBack()) {
       navigation.goBack();
     } else {
@@ -328,8 +336,15 @@ export function DailyWisdomScreen() {
 
       {/* BottomSheet de Preferências Tipográficas */}
       <ReaderPreferencesBottomSheet ref={readerPreferencesRef} />
+
+      {/* Modal Contextual de Lembrete Diário (Push) e Cadastro para Visitantes */}
+      <OnboardingCompletionPromptModal
+        visible={showPromptModal}
+        onClose={() => {
+          setShowPromptModal(false);
+          proceedNavigationAfterReading();
+        }}
+      />
     </View>
   );
 }
-
-export default DailyWisdomScreen;

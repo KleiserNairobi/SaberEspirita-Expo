@@ -9,6 +9,7 @@ import * as Storage from "@/utils/Storage";
 import { getDeviceIdentifiers } from "@/utils/device";
 
 import { usePreferencesStore } from "./preferencesStore";
+import { useOnboardingStore } from "./onboardingStore";
 
 // Adapter MMKV para Zustand (mesmo padrão do themeStore)
 const zustandStorage = {
@@ -184,6 +185,13 @@ export const useAuthStore = create<AuthState>()(
           } catch (onesignalError) {
             console.error("Erro ao sincronizar OneSignal no login:", onesignalError);
           }
+
+          // Sincronizar dados pendentes de onboarding com o backend se existirem
+          try {
+            useOnboardingStore.getState().syncPendingOnboardingWithBackend();
+          } catch (onboardingError) {
+            console.warn("AuthStore: Erro ao sincronizar onboarding no login:", onboardingError);
+          }
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
           console.error("AuthStore: Erro no login:", errorMessage);
@@ -243,6 +251,13 @@ export const useAuthStore = create<AuthState>()(
           );
 
           set({ user: appUser, isGuest: false, loading: false });
+
+          // Sincronizar dados pendentes de onboarding com o backend
+          try {
+            useOnboardingStore.getState().syncPendingOnboardingWithBackend();
+          } catch (onboardingError) {
+            console.warn("AuthStore: Erro ao sincronizar onboarding após verificação de e-mail:", onboardingError);
+          }
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
           console.error("AuthStore: Erro ao validar código de e-mail:", errorMessage);
@@ -310,6 +325,13 @@ export const useAuthStore = create<AuthState>()(
               onesignalError
             );
           }
+
+          // Sincronizar dados pendentes de onboarding com o backend
+          try {
+            useOnboardingStore.getState().syncPendingOnboardingWithBackend();
+          } catch (onboardingError) {
+            console.warn("AuthStore: Erro ao sincronizar onboarding no Google Sign-In:", onboardingError);
+          }
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
           console.error("AuthStore: Erro no login Google:", errorMessage);
@@ -372,6 +394,13 @@ export const useAuthStore = create<AuthState>()(
               "Erro ao sincronizar OneSignal no login Apple:",
               onesignalError
             );
+          }
+
+          // Sincronizar dados pendentes de onboarding com o backend
+          try {
+            useOnboardingStore.getState().syncPendingOnboardingWithBackend();
+          } catch (onboardingError) {
+            console.warn("AuthStore: Erro ao sincronizar onboarding no Apple Sign-In:", onboardingError);
           }
         } catch (error: any) {
           if (error.code === "ERR_REQUEST_CANCELED") {
@@ -468,6 +497,13 @@ export const useAuthStore = create<AuthState>()(
             console.log("AuthStore: OneSignal.login sincronizado para UID:", user.uid);
           } catch (e) {
             console.warn("AuthStore: Falha ao chamar OneSignal.login na restauração de sessão:", e);
+          }
+
+          // Sincronizar dados pendentes de onboarding caso ainda não tenham sido persistidos
+          try {
+            useOnboardingStore.getState().syncPendingOnboardingWithBackend();
+          } catch (onboardingError) {
+            console.warn("AuthStore: Erro ao sincronizar onboarding na restauração:", onboardingError);
           }
 
           const jwtToken = Storage.loadString("jwt_token");

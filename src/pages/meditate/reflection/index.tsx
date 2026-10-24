@@ -245,5 +245,3 @@ export function ReflectionScreen() {
   );
 }
 
-export default ReflectionScreen;
-

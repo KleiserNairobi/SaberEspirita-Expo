@@ -34,7 +34,7 @@ import { prefetchImages } from "@/utils/imagePrefetch";
 
 type TabType = "REFLECTIONS" | "MEDITATIONS";
 
-export default function MeditateScreen() {
+export function MeditateScreen() {
   const { theme } = useAppTheme();
   const { isCompact } = useResponsiveLayout();
   const isTablet = !isCompact;

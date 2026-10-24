@@ -5,7 +5,7 @@ import type { NavigationState } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { BannedScreen } from "@/pages/auth/banned";
-import { WelcomeScreen } from "@/pages/onboarding/welcome";
+import { OnboardingFlowScreen } from "@/pages/onboarding";
 import { logScreenView } from "@/services/analytics/analyticsService";
 import { useAuthStore } from "@/stores/authStore";
 import { useOnboardingStore } from "@/stores/onboardingStore";
@@ -102,7 +102,7 @@ function getActiveRouteName(state: NavigationState | undefined): string | undefi
 
 export function RootNavigator() {
   const { user, isGuest, initialized, initializeAuth, isDeviceBanned } = useAuthStore();
-  const { hasSeenWelcome } = useOnboardingStore();
+  const { hasCompletedOnboarding, hasSeenWelcome } = useOnboardingStore();
   const routeNameRef = useRef<string | undefined>(undefined);
 
   // Inicializar listener do Firebase uma única vez
@@ -164,8 +164,8 @@ export function RootNavigator() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {(!user && !isGuest) || (user && !user.emailVerified) ? (
           <Stack.Screen name="Auth" component={AuthNavigator} />
-        ) : !hasSeenWelcome ? (
-          <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        ) : !hasCompletedOnboarding && !hasSeenWelcome ? (
+          <Stack.Screen name="Welcome" component={OnboardingFlowScreen} />
         ) : (
           <Stack.Screen name="App" component={AppNavigator} />
         )}

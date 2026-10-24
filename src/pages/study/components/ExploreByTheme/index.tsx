@@ -88,6 +88,7 @@ interface ExploreByThemeProps {
   courses: ICourse[];
   progressMap?: Record<string, IUserCourseProgress>;
   featuredCourseIds?: Set<string>;
+  initialCategory?: string;
   onCoursePress: (course: ICourse, hasProgress: boolean) => void;
   onSeeAllPress?: () => void;
 }
@@ -95,6 +96,7 @@ interface ExploreByThemeProps {
 export const ExploreByTheme = React.memo(function ExploreByTheme({
   courses,
   progressMap = {},
+  initialCategory,
   onCoursePress,
   onSeeAllPress,
 }: ExploreByThemeProps) {
@@ -102,11 +104,20 @@ export const ExploreByTheme = React.memo(function ExploreByTheme({
   const styles = createStyles(theme);
   const { user } = useAuthStore();
 
-  const [selectedCategory, setSelectedCategory] = useState<string>("INIC");
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    initialCategory || "INIC"
+  );
   const [selectedSubtag, setSelectedSubtag] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const carouselScrollRef = useRef<ScrollView>(null);
+
+  // Sincroniza a categoria inicial caso informada via navegação externa
+  useEffect(() => {
+    if (initialCategory) {
+      setSelectedCategory(initialCategory);
+    }
+  }, [initialCategory]);
 
   // Reseta a rolagem do carrossel para o início sempre que o filtro de categoria, subtag ou busca mudar
   useEffect(() => {

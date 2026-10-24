@@ -362,5 +362,3 @@ export function MeditationPlayerScreen() {
   );
 }
 
-export default MeditationPlayerScreen;
-
