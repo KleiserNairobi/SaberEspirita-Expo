@@ -26,7 +26,7 @@ export const OnboardingCompletionPromptBottomSheet = forwardRef<
   const styles = createStyles(theme);
   const navigation = useNavigation<any>();
   const { isGuest } = useAuthStore();
-  const { setOnboardingAnswer } = useOnboardingStore();
+  const { setOnboardingAnswer, dismissNotificationPrompt } = useOnboardingStore();
 
   const [modalStage, setModalStage] = useState<"push" | "account">("push");
   const [selectedTime, setSelectedTime] = useState<NotificationTime>("08:00");
@@ -47,31 +47,29 @@ export const OnboardingCompletionPromptBottomSheet = forwardRef<
       setModalStage("account");
     } else {
       (ref as any)?.current?.dismiss();
-      onDismiss?.();
     }
   };
 
   const handleDeclinePush = () => {
     logEvent("onboarding_push_declined", {});
+    dismissNotificationPrompt();
+
     if (isGuest) {
       setModalStage("account");
     } else {
       (ref as any)?.current?.dismiss();
-      onDismiss?.();
     }
   };
 
   const handleCreateAccount = () => {
     logEvent("onboarding_guest_register_click", {});
     (ref as any)?.current?.dismiss();
-    onDismiss?.();
     navigation.navigate("Auth", { screen: "Register" });
   };
 
   const handleDismissAccount = () => {
     logEvent("onboarding_guest_dismiss_register", {});
     (ref as any)?.current?.dismiss();
-    onDismiss?.();
   };
 
   const config: BottomSheetMessageConfig =

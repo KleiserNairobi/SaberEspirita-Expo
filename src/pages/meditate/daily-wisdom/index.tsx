@@ -61,8 +61,9 @@ export function DailyWisdomScreen() {
 
   const readerPreferencesRef = useRef<BottomSheetModal>(null);
   const hasLogged = useRef(false);
+  const isNavigatingRef = useRef(false);
 
-  const { answers } = useOnboardingStore();
+  const { answers, shouldShowNotificationPrompt } = useOnboardingStore();
   const promptBottomSheetRef = useRef<BottomSheetModal>(null);
   const [isNarrating, setIsNarrating] = useState(false);
   const [isInitialImageReady, setIsInitialImageReady] = useState(false);
@@ -193,8 +194,8 @@ export function DailyWisdomScreen() {
       hasLogged.current = true;
     }
 
-    // Se o usuário ainda não respondeu ao convite de notificação diária, abre o bottomsheet contextual
-    if (!answers.notificationTime) {
+    // Se o usuário ainda não respondeu ou é momento de oferecer novamente, abre o bottomsheet contextual
+    if (shouldShowNotificationPrompt()) {
       promptBottomSheetRef.current?.present();
       return;
     }
@@ -203,6 +204,9 @@ export function DailyWisdomScreen() {
   }
 
   function proceedNavigationAfterReading() {
+    if (isNavigatingRef.current) return;
+    isNavigatingRef.current = true;
+
     if (navigation.canGoBack()) {
       navigation.goBack();
     } else {

@@ -22,6 +22,7 @@ export interface OnboardingStoreState {
   answers: OnboardingAnswers;
   isSyncedWithBackend: boolean;
   completedAt?: string;
+  notificationPromptDismissedAt?: string;
 
   setOnboardingAnswer: <K extends keyof OnboardingAnswers>(
     field: K,
@@ -31,6 +32,8 @@ export interface OnboardingStoreState {
   syncPendingOnboardingWithBackend: () => Promise<void>;
   markWelcomeAsSeen: () => void; // Compatibilidade legada
   resetOnboarding: () => void;
+  dismissNotificationPrompt: () => void;
+  shouldShowNotificationPrompt: () => boolean;
 }
 
 export const useOnboardingStore = create<OnboardingStoreState>()(
@@ -104,7 +107,25 @@ export const useOnboardingStore = create<OnboardingStoreState>()(
           answers: {},
           isSyncedWithBackend: false,
           completedAt: undefined,
+          notificationPromptDismissedAt: undefined,
         });
+      },
+
+      dismissNotificationPrompt: () => {
+        set({ notificationPromptDismissedAt: new Date().toISOString() });
+      },
+
+      shouldShowNotificationPrompt: () => {
+        const state = get();
+        // Se o usuário já configurou o horário de notificação, nunca mais exibe
+        if (state.answers.notificationTime) return false;
+        // Se nunca dispensou o aviso, deve exibir
+        if (!state.notificationPromptDismissedAt) return true;
+        // Se já dispensou, aguarda 7 dias de respiro para oferecer novamente
+        const dismissedTime = new Date(state.notificationPromptDismissedAt).getTime();
+        const now = Date.now();
+        const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+        return now - dismissedTime > SEVEN_DAYS_MS;
       },
     }),
     {
