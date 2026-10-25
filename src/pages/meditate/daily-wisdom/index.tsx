@@ -21,11 +21,9 @@ import { ContentSheet } from "@/components/ContentSheet";
 import { HeroHeader } from "@/components/HeroHeader";
 import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { OnboardingCompletionPromptBottomSheet } from "@/pages/onboarding/components/OnboardingCompletionPromptModal";
 import { MeditateStackParamList } from "@/routers/types";
 import { logEvent } from "@/services/analytics/analyticsService";
 import { statsApiService } from "@/services/api/statsApiService";
-import { useOnboardingStore } from "@/stores/onboardingStore";
 import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
 import { IDailyWisdom } from "@/types/dailyWisdom";
 import { SHARE_FOOTER } from "@/utils/constants";
@@ -63,8 +61,6 @@ export function DailyWisdomScreen() {
   const hasLogged = useRef(false);
   const isNavigatingRef = useRef(false);
 
-  const { answers, shouldShowNotificationPrompt } = useOnboardingStore();
-  const promptBottomSheetRef = useRef<BottomSheetModal>(null);
   const [isNarrating, setIsNarrating] = useState(false);
   const [isInitialImageReady, setIsInitialImageReady] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -192,12 +188,6 @@ export function DailyWisdomScreen() {
         moment: activeWisdom.moment,
       });
       hasLogged.current = true;
-    }
-
-    // Se o usuário ainda não respondeu ou é momento de oferecer novamente, abre o bottomsheet contextual
-    if (shouldShowNotificationPrompt()) {
-      promptBottomSheetRef.current?.present();
-      return;
     }
 
     proceedNavigationAfterReading();
@@ -347,12 +337,6 @@ export function DailyWisdomScreen() {
 
       {/* BottomSheet de Preferências Tipográficas */}
       <ReaderPreferencesBottomSheet ref={readerPreferencesRef} />
-
-      {/* BottomSheet Contextual de Lembrete Diário (Push) e Cadastro para Visitantes */}
-      <OnboardingCompletionPromptBottomSheet
-        ref={promptBottomSheetRef}
-        onDismiss={proceedNavigationAfterReading}
-      />
     </View>
   );
 }
