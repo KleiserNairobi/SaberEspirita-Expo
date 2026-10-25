@@ -1,0 +1,112 @@
+[
+  {
+    "id": "seed-01",
+    "title": "A Paciência nas Pequenas Coisas",
+    "bookReference": "Minutos de Sabedoria",
+    "author": "C. Torres Pastorino",
+    "openingQuote": "Não percas a serenidade diante dos pequenos tropeços cotidianos.",
+    "content": "Aprende a tolerar as contrariedades miúdas de cada dia. A pedra no sapato incomoda mais que a grande montanha à frente, se não souberes retirá-la com brandura.\n\nLembra-te de que as almas que te cercam trazem também suas dores e limitações. Quando alguém agir com aspereza, responde com o silêncio respeitoso ou com uma palavra pacificadora. A paciência é a caridade do tempo posta a serviço do amor.",
+    "dayOfYear": 1,
+    "category": "Conduta",
+    "moment": "GERAL"
+  },
+  {
+    "id": "seed-02",
+    "title": "O Consolo da Imortalidade",
+    "bookReference": "O Evangelho Segundo o Espiritismo",
+    "author": "Allan Kardec",
+    "openingQuote": "A separação é apenas material; os laços do afeto verdadeiro permanecem indestrutíveis.",
+    "content": "Enxuga as lágrimas da saudade amarga e transforma-as em preces luminosas. Aqueles que partiram antes de nós para a Pátria Espiritual não caíram no abismo do nada, mas renasceram para a verdadeira vida.\n\nEles ouvem os teus pensamentos e sentem as vibrações do teu coração. Se lhes envias dor e desespero, perturba-lhes a paz; se lhes envias amor, gratidão e resignação, serves-lhes de bálsamo consolador. A morte não rompe o amor; apenas liberta a alma das roupagens perecíveis da carne.",
+    "dayOfYear": 2,
+    "category": "Consolo",
+    "moment": "LUTO_SAUDADE"
+  },
+  {
+    "id": "seed-03",
+    "title": "A Bênção das Dificuldades",
+    "bookReference": "Vinha de Luz",
+    "author": "Emmanuel / Francisco Cândido Xavier",
+    "openingQuote": "Toda prova aceita com dignidade transforma-se em claridade na consciência.",
+    "content": "Não maldigas as dificuldades que hoje te visitam. O ouro precisa da fornalha ardente para purificar-se, e o diamante bruto requer o cinzel rigoroso para revelar o seu brilho interior.\n\nAs dores morais e os revezes materiais são mestres austeros que te convidam a amadurecer. Em vez de perguntar 'Por que comigo?', eleva o olhar para o Alto e questiona: 'O que o Senhor espera que eu aprenda com esta lição?'. A confiança em Deus aplaca qualquer tempestade.",
+    "dayOfYear": 3,
+    "category": "Fortaleza",
+    "moment": "AFLICAO_PROVAS"
+  },
+  {
+    "id": "seed-04",
+    "title": "A Cura que Nasce do Pensamento",
+    "bookReference": "Pensamento e Vida",
+    "author": "Emmanuel / Francisco Cândido Xavier",
+    "openingQuote": "A mente equilibrada projeta fluidos de restauração para todo o organismo.",
+    "content": "O corpo físico é o eco fiel dos teus estados mentais. A amargura crônica intoxica as células, enquanto o otimismo e a fé agem como remédios divinos invisíveis.\n\nSe te encontras enfermo ou debilitado, faze silêncio interior e banha tua alma na fonte inesgotável da misericórdia celeste. Confia na ação benfazeja da medicina terrena e associa a ela a terapêutica sublime da oração e da água fluidificada. Quem conserva a paz do espírito acelera a cura do próprio corpo.",
+    "dayOfYear": 4,
+    "category": "Saúde",
+    "moment": "SAUDE_CURA"
+  },
+  {
+    "id": "seed-05",
+    "title": "A Libertação do Perdão",
+    "bookReference": "Agenda Cristã",
+    "author": "André Luiz / Francisco Cândido Xavier",
+    "openingQuote": "Guardar ressentimento é beber veneno esperando que o outro sofra.",
+    "content": "Perdoar não significa aprovar o erro alheio, mas libertar a si mesmo do cativeiro da mágoa. O ofensor já traz consigo a semente amarga da própria infelicidade.\n\nNão permitas que a atitude irrefletida do próximo roube a tua serenidade. Olha para quem te ofendeu como alguém espiritualmente adoentado, necessitado de compaixão e prece. Ao fechar a porta ao ódio, abres as janelas da tua alma para que a paz do Cristo entre e faça morada.",
+    "dayOfYear": 5,
+    "category": "Harmonia",
+    "moment": "PERDAO_HARMONIA"
+  },
+  {
+    "id": "seed-06",
+    "title": "A Serenidade Contra a Angústia",
+    "bookReference": "Minutos de Sabedoria",
+    "author": "C. Torres Pastorino",
+    "openingQuote": "Não antecipes o sofrimento de amanhã; o dia de hoje já traz a sua própria tarefa.",
+    "content": "A ansiedade nasce quando tentamos carregar hoje os pesos do futuro. A Providência Divina não nos concede a força para o amanhã antes que o amanhã chegue; dá-nos, porém, a graça exata para o momento presente.\n\nRespira fundo. Desacelera os batimentos inquietos da mente. Lembra-te de que Deus cuida dos lírios do campo e das aves do céu com infinita ternura. Por que te esqueceria a ti, Seu filho amado? Confia e descansa o teu coração no colo do Criador.",
+    "dayOfYear": 6,
+    "category": "Paz",
+    "moment": "ANSIEDADE_MEDO"
+  },
+  {
+    "id": "seed-07",
+    "title": "Levanta-te e Recomeça",
+    "bookReference": "Palavras de Vida Eterna",
+    "author": "Emmanuel / Francisco Cândido Xavier",
+    "openingQuote": "O fracasso de ontem é a escola primária do êxito de amanhã.",
+    "content": "Se as forças parecem ter-se esgotado e a névoa do desânimo toldou o teu horizonte, lembra-te de que todo amanhecer é um convite de Deus para um recomeço abençoado.\n\nNão permaneças prostrado no chão lamentando a queda. Cada passo dado com boa vontade desfaz o peso do cansaço. Os Benfeitores Espirituais sustentam as mãos que se erguem para o trabalho edificante. Levanta-te com coragem: há sempre alguém esperando pelo teu sorriso e pela tua ajuda fraterna.",
+    "dayOfYear": 7,
+    "category": "Coragem",
+    "moment": "DESANIMO_FORCA"
+  },
+  {
+    "id": "seed-08",
+    "title": "A Dádiva da Gratidão",
+    "bookReference": "Pão Nosso",
+    "author": "Emmanuel / Francisco Cândido Xavier",
+    "openingQuote": "Agradecer é abrir o coração para receber novas bênçãos.",
+    "content": "Muitas vezes olhamos apenas para o que nos falta, esquecendo-nos das incontáveis dádivas que já nos enriquecem a existência: o ar que respiramos, o teto que nos abriga, a oportunidade de servir e a faculdade sublime de pensar e amar.\n\nA gratidão é uma força magnética que atrai correntes de simpatia e luz espiritual. Faze hoje um inventário das tuas bênçãos e agradece a Deus até mesmo pelas lágrimas que te ensinaram a compreender a dor do teu irmão.",
+    "dayOfYear": 8,
+    "category": "Gratidão",
+    "moment": "GRATIDAO_LOUVOR"
+  },
+  {
+    "id": "seed-09",
+    "title": "A Sabedoria nas Encruzilhadas",
+    "bookReference": "Fonte Viva",
+    "author": "Emmanuel / Francisco Cândido Xavier",
+    "openingQuote": "Na dúvida entre dois caminhos, escolhe sempre aquele que mais beneficie o próximo.",
+    "content": "Diante das grandes decisões da vida, não te precipites impulsionado pelo orgulho ou pelo medo. Busca o silêncio da prece e ausculta a voz serena da consciência.\n\nOs conselhos do Evangelho nunca falham: a resposta mais sábia é sempre a que semeia a paz, preserva a honra e promove o bem comum. Age com retidão e deixa o resultado nas mãos da Lei de Amor que governa os destinos humanos.",
+    "dayOfYear": 9,
+    "category": "Discernimento",
+    "moment": "DECISAO_SABEDORIA"
+  },
+  {
+    "id": "seed-10",
+    "title": "A Força do Pensamento Positivo",
+    "bookReference": "Minutos de Sabedoria",
+    "author": "C. Torres Pastorino",
+    "openingQuote": "Tua mente é um dínamo que cria a realidade ao teu redor.",
+    "content": "Vigia as palavras que saem da tua boca, mas vigia com maior rigor os pensamentos que abrigas em segredo. Somos herdeiros das nossas próprias criações mentais.\n\nSubstitui o pessimismo pela esperança e a queixa pelo empenho de renovação. Ao emitires pensamentos luminosos de benevolência e solidariedade, sintonizas de imediato com a falange dos Espíritos Protetores, que passam a intuir-te nos teus passos.",
+    "dayOfYear": 10,
+    "category": "Pensamento",
+    "moment": "GERAL"
+  }
+]

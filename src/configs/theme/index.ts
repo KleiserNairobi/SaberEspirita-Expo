@@ -1,6 +1,6 @@
 import { DarkTheme } from "./dark";
 import { LightTheme } from "./light";
-import { ITheme } from "./types";
+import { ITheme, WindowWidthSizeClass, ResponsiveLayoutConfig } from "./types";
 
 export { DarkTheme, LightTheme };
-export type { ITheme };
+export type { ITheme, WindowWidthSizeClass, ResponsiveLayoutConfig };

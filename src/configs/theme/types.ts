@@ -47,6 +47,13 @@ export type ThemeTypography = {
     semibold: string;
     bold: string;
   };
+  reading: {
+    regular: string;
+    medium: string;
+    semibold: string;
+    bold: string;
+    italic: string;
+  };
   sizes: {
     xs: number;
     sm: number;
@@ -70,10 +77,32 @@ export interface ITheme {
     lg: any;
   };
 
-  // Helper function para criar estilos de texto
+  // Helper function para criar estilos de texto de interface (Barlow Condensed / Oswald)
   text: (
     size: keyof ThemeTypography["sizes"],
     weight: keyof ThemeTypography["weights"],
     color?: string
   ) => TextStyle;
+
+  // Helper function para criar estilos de leitura (Barlow normal)
+  readingText: (
+    size: keyof ThemeTypography["sizes"] | number,
+    weight?: keyof ThemeTypography["reading"],
+    color?: string,
+    lineHeight?: number
+  ) => TextStyle;
 }
+
+export type WindowWidthSizeClass = "compact" | "medium" | "expanded";
+
+export type ResponsiveLayoutConfig = {
+  widthSizeClass: WindowWidthSizeClass;
+  isCompact: boolean;
+  isMedium: boolean;
+  isExpanded: boolean;
+  isLandscape: boolean;
+  width: number;
+  height: number;
+  suggestedColumns: number;
+  maxReadingWidth: number;
+};

@@ -1,4 +1,6 @@
 // Tipos para navegação type-safe
+import { IDailyWisdom } from "@/types/dailyWisdom";
+
 export type RootStackParamList = {
   Auth: undefined;
   Welcome: undefined;
@@ -87,6 +89,7 @@ export type AppStackParamList = {
     subtitle?: string;
   };
   Reflection: { id: string };
+  DailyWisdom: { id?: string; moment?: string; wisdom?: IDailyWisdom; openMomentSelector?: boolean } | undefined;
   MeditationPlayer: { id: string };
 };
 
@@ -96,7 +99,7 @@ export type GlossaryStackParamList = {
 };
 
 export type TabParamList = {
-  StudyTab: undefined;
+  StudyTab: { initialCategory?: string } | undefined;
   FixTab: undefined;
   MeditateTab: undefined;
   PrayTab: undefined;
@@ -113,6 +116,7 @@ export type PrayStackParamList = {
 
 export type MeditateStackParamList = {
   MeditateHome: undefined;
+  DailyWisdom: { id?: string; moment?: string; wisdom?: IDailyWisdom; openMomentSelector?: boolean } | undefined;
   AllReflections: { id?: string };
   Reflection: { id: string };
   AllMeditations: undefined;

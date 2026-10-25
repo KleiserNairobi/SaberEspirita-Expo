@@ -46,7 +46,7 @@ const REFLECTION_FILTER_OPTIONS = [
   { id: "BY_TOPIC" as ContentFilterType, label: "Por Tópico", icon: Tag },
 ] as const;
 
-export default function AllReflectionsScreen() {
+export function AllReflectionsScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
@@ -238,7 +238,7 @@ export default function AllReflectionsScreen() {
               {/* Título e Subtítulo */}
               <View style={styles.headerTextContainer}>
                 <Text style={styles.title}>
-                  {isFavoritesPage ? "Minhas Reflexões" : "Textos para Reflexão"}
+                  {isFavoritesPage ? "Minhas Reflexões" : "Páginas do Saber"}
                 </Text>
                 <Text style={styles.subtitle}>
                   {isFavoritesPage

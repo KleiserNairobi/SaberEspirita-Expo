@@ -1,38 +1,36 @@
 import React from "react";
-import {
-  RefreshControl,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-import { PrayStackParamList } from "@/routers/types";
+import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
-import { Heart, BookOpen } from "lucide-react-native";
+import { BookOpen, Heart } from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { MoodSelector } from "@/pages/pray/components/MoodSelector";
-import { WelcomingHero } from "@/pages/pray/components/WelcomingHero";
+import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 import { AIChatCard } from "@/pages/pray/components/AIChatCard";
+import { MoodSelector } from "@/pages/pray/components/MoodSelector";
 import { TrendingPrayers } from "@/pages/pray/components/TrendingPrayers";
+import { WelcomingHero } from "@/pages/pray/components/WelcomingHero";
 import { createStyles } from "@/pages/pray/styles";
+import { PrayStackParamList } from "@/routers/types";
+import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { useAuth } from "@/stores/authStore";
 import { useMoodStore } from "@/stores/moodStore";
-import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
 
 // Removed MOMENT_ICONS mapping
 
 export default function PrayScreen() {
   const { theme } = useAppTheme();
+  const { isCompact } = useResponsiveLayout();
+  const isTablet = !isCompact;
   const styles = createStyles(theme);
   const navigation = useNavigation<NativeStackNavigationProp<PrayStackParamList>>();
   const { user } = useAuth();
-  const { currentMood, clearMood } = useMoodStore();
+  const { currentMood } = useMoodStore();
 
   const { setPlaying, setCurrentTrack } = useAmbientPlayerStore();
   const { syncWithFirebase } = usePrayerFavoritesStore();
@@ -59,13 +57,12 @@ export default function PrayScreen() {
     }
   }, [queryClient]);
 
-  // Reseta o humor e desliga áudio da Oração passada ao retornar
+  // Desliga áudio da Oração passada ao retornar
   useFocusEffect(
     React.useCallback(() => {
-      clearMood();
       setPlaying(false);
       setCurrentTrack(null);
-    }, [clearMood, setPlaying, setCurrentTrack])
+    }, [setPlaying, setCurrentTrack])
   );
 
   function handleAIChatPress() {
@@ -94,7 +91,7 @@ export default function PrayScreen() {
         }
       >
         {/* Header com Atalhos */}
-        <View style={styles.header}>
+        <View style={[styles.header, isTablet && styles.tabletHeader]}>
           <View style={styles.headerTextContainer}>
             <Text style={styles.greeting}>Ore</Text>
             <Text style={styles.subtitle}>Você e Deus: em sintonia para o bem.</Text>
@@ -121,12 +118,30 @@ export default function PrayScreen() {
           </View>
         </View>
 
-        {/* Fluxo de Acolhimento: Identificação -> Sugestão -> Assistência */}
-        <MoodSelector />
-        <WelcomingHero />
-        <AIChatCard onPress={handleAIChatPress} />
-
-        <TrendingPrayers />
+        {/* Conteúdo Adaptativo: Duas colunas em Tablet, Coluna Única em Smartphone */}
+        {isTablet ? (
+          <View style={styles.tabletRow}>
+            <View style={styles.tabletLeftColumn}>
+              <MoodSelector style={styles.tabletFirstCard} />
+              <WelcomingHero style={styles.tabletCard} />
+              <AIChatCard onPress={handleAIChatPress} style={styles.tabletCard} />
+            </View>
+            <View style={styles.tabletRightColumn}>
+              <TrendingPrayers
+                defaultExpanded={true}
+                style={styles.tabletTrendingContainer}
+              />
+            </View>
+          </View>
+        ) : (
+          <>
+            {/* Fluxo de Acolhimento Smartphone: Identificação -> Sugestão -> Assistência */}
+            <MoodSelector />
+            <WelcomingHero />
+            <AIChatCard onPress={handleAIChatPress} />
+            <TrendingPrayers />
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

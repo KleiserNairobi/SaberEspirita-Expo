@@ -25,8 +25,12 @@ export const createStyles = (theme: ITheme) =>
     headerTextBlock: {
       flex: 1,
     },
-    shortcutButton: {
-      position: "relative",
+    headerActions: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.sm,
+    },
+    headerAction: {
       width: 40,
       height: 40,
       borderRadius: theme.radius.full,
@@ -107,5 +111,31 @@ export const createStyles = (theme: ITheme) =>
     segmentTextActive: {
       color: theme.colors.background, // Texto branco/invertido
       fontFamily: "Oswald_600SemiBold",
+    },
+    // Estilos específicos para Tablet
+    tabletRow: {
+      flexDirection: "row",
+      paddingHorizontal: 20,
+      gap: theme.spacing.xl,
+      alignItems: "flex-start",
+    },
+    tabletLeftColumn: {
+      flex: 1,
+    },
+    tabletRightColumn: {
+      flex: 1,
+    },
+    noMarginHorizontal: {
+      marginHorizontal: 0,
+    },
+    tabletSegmentContainer: {
+      marginHorizontal: 0,
+      marginTop: 58, // Nivelado perfeitamente com a borda superior da imagem do Pensamento do Dia
+      marginBottom: theme.spacing.md,
+    },
+    tabletSectionHeader: {
+      marginHorizontal: 0,
+      marginTop: theme.spacing.xs,
+      marginBottom: theme.spacing.sm,
     },
   });

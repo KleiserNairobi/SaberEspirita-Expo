@@ -1,12 +1,13 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useCallback, useMemo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   BottomSheetModal,
   BottomSheetBackdrop,
-  BottomSheetView,
+  BottomSheetBackdropProps,
+  BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import { RotateCcw } from "lucide-react-native";
+import { RotateCcw, X } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useMoodStore } from "@/stores/moodStore";
@@ -19,14 +20,15 @@ export const MoodSelectionBottomSheet = forwardRef<BottomSheetModal>(
     const { currentMood, setMood } = useMoodStore();
     const insets = useSafeAreaInsets();
     const styles = createStyles(theme);
+    const snapPoints = useMemo(() => ["80%"], []);
 
     function handleMoodSelect(moodId: any) {
       setMood(moodId);
       (ref as React.RefObject<BottomSheetModal>).current?.dismiss();
     }
 
-    function renderBackdrop(props: any) {
-      return (
+    const renderBackdrop = useCallback(
+      (props: BottomSheetBackdropProps) => (
         <BottomSheetBackdrop
           {...props}
           disappearsOnIndex={-1}
@@ -34,38 +36,54 @@ export const MoodSelectionBottomSheet = forwardRef<BottomSheetModal>(
           opacity={0.5}
           pressBehavior="close"
         />
-      );
-    }
+      ),
+      []
+    );
 
     return (
       <BottomSheetModal
         ref={ref}
-        enableDynamicSizing={true}
+        snapPoints={snapPoints}
+        enableDynamicSizing={false}
+        topInset={insets.top}
         enablePanDownToClose={true}
         backdropComponent={renderBackdrop}
         backgroundStyle={styles.bottomSheetBackground}
         handleIndicatorStyle={styles.handleIndicator}
       >
-        <BottomSheetView
-          style={[styles.modalContent, { paddingBottom: Math.max(insets.bottom, 24) }]}
-        >
-          <View style={styles.modalHeader}>
+        <View style={styles.modalHeader}>
+          <View style={styles.headerTextBlock}>
             <Text style={styles.modalTitle}>Como está seu coração?</Text>
+            <Text style={styles.modalSubtitle}>
+              Compartilhe seu estado presente para sintonia na prece
+            </Text>
           </View>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => (ref as React.RefObject<BottomSheetModal>).current?.dismiss()}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            accessibilityLabel="Fechar"
+            accessibilityRole="button"
+          >
+            <X size={20} color={theme.colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
 
-          {MOODS.map((mood, index) => {
+        <BottomSheetScrollView
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: Math.max(insets.bottom, 24) + 48 },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          {MOODS.map((mood) => {
             const Icon = mood.icon;
             const isSelected = currentMood === mood.id;
-            const isLast = index === MOODS.length - 1;
 
             return (
               <TouchableOpacity
                 key={mood.id}
-                style={[
-                  styles.moodOption,
-                  isSelected && styles.moodOptionSelected,
-                  isLast && { borderBottomWidth: 0 },
-                ]}
+                style={[styles.moodOption, isSelected && styles.moodOptionSelected]}
                 onPress={() => handleMoodSelect(mood.id)}
                 activeOpacity={0.7}
               >
@@ -80,29 +98,29 @@ export const MoodSelectionBottomSheet = forwardRef<BottomSheetModal>(
                     color={isSelected ? theme.colors.background : theme.colors.primary}
                   />
                 </View>
-                <Text
-                  style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}
-                >
-                  {mood.label}
-                </Text>
-                {isSelected && <View style={styles.selectionDot} />}
+                <View style={styles.optionContent}>
+                  <Text
+                    style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}
+                  >
+                    {mood.label}
+                  </Text>
+                  <Text style={styles.optionSubtitle}>{mood.subtitle}</Text>
+                </View>
               </TouchableOpacity>
             );
           })}
 
           {currentMood && currentMood !== "NORMAL" && (
-            <View style={{ marginTop: 24 }}>
-              <TouchableOpacity
-                style={styles.clearButton}
-                onPress={() => handleMoodSelect("NORMAL")}
-                activeOpacity={0.7}
-              >
-                <RotateCcw size={18} color={theme.colors.textSecondary} />
-                <Text style={styles.clearButtonText}>Limpar sentimento</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              style={styles.clearButton}
+              onPress={() => handleMoodSelect("NORMAL")}
+              activeOpacity={0.7}
+            >
+              <RotateCcw size={18} color={theme.colors.primary} />
+              <Text style={styles.clearButtonText}>Restabelecer sintonia equilibrada</Text>
+            </TouchableOpacity>
           )}
-        </BottomSheetView>
+        </BottomSheetScrollView>
       </BottomSheetModal>
     );
   }

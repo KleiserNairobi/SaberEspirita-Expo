@@ -2,6 +2,23 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.23-ota.3] - 2026-10-25 (Hot-Update)
+
+### Adicionado / Aprimorado
+
+- **Fluxo Integrado de Boas-Vindas e Acolhimento (`OnboardingFlowScreen`, `useOnboardingStore`)**:
+  - Implementado questionário de acolhimento em 3 etapas de toque único para identificar o momento atual, o objetivo central e a disponibilidade diária de estudos.
+  - Header ilustrado acolhedor com arte de Jesus, folha arredondada e logotipo suave na transição.
+  - Entrega de vitória rápida ("Aha! Moment" < 90s) direcionando para Gotas de Sabedoria, Prece de Serenidade ou Primeira Lição.
+  - Persistência híbrida no MMKV e sincronização automática com o backend (`PUT /api/v1/users/me/onboarding`).
+- **Gotas de Sabedoria no Módulo Medite (`DailyWisdomCard`, `DailyWisdomScreen`)**:
+  - Substituição do "Pensamento do Dia" por "Gotas de Sabedoria", conectado aos endpoints oficiais do backend (`dailyWisdomApiService`) com rotação determinística e seed offline empacotado.
+  - Tela de leitura em tela cheia com capa retrátil, citação de destaque em Baskervville Itálico, barra `ReadingToolbar`, modal de preferências de leitura e botão de rodapé "FINALIZEI A LEITURA".
+  - Inclusão da família tipográfica `Barlow` (`@expo-google-fonts/barlow`) com carregamento de fontes em runtime JS.
+- **Equiparação e Sincronização do BottomSheet de Oração (`MoodSelectionBottomSheet`, `moodStore`)**:
+  - Redesenhado o seletor de humor da oração para espelhar a estrutura e o design do `WisdomMomentBottomSheet`: fundo `theme.colors.card`, altura máxima de 80%, botão superior "X" de fechar e botão de restauração.
+  - Estabelecida a sincronização bidirecional entre o humor do módulo Ore e os momentos da sabedoria do módulo Medite.
+
 ## [2.0.23-ota.2] - 2026-10-16 (Hot-Update)
 
 ### Aprimorado

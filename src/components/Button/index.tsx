@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   StyleProp,
   Text,
+  TextStyle,
   TouchableOpacity,
   ViewStyle,
 } from "react-native";
@@ -19,6 +20,7 @@ interface ButtonProps {
   fullWidth?: boolean;
   icon?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 export function Button({
@@ -31,6 +33,7 @@ export function Button({
   fullWidth = false,
   icon,
   style,
+  textStyle: customTextStyle,
 }: ButtonProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -51,6 +54,7 @@ export function Button({
     size === "lg" && styles.textLg,
     variant === "outline" && styles.textOutline,
     disabled && (variant === "outline" ? styles.textOutlineDisabled : styles.textDisabled),
+    customTextStyle,
   ];
 
   return (

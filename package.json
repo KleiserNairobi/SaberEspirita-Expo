@@ -1,7 +1,7 @@
 {
   "name": "saber-espirita",
   "main": "App.tsx",
-  "version": "2.0.23-ota.2",
+  "version": "2.0.23-ota.3",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@expo-google-fonts/allura": "^0.4.2",
+    "@expo-google-fonts/barlow": "^0.4.1",
     "@expo-google-fonts/barlow-condensed": "^0.4.1",
     "@expo-google-fonts/baskervville": "^0.4.1",
     "@expo-google-fonts/oswald": "^0.4.2",

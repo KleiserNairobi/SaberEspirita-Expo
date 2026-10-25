@@ -14,8 +14,10 @@ interface HeroHeaderProps {
   imageUrl?: string | number;
   title: string;
   subtitle?: string;
+  subtitleAbove?: boolean;
   onBack: () => void;
   onShare?: () => void;
+  renderRight?: () => React.ReactNode;
   style?: ViewStyle;
 }
 
@@ -23,8 +25,10 @@ export function HeroHeader({
   imageUrl,
   title,
   subtitle,
+  subtitleAbove = false,
   onBack,
   onShare,
+  renderRight,
   style,
 }: HeroHeaderProps) {
   const { theme } = useAppTheme();
@@ -62,7 +66,9 @@ export function HeroHeader({
         >
           <ArrowLeft size={24} color="#FFFFFF" />
         </TouchableOpacity>
-        {onShare && (
+        {renderRight ? (
+          renderRight()
+        ) : onShare ? (
           <TouchableOpacity
             style={styles.floatingShareButton}
             onPress={onShare}
@@ -70,16 +76,21 @@ export function HeroHeader({
           >
             <Share2 size={24} color="#FFFFFF" />
           </TouchableOpacity>
-        )}
+        ) : null}
       </View>
 
       {/* TÍTULO E SUBTÍTULO SOBRE A IMAGEM DE CAPA */}
       <View style={styles.staticTitleContainer}>
         <View style={styles.imageTitleSection}>
+          {subtitleAbove && subtitle && (
+            <Text style={styles.imageCourseSubtitle} numberOfLines={1}>
+              {subtitle}
+            </Text>
+          )}
           <Text style={styles.imageCourseTitle} numberOfLines={2}>
             {title}
           </Text>
-          {subtitle && (
+          {!subtitleAbove && subtitle && (
             <Text style={styles.imageCourseSubtitle} numberOfLines={1}>
               {subtitle}
             </Text>

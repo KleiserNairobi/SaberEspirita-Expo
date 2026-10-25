@@ -9,11 +9,13 @@ import { BookOpen, Clock, Tag, User } from "lucide-react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ReadingToolbar } from "@/components/ReadingToolbar";
+import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { MeditateStackParamList } from "@/routers/types";
 import { reflectionApiService } from "@/services/api/reflectionApiService";
 import { statsApiService } from "@/services/api/statsApiService";
-import { usePrayerPreferencesStore } from "@/stores/prayerPreferencesStore";
+import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
 import { shareReflection } from "@/utils/sharing";
 import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
@@ -32,8 +34,12 @@ export function ReflectionScreen() {
   const [isNarrating, setIsNarrating] = useState(false);
   const hasLogged = useRef(false);
 
-  const { fontSizeLevel, increaseFontSize, decreaseFontSize, getFontSize } =
-    usePrayerPreferencesStore();
+  const { getFontSize, getLineHeight } = useReaderPreferencesStore();
+  const readerPreferencesRef = useRef<BottomSheetModal>(null);
+
+  const handleOpenPreferences = () => {
+    readerPreferencesRef.current?.present();
+  };
 
   const { isFavorite, toggleFavorite } = useReflectionFavoritesStore();
 
@@ -191,10 +197,7 @@ export function ReflectionScreen() {
             onShare={handleShare}
             onNarrate={handleNarrate}
             isNarrating={isNarrating}
-            onIncreaseFontSize={increaseFontSize}
-            onDecreaseFontSize={decreaseFontSize}
-            canIncreaseFontSize={fontSizeLevel < 4}
-            canDecreaseFontSize={fontSizeLevel > 0}
+            onPreferences={handleOpenPreferences}
             showFavorite={true}
             isFavorite={isFavorite(route.params.id)}
             onFavorite={handleToggleFavorite}
@@ -204,7 +207,12 @@ export function ReflectionScreen() {
           {/* <View style={styles.divider} /> */}
 
           {/* Conteúdo da reflexão */}
-          <Text style={[styles.bodyText, { fontSize: getFontSize() }]}>
+          <Text
+            style={[
+              styles.bodyText,
+              { fontSize: getFontSize(), lineHeight: getLineHeight() },
+            ]}
+          >
             {reflection.content}
           </Text>
 
@@ -231,9 +239,9 @@ export function ReflectionScreen() {
           <Text style={styles.finishButtonText}>Finalizei a Leitura</Text>
         </TouchableOpacity>
       </View>
+
+      <ReaderPreferencesBottomSheet ref={readerPreferencesRef} />
     </SafeAreaView>
   );
 }
-
-export default ReflectionScreen;
 

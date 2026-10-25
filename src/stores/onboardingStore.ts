@@ -1,5 +1,8 @@
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+
+import { userOnboardingApiService } from "@/services/api/userOnboardingApiService";
+import { OnboardingAnswers } from "@/types/onboarding";
 import * as Storage from "@/utils/Storage";
 
 // Adapter MMKV para Zustand (mesmo padrão do themeStore e authStore)
@@ -13,31 +16,108 @@ const zustandStorage = {
   },
 };
 
-// Estado da store
-interface OnboardingState {
-  hasSeenWelcome: boolean;
-  markWelcomeAsSeen: () => void;
-  resetWelcome: () => void; // Útil para testes
+export interface OnboardingStoreState {
+  hasSeenWelcome: boolean; // Mantido para retrocompatibilidade
+  hasCompletedOnboarding: boolean;
+  answers: OnboardingAnswers;
+  isSyncedWithBackend: boolean;
+  completedAt?: string;
+
+  setOnboardingAnswer: <K extends keyof OnboardingAnswers>(
+    field: K,
+    value: OnboardingAnswers[K]
+  ) => void;
+  completeOnboarding: (isAuthenticated?: boolean) => Promise<void>;
+  syncPendingOnboardingWithBackend: () => Promise<void>;
+  markWelcomeAsSeen: () => void; // Compatibilidade legada
+  resetOnboarding: () => void;
 }
 
-export const useOnboardingStore = create<OnboardingState>()(
+export const useOnboardingStore = create<OnboardingStoreState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       hasSeenWelcome: false,
+      hasCompletedOnboarding: false,
+      answers: {},
+      isSyncedWithBackend: false,
+      completedAt: undefined,
 
-      markWelcomeAsSeen: () => {
-        console.log("OnboardingStore: Marcando welcome como visto");
-        set({ hasSeenWelcome: true });
+      setOnboardingAnswer: (field, value) => {
+        set((state) => ({
+          answers: {
+            ...state.answers,
+            [field]: value,
+          },
+        }));
       },
 
-      resetWelcome: () => {
-        console.log("OnboardingStore: Resetando welcome (para testes)");
-        set({ hasSeenWelcome: false });
+      completeOnboarding: async (isAuthenticated = false) => {
+        const now = new Date().toISOString();
+        set({
+          hasCompletedOnboarding: true,
+          hasSeenWelcome: true,
+          completedAt: now,
+        });
+
+        // Se o usuário já estiver autenticado, tenta sincronizar imediatamente com o backend
+        if (isAuthenticated) {
+          const answers = get().answers;
+          if (answers.moment || answers.goal || answers.dailyTime) {
+            const success = await userOnboardingApiService.updateOnboarding(answers);
+            if (success) {
+              set({ isSyncedWithBackend: true });
+            }
+          }
+        }
+      },
+
+      syncPendingOnboardingWithBackend: async () => {
+        const state = get();
+        if (state.isSyncedWithBackend) return;
+
+        const answers = state.answers;
+        if (answers.moment || answers.goal || answers.dailyTime) {
+          console.log(
+            "OnboardingStore: Sincronizando dados pendentes de onboarding com o backend..."
+          );
+          const success = await userOnboardingApiService.updateOnboarding(answers);
+          if (success) {
+            console.log(
+              "OnboardingStore: Onboarding sincronizado com sucesso no PostgreSQL."
+            );
+            set({ isSyncedWithBackend: true });
+          }
+        }
+      },
+
+      markWelcomeAsSeen: () => {
+        set({
+          hasCompletedOnboarding: true,
+          hasSeenWelcome: true,
+        });
+      },
+
+      resetOnboarding: () => {
+        set({
+          hasSeenWelcome: false,
+          hasCompletedOnboarding: false,
+          answers: {},
+          isSyncedWithBackend: false,
+          completedAt: undefined,
+        });
       },
     }),
     {
-      name: "onboarding-storage", // Chave no MMKV
+      name: "onboarding-storage",
       storage: createJSONStorage(() => zustandStorage),
+      // Retrocompatibilidade automática: se hasSeenWelcome era true, consideramos onboarding completo
+      merge: (persistedState: any, currentState: OnboardingStoreState) => {
+        const merged = { ...currentState, ...persistedState };
+        if (merged.hasSeenWelcome) {
+          merged.hasCompletedOnboarding = true;
+        }
+        return merged;
+      },
     }
   )
 );

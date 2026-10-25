@@ -17,7 +17,7 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.md,
     },
     title: {
-      ...theme.text("xxxl", "semibold"),
+      ...theme.readingText("xxxl", "bold"),
       marginBottom: theme.spacing.sm,
       textAlign: "center",
     },
@@ -54,8 +54,7 @@ export const createStyles = (theme: ITheme) =>
       justifyContent: "center",
     },
     content: {
-      ...theme.text("lg", "regular"),
-      lineHeight: 28,
+      ...theme.readingText("lg", "regular"),
       textAlign: "left",
     },
     loadingContainer: {

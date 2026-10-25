@@ -36,7 +36,7 @@ const MEDITATION_FILTER_OPTIONS = [
   { id: "MINUTES_LONG" as ContentFilterType, label: "Longas (+5 min)", icon: Clock },
 ] as const;
 
-export default function AllMeditationsScreen() {
+export function AllMeditationsScreen() {
   const { theme } = useAppTheme();
   // Reaproveitando o exato mesmo estilo de layout da lista de reflexões
   const styles = createStyles(theme);

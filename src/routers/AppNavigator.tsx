@@ -12,6 +12,7 @@ import { PerformanceScreen } from "@/pages/fix/performance";
 import { CourseQuizScreen } from "@/pages/fix/quiz/CourseQuizScreen";
 import { QuizResultScreen } from "@/pages/fix/quiz/result";
 import { QuizReviewScreen } from "@/pages/fix/quiz/review";
+import { DailyWisdomScreen } from "@/pages/meditate/daily-wisdom";
 import { MeditationPlayerScreen } from "@/pages/meditate/meditation-player";
 import { ReflectionScreen } from "@/pages/meditate/reflection";
 import { NotificationsScreen } from "@/pages/notifications";
@@ -65,6 +66,7 @@ export function AppNavigator() {
         <Stack.Screen name="PodcastPlayer" component={PodcastPlayerScreen} />
         <Stack.Screen name="BookletViewer" component={BookletViewerScreen} />
         <Stack.Screen name="Reflection" component={ReflectionScreen} />
+        <Stack.Screen name="DailyWisdom" component={DailyWisdomScreen} />
         <Stack.Screen name="MeditationPlayer" component={MeditationPlayerScreen} />
       </Stack.Navigator>
     </BottomSheetModalProvider>

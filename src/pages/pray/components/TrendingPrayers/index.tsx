@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator, Animated } from "react-native";
+import { ActivityIndicator, Animated, StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 import { ChevronRight, TrendingUp, ChevronDown, Users } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -9,12 +9,17 @@ import { PrayStackParamList } from "@/routers/types";
 import { useTrendingPrayers, TrendingPeriod } from "@/pages/pray/hooks/useTrendingPrayers";
 import { createStyles } from "./styles";
 
-export function TrendingPrayers() {
+interface TrendingPrayersProps {
+  style?: StyleProp<ViewStyle>;
+  defaultExpanded?: boolean;
+}
+
+export function TrendingPrayers({ style, defaultExpanded }: TrendingPrayersProps = {}) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
   const navigation = useNavigation<NativeStackNavigationProp<PrayStackParamList>>();
   
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(defaultExpanded ?? false);
   const [period, setPeriod] = useState<TrendingPeriod>("day");
   
   const { data: prayers, isLoading } = useTrendingPrayers(period);
@@ -66,7 +71,7 @@ export function TrendingPrayers() {
   };
 
   return (
-    <View style={styles.sectionContainer}>
+    <View style={[styles.sectionContainer, style]}>
       <View style={styles.card}>
         <TouchableOpacity
           style={styles.headerRow}

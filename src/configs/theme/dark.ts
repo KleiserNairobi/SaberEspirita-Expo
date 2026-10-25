@@ -46,6 +46,13 @@ export const DarkTheme: ITheme = {
       semibold: "BarlowCondensed_600SemiBold",
       bold: "Oswald_700Bold",
     },
+    reading: {
+      regular: "Barlow_400Regular",
+      medium: "Barlow_500Medium",
+      semibold: "Barlow_600SemiBold",
+      bold: "Barlow_700Bold",
+      italic: "Barlow_400Regular_Italic",
+    },
     sizes: {
       xs: 12,
       sm: 14,
@@ -83,5 +90,11 @@ export const DarkTheme: ITheme = {
     fontSize: DarkTheme.typography.sizes[size],
     fontFamily: DarkTheme.typography.weights[weight],
     color: color || DarkTheme.colors.text,
+  }),
+  readingText: (size, weight = "regular", color, lineHeight) => ({
+    fontSize: typeof size === "number" ? size : DarkTheme.typography.sizes[size],
+    fontFamily: DarkTheme.typography.reading[weight],
+    color: color || DarkTheme.colors.text,
+    lineHeight,
   }),
 };
