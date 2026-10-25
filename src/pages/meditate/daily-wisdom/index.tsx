@@ -23,6 +23,7 @@ import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBott
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { OnboardingCompletionPromptModal } from "@/pages/onboarding/components/OnboardingCompletionPromptModal";
 import { MeditateStackParamList } from "@/routers/types";
+import { logEvent } from "@/services/analytics/analyticsService";
 import { statsApiService } from "@/services/api/statsApiService";
 import { useOnboardingStore } from "@/stores/onboardingStore";
 import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
@@ -175,6 +176,12 @@ export function DailyWisdomScreen() {
     }
 
     if (activeWisdom && !hasLogged.current) {
+      logEvent("daily_wisdom_read", {
+        id: activeWisdom.id,
+        title: activeWisdom.title,
+        moment: activeWisdom.moment,
+      });
+
       statsApiService.logEvent({
         eventName: "daily_wisdom_read",
         category: "daily_wisdom",
