@@ -38,7 +38,7 @@ export function getLocalSeedWisdom(moment?: WisdomMoment | string): IDailyWisdom
   const dayOfYear = Math.floor(diff / oneDay);
 
   const matched = seeds.find((s) => s.dayOfYear === ((dayOfYear % seeds.length) + 1));
-  return matched || seeds[0];
+  return matched || seeds[dayOfYear % seeds.length] || seeds[0];
 }
 
 /**
