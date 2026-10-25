@@ -21,7 +21,7 @@ import { ContentSheet } from "@/components/ContentSheet";
 import { HeroHeader } from "@/components/HeroHeader";
 import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { OnboardingCompletionPromptModal } from "@/pages/onboarding/components/OnboardingCompletionPromptModal";
+import { OnboardingCompletionPromptBottomSheet } from "@/pages/onboarding/components/OnboardingCompletionPromptModal";
 import { MeditateStackParamList } from "@/routers/types";
 import { logEvent } from "@/services/analytics/analyticsService";
 import { statsApiService } from "@/services/api/statsApiService";
@@ -63,7 +63,7 @@ export function DailyWisdomScreen() {
   const hasLogged = useRef(false);
 
   const { answers } = useOnboardingStore();
-  const [showPromptModal, setShowPromptModal] = useState(false);
+  const promptBottomSheetRef = useRef<BottomSheetModal>(null);
   const [isNarrating, setIsNarrating] = useState(false);
   const [isInitialImageReady, setIsInitialImageReady] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -193,9 +193,9 @@ export function DailyWisdomScreen() {
       hasLogged.current = true;
     }
 
-    // Se o usuário ainda não respondeu ao convite de notificação diária, abre o modal contextual
+    // Se o usuário ainda não respondeu ao convite de notificação diária, abre o bottomsheet contextual
     if (!answers.notificationTime) {
-      setShowPromptModal(true);
+      promptBottomSheetRef.current?.present();
       return;
     }
 
@@ -344,13 +344,10 @@ export function DailyWisdomScreen() {
       {/* BottomSheet de Preferências Tipográficas */}
       <ReaderPreferencesBottomSheet ref={readerPreferencesRef} />
 
-      {/* Modal Contextual de Lembrete Diário (Push) e Cadastro para Visitantes */}
-      <OnboardingCompletionPromptModal
-        visible={showPromptModal}
-        onClose={() => {
-          setShowPromptModal(false);
-          proceedNavigationAfterReading();
-        }}
+      {/* BottomSheet Contextual de Lembrete Diário (Push) e Cadastro para Visitantes */}
+      <OnboardingCompletionPromptBottomSheet
+        ref={promptBottomSheetRef}
+        onDismiss={proceedNavigationAfterReading}
       />
     </View>
   );
