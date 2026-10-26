@@ -1,15 +1,18 @@
-import { ImageSliderType } from "@/data/SliderData";
-import { Heart } from "lucide-react-native";
+import { Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
+
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
-import { Image, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Heart } from "lucide-react-native";
 import Animated, {
   Extrapolation,
-  interpolate,
   SharedValue,
+  interpolate,
   useAnimatedStyle,
 } from "react-native-reanimated";
+
+import { ImageSliderType } from "@/data/SliderData";
 import { useAppTheme } from "@/hooks/useAppTheme";
+
 import { createStyles } from "./styles";
 
 type Props = {
@@ -52,6 +55,7 @@ export function SliderItem({ index, item, scrollX }: Props) {
     <Animated.View style={[styles.container, rnAnimatedStyle, { width }]}>
       <Image
         source={typeof item.image === "string" ? { uri: item.image } : item.image}
+        contentFit="cover"
         style={{
           width: 280,
           height: 400,

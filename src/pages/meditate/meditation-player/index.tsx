@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Share, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-import { MeditateStackParamList } from "@/routers/types";
+import { ActivityIndicator, Share, Text, TouchableOpacity, View } from "react-native";
+
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Clock, Headphones, Pause, Play, SkipBack, SkipForward } from "lucide-react-native";
+import {
+  Clock,
+  Headphones,
+  Pause,
+  Play,
+  SkipBack,
+  SkipForward,
+} from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import TrackPlayer, {
   RepeatMode,
   State,
@@ -13,16 +20,18 @@ import TrackPlayer, {
   useProgress,
 } from "react-native-track-player";
 
-import { HeroHeader } from "@/components/HeroHeader";
 import { ContentSheet } from "@/components/ContentSheet";
-import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
-
+import { HeroHeader } from "@/components/HeroHeader";
 import { useMeditation } from "@/hooks/queries/useMeditations";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { getCachedAudioUri } from "@/services/audio/audioCacheService";
+import { MeditateStackParamList } from "@/routers/types";
 import { statsApiService } from "@/services/api/statsApiService";
+import { getCachedAudioUri } from "@/services/audio/audioCacheService";
+import { ensureTrackPlayerReady } from "@/services/audio/trackPlayerService";
 import { useAuth } from "@/stores/authStore";
 import { useMeditationPlayerStore } from "@/stores/meditationPlayerStore";
+import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
+
 import { createStyles } from "./styles";
 
 export function MeditationPlayerScreen() {
@@ -132,6 +141,7 @@ export function MeditationPlayerScreen() {
     async function setupAndLoad() {
       if (localAudioUri && meditation) {
         try {
+          await ensureTrackPlayerReady();
           // Reset completo para garantir que a meditação inicie sempre do zero
           await TrackPlayer.reset();
 
@@ -197,7 +207,9 @@ export function MeditationPlayerScreen() {
   async function handleShare() {
     if (!meditation) return;
     try {
-      const parts = [`Confira a meditação guiada "${meditation.title}" no Saber Espírita!`];
+      const parts = [
+        `Confira a meditação guiada "${meditation.title}" no Saber Espírita!`,
+      ];
       if (meditation.description) {
         parts.push(`\nSobre esta Meditação:\n${meditation.description}`);
       }
@@ -214,6 +226,7 @@ export function MeditationPlayerScreen() {
   }
 
   const togglePlayPause = async () => {
+    await ensureTrackPlayerReady();
     // stop() reseta posição para 0 e mantém fila — um play() após stop()
     // sempre reinicia do começo, sem necessidade de tratamento especial.
     if (isPlaying) {
@@ -361,4 +374,3 @@ export function MeditationPlayerScreen() {
     </View>
   );
 }
-

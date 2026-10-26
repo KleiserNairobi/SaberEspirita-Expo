@@ -1,5 +1,6 @@
 import React from "react";
-import { TouchableOpacity, Text, View, Image, ImageSourcePropType } from "react-native";
+import { TouchableOpacity, Text, View } from "react-native";
+import { Image, ImageSource } from "expo-image";
 import * as LucideIcons from "lucide-react-native";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { createStyles } from "./styles";
@@ -10,7 +11,7 @@ interface CategoryCardProps {
   progress: number; // 0-100
   icon?: string;
   onPress: () => void;
-  imageSource?: ImageSourcePropType;
+  imageSource?: ImageSource | number;
 }
 
 const CATEGORY_ICON_MAP: Record<string, keyof typeof LucideIcons> = {
@@ -71,7 +72,7 @@ export function CategoryCard({
       </View>
 
       {imageSource && (
-        <Image source={imageSource} style={styles.backgroundImage} resizeMode="contain" />
+        <Image source={imageSource} style={styles.backgroundImage} contentFit="contain" />
       )}
 
       {/* Nome */}

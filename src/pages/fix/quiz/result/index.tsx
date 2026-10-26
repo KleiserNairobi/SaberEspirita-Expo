@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 
-import { Image, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
+import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/Button";
@@ -145,7 +146,7 @@ export function QuizResultScreen() {
       >
         {/* Ilustração de Estrelas */}
         <View style={styles.starsContainer}>
-          <Image source={resultImage} style={styles.resultImage} resizeMode="contain" />
+          <Image source={resultImage} style={styles.resultImage} contentFit="contain" />
         </View>
 
         {/* Título */}

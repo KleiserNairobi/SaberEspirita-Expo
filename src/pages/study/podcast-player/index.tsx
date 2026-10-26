@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Share, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AppStackParamList } from "@/routers/types";
+import { ActivityIndicator, Share, Text, TouchableOpacity, View } from "react-native";
+
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Clock, Headphones, Pause, Play, SkipBack, SkipForward } from "lucide-react-native";
+import {
+  Clock,
+  Headphones,
+  Pause,
+  Play,
+  SkipBack,
+  SkipForward,
+} from "lucide-react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import TrackPlayer, {
   RepeatMode,
   State,
@@ -13,16 +20,18 @@ import TrackPlayer, {
   useProgress,
 } from "react-native-track-player";
 
-import { HeroHeader } from "@/components/HeroHeader";
 import { ContentSheet } from "@/components/ContentSheet";
-import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
-
+import { HeroHeader } from "@/components/HeroHeader";
 import { usePodcast } from "@/hooks/queries/usePodcasts";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { getCachedAudioUri } from "@/services/audio/audioCacheService";
+import { AppStackParamList } from "@/routers/types";
 import { statsApiService } from "@/services/api/statsApiService";
+import { getCachedAudioUri } from "@/services/audio/audioCacheService";
+import { ensureTrackPlayerReady } from "@/services/audio/trackPlayerService";
 import { useAuth } from "@/stores/authStore";
 import { usePodcastPlayerStore } from "@/stores/podcastPlayerStore";
+import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
+
 import { createStyles } from "./styles";
 
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -57,10 +66,7 @@ export function PodcastPlayerScreen() {
           const uri = await getCachedAudioUri(podcast.audioUrl);
           setLocalAudioUri(uri);
         } catch (error) {
-          console.error(
-            "[PodcastPlayer] Falha ao obter URI de áudio em cache:",
-            error
-          );
+          console.error("[PodcastPlayer] Falha ao obter URI de áudio em cache:", error);
           setLocalAudioUri(podcast.audioUrl); // fallback para URL remota
         }
       }
@@ -128,6 +134,7 @@ export function PodcastPlayerScreen() {
     async function setupAndLoad() {
       if (localAudioUri && podcast) {
         try {
+          await ensureTrackPlayerReady();
           // Reset completo para garantir que o áudio inicie sempre do zero
           await TrackPlayer.reset();
 
@@ -193,7 +200,9 @@ export function PodcastPlayerScreen() {
   async function handleShare() {
     if (!podcast) return;
     try {
-      const parts = [`Confira o episódio de podcast "${podcast.title}" do Saber Espírita!`];
+      const parts = [
+        `Confira o episódio de podcast "${podcast.title}" do Saber Espírita!`,
+      ];
       if (podcast.description) {
         parts.push(`\nSobre o Episódio:\n${podcast.description}`);
       }
@@ -210,6 +219,7 @@ export function PodcastPlayerScreen() {
   }
 
   const togglePlayPause = async () => {
+    await ensureTrackPlayerReady();
     if (isPlaying) {
       await TrackPlayer.pause();
       setPlaying(false);
@@ -354,4 +364,3 @@ export function PodcastPlayerScreen() {
 }
 
 export default PodcastPlayerScreen;
-

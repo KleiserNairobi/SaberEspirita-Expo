@@ -1,11 +1,23 @@
 import React from "react";
-import { ImageBackground, StyleProp, Text, TouchableOpacity, View, ViewStyle, Share } from "react-native";
+
+import {
+  Share,
+  StyleProp,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
+
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Share2 } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { getDailyThought } from "@/utils/dailyThought";
 import { SHARE_FOOTER } from "@/utils/constants";
+import { getDailyThought } from "@/utils/dailyThought";
+
 import { createStyles } from "./styles";
 
 interface DailyThoughtCardProps {
@@ -30,12 +42,12 @@ export function DailyThoughtCard({ style }: DailyThoughtCardProps = {}) {
 
   return (
     <View style={[styles.container, style]}>
-      <ImageBackground
-        source={backgroundImage}
-        style={styles.imageBackground}
-        imageStyle={styles.backgroundImage}
-        resizeMode="cover"
-      >
+      <View style={styles.imageBackground}>
+        <Image
+          source={backgroundImage}
+          style={[StyleSheet.absoluteFillObject, styles.backgroundImage]}
+          contentFit="cover"
+        />
         <LinearGradient
           colors={[
             "rgba(0, 0, 0, 0.1)", // Topo: quase transparente
@@ -59,7 +71,7 @@ export function DailyThoughtCard({ style }: DailyThoughtCardProps = {}) {
           {/* Autor */}
           <Text style={styles.author}>{author}</Text>
         </LinearGradient>
-      </ImageBackground>
+      </View>
     </View>
   );
 }

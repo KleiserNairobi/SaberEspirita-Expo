@@ -6,52 +6,74 @@ import TrackPlayer, {
   RatingType,
 } from "react-native-track-player";
 
+// Estado de inicialização e Promise Singleton para idempotência
+let setupPromise: Promise<boolean> | null = null;
+let isPlayerSetup = false;
+
 // Inicialização do Player com capacidades essenciais de Background e Lock Screen
-export async function setupTrackPlayer() {
-  let isSetup = false;
-  try {
-    await TrackPlayer.setupPlayer({
-      iosCategory: IOSCategory.Playback,
-    });
-    isSetup = true;
-  } catch (error: any) {
-    if (error.code === "player_already_initialized") {
+export async function setupTrackPlayer(): Promise<boolean> {
+  if (isPlayerSetup) {
+    return true;
+  }
+
+  if (setupPromise) {
+    return setupPromise;
+  }
+
+  setupPromise = (async () => {
+    let isSetup = false;
+    try {
+      await TrackPlayer.setupPlayer({
+        iosCategory: IOSCategory.Playback,
+      });
       isSetup = true;
-    } else {
-      console.error("[TrackPlayerService] Erro ao configurar player:", error);
-      return false;
+    } catch (error: any) {
+      if (error?.code === "player_already_initialized") {
+        isSetup = true;
+      } else {
+        console.error("[TrackPlayerService] Erro ao configurar player:", error);
+        setupPromise = null;
+        return false;
+      }
     }
-  }
 
-  try {
-    await TrackPlayer.updateOptions({
-      android: {
-        // Se o usuário assassinar o app na aba de apps recentes, pare o áudio
-        appKilledPlaybackBehavior:
-          AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
-      },
-      // Configurações específicas para iOS para garantir estabilidade e background audio
-      // Nota: Algumas propriedades podem não estar disponíveis dependendo da versão,
-      // mas o updateOptions é flexível.
+    try {
+      await TrackPlayer.updateOptions({
+        android: {
+          // Se o usuário fechar o app na lista de recentes, interrompa o áudio e remova a notificação
+          appKilledPlaybackBehavior:
+            AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+        },
+        // Capacidades visíveis na tela de bloqueio e central de controle
+        capabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious,
+          Capability.Stop,
+        ],
+        // Controles compactos na barra de notificações
+        compactCapabilities: [Capability.Play, Capability.Pause],
+        progressUpdateEventInterval: 1,
+        ratingType: RatingType.Heart,
+      });
+    } catch (error) {
+      console.error("[TrackPlayerService] Erro ao atualizar opções:", error);
+    }
 
-      // Capacidades visíveis na tela de bloqueio e central de controle
-      capabilities: [
-        Capability.Play,
-        Capability.Pause,
-        Capability.SkipToNext,
-        Capability.SkipToPrevious,
-        Capability.Stop,
-      ],
-      // Menos controles na notificação compacta do Android/iOS
-      compactCapabilities: [Capability.Play, Capability.Pause],
-      progressUpdateEventInterval: 1, // Feedback de 1 segundo para barras de progresso lisas
-      ratingType: RatingType.Heart,
-    });
-  } catch (error) {
-    console.error("[TrackPlayerService] Erro ao atualizar opções:", error);
-  }
+    isPlayerSetup = isSetup;
+    return isSetup;
+  })();
 
-  return isSetup;
+  return setupPromise;
+}
+
+/**
+ * Garante que o TrackPlayer está devidamente inicializado antes de qualquer operação de áudio.
+ * Chamada idempotente e segura para telas de reprodução (lazy loading).
+ */
+export async function ensureTrackPlayerReady(): Promise<boolean> {
+  return setupTrackPlayer();
 }
 
 // O Serviço Mestre que roda C++ Side / Background

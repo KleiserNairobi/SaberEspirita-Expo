@@ -1,6 +1,8 @@
 import React from "react";
 
-import { Image, Text, View } from "react-native";
+import { Text, View } from "react-native";
+
+import { Image } from "expo-image";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { ILeaderboardUser } from "@/types/leaderboard";
@@ -44,6 +46,8 @@ export function RankingList({ player }: Props) {
       </View>
       <Image
         source={{ uri: avatarUrl }}
+        cachePolicy="memory-disk"
+        contentFit="cover"
         onError={() => setImageFailed(true)}
         style={styles.listAvatar}
       />

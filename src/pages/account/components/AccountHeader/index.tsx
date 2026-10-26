@@ -1,8 +1,12 @@
-import { Leaf, Pencil, Sprout, TreePalm } from "lucide-react-native";
 import React from "react";
-import { Image, StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native";
+
+import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native";
+
+import { Image } from "expo-image";
+import { Leaf, Pencil, Sprout, TreePalm } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
+
 import { createStyles } from "./styles";
 
 interface AccountHeaderProps {
@@ -69,6 +73,8 @@ export function AccountHeader({
             {validPhoto && !imageFailed ? (
               <Image
                 source={{ uri: validPhoto }}
+                cachePolicy="memory-disk"
+                contentFit="cover"
                 onError={() => setImageFailed(true)}
                 style={styles.avatarImage}
               />
@@ -86,12 +92,7 @@ export function AccountHeader({
         {!!level && (
           <View style={[styles.levelBadge, { backgroundColor: badgeBg }]}>
             <level.Icon size={12} color={badgeColor} style={{ flexShrink: 0 }} />
-            <Text
-              style={[
-                theme.text("xs", "semibold"),
-                { color: badgeColor },
-              ]}
-            >
+            <Text style={[theme.text("xs", "semibold"), { color: badgeColor }]}>
               {level.label}
             </Text>
           </View>

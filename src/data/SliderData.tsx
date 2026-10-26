@@ -1,16 +1,15 @@
-import { ImageSourcePropType } from "react-native";
+import { ImageSource } from "expo-image";
 
 export type ImageSliderType = {
   title: string;
   description: string;
-  image: ImageSourcePropType;
+  image: ImageSource | number | string;
 };
 
 export const ImageSlider = [
   {
     title: "Curso Básico de Espiritismo",
-    description:
-      "Aprenda os fundamentos do Espiritismo com este curso introdutório.",
+    description: "Aprenda os fundamentos do Espiritismo com este curso introdutório.",
     image: require("@/assets/images/slider1.png"),
   },
   {
@@ -39,8 +38,7 @@ export const ImageSlider = [
   },
   {
     title: "Curso Básico de Espiritismo",
-    description:
-      "Aprenda os fundamentos do Espiritismo com este curso introdutório.",
+    description: "Aprenda os fundamentos do Espiritismo com este curso introdutório.",
     image: require("@/assets/images/slider1.png"),
   },
   {

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-import { Image, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
+import { Image } from "expo-image";
 import { Crown } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -39,7 +40,7 @@ export function LeaderboardPodium({ players }: Props) {
 
     const primaryColorHex = theme.colors.primary.replace("#", "");
     const formattedName = formatUserName(player.userName);
-    
+
     const rawPhoto = player.photoURL || (player as any).photoUrl;
     const validPhoto =
       rawPhoto && typeof rawPhoto === "string" && rawPhoto.trim().length > 0
@@ -69,6 +70,8 @@ export function LeaderboardPodium({ players }: Props) {
           )}
           <Image
             source={{ uri: avatarUrl }}
+            cachePolicy="memory-disk"
+            contentFit="cover"
             onError={() => setImageFailed(true)}
             style={[
               styles.avatar,

@@ -1,7 +1,6 @@
 import React, { forwardRef, useEffect, useState } from "react";
-import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { Camera, Image as ImageIcon, Trash2 } from "lucide-react-native";
+
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 
 import {
   BottomSheetBackdrop,
@@ -9,6 +8,9 @@ import {
   BottomSheetTextInput,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
+import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
+import { Camera, Image as ImageIcon, Trash2 } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button } from "@/components/Button";
@@ -139,7 +141,7 @@ export const EditProfileBottomSheet = forwardRef<
 
     setIsLoading(true);
     try {
-      const photoUriToSave = isRemovingPhoto ? "" : (selectedPhotoUri || undefined);
+      const photoUriToSave = isRemovingPhoto ? "" : selectedPhotoUri || undefined;
       await onSave(name.trim(), photoUriToSave);
       // @ts-ignore
       ref.current?.dismiss();
@@ -172,7 +174,7 @@ export const EditProfileBottomSheet = forwardRef<
 
   const activePhoto =
     initialPhotoUrl && initialPhotoUrl.trim().length > 0 ? initialPhotoUrl : null;
-  const displayPhoto = isRemovingPhoto ? null : (selectedPhotoUri || activePhoto);
+  const displayPhoto = isRemovingPhoto ? null : selectedPhotoUri || activePhoto;
 
   const formattedName = formatUserName(name || initialName || "Usuário");
   const initialLetter = formattedName.charAt(0).toUpperCase();
@@ -208,7 +210,12 @@ export const EditProfileBottomSheet = forwardRef<
           <View style={styles.avatarWrapper}>
             <View style={styles.avatarContainer}>
               {displayPhoto ? (
-                <Image source={{ uri: displayPhoto }} style={styles.avatarImage} />
+                <Image
+                  source={{ uri: displayPhoto }}
+                  contentFit="cover"
+                  cachePolicy="memory-disk"
+                  style={styles.avatarImage}
+                />
               ) : (
                 <Text style={styles.avatarInitials}>{initialLetter}</Text>
               )}

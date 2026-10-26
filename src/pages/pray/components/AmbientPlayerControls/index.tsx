@@ -11,6 +11,7 @@ import TrackPlayer, {
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
+import { ensureTrackPlayerReady } from "@/services/audio/trackPlayerService";
 import { createStyles } from "./styles";
 
 const COMPOSERS: Record<string, string> = {
@@ -86,6 +87,7 @@ export function AmbientPlayerControls() {
     async function setupAndLoad() {
       if (currentTrack && currentAudioId) {
         try {
+          await ensureTrackPlayerReady();
           const currentNativeTrackIndex = await TrackPlayer.getActiveTrackIndex();
           let currentNativeTrack = null;
           if (currentNativeTrackIndex !== undefined && currentNativeTrackIndex !== null) {
@@ -140,6 +142,7 @@ export function AmbientPlayerControls() {
   if (!currentAudioId) return null;
 
   async function handleTogglePlay() {
+    await ensureTrackPlayerReady();
     if (isPlaying) {
       await TrackPlayer.pause();
       setPlaying(false);
