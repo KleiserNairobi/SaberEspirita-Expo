@@ -2,6 +2,18 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.23-ota.4] - 2026-10-26 (Hot-Update)
+
+### Adicionado / Aprimorado
+
+- **Expansão e Diversificação das Gotas de Sabedoria (`seed.json`, `DailyWisdomCard`, `DailyWisdomScreen`)**:
+  - Ampliado o acervo de lições de sabedoria para 5 textos completos por momento da alma (paz, gratidão, consolo, força e iluminação), garantindo variedade reflexiva contínua.
+  - Diversificados os autores espirituais pós-Kardec (Emmanuel, André Luiz, Joanna de Ângelis, Humberto de Campos e Meimei) via psicografia de Chico Xavier e Divaldo Franco.
+  - Adicionado rastreamento analítico ao finalizar leituras de sabedoria (`wisdom_read_completed`).
+- **Aprimoramentos de Experiência no Módulo Medite e Onboarding**:
+  - Eliminado redirecionamento indevido pós-leitura e implementado controle de frequência para prompt de notificação diária.
+  - Otimizado modal de conclusão do onboarding para `BottomSheetMessage` com botões padronizados do tema.
+
 ## [2.0.23-ota.3] - 2026-10-25 (Hot-Update)
 
 ### Adicionado / Aprimorado

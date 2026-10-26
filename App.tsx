@@ -58,7 +58,7 @@ import {
 SplashScreen.preventAutoHideAsync();
 
 // React Query Cache Buster (usado para rastreamento de compatibilidade de cache em deploys OTA)
-const cacheConfig = { buster: "2026-10-25-ota-3-wisdom" };
+const cacheConfig = { buster: "2026-10-26-ota-4-wisdom" };
 
 // Criar QueryClient fora do componente para evitar recriação
 const queryClient = new QueryClient({
