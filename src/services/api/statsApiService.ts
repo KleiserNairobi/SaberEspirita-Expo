@@ -40,8 +40,13 @@ export const statsApiService = {
         userId: null,
         payload: JSON.stringify(flattenedPayload),
       });
-    } catch {
-      // Ignora falhas de envio de telemetria em background
+      if (__DEV__) {
+        console.log(`[StatsAPI] Event logged: ${eventData.eventName || eventData.category}`, flattenedPayload);
+      }
+    } catch (error) {
+      if (__DEV__) {
+        console.warn("[StatsAPI] Falha ao enviar evento para o backend:", error);
+      }
     }
   },
 

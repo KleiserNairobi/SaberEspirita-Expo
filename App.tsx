@@ -9,7 +9,6 @@ import {
 } from "react-native";
 
 import { Allura_400Regular } from "@expo-google-fonts/allura";
-import { Baskervville_400Regular_Italic } from "@expo-google-fonts/baskervville";
 import {
   Barlow_400Regular,
   Barlow_400Regular_Italic,
@@ -24,6 +23,7 @@ import {
   BarlowCondensed_600SemiBold,
   BarlowCondensed_700Bold,
 } from "@expo-google-fonts/barlow-condensed";
+import { Baskervville_400Regular_Italic } from "@expo-google-fonts/baskervville";
 import {
   Oswald_300Light,
   Oswald_400Regular,
@@ -56,6 +56,9 @@ import {
 
 // Prevenir que o splash screen seja ocultado automaticamente
 SplashScreen.preventAutoHideAsync();
+
+// React Query Cache Buster (usado para rastreamento de compatibilidade de cache em deploys OTA)
+const cacheConfig = { buster: "2026-10-26-ota-4" };
 
 // Criar QueryClient fora do componente para evitar recriação
 const queryClient = new QueryClient({

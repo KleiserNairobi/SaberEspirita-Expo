@@ -162,18 +162,18 @@ export const BottomSheetMessage = forwardRef<BottomSheetModal, BottomSheetMessag
 
                 {/* Botões */}
                 <View style={styles.buttonContainer}>
+                  {config.primaryButton && (
+                    <Button
+                      title={config.primaryButton.label}
+                      onPress={handlePrimaryPress}
+                      fullWidth
+                    />
+                  )}
                   {config.secondaryButton && (
                     <Button
                       title={config.secondaryButton.label}
                       variant="outline"
                       onPress={handleSecondaryPress}
-                      fullWidth
-                    />
-                  )}
-                  {config.primaryButton && (
-                    <Button
-                      title={config.primaryButton.label}
-                      onPress={handlePrimaryPress}
                       fullWidth
                     />
                   )}

@@ -21,10 +21,9 @@ import { ContentSheet } from "@/components/ContentSheet";
 import { HeroHeader } from "@/components/HeroHeader";
 import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { OnboardingCompletionPromptModal } from "@/pages/onboarding/components/OnboardingCompletionPromptModal";
 import { MeditateStackParamList } from "@/routers/types";
+import { logEvent } from "@/services/analytics/analyticsService";
 import { statsApiService } from "@/services/api/statsApiService";
-import { useOnboardingStore } from "@/stores/onboardingStore";
 import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
 import { IDailyWisdom } from "@/types/dailyWisdom";
 import { SHARE_FOOTER } from "@/utils/constants";
@@ -60,9 +59,8 @@ export function DailyWisdomScreen() {
 
   const readerPreferencesRef = useRef<BottomSheetModal>(null);
   const hasLogged = useRef(false);
+  const isNavigatingRef = useRef(false);
 
-  const { answers } = useOnboardingStore();
-  const [showPromptModal, setShowPromptModal] = useState(false);
   const [isNarrating, setIsNarrating] = useState(false);
   const [isInitialImageReady, setIsInitialImageReady] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -175,6 +173,12 @@ export function DailyWisdomScreen() {
     }
 
     if (activeWisdom && !hasLogged.current) {
+      logEvent("daily_wisdom_read", {
+        id: activeWisdom.id,
+        title: activeWisdom.title,
+        moment: activeWisdom.moment,
+      });
+
       statsApiService.logEvent({
         eventName: "daily_wisdom_read",
         category: "daily_wisdom",
@@ -186,16 +190,13 @@ export function DailyWisdomScreen() {
       hasLogged.current = true;
     }
 
-    // Se o usuário ainda não respondeu ao convite de notificação diária, abre o modal contextual
-    if (!answers.notificationTime) {
-      setShowPromptModal(true);
-      return;
-    }
-
     proceedNavigationAfterReading();
   }
 
   function proceedNavigationAfterReading() {
+    if (isNavigatingRef.current) return;
+    isNavigatingRef.current = true;
+
     if (navigation.canGoBack()) {
       navigation.goBack();
     } else {
@@ -336,15 +337,6 @@ export function DailyWisdomScreen() {
 
       {/* BottomSheet de Preferências Tipográficas */}
       <ReaderPreferencesBottomSheet ref={readerPreferencesRef} />
-
-      {/* Modal Contextual de Lembrete Diário (Push) e Cadastro para Visitantes */}
-      <OnboardingCompletionPromptModal
-        visible={showPromptModal}
-        onClose={() => {
-          setShowPromptModal(false);
-          proceedNavigationAfterReading();
-        }}
-      />
     </View>
   );
 }

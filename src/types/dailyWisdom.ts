@@ -17,7 +17,7 @@ export interface IDailyWisdom {
   openingQuote?: string;
   content: string;
   publishDate?: string;
-  dayOfYear?: number;
+  dayOfYear?: number | null;
   category?: string;
   moment: WisdomMoment | string;
   imageUrl?: string;
