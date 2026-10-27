@@ -5,7 +5,7 @@ import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
-import { ArrowUpRight, ChevronDown, Sparkles } from "lucide-react-native";
+import { ChevronDown, Maximize2, Sparkles } from "lucide-react-native";
 
 import { WisdomMomentBottomSheet } from "@/components/WisdomMomentBottomSheet";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -151,7 +151,7 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
             activeOpacity={0.7}
             accessibilityLabel="Ler mensagem completa"
           >
-            <ArrowUpRight size={16} color={theme.colors.primary} />
+            <Maximize2 size={15} color={theme.colors.primary} />
           </TouchableOpacity>
         </View>
 
