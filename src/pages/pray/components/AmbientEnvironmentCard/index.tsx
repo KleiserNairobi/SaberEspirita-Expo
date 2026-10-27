@@ -243,7 +243,7 @@ export function AmbientEnvironmentCard({
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require("@/assets/images/placeholder.jpeg")} // Placeholder imersivo
+        source={require("@/assets/images/imgPhH.webp")} // Placeholder imersivo
         style={styles.backgroundImage}
         imageStyle={{ opacity: 0.2 }}
       >

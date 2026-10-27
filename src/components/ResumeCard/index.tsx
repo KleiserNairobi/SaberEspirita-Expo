@@ -45,13 +45,13 @@ export function ResumeCard({ course, progress, nextLesson, onPress }: ResumeCard
       ? { uri: course.imageUrl }
       : typeof course.imageUrl === "number"
         ? course.imageUrl
-        : require("@/assets/images/placeholder.jpeg");
+        : require("@/assets/images/imgPhH.webp");
 
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
       <Image
         source={imageSource}
-        placeholder={require("@/assets/images/placeholder.jpeg")}
+        placeholder={require("@/assets/images/imgPhH.webp")}
         style={styles.thumbnail}
         contentFit="cover"
         transition={200}

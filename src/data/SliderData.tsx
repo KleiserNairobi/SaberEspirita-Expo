@@ -10,59 +10,59 @@ export const ImageSlider = [
   {
     title: "Curso Básico de Espiritismo",
     description: "Aprenda os fundamentos do Espiritismo com este curso introdutório.",
-    image: require("@/assets/images/slider1.png"),
+    image: require("@/assets/images/imgPhH.webp"),
   },
   {
     title: "História do Espiritismo",
     description:
       "Explore a rica história do Espiritismo desde suas origens até os dias atuais.",
-    image: require("@/assets/images/slider2.png"),
+    image: require("@/assets/images/imgPhH.webp"),
   },
   {
     title: "Princípios e Doutrinas",
     description:
       "Compreenda os principais conceitos e doutrinas que fundamentam o Espiritismo.",
-    image: require("@/assets/images/slider3.png"),
+    image: require("@/assets/images/imgPhH.webp"),
   },
   {
     title: "Práticas Espirituais",
     description:
       "Descubra as práticas espirituais recomendadas pelo Espiritismo para o crescimento pessoal.",
-    image: require("@/assets/images/slider4.png"),
+    image: require("@/assets/images/imgPhH.webp"),
   },
   {
     title: "Espiritismo e Ciência",
     description:
       "Entenda a relação entre o Espiritismo e os avanços científicos ao longo do tempo.",
-    image: require("@/assets/images/slider5.png"),
+    image: require("@/assets/images/imgPhH.webp"),
   },
   {
     title: "Curso Básico de Espiritismo",
     description: "Aprenda os fundamentos do Espiritismo com este curso introdutório.",
-    image: require("@/assets/images/slider1.png"),
+    image: require("@/assets/images/imgPhH.webp"),
   },
   {
     title: "História do Espiritismo",
     description:
       "Explore a rica história do Espiritismo desde suas origens até os dias atuais.",
-    image: require("@/assets/images/slider2.png"),
+    image: require("@/assets/images/imgPhH.webp"),
   },
   {
     title: "Princípios e Doutrinas",
     description:
       "Compreenda os principais conceitos e doutrinas que fundamentam o Espiritismo.",
-    image: require("@/assets/images/slider3.png"),
+    image: require("@/assets/images/imgPhH.webp"),
   },
   {
     title: "Práticas Espirituais",
     description:
       "Descubra as práticas espirituais recomendadas pelo Espiritismo para o crescimento pessoal.",
-    image: require("@/assets/images/slider4.png"),
+    image: require("@/assets/images/imgPhH.webp"),
   },
   {
     title: "Espiritismo e Ciência",
     description:
       "Entenda a relação entre o Espiritismo e os avanços científicos ao longo do tempo.",
-    image: require("@/assets/images/slider5.png"),
+    image: require("@/assets/images/imgPhH.webp"),
   },
 ];

@@ -48,7 +48,7 @@ export const VerticalCourseCard = React.memo(function VerticalCourseCard({
       ? { uri: course.imageUrl }
       : typeof course.imageUrl === "number"
         ? course.imageUrl
-        : require("@/assets/images/placeholder.jpeg");
+        : require("@/assets/images/imgPhV.webp");
 
   return (
     <TouchableOpacity
@@ -60,7 +60,7 @@ export const VerticalCourseCard = React.memo(function VerticalCourseCard({
       <View style={styles.imageWrapper}>
         <Image
           source={imageSource}
-          placeholder={require("@/assets/images/placeholder.jpeg")}
+          placeholder={require("@/assets/images/imgPhV.webp")}
           style={styles.image}
           contentFit="cover"
           transition={200}

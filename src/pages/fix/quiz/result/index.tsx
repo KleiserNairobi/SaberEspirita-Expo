@@ -93,10 +93,10 @@ export function QuizResultScreen() {
 
   // Determinar imagem de resultado baseada no percentage
   function getResultImage(percentage: number) {
-    if (percentage >= 90) return require("@/assets/images/stars/FourStars.png");
-    if (percentage >= 70) return require("@/assets/images/stars/ThreeStars.png");
-    if (percentage >= 50) return require("@/assets/images/stars/TwoStars.png");
-    return require("@/assets/images/stars/OneStar.png");
+    if (percentage >= 90) return require("@/assets/images/stars/FourStars.webp");
+    if (percentage >= 70) return require("@/assets/images/stars/ThreeStars.webp");
+    if (percentage >= 50) return require("@/assets/images/stars/TwoStars.webp");
+    return require("@/assets/images/stars/OneStar.webp");
   }
 
   const feedback = getFeedbackMessage(level);

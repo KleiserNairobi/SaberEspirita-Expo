@@ -34,13 +34,13 @@ import { createStyles } from "./styles";
 
 // Artes espirituais dos dias da semana como fallback acolhedor caso a lição não tenha URL remota
 const DAY_BACKGROUNDS = [
-  require("@/assets/images/meditate/domingo.png"),
-  require("@/assets/images/meditate/segunda.png"),
-  require("@/assets/images/meditate/terca.png"),
-  require("@/assets/images/meditate/quarta.png"),
-  require("@/assets/images/meditate/quinta.png"),
-  require("@/assets/images/meditate/sexta.png"),
-  require("@/assets/images/meditate/sabado.png"),
+  require("@/assets/images/meditate/domingo.webp"),
+  require("@/assets/images/meditate/segunda.webp"),
+  require("@/assets/images/meditate/terca.webp"),
+  require("@/assets/images/meditate/quarta.webp"),
+  require("@/assets/images/meditate/quinta.webp"),
+  require("@/assets/images/meditate/sexta.webp"),
+  require("@/assets/images/meditate/sabado.webp"),
 ];
 
 type DailyWisdomScreenRouteProp = RouteProp<MeditateStackParamList, "DailyWisdom">;

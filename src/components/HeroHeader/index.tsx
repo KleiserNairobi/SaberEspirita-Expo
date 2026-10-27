@@ -40,14 +40,14 @@ export function HeroHeader({
       ? { uri: imageUrl }
       : typeof imageUrl === "number"
         ? imageUrl
-        : require("@/assets/images/placeholder.jpeg");
+        : require("@/assets/images/imgPhH.webp");
 
   return (
     <View style={style}>
       {/* IMAGEM DE CAPA NO TOPO */}
       <Image
         source={imageSource}
-        placeholder={require("@/assets/images/placeholder.jpeg")}
+        placeholder={require("@/assets/images/imgPhH.webp")}
         placeholderContentFit="cover"
         priority="high"
         cachePolicy="memory-disk"

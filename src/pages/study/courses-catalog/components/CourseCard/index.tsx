@@ -24,13 +24,12 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
   const minutes = course.workloadMinutes % 60;
   const durationText = hours > 0 ? `${hours}h ${minutes}min` : `${minutes} min`;
 
-  /* Lógica corrigida para exibir placeholder caso a URL venha vazia ou indefinida */
   const imageSource =
     typeof course.imageUrl === "string" && course.imageUrl.trim().length > 0
       ? { uri: course.imageUrl }
       : typeof course.imageUrl === "number"
         ? course.imageUrl
-        : require("@/assets/images/placeholder.jpeg");
+        : require("@/assets/images/imgPhV.webp");
 
   // Verificar se o curso está em breve ou encerrado
   const isComingSoon = course.status === "COMING_SOON";

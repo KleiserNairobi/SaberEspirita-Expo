@@ -84,7 +84,7 @@ export const ContinueStudyingSection = React.memo(function ContinueStudyingSecti
               ? { uri: course.imageUrl }
               : typeof course.imageUrl === "number"
                 ? course.imageUrl
-                : require("@/assets/images/placeholder.jpeg");
+                : require("@/assets/images/imgPhV.webp");
 
           return (
             <TouchableOpacity
@@ -95,7 +95,7 @@ export const ContinueStudyingSection = React.memo(function ContinueStudyingSecti
               <View style={styles.imagePlaceholder}>
                 <Image
                   source={imageSource}
-                  placeholder={require("@/assets/images/placeholder.jpeg")}
+                  placeholder={require("@/assets/images/imgPhV.webp")}
                   style={styles.courseImage}
                   contentFit="cover"
                   transition={200}

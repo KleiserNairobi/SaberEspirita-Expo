@@ -94,7 +94,7 @@ const CarouselItem = React.memo(function CarouselItem({
       ? { uri: item.imageUrl }
       : typeof item.imageUrl === "number"
         ? item.imageUrl
-        : require("@/assets/images/placeholder.jpeg");
+        : require("@/assets/images/imgPhH.webp");
 
   const isComingSoon = item.status === "COMING_SOON";
   const isLegacy = item.status === "LEGACY";
