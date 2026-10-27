@@ -18,7 +18,7 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { navigationRef } from "@/routers/RootNavigator";
 import { logEvent } from "@/services/analytics/analyticsService";
 import { useAuthStore } from "@/stores/authStore";
-import { useOnboardingStore } from "@/stores/onboardingStore";
+import { getInitialTabForGoal, useOnboardingStore } from "@/stores/onboardingStore";
 import { DailyTime, OnboardingGoal, SpiritismMoment } from "@/types/onboarding";
 
 import { OnboardingHeader } from "./components/OnboardingHeader";
@@ -269,96 +269,18 @@ export function OnboardingFlowScreen() {
       // Ler do store garantindo os valores mais recentes persistidos
       const store = useOnboardingStore.getState();
       const selectedGoal = store.answers.goal;
+      const targetTab = skipped ? "StudyTab" : getInitialTabForGoal(selectedGoal);
+
+      logEvent("onboarding_aha_moment_delivered", {
+        destination: targetTab,
+        goal: selectedGoal,
+        skipped,
+      });
 
       const isAuthenticated = Boolean(user && !isGuest);
+      // Ao concluir o onboarding, o TabNavigator já nasce nativamente configurado
+      // para renderizar a aba escolhida (sem passar por Estude ou dar pulo de tela)
       await completeOnboarding(isAuthenticated);
-
-      if (skipped) {
-        logEvent("onboarding_aha_moment_delivered", { destination: "Home" });
-        navigationRef.current?.navigate("App");
-        return;
-      }
-
-      // Direcionamento personalizado conforme resposta do Passo 2
-      setTimeout(() => {
-        switch (selectedGoal) {
-          // Destino 1: Estudo - O Livro dos Espíritos (pílula LE)
-          case "kardec_deep":
-            logEvent("onboarding_aha_moment_delivered", {
-              destination: "StudyTab",
-              initialCategory: "LE",
-            });
-            navigationRef.current?.navigate("App", {
-              screen: "Tabs",
-              params: {
-                screen: "StudyTab",
-                params: {
-                  initialCategory: "LE",
-                },
-              },
-            });
-            break;
-
-          // Destino 2: Estudo - Iniciação Espírita (pílula INIC)
-          case "basics_step_by_step":
-          case "kardec_history":
-            logEvent("onboarding_aha_moment_delivered", {
-              destination: "StudyTab",
-              initialCategory: "INIC",
-            });
-            navigationRef.current?.navigate("App", {
-              screen: "Tabs",
-              params: {
-                screen: "StudyTab",
-                params: {
-                  initialCategory: "INIC",
-                },
-              },
-            });
-            break;
-
-          // Destino 3: Orações e Preces (aba Ore)
-          case "prayers_relief":
-          case "how_to_pray":
-          case "family_peace":
-          case "gospel_at_home":
-            logEvent("onboarding_aha_moment_delivered", { destination: "PrayTab" });
-            navigationRef.current?.navigate("App", {
-              screen: "Tabs",
-              params: {
-                screen: "PrayTab",
-              },
-            });
-            break;
-
-          // Destino 4: Quizzes e Fixação (aba Fixe)
-          case "fix_quizzes":
-            logEvent("onboarding_aha_moment_delivered", { destination: "FixTab" });
-            navigationRef.current?.navigate("App", {
-              screen: "Tabs",
-              params: {
-                screen: "FixTab",
-              },
-            });
-            break;
-
-          // Destino 5: Gotas de Sabedoria / Consolo (Home da aba Medite)
-          case "daily_wisdom":
-          case "daily_wisdom_curious":
-          case "daily_wisdom_study":
-          case "grief_comfort":
-          case "prayers_reflections":
-          default:
-            logEvent("onboarding_aha_moment_delivered", { destination: "MeditateTab" });
-            navigationRef.current?.navigate("App", {
-              screen: "Tabs",
-              params: {
-                screen: "MeditateTab",
-              },
-            });
-            break;
-        }
-      }, 150);
     }, 1800);
   };
 

@@ -37,6 +37,7 @@ import { LogLevel, OneSignal } from "react-native-onesignal";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import TrackPlayer from "react-native-track-player";
 
+import { AnimatedSplashScreen } from "./src/components/AnimatedSplashScreen";
 import { UpdateModal } from "./src/components/UpdateModal";
 import { useAppTheme } from "./src/hooks/useAppTheme";
 import { useUpdateModal } from "./src/hooks/useUpdateModal";
@@ -47,6 +48,7 @@ import {
   playbackService,
   setupTrackPlayer,
 } from "./src/services/audio/trackPlayerService";
+import { useAuthStore } from "./src/stores/authStore";
 
 // Prevenir que o splash screen seja ocultado automaticamente
 SplashScreen.preventAutoHideAsync();
@@ -96,7 +98,7 @@ function useCheckUpdate(appIsReady: boolean) {
 }
 
 function App() {
-  const [appIsReady, setAppIsReady] = useState(false);
+  const [showAnimatedSplash, setShowAnimatedSplash] = useState(true);
 
   const [fontsLoaded] = useFonts({
     Allura_400Regular,
@@ -118,21 +120,35 @@ function App() {
     Oswald_700Bold,
   });
 
+  const authInitialized = useAuthStore((state) => state.initialized);
+  const initializeAuth = useAuthStore((state) => state.initializeAuth);
+
+  // Inicializa a sessão auth (PostgreSQL/MMKV) logo no primeiro instante
+  useEffect(() => {
+    const unsubscribe = initializeAuth();
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [initializeAuth]);
+
+  // App está 100% pronto quando fontes estão carregadas e a sessão está inicializada
+  const appIsReady = Boolean(fontsLoaded && authInitialized);
+
   const { modalVisible, modalConfig, hideModal } = useCheckUpdate(appIsReady);
 
   useEffect(() => {
-    async function prepare() {
+    async function hideNativeSplash() {
       try {
         if (fontsLoaded) {
-          setAppIsReady(true);
-          // Ocultar splash screen imediatamente com as fontes prontas
+          // Oculta a splash nativa assim que as fontes carregam,
+          // permitindo que a AnimatedSplashScreen assuma sem cortes
           await SplashScreen.hideAsync();
         }
-      } catch (e: any) {
-        console.error(e);
+      } catch (e: unknown) {
+        console.warn("[Splash] Falha ao dispensar splash nativa:", e);
       }
     }
-    prepare();
+    hideNativeSplash();
   }, [fontsLoaded]);
 
   // Inicializações silenciosas em background após o app estar pronto e interativo
@@ -158,7 +174,6 @@ function App() {
           OneSignal.Notifications.requestPermission(true);
 
           // Sincronizar usuário e tags de preferências
-          const { useAuthStore } = require("./src/stores/authStore");
           const { usePreferencesStore } = require("./src/stores/preferencesStore");
 
           const authState = useAuthStore.getState();
@@ -180,12 +195,12 @@ function App() {
     }
   }, [appIsReady]);
 
-  if (!appIsReady) {
+  if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <>
+    <View style={styles.appContainer}>
       <AppContent />
       <UpdateModal
         visible={modalVisible}
@@ -195,18 +210,24 @@ function App() {
         updateUrl={modalConfig.updateUrl}
         onClose={hideModal}
       />
-    </>
+      {showAnimatedSplash && (
+        <AnimatedSplashScreen
+          isReady={appIsReady}
+          onFinish={() => setShowAnimatedSplash(false)}
+        />
+      )}
+    </View>
   );
 }
 
 function AppContent() {
-  const { resolvedThemeType } = useAppTheme();
+  const { resolvedThemeType, theme } = useAppTheme();
 
   // Ativa monitoramento de atividade do usuário
   useUserActivity();
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaProvider>
         <BottomSheetModalProvider>
           <QueryClientProvider client={queryClient}>
@@ -222,6 +243,12 @@ function AppContent() {
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  appContainer: {
+    flex: 1,
+  },
+});
 
 if (__DEV__) {
   require("./ReactotronConfig");

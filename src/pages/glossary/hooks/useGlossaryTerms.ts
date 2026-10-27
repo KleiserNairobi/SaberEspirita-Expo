@@ -10,14 +10,24 @@ export const GLOSSARY_KEYS = {
   byCategory: (category: string) => ["glossary", "category", category, "v1"] as const,
 };
 
+// Collator instanciado uma única vez no nível de módulo para performance máxima (evita recriação JNI no Hermes)
+const ptCollator = new Intl.Collator("pt-BR", { sensitivity: "base" });
+
+const normalizeText = (text: string) =>
+  text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
 export function useGlossaryTerms() {
   return useQuery({
     queryKey: GLOSSARY_KEYS.all,
     queryFn: () => glossaryApiService.getGlossaryTerms(),
-    staleTime: 1000 * 60 * 30, // 30 minutos
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas de cache fresco
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: true,
-    refetchOnReconnect: true,
+    refetchOnMount: false, // Abre instantaneamente em 0ms do cache local
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -26,10 +36,9 @@ export function useGlossaryTerm(id: string) {
     queryKey: GLOSSARY_KEYS.term(id),
     queryFn: () => glossaryApiService.getGlossaryTermById(id),
     enabled: !!id,
-    staleTime: 1000 * 60 * 30, // 30 minutos
-    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: true,
-    refetchOnReconnect: true,
+    staleTime: 1000 * 60 * 60 * 24,
+    gcTime: 1000 * 60 * 60 * 24 * 7,
+    refetchOnMount: false,
   });
 }
 
@@ -40,39 +49,62 @@ export function useFilteredGlossaryTerms(
 ) {
   const { data: allTerms } = useGlossaryTerms();
 
-  const filteredTerms = useMemo(() => {
+  // 1. Pré-ordenação memorizada ultrarrápida: < 1ms usando o ptCollator estático
+  const sortedAllTerms = useMemo(() => {
     if (!allTerms || allTerms.length === 0) return [];
+    return [...allTerms].sort((a, b) => ptCollator.compare(a.term || "", b.term || ""));
+  }, [allTerms]);
 
-    let filtered = allTerms;
+  // Set O(1) para favoritos
+  const favoritesSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
 
-    // Aplicar filtro de categoria ou favoritos
-    if (filterType === "FAVORITES") {
-      filtered = filtered.filter((term) => favoriteIds.includes(term.id));
-    } else if (filterType !== "ALL") {
-      filtered = filtered.filter((term) => term.category === filterType);
-    }
+  // 2. Filtragem: busca geral irrestrita quando houver query; caso contrário filtra pela categoria ativa
+  const filteredTerms = useMemo(() => {
+    if (sortedAllTerms.length === 0) return [];
 
-    // Filtro de busca (Search Query)
-    const query = searchQuery.trim().toLowerCase();
+    const query = searchQuery.trim();
+
+    // REGRA: A busca é SEMPRE GERAL em todo o acervo, focada estritamente no título do termo (e sinônimos)
     if (query) {
-      filtered = filtered.filter((term) => {
-        const termMatch = term.term ? term.term.toLowerCase().includes(query) : false;
-        const defMatch = term.definition ? term.definition.toLowerCase().includes(query) : false;
-        const syns = Array.isArray(term.synonyms)
-          ? term.synonyms
-          : typeof term.synonyms === "string"
-          ? [term.synonyms]
-          : [];
-        const synMatch = syns.some((syn) =>
-          typeof syn === "string" ? syn.toLowerCase().includes(query) : false
-        );
-        return termMatch || defMatch || synMatch;
+      const normalizedQuery = normalizeText(query);
+
+      const matches = sortedAllTerms.filter((term) => {
+        if (!term.term) return false;
+        if (normalizeText(term.term).includes(normalizedQuery)) return true;
+
+        if (Array.isArray(term.synonyms)) {
+          return term.synonyms.some((syn) =>
+            typeof syn === "string" && normalizeText(syn).includes(normalizedQuery)
+          );
+        }
+        return false;
+      });
+
+      // Prioriza termos cujo título COMEÇA com a palavra pesquisada (ex: "Reencarnação" antes de "Equipe Reencarnatória")
+      return matches.sort((a, b) => {
+        const normA = normalizeText(a.term || "");
+        const normB = normalizeText(b.term || "");
+        const startsA = normA.startsWith(normalizedQuery);
+        const startsB = normB.startsWith(normalizedQuery);
+
+        if (startsA && !startsB) return -1;
+        if (!startsA && startsB) return 1;
+
+        return ptCollator.compare(a.term || "", b.term || "");
       });
     }
 
-    // Ordenação alfabética em cópia do array
-    return [...filtered].sort((a, b) => (a.term || "").localeCompare(b.term || "", "pt-BR"));
-  }, [allTerms, searchQuery, filterType, favoriteIds]);
+    // Sem busca digitada: exibe termos da categoria selecionada
+    if (filterType === "FAVORITES") {
+      return sortedAllTerms.filter((term) => favoritesSet.has(term.id));
+    }
+
+    if (filterType === "ALL") {
+      return sortedAllTerms;
+    }
+
+    return sortedAllTerms.filter((term) => term.category === filterType);
+  }, [sortedAllTerms, searchQuery, filterType, favoritesSet]);
 
   return filteredTerms;
 }

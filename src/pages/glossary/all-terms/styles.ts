@@ -98,10 +98,12 @@ export function createStyles(theme: ITheme) {
     },
     searchContainer: {
       width: "100%",
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.xs,
+      paddingBottom: theme.spacing.md,
     },
     list: {
       paddingBottom: theme.spacing.xl,
-      gap: theme.spacing.sm,
     },
     emptyContainer: {
       flex: 1,

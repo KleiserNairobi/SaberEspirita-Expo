@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
@@ -13,6 +13,11 @@ import {
 import { AnimatedTabBar } from "@/components/AnimatedTabBar";
 import { AccountScreen } from "@/pages/account";
 import { StudyScreen } from "@/pages/study";
+import {
+  getInitialStudyCategoryForGoal,
+  getInitialTabForGoal,
+  useOnboardingStore,
+} from "@/stores/onboardingStore";
 
 import { FixNavigator } from "./FixNavigator";
 import { MeditateNavigator } from "./MeditateNavigator";
@@ -22,8 +27,33 @@ import { TabParamList } from "./types";
 const Tab = createBottomTabNavigator<TabParamList>();
 
 export function TabNavigator() {
+  const answers = useOnboardingStore((state) => state.answers);
+  const initialTabConsumed = useOnboardingStore((state) => state.initialTabConsumed);
+  const consumeInitialTab = useOnboardingStore((state) => state.consumeInitialTab);
+
+  const initialRouteName = useMemo(() => {
+    if (!initialTabConsumed && answers.goal) {
+      return getInitialTabForGoal(answers.goal);
+    }
+    return "StudyTab";
+  }, [initialTabConsumed, answers.goal]);
+
+  const initialStudyCategory = useMemo(() => {
+    if (!initialTabConsumed && answers.goal) {
+      return getInitialStudyCategoryForGoal(answers.goal);
+    }
+    return undefined;
+  }, [initialTabConsumed, answers.goal]);
+
+  useEffect(() => {
+    if (!initialTabConsumed && answers.goal) {
+      consumeInitialTab();
+    }
+  }, [initialTabConsumed, answers.goal, consumeInitialTab]);
+
   return (
     <Tab.Navigator
+      initialRouteName={initialRouteName}
       tabBar={(props) => <AnimatedTabBar {...props} />}
       screenOptions={{
         headerShown: false,
@@ -32,6 +62,7 @@ export function TabNavigator() {
       <Tab.Screen
         name="StudyTab"
         component={StudyScreen}
+        initialParams={initialStudyCategory ? { initialCategory: initialStudyCategory } : undefined}
         options={{
           title: "Estude",
           tabBarIcon: ({ color, size }) => <ClipboardClock size={size} color={color} />,

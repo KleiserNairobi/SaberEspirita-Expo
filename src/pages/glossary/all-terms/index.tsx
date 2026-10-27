@@ -1,32 +1,39 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { View, SectionList, Text, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+
+import {
+  ActivityIndicator,
+  FlatList,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StatusBar } from "expo-status-bar";
 import {
   ArrowLeft,
-  LayoutGrid,
-  Heart,
-  BookOpen,
-  BookHeart,
-  Sparkles,
-  Scale,
   Atom,
+  BookHeart,
+  BookOpen,
   Brain,
+  Heart,
+  Scale,
+  Sparkles,
 } from "lucide-react-native";
-import { differenceInDays } from "date-fns";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { GlossaryStackParamList } from "@/routers/types";
+import { statsApiService } from "@/services/api/statsApiService";
+import { useGlossaryFavoritesStore } from "@/stores/glossaryFavoritesStore";
 import { IGlossaryTerm } from "@/types/glossary";
 import { GlossaryFilterType } from "@/types/glossaryFilter";
-import { useFilteredGlossaryTerms, useGlossaryTerms } from "../hooks/useGlossaryTerms";
-import { useGlossaryFavoritesStore } from "@/stores/glossaryFavoritesStore";
-import { statsApiService } from "@/services/api/statsApiService";
 
-import { SearchBar } from "@/pages/pray/components/SearchBar";
 import { GlossaryCard } from "../components/GlossaryCard";
+import { useFilteredGlossaryTerms, useGlossaryTerms } from "../hooks/useGlossaryTerms";
 import { createStyles } from "./styles";
 
 type NavigationProp = NativeStackNavigationProp<GlossaryStackParamList, "AllTerms">;
@@ -40,133 +47,156 @@ export function AllTermsScreen() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [filterType, setFilterType] = useState<GlossaryFilterType>("ALL");
+  // Categoria padrão: Doutrina Básica (item "Todos" removido)
+  const [filterType, setFilterType] = useState<GlossaryFilterType>("Doutrina Básica");
   const favoriteIds = useGlossaryFavoritesStore((s) => s.favorites);
 
-  // Debounce da busca para otimizar performance com muitos itens
+  // Debounce da busca
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(searchQuery);
-    }, 300);
+    }, 200);
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
+  // Busca geral irrestrita quando houver debouncedQuery; ou filtra por categoria selecionada
   const filteredTerms = useFilteredGlossaryTerms(debouncedQuery, filterType, favoriteIds);
 
+  // Contagem linear ultrarrápida das categorias (sem cálculos de data)
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {
-      ALL: allTerms?.length || 0,
       FAVORITES: favoriteIds.length,
       "Doutrina Básica": 0,
-      "Mediunidade": 0,
+      Mediunidade: 0,
       "Moral e Ética": 0,
       "Ciência Espírita": 0,
-      "Evangelho": 0,
+      Evangelho: 0,
       "Filosofia Espírita": 0,
     };
-    if (allTerms) {
-      allTerms.forEach((term) => {
-        if (counts[term.category] !== undefined) {
-          counts[term.category]++;
+
+    if (allTerms && allTerms.length > 0) {
+      for (let i = 0; i < allTerms.length; i++) {
+        const cat = allTerms[i].category;
+        if (counts[cat] !== undefined) {
+          counts[cat]++;
         }
-      });
+      }
     }
+
     return counts;
-  }, [allTerms, favoriteIds]);
+  }, [allTerms, favoriteIds.length]);
 
-  // Lógica para detectar se uma categoria contém termos novos (menos de 15 dias)
-  const categoryHasNew = useMemo(() => {
-    const hasNew: Record<string, boolean> = {
-      ALL: false,
-    };
-    if (allTerms) {
-      allTerms.forEach((term) => {
-        const isNew = term.createdAt && differenceInDays(new Date(), term.createdAt) <= 15;
-        if (isNew) {
-          hasNew.ALL = true;
-          hasNew[term.category] = true;
-        }
+  // Nova ordem dos cards: favoritos, doutrina básica, evangelho, mediunidade, moral e ética, ciência espírita, filosofia espírita (sem "Todos")
+  const CATEGORIES = useMemo(
+    () => [
+      {
+        type: "FAVORITES",
+        label: "Favoritos",
+        icon: Heart,
+        count: categoryCounts.FAVORITES,
+      },
+      {
+        type: "Doutrina Básica",
+        label: "Doutrina Básica",
+        icon: BookOpen,
+        count: categoryCounts["Doutrina Básica"],
+      },
+      {
+        type: "Evangelho",
+        label: "Evangelho",
+        icon: BookHeart,
+        count: categoryCounts["Evangelho"],
+      },
+      {
+        type: "Mediunidade",
+        label: "Mediunidade",
+        icon: Sparkles,
+        count: categoryCounts["Mediunidade"],
+      },
+      {
+        type: "Moral e Ética",
+        label: "Moral e Ética",
+        icon: Scale,
+        count: categoryCounts["Moral e Ética"],
+      },
+      {
+        type: "Ciência Espírita",
+        label: "Ciência Espírita",
+        icon: Atom,
+        count: categoryCounts["Ciência Espírita"],
+      },
+      {
+        type: "Filosofia Espírita",
+        label: "Filosofia Espírita",
+        icon: Brain,
+        count: categoryCounts["Filosofia Espírita"],
+      },
+    ],
+    [categoryCounts]
+  );
+
+  const handleTermPress = useCallback(
+    (term: IGlossaryTerm) => {
+      statsApiService.logEvent({
+        eventName: "glossary_view",
+        category: "glossary",
+        label: term.term,
+        metadata: { origin: "menu" },
       });
-    }
-    return hasNew;
-  }, [allTerms]);
+      navigation.navigate("TermDetail", { id: term.id });
+    },
+    [navigation]
+  );
 
-  const CATEGORIES = useMemo(() => [
-    { type: "ALL", label: "Todos", icon: LayoutGrid, count: categoryCounts.ALL, hasNew: categoryHasNew.ALL },
-    { type: "FAVORITES", label: "Favoritos", icon: Heart, count: categoryCounts.FAVORITES, hasNew: false },
-    { type: "Doutrina Básica", label: "Doutrina Básica", icon: BookOpen, count: categoryCounts["Doutrina Básica"], hasNew: categoryHasNew["Doutrina Básica"] },
-    { type: "Evangelho", label: "Evangelho", icon: BookHeart, count: categoryCounts["Evangelho"], hasNew: categoryHasNew["Evangelho"] },
-    { type: "Mediunidade", label: "Mediunidade", icon: Sparkles, count: categoryCounts["Mediunidade"], hasNew: categoryHasNew["Mediunidade"] },
-    { type: "Moral e Ética", label: "Moral e Ética", icon: Scale, count: categoryCounts["Moral e Ética"], hasNew: categoryHasNew["Moral e Ética"] },
-    { type: "Ciência Espírita", label: "Ciência Espírita", icon: Atom, count: categoryCounts["Ciência Espírita"], hasNew: categoryHasNew["Ciência Espírita"] },
-    { type: "Filosofia Espírita", label: "Filosofia Espírita", icon: Brain, count: categoryCounts["Filosofia Espírita"], hasNew: categoryHasNew["Filosofia Espírita"] },
-  ], [categoryCounts, categoryHasNew]);
-
-  function handleTermPress(term: IGlossaryTerm) {
-    statsApiService.logEvent({
-      eventName: "glossary_view",
-      category: "glossary",
-      label: term.term,
-      metadata: { origin: "menu" },
-    });
-    navigation.navigate("TermDetail", { id: term.id });
-  }
-
-  function renderTerm({ item }: { item: IGlossaryTerm }) {
-    return (
+  const renderTerm = useCallback(
+    ({ item }: { item: IGlossaryTerm }) => (
       <View style={{ paddingHorizontal: theme.spacing.lg }}>
-        <GlossaryCard term={item} onPress={() => handleTermPress(item)} />
+        <GlossaryCard term={item} onPress={handleTermPress} />
       </View>
-    );
-  }
+    ),
+    [theme.spacing.lg, handleTermPress]
+  );
 
-  function renderLoading() {
-    return (
+  const renderLoading = useCallback(
+    () => (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
-    );
-  }
+    ),
+    [styles.loadingContainer, theme.colors.primary]
+  );
 
-  function renderEmpty() {
+  const renderEmpty = useCallback(() => {
     if (isLoading) return renderLoading();
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>
-          {searchQuery ? "Nenhum termo encontrado" : "Nenhum termo disponível"}
+          {searchQuery
+            ? "Nenhum termo encontrado na busca geral"
+            : "Nenhum termo disponível nesta categoria"}
         </Text>
       </View>
     );
-  }
+  }, [isLoading, renderLoading, searchQuery, styles.emptyContainer, styles.emptyText]);
 
+  const keyExtractor = useCallback((item: IGlossaryTerm) => item.id, []);
 
-
-  const renderSectionHeader = React.useCallback(() => (
-    <View style={styles.stickyHeader}>
-      <View style={styles.searchContainer}>
-        <SearchBar
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholder="Buscar termo..."
-        />
-      </View>
-    </View>
-  ), [searchQuery, styles.stickyHeader, styles.searchContainer]);
+  const isSearching = Boolean(debouncedQuery.trim());
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <StatusBar style={theme.isDark ? "light" : "dark"} />
 
       <View style={styles.container}>
-        <SectionList
-          sections={isLoading ? [] : [{ data: filteredTerms }]}
+        <FlatList
+          data={isLoading ? [] : filteredTerms}
           renderItem={renderTerm}
-          keyExtractor={(item) => item.id}
-          stickySectionHeadersEnabled={true}
-          initialNumToRender={10}
+          keyExtractor={keyExtractor}
+          initialNumToRender={8}
+          maxToRenderPerBatch={8}
           windowSize={5}
-          maxToRenderPerBatch={5}
           updateCellsBatchingPeriod={30}
+          removeClippedSubviews={true}
           ListHeaderComponent={
             <>
               {/* Header: Layout Compacto (Voltar | Textos) */}
@@ -185,7 +215,7 @@ export function AllTermsScreen() {
                 </View>
               </View>
 
-              {/* Linha 3: Carrossel de Categorias */}
+              {/* Carrossel de Categorias (Ordem: Favoritos -> Doutrina Básica -> ...) */}
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -193,9 +223,13 @@ export function AllTermsScreen() {
                 contentContainerStyle={styles.categoriesContent}
               >
                 {CATEGORIES.map((cat) => {
-                  const isSelected = filterType === cat.type;
-                  const cardBg = isSelected ? theme.colors.primary + "10" : theme.colors.card;
-                  const cardBorder = isSelected ? theme.colors.primary : theme.colors.border;
+                  const isSelected = !isSearching && filterType === cat.type;
+                  const cardBg = isSelected
+                    ? theme.colors.primary + "10"
+                    : theme.colors.card;
+                  const cardBorder = isSelected
+                    ? theme.colors.primary
+                    : theme.colors.border;
 
                   return (
                     <TouchableOpacity
@@ -204,25 +238,37 @@ export function AllTermsScreen() {
                         styles.categoryCard,
                         { backgroundColor: cardBg, borderColor: cardBorder },
                       ]}
-                      onPress={() => !isLoading && setFilterType(cat.type as GlossaryFilterType)}
+                      onPress={() => {
+                        setSearchQuery("");
+                        setDebouncedQuery("");
+                        setFilterType(cat.type as GlossaryFilterType);
+                      }}
                       activeOpacity={0.7}
                       disabled={isLoading}
                     >
                       <View style={styles.categoryIconContainer}>
                         <cat.icon size={20} color={theme.colors.primary} />
-                        {cat.hasNew && <View style={styles.badge} />}
                       </View>
                       <Text style={styles.categoryLabel}>{cat.label}</Text>
                       <Text style={styles.categoryCount}>
-                        {isLoading ? "--" : cat.count} {cat.count === 1 ? "termo" : "termos"}
+                        {isLoading ? "--" : cat.count}{" "}
+                        {cat.count === 1 ? "termo" : "termos"}
                       </Text>
                     </TouchableOpacity>
                   );
                 })}
               </ScrollView>
+
+              {/* Barra de Busca (Geral em todo o acervo) */}
+              <View style={styles.searchContainer}>
+                <SearchBar
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  placeholder="Buscar termo..."
+                />
+              </View>
             </>
           }
-          renderSectionHeader={renderSectionHeader}
           contentContainerStyle={styles.list}
           ListEmptyComponent={renderEmpty}
           showsVerticalScrollIndicator={false}

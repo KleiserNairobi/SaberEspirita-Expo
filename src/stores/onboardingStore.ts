@@ -16,6 +16,40 @@ const zustandStorage = {
   },
 };
 
+export type InitialTabType = "PrayTab" | "MeditateTab" | "FixTab" | "StudyTab";
+
+/**
+ * Mapeia o objetivo escolhido no Onboarding para a aba de destino nativa
+ */
+export function getInitialTabForGoal(goal?: string): InitialTabType {
+  switch (goal) {
+    case "prayers_relief":
+    case "how_to_pray":
+    case "family_peace":
+    case "gospel_at_home":
+      return "PrayTab";
+    case "fix_quizzes":
+      return "FixTab";
+    case "daily_wisdom":
+    case "daily_wisdom_curious":
+    case "daily_wisdom_study":
+    case "grief_comfort":
+    case "prayers_reflections":
+      return "MeditateTab";
+    default:
+      return "StudyTab";
+  }
+}
+
+/**
+ * Mapeia a categoria inicial de estudo caso o objetivo seja Estudo Kardec/Iniciação
+ */
+export function getInitialStudyCategoryForGoal(goal?: string): string | undefined {
+  if (goal === "kardec_deep") return "LE";
+  if (goal === "basics_step_by_step" || goal === "kardec_history") return "INIC";
+  return undefined;
+}
+
 export interface OnboardingStoreState {
   hasSeenWelcome: boolean; // Mantido para retrocompatibilidade
   hasCompletedOnboarding: boolean;
@@ -23,12 +57,14 @@ export interface OnboardingStoreState {
   isSyncedWithBackend: boolean;
   completedAt?: string;
   notificationPromptDismissedAt?: string;
+  initialTabConsumed: boolean;
 
   setOnboardingAnswer: <K extends keyof OnboardingAnswers>(
     field: K,
     value: OnboardingAnswers[K]
   ) => void;
   completeOnboarding: (isAuthenticated?: boolean) => Promise<void>;
+  consumeInitialTab: () => void;
   syncPendingOnboardingWithBackend: () => Promise<void>;
   markWelcomeAsSeen: () => void; // Compatibilidade legada
   resetOnboarding: () => void;
@@ -44,6 +80,7 @@ export const useOnboardingStore = create<OnboardingStoreState>()(
       answers: {},
       isSyncedWithBackend: false,
       completedAt: undefined,
+      initialTabConsumed: false,
 
       setOnboardingAnswer: (field, value) => {
         set((state) => ({
@@ -54,12 +91,17 @@ export const useOnboardingStore = create<OnboardingStoreState>()(
         }));
       },
 
+      consumeInitialTab: () => {
+        set({ initialTabConsumed: true });
+      },
+
       completeOnboarding: async (isAuthenticated = false) => {
         const now = new Date().toISOString();
         set({
           hasCompletedOnboarding: true,
           hasSeenWelcome: true,
           completedAt: now,
+          initialTabConsumed: false,
         });
 
         // Se o usuário já estiver autenticado, tenta sincronizar imediatamente com o backend
@@ -108,6 +150,7 @@ export const useOnboardingStore = create<OnboardingStoreState>()(
           isSyncedWithBackend: false,
           completedAt: undefined,
           notificationPromptDismissedAt: undefined,
+          initialTabConsumed: false,
         });
       },
 
