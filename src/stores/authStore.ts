@@ -1,6 +1,10 @@
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as AppleAuthentication from "expo-apple-authentication";
-import { OneSignal } from "react-native-onesignal";
+import {
+  loginOneSignal,
+  logoutOneSignal,
+  syncOneSignalTags,
+} from "@/services/notifications/oneSignalService";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -174,17 +178,13 @@ export const useAuthStore = create<AuthState>()(
 
           set({ user: appUser, isGuest: false, loading: false });
 
-          // Sincronizar com OneSignal
-          try {
-            OneSignal.login(appUser.uid);
-            const preferences = usePreferencesStore.getState();
-            OneSignal.User.addTags({
-              app_updates: preferences.appUpdateNotifications.toString(),
-              course_reminders: preferences.courseNotifications.toString(),
-            });
-          } catch (onesignalError) {
-            console.error("Erro ao sincronizar OneSignal no login:", onesignalError);
-          }
+          // Sincronizar com OneSignal com segurança
+          loginOneSignal(appUser.uid);
+          const preferences = usePreferencesStore.getState();
+          syncOneSignalTags({
+            app_updates: preferences.appUpdateNotifications.toString(),
+            course_reminders: preferences.courseNotifications.toString(),
+          });
 
           // Sincronizar dados pendentes de onboarding com o backend se existirem
           try {
@@ -312,19 +312,13 @@ export const useAuthStore = create<AuthState>()(
 
           set({ user: appUser, isGuest: false, loading: false });
 
-          try {
-            OneSignal.login(appUser.uid);
-            const preferences = usePreferencesStore.getState();
-            OneSignal.User.addTags({
-              app_updates: preferences.appUpdateNotifications.toString(),
-              course_reminders: preferences.courseNotifications.toString(),
-            });
-          } catch (onesignalError) {
-            console.error(
-              "Erro ao sincronizar OneSignal no login Google:",
-              onesignalError
-            );
-          }
+          // Sincronizar com OneSignal com segurança
+          loginOneSignal(appUser.uid);
+          const preferences = usePreferencesStore.getState();
+          syncOneSignalTags({
+            app_updates: preferences.appUpdateNotifications.toString(),
+            course_reminders: preferences.courseNotifications.toString(),
+          });
 
           // Sincronizar dados pendentes de onboarding com o backend
           try {
@@ -382,19 +376,13 @@ export const useAuthStore = create<AuthState>()(
 
           set({ user: appUser, isGuest: false, loading: false });
 
-          try {
-            OneSignal.login(appUser.uid);
-            const preferences = usePreferencesStore.getState();
-            OneSignal.User.addTags({
-              app_updates: preferences.appUpdateNotifications.toString(),
-              course_reminders: preferences.courseNotifications.toString(),
-            });
-          } catch (onesignalError) {
-            console.error(
-              "Erro ao sincronizar OneSignal no login Apple:",
-              onesignalError
-            );
-          }
+          // Sincronizar com OneSignal com segurança
+          loginOneSignal(appUser.uid);
+          const preferences = usePreferencesStore.getState();
+          syncOneSignalTags({
+            app_updates: preferences.appUpdateNotifications.toString(),
+            course_reminders: preferences.courseNotifications.toString(),
+          });
 
           // Sincronizar dados pendentes de onboarding com o backend
           try {
@@ -434,11 +422,7 @@ export const useAuthStore = create<AuthState>()(
             await GoogleSignin.signOut();
           } catch {}
 
-          try {
-            OneSignal.logout();
-          } catch (onesignalError) {
-            console.error("Erro ao deslogar do OneSignal:", onesignalError);
-          }
+          logoutOneSignal();
         } catch (error: any) {
           Storage.remove("jwt_token");
           Storage.remove("refresh_token");
@@ -492,12 +476,7 @@ export const useAuthStore = create<AuthState>()(
         set({ initialized: true, loading: false });
 
         if (user?.uid && !isGuest) {
-          try {
-            OneSignal.login(user.uid);
-            console.log("AuthStore: OneSignal.login sincronizado para UID:", user.uid);
-          } catch (e) {
-            console.warn("AuthStore: Falha ao chamar OneSignal.login na restauração de sessão:", e);
-          }
+          loginOneSignal(user.uid);
 
           // Sincronizar dados pendentes de onboarding caso ainda não tenham sido persistidos
           try {

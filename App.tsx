@@ -33,7 +33,6 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { LogLevel, OneSignal } from "react-native-onesignal";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import TrackPlayer from "react-native-track-player";
 
@@ -48,7 +47,16 @@ import {
   playbackService,
   setupTrackPlayer,
 } from "./src/services/audio/trackPlayerService";
+import {
+  initOneSignal,
+  loginOneSignal,
+  requestOneSignalPermission,
+  syncOneSignalTags,
+} from "./src/services/notifications/oneSignalService";
 import { useAuthStore } from "./src/stores/authStore";
+
+// Inicializar OneSignal SDK antecipadamente no startup da aplicação nativa
+initOneSignal();
 
 // Prevenir que o splash screen seja ocultado automaticamente
 SplashScreen.preventAutoHideAsync();
@@ -161,28 +169,19 @@ function App() {
         });
 
         try {
-          // App ID unificado do OneSignal (iOS e Android)
-          const oneSignalAppId = "3c6a4e60-74c6-430f-8800-6917385cb9b8";
-
-          // Configurar log level apenas em desenvolvimento
-          OneSignal.Debug.setLogLevel(__DEV__ ? LogLevel.Verbose : LogLevel.None);
-
-          // Inicializar OneSignal
-          OneSignal.initialize(oneSignalAppId);
-
           // Solicitar permissões de notificação
-          OneSignal.Notifications.requestPermission(true);
+          requestOneSignalPermission();
 
           // Sincronizar usuário e tags de preferências
           const { usePreferencesStore } = require("./src/stores/preferencesStore");
 
           const authState = useAuthStore.getState();
           if (authState.user?.uid && !authState.isGuest) {
-            OneSignal.login(authState.user.uid);
+            loginOneSignal(authState.user.uid);
           }
 
           const preferences = usePreferencesStore.getState();
-          OneSignal.User.addTags({
+          syncOneSignalTags({
             app_updates: preferences.appUpdateNotifications.toString(),
             course_reminders: preferences.courseNotifications.toString(),
           });

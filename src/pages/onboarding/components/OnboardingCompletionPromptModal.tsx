@@ -3,7 +3,7 @@ import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import { Moon, Sun } from "lucide-react-native";
-import { OneSignal } from "react-native-onesignal";
+import { requestOneSignalPermission } from "@/services/notifications/oneSignalService";
 
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
@@ -35,12 +35,8 @@ export const OnboardingCompletionPromptBottomSheet = forwardRef<
     setOnboardingAnswer("notificationTime", selectedTime);
     logEvent("onboarding_push_accepted", { time: selectedTime });
 
-    try {
-      if (Platform.OS === "ios" || Platform.OS === "android") {
-        OneSignal.Notifications.requestPermission(true);
-      }
-    } catch (e) {
-      console.warn("Falha ao solicitar permissão OneSignal:", e);
+    if (Platform.OS === "ios" || Platform.OS === "android") {
+      await requestOneSignalPermission();
     }
 
     if (isGuest) {

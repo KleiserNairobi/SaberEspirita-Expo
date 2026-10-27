@@ -1,4 +1,4 @@
-import { OneSignal } from "react-native-onesignal";
+import { syncOneSignalTags } from "@/services/notifications/oneSignalService";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -53,21 +53,11 @@ export const usePreferencesStore = create<PreferencesState>()(
       setSoundEffects: (value) => set({ soundEffects: value }),
       setAppUpdateNotifications: (value) => {
         set({ appUpdateNotifications: value });
-        // Sincronizar com OneSignal
-        try {
-          OneSignal.User.addTag("app_updates", value.toString());
-        } catch (error) {
-          console.error("Erro ao sincronizar tag app_updates:", error);
-        }
+        syncOneSignalTags({ app_updates: value.toString() });
       },
       setCourseNotifications: (value) => {
         set({ courseNotifications: value });
-        // Sincronizar com OneSignal
-        try {
-          OneSignal.User.addTag("course_reminders", value.toString());
-        } catch (error) {
-          console.error("Erro ao sincronizar tag course_reminders:", error);
-        }
+        syncOneSignalTags({ course_reminders: value.toString() });
       },
 
       // Rate App Actions Implementation
