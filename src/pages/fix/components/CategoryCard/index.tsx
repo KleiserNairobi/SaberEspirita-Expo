@@ -72,7 +72,14 @@ export function CategoryCard({
       </View>
 
       {imageSource && (
-        <Image source={imageSource} style={styles.backgroundImage} contentFit="contain" />
+        <Image
+          source={imageSource}
+          style={styles.backgroundImage}
+          contentFit="contain"
+          cachePolicy="memory-disk"
+          priority="low"
+          transition={150}
+        />
       )}
 
       {/* Nome */}
