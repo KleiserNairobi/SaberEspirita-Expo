@@ -299,52 +299,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - OneSignalXCFramework (5.4.1):
-    - OneSignalXCFramework/OneSignalComplete (= 5.4.1)
-  - OneSignalXCFramework/OneSignal (5.4.1):
-    - OneSignalXCFramework/OneSignalCore
-    - OneSignalXCFramework/OneSignalExtension
-    - OneSignalXCFramework/OneSignalLiveActivities
-    - OneSignalXCFramework/OneSignalNotifications
-    - OneSignalXCFramework/OneSignalOSCore
-    - OneSignalXCFramework/OneSignalOutcomes
-    - OneSignalXCFramework/OneSignalUser
-  - OneSignalXCFramework/OneSignalComplete (5.4.1):
-    - OneSignalXCFramework/OneSignal
-    - OneSignalXCFramework/OneSignalInAppMessages
-    - OneSignalXCFramework/OneSignalLocation
-  - OneSignalXCFramework/OneSignalCore (5.4.1)
-  - OneSignalXCFramework/OneSignalExtension (5.4.1):
-    - OneSignalXCFramework/OneSignalCore
-    - OneSignalXCFramework/OneSignalOutcomes
-  - OneSignalXCFramework/OneSignalInAppMessages (5.4.1):
-    - OneSignalXCFramework/OneSignalCore
-    - OneSignalXCFramework/OneSignalNotifications
-    - OneSignalXCFramework/OneSignalOSCore
-    - OneSignalXCFramework/OneSignalOutcomes
-    - OneSignalXCFramework/OneSignalUser
-  - OneSignalXCFramework/OneSignalLiveActivities (5.4.1):
-    - OneSignalXCFramework/OneSignalCore
-    - OneSignalXCFramework/OneSignalOSCore
-    - OneSignalXCFramework/OneSignalUser
-  - OneSignalXCFramework/OneSignalLocation (5.4.1):
-    - OneSignalXCFramework/OneSignalCore
-    - OneSignalXCFramework/OneSignalNotifications
-    - OneSignalXCFramework/OneSignalOSCore
-    - OneSignalXCFramework/OneSignalUser
-  - OneSignalXCFramework/OneSignalNotifications (5.4.1):
-    - OneSignalXCFramework/OneSignalCore
-    - OneSignalXCFramework/OneSignalExtension
-    - OneSignalXCFramework/OneSignalOutcomes
-  - OneSignalXCFramework/OneSignalOSCore (5.4.1):
-    - OneSignalXCFramework/OneSignalCore
-  - OneSignalXCFramework/OneSignalOutcomes (5.4.1):
-    - OneSignalXCFramework/OneSignalCore
-  - OneSignalXCFramework/OneSignalUser (5.4.1):
-    - OneSignalXCFramework/OneSignalCore
-    - OneSignalXCFramework/OneSignalNotifications
-    - OneSignalXCFramework/OneSignalOSCore
-    - OneSignalXCFramework/OneSignalOutcomes
   - PromisesObjC (2.4.0)
   - RCTDeprecation (0.81.5)
   - RCTRequired (0.81.5)
@@ -2555,7 +2509,6 @@ DEPENDENCIES:
   - "HotUpdater (from `../node_modules/@hot-updater/react-native`)"
   - NitroMmkv (from `../node_modules/react-native-mmkv`)
   - NitroModules (from `../node_modules/react-native-nitro-modules`)
-  - OneSignalXCFramework (< 6.0, >= 5.0)
   - RCTDeprecation (from `../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
   - RCTRequired (from `../node_modules/react-native/Libraries/Required`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -2658,7 +2611,6 @@ SPEC REPOS:
     - libwebp
     - MMKVCore
     - nanopb
-    - OneSignalXCFramework
     - PromisesObjC
     - SDWebImage
     - SDWebImageAVIFCoder
@@ -2936,7 +2888,6 @@ SPEC CHECKSUMS:
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   NitroMmkv: 8a41b343ffcd651bfb1ec9d50a8c15f488b37aae
   NitroModules: 475e9212530136851c48d04f458b0d33d4d21da1
-  OneSignalXCFramework: 0b85a8d949247f80809a9d5598200cc263591129
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RCTDeprecation: 943572d4be82d480a48f4884f670135ae30bf990
   RCTRequired: 8f3cfc90cc25cf6e420ddb3e7caaaabc57df6043
@@ -3025,6 +2976,6 @@ SPEC CHECKSUMS:
   SwiftAudioEx: f6aa653770f3a0d3851edaf8d834a30aee4a7646
   Yoga: 5934998fbeaef7845dbf698f698518695ab4cd1a
 
-PODFILE CHECKSUM: ce2447ba70681246f40989d8bcdc264f0585d41b
+PODFILE CHECKSUM: 0a3a9f182910bcc7bed361a1b62cc114c95d3b38
 
 COCOAPODS: 1.16.2
