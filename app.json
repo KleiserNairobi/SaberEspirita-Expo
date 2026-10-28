@@ -7,18 +7,14 @@
     "orientation": "default",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/images/icon.png",
+    "newArchEnabled": true,
     "ios": {
       "buildNumber": "60",
       "supportsTablet": true,
       "requireFullScreen": true,
       "bundleIdentifier": "app.saberespirita",
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification", "audio"],
-        "NSLocationWhenInUseUsageDescription": "Permita sua localização em uso para receber notificações personalizadas sobre o Saber Espírita."
-      },
-      "entitlements": {
-        "aps-environment": "production",
-        "com.apple.security.application-groups": ["group.app.saberespirita.onesignal"]
+        "UIBackgroundModes": ["audio"]
       },
       "googleServicesFile": "./dev/configs/GoogleService-Info.plist"
     },
@@ -50,12 +46,6 @@
             "backgroundColor": "#121E31",
             "image": "./assets/images/splash-icon.png"
           }
-        }
-      ],
-      [
-        "onesignal-expo-plugin",
-        {
-          "mode": "production"
         }
       ],
       [

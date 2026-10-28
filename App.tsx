@@ -47,16 +47,7 @@ import {
   playbackService,
   setupTrackPlayer,
 } from "./src/services/audio/trackPlayerService";
-import {
-  initOneSignal,
-  loginOneSignal,
-  requestOneSignalPermission,
-  syncOneSignalTags,
-} from "./src/services/notifications/oneSignalService";
 import { useAuthStore } from "./src/stores/authStore";
-
-// Inicializar OneSignal SDK antecipadamente no startup da aplicação nativa
-initOneSignal();
 
 // Prevenir que o splash screen seja ocultado automaticamente
 SplashScreen.preventAutoHideAsync();
@@ -167,27 +158,6 @@ function App() {
         setupTrackPlayer().catch((err) => {
           console.warn("[Audio] Aquecimento de áudio em background:", err);
         });
-
-        try {
-          // Solicitar permissões de notificação
-          requestOneSignalPermission();
-
-          // Sincronizar usuário e tags de preferências
-          const { usePreferencesStore } = require("./src/stores/preferencesStore");
-
-          const authState = useAuthStore.getState();
-          if (authState.user?.uid && !authState.isGuest) {
-            loginOneSignal(authState.user.uid);
-          }
-
-          const preferences = usePreferencesStore.getState();
-          syncOneSignalTags({
-            app_updates: preferences.appUpdateNotifications.toString(),
-            course_reminders: preferences.courseNotifications.toString(),
-          });
-        } catch (error) {
-          console.error("Erro ao sincronizar OneSignal na inicialização:", error);
-        }
       });
 
       return () => task.cancel();

@@ -1647,9 +1647,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-onesignal (5.3.1):
-    - OneSignalXCFramework (= 5.4.1)
-    - React (< 1.0.0, >= 0.13.0)
   - react-native-pdf (7.0.5):
     - hermes-engine
     - RCTRequired
@@ -2594,7 +2591,6 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
-  - react-native-onesignal (from `../node_modules/react-native-onesignal`)
   - react-native-pdf (from `../node_modules/react-native-pdf`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-track-player (from `../node_modules/react-native-track-player`)
@@ -2798,8 +2794,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   react-native-blob-util:
     :path: "../node_modules/react-native-blob-util"
-  react-native-onesignal:
-    :path: "../node_modules/react-native-onesignal"
   react-native-pdf:
     :path: "../node_modules/react-native-pdf"
   react-native-safe-area-context:
@@ -2978,7 +2972,6 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 603c18db65844bb81dbe62fee8fcc976eaeb7108
   React-microtasksnativemodule: d77e0c426fce34c23227394c96ca1033b30c813c
   react-native-blob-util: 1de1111170cdfb2e3fd311ea2cd6c94755d98103
-  react-native-onesignal: 7e6a97e3ebecbea1cdc469cdcaebd3244292c474
   react-native-pdf: 1afd2775195047e7160621e8c4ccbc0c31d1ed96
   react-native-safe-area-context: 53f796cb6c814661bbe99fbdfd0585d07b996cdd
   react-native-track-player: 24ecd55d64da8a6471ba96484b67bc9cee6fc629

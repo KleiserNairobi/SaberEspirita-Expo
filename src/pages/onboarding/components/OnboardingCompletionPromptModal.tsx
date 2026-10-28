@@ -1,9 +1,10 @@
 import React, { forwardRef, useState } from "react";
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import { Moon, Sun } from "lucide-react-native";
-import { requestOneSignalPermission } from "@/services/notifications/oneSignalService";
 
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
@@ -34,10 +35,6 @@ export const OnboardingCompletionPromptBottomSheet = forwardRef<
   const handleConfirmPush = async () => {
     setOnboardingAnswer("notificationTime", selectedTime);
     logEvent("onboarding_push_accepted", { time: selectedTime });
-
-    if (Platform.OS === "ios" || Platform.OS === "android") {
-      await requestOneSignalPermission();
-    }
 
     if (isGuest) {
       setModalStage("account");
@@ -73,7 +70,8 @@ export const OnboardingCompletionPromptBottomSheet = forwardRef<
       ? {
           type: "info",
           title: "Inspiração diária no seu dia",
-          message: "Podemos enviar uma gota de sabedoria ou prece para renovar suas forças?",
+          message:
+            "Podemos enviar uma gota de sabedoria ou prece para renovar suas forças?",
           primaryButton: {
             label: "Sim, me lembrar",
             onPress: handleConfirmPush,

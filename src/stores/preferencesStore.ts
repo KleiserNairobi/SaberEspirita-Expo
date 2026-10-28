@@ -1,4 +1,3 @@
-import { syncOneSignalTags } from "@/services/notifications/oneSignalService";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -51,14 +50,8 @@ export const usePreferencesStore = create<PreferencesState>()(
       lessonsCompletedCount: 0,
 
       setSoundEffects: (value) => set({ soundEffects: value }),
-      setAppUpdateNotifications: (value) => {
-        set({ appUpdateNotifications: value });
-        syncOneSignalTags({ app_updates: value.toString() });
-      },
-      setCourseNotifications: (value) => {
-        set({ courseNotifications: value });
-        syncOneSignalTags({ course_reminders: value.toString() });
-      },
+      setAppUpdateNotifications: (value) => set({ appUpdateNotifications: value }),
+      setCourseNotifications: (value) => set({ courseNotifications: value }),
 
       // Rate App Actions Implementation
       incrementLessonsCompletedCount: () =>

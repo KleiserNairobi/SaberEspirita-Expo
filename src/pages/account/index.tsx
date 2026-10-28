@@ -4,8 +4,6 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import {
-  Bell,
-  BellRing,
   FileText,
   HelpCircle,
   Instagram,
@@ -221,31 +219,6 @@ export function AccountScreen() {
               </SettingsSection>
             );
 
-            const notificationsSection = (
-              <SettingsSection title="Notificações">
-                <SettingsItem
-                  icon={Bell}
-                  title="Atualizações do App"
-                  subtitle="Receba notificações sobre novas versões"
-                  isSwitch
-                  switchValue={preferences.appUpdateNotifications}
-                  onSwitchChange={preferences.setAppUpdateNotifications}
-                  showDivider
-                  isFirst
-                />
-                <SettingsItem
-                  icon={BellRing}
-                  title="Notificações de Curso"
-                  subtitle="Lembretes sobre seus cursos em andamento"
-                  isSwitch
-                  switchValue={preferences.courseNotifications}
-                  onSwitchChange={preferences.setCourseNotifications}
-                  showDivider
-                  isLast
-                />
-              </SettingsSection>
-            );
-
             const supportSection = (
               <SettingsSection title="Suporte">
                 <SettingsItem
@@ -410,9 +383,8 @@ export function AccountScreen() {
 
                     {/* Coluna da Direita (~68%) */}
                     <View style={styles.tabletRightColumn}>
-                      {/* Preferências e Notificações (altura combinada alinha perfeitamente com ProfileCard) */}
+                      {/* Preferências (altura alinha perfeitamente com ProfileCard) */}
                       {preferencesSection}
-                      {notificationsSection}
 
                       {/* Linha Central: Suporte em largura total */}
                       {supportSection}
@@ -438,7 +410,6 @@ export function AccountScreen() {
                   }
                 />
                 {preferencesSection}
-                {notificationsSection}
                 {supportSection}
                 {legalSection}
                 {actionsSection}

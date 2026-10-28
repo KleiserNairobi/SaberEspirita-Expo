@@ -45,7 +45,7 @@
     <key>HOT_UPDATER_CHANNEL</key>
     <string>production</string>
     <key>HOT_UPDATER_FINGERPRINT_HASH</key>
-    <string>6bb2d6832b56fbb16e4aaa173e6067bb235f7203</string>
+    <string>f6e190d66027b9c920fce2443f0fecfb6f43398a</string>
     <key>LSMinimumSystemVersion</key>
     <string>12.0</string>
     <key>LSRequiresIPhoneOS</key>
@@ -71,7 +71,6 @@
     <true/>
     <key>UIBackgroundModes</key>
     <array>
-      <string>remote-notification</string>
       <string>audio</string>
     </array>
     <key>UILaunchStoryboardName</key>

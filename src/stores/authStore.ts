@@ -1,10 +1,5 @@
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as AppleAuthentication from "expo-apple-authentication";
-import {
-  loginOneSignal,
-  logoutOneSignal,
-  syncOneSignalTags,
-} from "@/services/notifications/oneSignalService";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -12,7 +7,6 @@ import { UserProfileDTO, authApiService } from "@/services/api/authApiService";
 import * as Storage from "@/utils/Storage";
 import { getDeviceIdentifiers } from "@/utils/device";
 
-import { usePreferencesStore } from "./preferencesStore";
 import { useOnboardingStore } from "./onboardingStore";
 
 // Adapter MMKV para Zustand (mesmo padrão do themeStore)
@@ -178,19 +172,14 @@ export const useAuthStore = create<AuthState>()(
 
           set({ user: appUser, isGuest: false, loading: false });
 
-          // Sincronizar com OneSignal com segurança
-          loginOneSignal(appUser.uid);
-          const preferences = usePreferencesStore.getState();
-          syncOneSignalTags({
-            app_updates: preferences.appUpdateNotifications.toString(),
-            course_reminders: preferences.courseNotifications.toString(),
-          });
-
           // Sincronizar dados pendentes de onboarding com o backend se existirem
           try {
             useOnboardingStore.getState().syncPendingOnboardingWithBackend();
           } catch (onboardingError) {
-            console.warn("AuthStore: Erro ao sincronizar onboarding no login:", onboardingError);
+            console.warn(
+              "AuthStore: Erro ao sincronizar onboarding no login:",
+              onboardingError
+            );
           }
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
@@ -256,7 +245,10 @@ export const useAuthStore = create<AuthState>()(
           try {
             useOnboardingStore.getState().syncPendingOnboardingWithBackend();
           } catch (onboardingError) {
-            console.warn("AuthStore: Erro ao sincronizar onboarding após verificação de e-mail:", onboardingError);
+            console.warn(
+              "AuthStore: Erro ao sincronizar onboarding após verificação de e-mail:",
+              onboardingError
+            );
           }
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
@@ -307,24 +299,22 @@ export const useAuthStore = create<AuthState>()(
             res.email,
             res.displayName,
             true,
-            res.photoUrl || (res.user as any)?.photoURL || (res.user as any)?.photoUrl || photoUrl
+            res.photoUrl ||
+              (res.user as any)?.photoURL ||
+              (res.user as any)?.photoUrl ||
+              photoUrl
           );
 
           set({ user: appUser, isGuest: false, loading: false });
-
-          // Sincronizar com OneSignal com segurança
-          loginOneSignal(appUser.uid);
-          const preferences = usePreferencesStore.getState();
-          syncOneSignalTags({
-            app_updates: preferences.appUpdateNotifications.toString(),
-            course_reminders: preferences.courseNotifications.toString(),
-          });
 
           // Sincronizar dados pendentes de onboarding com o backend
           try {
             useOnboardingStore.getState().syncPendingOnboardingWithBackend();
           } catch (onboardingError) {
-            console.warn("AuthStore: Erro ao sincronizar onboarding no Google Sign-In:", onboardingError);
+            console.warn(
+              "AuthStore: Erro ao sincronizar onboarding no Google Sign-In:",
+              onboardingError
+            );
           }
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
@@ -376,19 +366,14 @@ export const useAuthStore = create<AuthState>()(
 
           set({ user: appUser, isGuest: false, loading: false });
 
-          // Sincronizar com OneSignal com segurança
-          loginOneSignal(appUser.uid);
-          const preferences = usePreferencesStore.getState();
-          syncOneSignalTags({
-            app_updates: preferences.appUpdateNotifications.toString(),
-            course_reminders: preferences.courseNotifications.toString(),
-          });
-
           // Sincronizar dados pendentes de onboarding com o backend
           try {
             useOnboardingStore.getState().syncPendingOnboardingWithBackend();
           } catch (onboardingError) {
-            console.warn("AuthStore: Erro ao sincronizar onboarding no Apple Sign-In:", onboardingError);
+            console.warn(
+              "AuthStore: Erro ao sincronizar onboarding no Apple Sign-In:",
+              onboardingError
+            );
           }
         } catch (error: any) {
           if (error.code === "ERR_REQUEST_CANCELED") {
@@ -421,8 +406,6 @@ export const useAuthStore = create<AuthState>()(
           try {
             await GoogleSignin.signOut();
           } catch {}
-
-          logoutOneSignal();
         } catch (error: any) {
           Storage.remove("jwt_token");
           Storage.remove("refresh_token");
@@ -476,13 +459,14 @@ export const useAuthStore = create<AuthState>()(
         set({ initialized: true, loading: false });
 
         if (user?.uid && !isGuest) {
-          loginOneSignal(user.uid);
-
           // Sincronizar dados pendentes de onboarding caso ainda não tenham sido persistidos
           try {
             useOnboardingStore.getState().syncPendingOnboardingWithBackend();
           } catch (onboardingError) {
-            console.warn("AuthStore: Erro ao sincronizar onboarding na restauração:", onboardingError);
+            console.warn(
+              "AuthStore: Erro ao sincronizar onboarding na restauração:",
+              onboardingError
+            );
           }
 
           const jwtToken = Storage.loadString("jwt_token");
@@ -518,7 +502,8 @@ export const useAuthStore = create<AuthState>()(
                 const updatedUser: AppUser = {
                   uid: profile.userId || profile.id || user.uid,
                   email: profile.email ?? user.email,
-                  displayName: profile.displayName ?? profile.userName ?? user.displayName,
+                  displayName:
+                    profile.displayName ?? profile.userName ?? user.displayName,
                   photoURL: profile.photoUrl ?? profile.photoURL ?? user.photoURL,
                   role: profile.role || user.role || "user",
                   isPremium: profile.isPremium ?? user.isPremium ?? false,
@@ -581,4 +566,3 @@ export function useIsPremium(): boolean {
   if (!user) return false;
   return Boolean(user.isPremium || user.role === "admin");
 }
-

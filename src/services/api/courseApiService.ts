@@ -79,6 +79,7 @@ export const courseApiService = {
    * Obtém a lista de cursos com suporte a filtros.
    */
   async getCourses(params?: GetCoursesParams): Promise<ICourse[]> {
+    /* Curso Nosso Lar em desenvolvimento (comentado para release)
     const mockNossoLarCourse: ICourse = {
       id: "nosso-lar-estudo-guiado",
       title: "Nosso Lar — Estudo Guiado",
@@ -105,6 +106,7 @@ export const courseApiService = {
         totalDurationMinutes: 65,
       },
     };
+    */
 
     try {
       const response = await apiClient.get<ICourse[]>("/courses", { params });
@@ -119,13 +121,9 @@ export const courseApiService = {
         certification: parseCertification(course.certification),
       }));
 
-      // Adiciona o curso mock de teste no catálogo se não existir
-      if (!list.some((c) => c.id === "nosso-lar-estudo-guiado")) {
-        list.push(mockNossoLarCourse);
-      }
       return list;
     } catch {
-      return [mockNossoLarCourse];
+      return [];
     }
   },
 
@@ -150,6 +148,7 @@ export const courseApiService = {
    */
   async getCourseById(courseId: string): Promise<ICourse | null> {
     if (!courseId) return null;
+    /* Mock do curso Nosso Lar comentado para release
     if (courseId === "nosso-lar-estudo-guiado") {
       return {
         id: "nosso-lar-estudo-guiado",
@@ -178,6 +177,7 @@ export const courseApiService = {
         },
       };
     }
+    */
     const response = await apiClient.get<any>(`/courses/${courseId}`);
     if (!response.data) return null;
 
