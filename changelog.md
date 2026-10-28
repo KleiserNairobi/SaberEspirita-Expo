@@ -2,6 +2,25 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.24] - 2026-10-28 (Build 61)
+
+### Adicionado / Aprimorado / Otimizado
+
+- **Splash Animada e Fluidez de Inicialização (`AnimatedSplashScreen`, `App`, `TabNavigator`)**:
+  - Implementada tela de abertura animada (`AnimatedSplashScreen`) com transição suave após o carregamento das fontes.
+  - Desacoplada a inicialização do motor de áudio (`setupTrackPlayer`) e removido o bloqueio de inicialização do `HotUpdater` (`updateStrategy: "appVersion"`), reduzindo drasticamente o tempo de boot (TTI) e prevenindo ANRs.
+  - Otimizada a rota inicial pós-onboarding para transição direta e fluida.
+- **Migração de Assets para WebP e Padronização de Imagens (`expo-image`, `assets/images`)**:
+  - Convertido todo o acervo de imagens estáticas (categorias de quiz, capas de meditação por dia da semana, estrelas de avaliação e placeholders) de PNG/JPEG para o formato **WebP**, reduzindo significativamente o tamanho do binário final.
+  - Aplicados placeholders dedicados para orientação horizontal (`imgPhH.webp`) e vertical (`imgPhV.webp`) e padronizado o uso do `expo-image` com cache nativo em memória e disco.
+  - Ajustada a margem de respiro (*safe zone*) do ícone adaptativo no Android.
+- **Otimização do Glossário e UI (`useGlossaryTerms`, `GlossaryCard`, `DailyWisdomCard`)**:
+  - Otimizada a indexação e filtragem de termos no Glossário Espírita para resposta instantânea na busca.
+  - Atualizado o ícone de expansão de leitura completa para `Maximize2` no card de Gotas de Sabedoria.
+- **Remoção do OneSignal e Arquitetura Nativa (`app.json`, `authStore`, `preferencesStore`, `AccountScreen`)**:
+  - Removida a dependência e o plugin nativo do `react-native-onesignal` das configurações de build (iOS/Android), stores e tela de Conta.
+  - Habilitada explicitamente a Nova Arquitetura (`newArchEnabled: true`) e consolidadas todas as evoluções das versões `2.0.23-ota.1` a `2.0.23-ota.4` (Fluxo de Acolhimento/Onboarding, Gotas de Sabedoria e Transparência Pedagógica) na base nativa.
+
 ## [2.0.23-ota.4] - 2026-10-26 (Hot-Update)
 
 ### Adicionado / Aprimorado
