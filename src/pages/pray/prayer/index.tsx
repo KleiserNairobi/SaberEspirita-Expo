@@ -178,18 +178,9 @@ export function PrayerScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Título e Metadados da Oração */}
+        {/* Título da Oração (Alinhado à esquerda) */}
         <View style={styles.header}>
           <Text style={styles.title}>{prayer.title}</Text>
-
-          {/* Metadata */}
-          {(prayer.author || prayer.source) && (
-            <View style={styles.metadata}>
-              {prayer.author && <Text style={styles.metadataText}>{prayer.author}</Text>}
-              {prayer.author && prayer.source && <View style={styles.divider} />}
-              {prayer.source && <Text style={styles.metadataText}>{prayer.source}</Text>}
-            </View>
-          )}
         </View>
 
         {/* Conteúdo */}
@@ -201,6 +192,15 @@ export function PrayerScreen() {
         >
           {prayer.content}
         </Text>
+
+        {/* Assinatura Literária ao Final com Travessão */}
+        {(prayer.author || prayer.source) && (
+          <View style={styles.signatureContainer}>
+            <Text style={styles.signatureText}>
+              — {[prayer.author, prayer.source].filter(Boolean).join(" • ")}
+            </Text>
+          </View>
+        )}
       </ScrollView>
 
       <View

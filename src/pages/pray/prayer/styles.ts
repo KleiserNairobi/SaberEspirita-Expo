@@ -13,13 +13,23 @@ export const createStyles = (theme: ITheme) =>
       paddingBottom: 200,
     },
     header: {
-      marginTop: theme.spacing.sm,
-      marginBottom: theme.spacing.lg,
+      marginTop: theme.spacing.md,
+      marginBottom: theme.spacing.md,
     },
     title: {
-      ...theme.readingText("xxxl", "bold"),
-      marginBottom: theme.spacing.sm,
-      textAlign: "center",
+      ...theme.readingText("xxl", "semibold"),
+      color: theme.colors.text,
+      textAlign: "left",
+    },
+    signatureContainer: {
+      marginTop: theme.spacing.xl,
+      alignItems: "flex-end",
+      paddingTop: theme.spacing.sm,
+    },
+    signatureText: {
+      ...theme.text("sm", "medium", theme.colors.textSecondary),
+      fontStyle: "italic",
+      textAlign: "right",
     },
     metadata: {
       flexDirection: "row",
