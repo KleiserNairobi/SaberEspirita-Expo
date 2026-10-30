@@ -143,6 +143,18 @@ export function ReflectionScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
+      {/* 1. Barra de Ações no Topo (Voltar à esquerda; Favoritar, Narrar, Compartilhar, Aa à direita) */}
+      <ReadingToolbar
+        onBack={handleGoBack}
+        onShare={handleShare}
+        onNarrate={handleNarrate}
+        isNarrating={isNarrating}
+        onPreferences={handleOpenPreferences}
+        showFavorite={true}
+        isFavorite={isFavorite(route.params.id)}
+        onFavorite={handleToggleFavorite}
+      />
+
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.scrollContent}
@@ -190,21 +202,6 @@ export function ReflectionScreen() {
               <Text style={styles.metadataText}>{topicLabel}</Text>
             </View>
           </View>
-
-          {/* Barra de Ações alinhada espacialmente e sem exceder a margem do texto */}
-          <ReadingToolbar
-            onBack={handleGoBack}
-            onShare={handleShare}
-            onNarrate={handleNarrate}
-            isNarrating={isNarrating}
-            onPreferences={handleOpenPreferences}
-            showFavorite={true}
-            isFavorite={isFavorite(route.params.id)}
-            onFavorite={handleToggleFavorite}
-          />
-
-          {/* Divisor */}
-          {/* <View style={styles.divider} /> */}
 
           {/* Conteúdo da reflexão */}
           <Text

@@ -161,12 +161,24 @@ export function PrayerScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
+      {/* 1. Barra de Ações no Topo (Voltar à esquerda; Favoritar, Narrar, Compartilhar, Aa à direita) */}
+      <ReadingToolbar
+        onBack={handleGoBack}
+        onShare={handleShare}
+        onNarrate={handleNarrate}
+        isNarrating={isNarrating}
+        onPreferences={handleOpenPreferences}
+        showFavorite={true}
+        isFavorite={isFav}
+        onFavorite={handleToggleFavorite}
+      />
+
       <ScrollView
         style={styles.safeArea}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
+        {/* Título e Metadados da Oração */}
         <View style={styles.header}>
           <Text style={styles.title}>{prayer.title}</Text>
 
@@ -179,18 +191,6 @@ export function PrayerScreen() {
             </View>
           )}
         </View>
-
-        {/* Barra de Ações */}
-        <ReadingToolbar
-          onBack={handleGoBack}
-          onShare={handleShare}
-          onNarrate={handleNarrate}
-          isNarrating={isNarrating}
-          onPreferences={handleOpenPreferences}
-          showFavorite={true}
-          isFavorite={isFav}
-          onFavorite={handleToggleFavorite}
-        />
 
         {/* Conteúdo */}
         <Text

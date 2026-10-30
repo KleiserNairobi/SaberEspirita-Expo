@@ -627,13 +627,7 @@ export function LessonPlayerScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          {lesson.title}
-        </Text>
-      </View>
-
+      {/* 1. Barra de Ações no Topo (Voltar à esquerda; Narrar, Compartilhar, Aa à direita) */}
       <ReadingToolbar
         onBack={handleGoBack}
         onShare={handleShare}
@@ -643,7 +637,14 @@ export function LessonPlayerScreen() {
         showFavorite={false}
       />
 
-      {/* Carrossel de Slides */}
+      {/* 2. Título da Aula abaixo da barra de ações */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle} numberOfLines={1}>
+          {lesson.title}
+        </Text>
+      </View>
+
+      {/* 3. Carrossel de Slides */}
       <FlatList
         ref={flatListRef}
         data={lesson.slides}

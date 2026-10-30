@@ -126,12 +126,24 @@ export function TermDetailScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
+      {/* 1. Barra de Ações no Topo (Voltar à esquerda; Favoritar, Narrar, Compartilhar, Aa à direita) */}
+      <ReadingToolbar
+        onBack={handleGoBack}
+        onShare={handleShare}
+        onNarrate={handleNarrate}
+        isNarrating={isNarrating}
+        onPreferences={handleOpenPreferences}
+        showFavorite={true}
+        isFavorite={isFavorite}
+        onFavorite={handleToggleFavorite}
+      />
+
       <ScrollView
         style={styles.safeArea}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
+        {/* Título e Categoria do Termo */}
         <View style={styles.header}>
           <Text style={styles.title}>{term.term}</Text>
 
@@ -142,18 +154,6 @@ export function TermDetailScreen() {
             <Text style={styles.metadataText}>{term.category}</Text>
           </View>
         </View>
-
-        {/* Barra de Ações Reutilizável */}
-        <ReadingToolbar
-          onBack={handleGoBack}
-          onShare={handleShare}
-          onNarrate={handleNarrate}
-          isNarrating={isNarrating}
-          onPreferences={handleOpenPreferences}
-          showFavorite={true}
-          isFavorite={isFavorite}
-          onFavorite={handleToggleFavorite}
-        />
 
         {/* Definição */}
         <View style={styles.section}>

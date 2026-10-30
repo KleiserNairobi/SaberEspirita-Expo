@@ -9,17 +9,15 @@ export const createStyles = (theme: ITheme) =>
       backgroundColor: theme.colors.background,
     },
     header: {
-      flexDirection: "row",
+      paddingHorizontal: theme.spacing.md,
+      paddingTop: theme.spacing.xs,
+      paddingBottom: theme.spacing.sm,
       alignItems: "center",
       justifyContent: "center",
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.sm,
-      borderBottomWidth: 1,
-      borderBottomColor: `${theme.colors.border}50`,
     },
     headerTitle: {
-      ...theme.text("md", "medium"),
-      color: theme.colors.textSecondary,
+      ...theme.text("md", "semibold"),
+      color: theme.colors.text,
       textAlign: "center",
     },
     content: {

@@ -6,7 +6,7 @@ import {
   VolumeX,
 } from "lucide-react-native";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 
 import { ITheme } from "@/configs/theme/types";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -30,6 +30,9 @@ export interface ReadingToolbarProps {
   showFavorite?: boolean;
   isFavorite?: boolean;
   onFavorite?: () => void;
+
+  // Estilo customizado do container
+  style?: ViewStyle;
 }
 
 export function ReadingToolbar({
@@ -42,6 +45,7 @@ export function ReadingToolbar({
   showFavorite = true,
   isFavorite = false,
   onFavorite,
+  style,
 }: ReadingToolbarProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -49,8 +53,8 @@ export function ReadingToolbar({
   const handlePreferencesPress = onPreferences || onIncreaseFontSize;
 
   return (
-    <View style={styles.container}>
-      {/* Voltar */}
+    <View style={[styles.container, style]}>
+      {/* Botão Voltar (Esquerda) */}
       <TouchableOpacity
         style={styles.actionButton}
         onPress={onBack}
@@ -60,60 +64,63 @@ export function ReadingToolbar({
         <ArrowLeft size={20} color={theme.colors.primary} />
       </TouchableOpacity>
 
-      {/* Favorito (Opcional) */}
-      {showFavorite && onFavorite && (
+      {/* Cluster de Ações (Direita) */}
+      <View style={styles.actionsGroup}>
+        {/* Favorito (Opcional) */}
+        {showFavorite && onFavorite && (
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={onFavorite}
+            activeOpacity={0.7}
+            accessibilityLabel={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          >
+            <Heart
+              size={20}
+              color={theme.colors.primary}
+              fill={isFavorite ? theme.colors.primary : "transparent"}
+            />
+          </TouchableOpacity>
+        )}
+
+        {/* Narrar */}
+        <TouchableOpacity
+          style={[
+            styles.actionButton,
+            isNarrating && styles.actionButtonActive,
+          ]}
+          onPress={onNarrate}
+          activeOpacity={0.7}
+          accessibilityLabel={isNarrating ? "Pausar Narração" : "Iniciar Narração"}
+        >
+          {isNarrating ? (
+            <VolumeX size={20} color={theme.colors.onPrimary} />
+          ) : (
+            <Volume2 size={20} color={theme.colors.primary} />
+          )}
+        </TouchableOpacity>
+
+        {/* Compartilhar */}
         <TouchableOpacity
           style={styles.actionButton}
-          onPress={onFavorite}
+          onPress={onShare}
           activeOpacity={0.7}
-          accessibilityLabel="Favoritar"
+          accessibilityLabel="Compartilhar"
         >
-          <Heart
-            size={20}
-            color={theme.colors.primary}
-            fill={isFavorite ? theme.colors.primary : "transparent"}
-          />
+          <Share2 size={20} color={theme.colors.primary} />
         </TouchableOpacity>
-      )}
 
-      {/* Narrar */}
-      <TouchableOpacity
-        style={[
-          styles.actionButton,
-          isNarrating && { backgroundColor: theme.colors.primary },
-        ]}
-        onPress={onNarrate}
-        activeOpacity={0.7}
-        accessibilityLabel={isNarrating ? "Pausar Narração" : "Iniciar Narração"}
-      >
-        {isNarrating ? (
-          <VolumeX size={20} color={theme.colors.onPrimary} />
-        ) : (
-          <Volume2 size={20} color={theme.colors.primary} />
+        {/* Botão Unificado Aa (Preferências de Leitura) */}
+        {handlePreferencesPress && (
+          <TouchableOpacity
+            style={styles.preferencesButton}
+            onPress={handlePreferencesPress}
+            activeOpacity={0.7}
+            accessibilityLabel="Preferências de Leitura (Aa)"
+          >
+            <Text style={styles.preferencesButtonText}>Aa</Text>
+          </TouchableOpacity>
         )}
-      </TouchableOpacity>
-
-      {/* Compartilhar */}
-      <TouchableOpacity
-        style={styles.actionButton}
-        onPress={onShare}
-        activeOpacity={0.7}
-        accessibilityLabel="Compartilhar"
-      >
-        <Share2 size={20} color={theme.colors.primary} />
-      </TouchableOpacity>
-
-      {/* Botão Unificado Aa (Preferências de Leitura) */}
-      {handlePreferencesPress && (
-        <TouchableOpacity
-          style={styles.preferencesButton}
-          onPress={handlePreferencesPress}
-          activeOpacity={0.7}
-          accessibilityLabel="Preferências de Leitura (Aa)"
-        >
-          <Text style={styles.preferencesButtonText}>Aa</Text>
-        </TouchableOpacity>
-      )}
+      </View>
     </View>
   );
 }
@@ -123,9 +130,15 @@ const createStyles = (theme: ITheme) =>
     container: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "space-around",
-      paddingVertical: theme.spacing.md,
+      justifyContent: "space-between",
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
       backgroundColor: theme.colors.background,
+    },
+    actionsGroup: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.xs + 2,
     },
     actionButton: {
       width: 40,
@@ -134,6 +147,9 @@ const createStyles = (theme: ITheme) =>
       backgroundColor: `${theme.colors.primary}15`,
       justifyContent: "center",
       alignItems: "center",
+    },
+    actionButtonActive: {
+      backgroundColor: theme.colors.primary,
     },
     preferencesButton: {
       width: 40,

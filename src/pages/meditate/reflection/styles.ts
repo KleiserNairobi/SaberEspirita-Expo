@@ -15,8 +15,8 @@ export const createStyles = (theme: ITheme) =>
       paddingBottom: 150,
     },
     header: {
-      marginTop: theme.spacing.xxl,
-      marginBottom: theme.spacing.md,
+      marginTop: theme.spacing.sm,
+      marginBottom: theme.spacing.lg,
     },
     title: {
       ...theme.readingText("xxxl", "bold"),
