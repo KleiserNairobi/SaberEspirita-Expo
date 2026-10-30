@@ -65,6 +65,9 @@ export const LightTheme: ITheme = {
       bold: "Barlow_700Bold",
       italic: "Barlow_400Regular_Italic",
     },
+    literary: {
+      italic: "Baskervville_400Regular_Italic",
+    },
     sizes: {
       xs: 12,
       sm: 14,
@@ -106,6 +109,12 @@ export const LightTheme: ITheme = {
   readingText: (size, weight = "regular", color, lineHeight) => ({
     fontSize: typeof size === "number" ? size : LightTheme.typography.sizes[size],
     fontFamily: LightTheme.typography.reading[weight],
+    color: color || LightTheme.colors.text,
+    lineHeight,
+  }),
+  literaryText: (size, color, lineHeight) => ({
+    fontSize: typeof size === "number" ? size : LightTheme.typography.sizes[size],
+    fontFamily: LightTheme.typography.literary.italic,
     color: color || LightTheme.colors.text,
     lineHeight,
   }),

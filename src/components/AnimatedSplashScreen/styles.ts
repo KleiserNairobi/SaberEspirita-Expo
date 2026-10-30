@@ -28,10 +28,8 @@ export function createStyles(theme: ITheme) {
       lineHeight: 58,
     },
     motto: {
-      fontFamily: "Baskervville_400Regular_Italic",
-      fontSize: 16,
+      ...theme.literaryText(16, theme.colors.textSecondary),
       textAlign: "center",
-      color: theme.colors.textSecondary,
       marginTop: theme.spacing.xs,
       letterSpacing: 0.3,
       paddingHorizontal: theme.spacing.md,

@@ -53,6 +53,9 @@ export const DarkTheme: ITheme = {
       bold: "Barlow_700Bold",
       italic: "Barlow_400Regular_Italic",
     },
+    literary: {
+      italic: "Baskervville_400Regular_Italic",
+    },
     sizes: {
       xs: 12,
       sm: 14,
@@ -94,6 +97,12 @@ export const DarkTheme: ITheme = {
   readingText: (size, weight = "regular", color, lineHeight) => ({
     fontSize: typeof size === "number" ? size : DarkTheme.typography.sizes[size],
     fontFamily: DarkTheme.typography.reading[weight],
+    color: color || DarkTheme.colors.text,
+    lineHeight,
+  }),
+  literaryText: (size, color, lineHeight) => ({
+    fontSize: typeof size === "number" ? size : DarkTheme.typography.sizes[size],
+    fontFamily: DarkTheme.typography.literary.italic,
     color: color || DarkTheme.colors.text,
     lineHeight,
   }),

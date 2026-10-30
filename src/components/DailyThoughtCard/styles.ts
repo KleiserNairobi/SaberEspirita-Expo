@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 import { ITheme } from "@/configs/theme/types";
 
-export const createStyles = (_theme: ITheme) =>
+export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
       marginHorizontal: 20,
@@ -45,9 +45,7 @@ export const createStyles = (_theme: ITheme) =>
       borderColor: "rgba(255, 255, 255, 0.3)",
     },
     quote: {
-      fontFamily: "Baskervville_400Regular_Italic",
-      fontSize: 18,
-      color: "#fff",
+      ...theme.literaryText(18, "#FFFFFF"),
       textAlign: "left",
       marginBottom: 10,
     },

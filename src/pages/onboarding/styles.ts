@@ -83,9 +83,7 @@ export const createStyles = (theme: ITheme) =>
       elevation: 0,
     },
     quoteText: {
-      ...theme.text("sm", "regular", theme.colors.text),
-      fontFamily: "Baskervville_400Regular_Italic",
-      lineHeight: 20,
+      ...theme.literaryText("sm", theme.colors.text, 20),
       marginBottom: theme.spacing.xs,
     },
     quoteAuthor: {

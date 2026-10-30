@@ -66,10 +66,7 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.md,
     },
     openingQuoteText: {
-      fontFamily: "Baskervville_400Regular_Italic",
-      fontSize: 16,
-      lineHeight: 24,
-      color: theme.colors.text,
+      ...theme.literaryText(16, theme.colors.text, 24),
     },
     bodyContainer: {
       paddingTop: theme.spacing.xs,

@@ -54,6 +54,9 @@ export type ThemeTypography = {
     bold: string;
     italic: string;
   };
+  literary: {
+    italic: string;
+  };
   sizes: {
     xs: number;
     sm: number;
@@ -88,6 +91,13 @@ export interface ITheme {
   readingText: (
     size: keyof ThemeTypography["sizes"] | number,
     weight?: keyof ThemeTypography["reading"],
+    color?: string,
+    lineHeight?: number
+  ) => TextStyle;
+
+  // Helper function para criar estilos literários/citações/assinaturas (Baskervville Italic)
+  literaryText: (
+    size: keyof ThemeTypography["sizes"] | number,
     color?: string,
     lineHeight?: number
   ) => TextStyle;

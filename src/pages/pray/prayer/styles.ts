@@ -28,15 +28,11 @@ export const createStyles = (theme: ITheme) =>
       gap: 3,
     },
     signatureAuthor: {
-      fontFamily: "Baskervville_400Regular_Italic",
-      fontSize: 15,
-      color: theme.colors.textSecondary,
+      ...theme.literaryText(15, theme.colors.textSecondary),
       textAlign: "left",
     },
     signatureSource: {
-      fontFamily: "Baskervville_400Regular_Italic",
-      fontSize: 13,
-      color: theme.colors.textSecondary,
+      ...theme.literaryText(13, theme.colors.textSecondary),
       opacity: 0.85,
       textAlign: "left",
     },

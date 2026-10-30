@@ -78,10 +78,7 @@ export const createStyles = (theme: ITheme) =>
       borderLeftColor: theme.colors.primary,
     },
     quoteText: {
-      fontFamily: "Baskervville_400Regular_Italic",
-      fontSize: 15,
-      lineHeight: 22,
-      color: theme.colors.text,
+      ...theme.literaryText(15, theme.colors.text, 22),
     },
     contentSnippet: {
       ...theme.text("md", "regular", theme.colors.text),
