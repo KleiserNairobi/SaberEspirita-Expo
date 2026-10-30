@@ -23,7 +23,7 @@ export const createStyles = (theme: ITheme) =>
     },
     signatureContainer: {
       marginTop: theme.spacing.xl,
-      alignItems: "flex-end",
+      alignItems: "flex-start",
       paddingTop: theme.spacing.sm,
       gap: 3,
     },
@@ -31,13 +31,14 @@ export const createStyles = (theme: ITheme) =>
       fontFamily: "Baskervville_400Regular_Italic",
       fontSize: 15,
       color: theme.colors.textSecondary,
-      textAlign: "right",
+      textAlign: "left",
     },
     signatureSource: {
       fontFamily: "Baskervville_400Regular_Italic",
       fontSize: 13,
-      color: theme.colors.muted,
-      textAlign: "right",
+      color: theme.colors.textSecondary,
+      opacity: 0.85,
+      textAlign: "left",
     },
     metadata: {
       flexDirection: "row",

@@ -2,7 +2,6 @@ import React, { useCallback, useRef, useState } from "react";
 
 import {
   ActivityIndicator,
-  Dimensions,
   FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -24,8 +23,8 @@ import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types"
 import { CommunityLevelUpModal } from "@/components/CommunityLevelUpModal";
 import { PremiumContentNoticeModal } from "@/components/PremiumContentNoticeModal";
 import { RateAppBottomSheet } from "@/components/RateAppBottomSheet";
-import { ReadingToolbar } from "@/components/ReadingToolbar";
 import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
+import { ReadingToolbar } from "@/components/ReadingToolbar";
 import {
   COURSE_PROGRESS_KEYS,
   useCourseProgress,
@@ -36,8 +35,8 @@ import { useExercises } from "@/hooks/queries/useExercises";
 import { useForumHasNewComments } from "@/hooks/queries/useLessonForum";
 import { LESSONS_KEYS, useLesson, useLessons } from "@/hooks/queries/useLessons";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 import { useRateApp } from "@/hooks/useRateApp";
+import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
 import { AppStackParamList } from "@/routers/types";
 import { forumApiService } from "@/services/api/forumApiService";
 import { glossaryApiService } from "@/services/api/glossaryApiService";
@@ -88,7 +87,7 @@ export function LessonPlayerScreen() {
   const [matchedGlossaryWord, setMatchedGlossaryWord] = useState<string | undefined>();
 
   // Controle de Fonte e Preferências de Leitura
-  const { getFontSize } = useReaderPreferencesStore();
+  const { getFontSize, getTitleSize } = useReaderPreferencesStore();
   const readerPreferencesRef = useRef<BottomSheetModal>(null);
 
   const handleOpenPreferences = useCallback(() => {
@@ -637,9 +636,12 @@ export function LessonPlayerScreen() {
         showFavorite={false}
       />
 
-      {/* 2. Título da Aula abaixo da barra de ações */}
+      {/* 2. Título da Aula abaixo da barra de ações (Escalável) */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle} numberOfLines={1}>
+        <Text
+          style={[styles.headerTitle, { fontSize: getTitleSize() - 4 }]}
+          numberOfLines={1}
+        >
           {lesson.title}
         </Text>
       </View>

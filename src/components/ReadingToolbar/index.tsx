@@ -1,12 +1,8 @@
-import {
-  ArrowLeft,
-  Heart,
-  Share2,
-  Volume2,
-  VolumeX,
-} from "lucide-react-native";
 import React from "react";
+
 import { StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
+
+import { ArrowLeft, Heart, Share2, Volume2, VolumeX } from "lucide-react-native";
 
 import { ITheme } from "@/configs/theme/types";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -72,7 +68,9 @@ export function ReadingToolbar({
             style={styles.actionButton}
             onPress={onFavorite}
             activeOpacity={0.7}
-            accessibilityLabel={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+            accessibilityLabel={
+              isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"
+            }
           >
             <Heart
               size={20}
@@ -84,10 +82,7 @@ export function ReadingToolbar({
 
         {/* Narrar */}
         <TouchableOpacity
-          style={[
-            styles.actionButton,
-            isNarrating && styles.actionButtonActive,
-          ]}
+          style={[styles.actionButton, isNarrating && styles.actionButtonActive]}
           onPress={onNarrate}
           activeOpacity={0.7}
           accessibilityLabel={isNarrating ? "Pausar Narração" : "Iniciar Narração"}

@@ -2,15 +2,15 @@ import React, { useRef, useState } from "react";
 
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery } from "@tanstack/react-query";
 import { BookOpen, Clock, Tag, User } from "lucide-react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { ReadingToolbar } from "@/components/ReadingToolbar";
 import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { ReadingToolbar } from "@/components/ReadingToolbar";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { MeditateStackParamList } from "@/routers/types";
 import { reflectionApiService } from "@/services/api/reflectionApiService";
@@ -34,7 +34,12 @@ export function ReflectionScreen() {
   const [isNarrating, setIsNarrating] = useState(false);
   const hasLogged = useRef(false);
 
-  const { getFontSize, getLineHeight } = useReaderPreferencesStore();
+  const {
+    getFontSize,
+    getLineHeight,
+    getScreenTitleSize,
+    getMetadataSize,
+  } = useReaderPreferencesStore();
   const readerPreferencesRef = useRef<BottomSheetModal>(null);
 
   const handleOpenPreferences = () => {
@@ -160,11 +165,31 @@ export function ReflectionScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header (Título e Subtítulo) */}
+        {/* Header (Título e Subtítulo escaláveis) */}
         <View style={styles.header}>
-          <Text style={styles.title}>{reflection.title}</Text>
+          <Text
+            style={[
+              styles.title,
+              {
+                fontSize: getScreenTitleSize(),
+                lineHeight: Math.round(getScreenTitleSize() * 1.25),
+              },
+            ]}
+          >
+            {reflection.title}
+          </Text>
           {reflection.subtitle && (
-            <Text style={styles.subtitle}>{reflection.subtitle}</Text>
+            <Text
+              style={[
+                styles.subtitle,
+                {
+                  fontSize: getFontSize(),
+                  lineHeight: Math.round(getFontSize() * 1.3),
+                },
+              ]}
+            >
+              {reflection.subtitle}
+            </Text>
           )}
         </View>
 
@@ -176,7 +201,14 @@ export function ReflectionScreen() {
             {reflection.source && (
               <View style={styles.metadataItem}>
                 <BookOpen size={16} color={theme.colors.muted} />
-                <Text style={styles.metadataText}>{reflection.source}</Text>
+                <Text
+                  style={[
+                    styles.metadataText,
+                    { fontSize: getMetadataSize() },
+                  ]}
+                >
+                  {reflection.source}
+                </Text>
               </View>
             )}
 
@@ -184,14 +216,26 @@ export function ReflectionScreen() {
             {reflection.author && (
               <View style={styles.metadataItem}>
                 <User size={16} color={theme.colors.muted} />
-                <Text style={styles.metadataText}>{reflection.author}</Text>
+                <Text
+                  style={[
+                    styles.metadataText,
+                    { fontSize: getMetadataSize() },
+                  ]}
+                >
+                  {reflection.author}
+                </Text>
               </View>
             )}
 
             {/* 3. Tempo de leitura */}
             <View style={styles.metadataItem}>
               <Clock size={16} color={theme.colors.muted} />
-              <Text style={styles.metadataText}>
+              <Text
+                style={[
+                  styles.metadataText,
+                  { fontSize: getMetadataSize() },
+                ]}
+              >
                 {reflection.readingTimeMinutes} min de leitura
               </Text>
             </View>
@@ -199,7 +243,14 @@ export function ReflectionScreen() {
             {/* 4. Tópico / Categoria */}
             <View style={styles.metadataItem}>
               <Tag size={16} color={theme.colors.muted} />
-              <Text style={styles.metadataText}>{topicLabel}</Text>
+              <Text
+                style={[
+                  styles.metadataText,
+                  { fontSize: getMetadataSize() },
+                ]}
+              >
+                {topicLabel}
+              </Text>
             </View>
           </View>
 
@@ -241,4 +292,3 @@ export function ReflectionScreen() {
     </SafeAreaView>
   );
 }
-

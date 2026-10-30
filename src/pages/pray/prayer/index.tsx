@@ -43,7 +43,13 @@ export function PrayerScreen() {
 
   const { data: prayer, isLoading } = usePrayer(id);
   const { isFavorite, toggleFavorite } = usePrayerFavoritesStore();
-  const { getFontSize, getLineHeight } = useReaderPreferencesStore();
+  const {
+    getFontSize,
+    getLineHeight,
+    getScreenTitleSize,
+    getAuthorSize,
+    getSourceSize,
+  } = useReaderPreferencesStore();
   const readerPreferencesRef = useRef<BottomSheetModal>(null);
 
   const handleOpenPreferences = useCallback(() => {
@@ -178,9 +184,19 @@ export function PrayerScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Título da Oração (Alinhado à esquerda) */}
+        {/* Título da Oração (Alinhado à esquerda e escalável com Aa) */}
         <View style={styles.header}>
-          <Text style={styles.title}>{prayer.title}</Text>
+          <Text
+            style={[
+              styles.title,
+              {
+                fontSize: getScreenTitleSize(),
+                lineHeight: Math.round(getScreenTitleSize() * 1.25),
+              },
+            ]}
+          >
+            {prayer.title}
+          </Text>
         </View>
 
         {/* Conteúdo */}
@@ -193,14 +209,34 @@ export function PrayerScreen() {
           {prayer.content}
         </Text>
 
-        {/* Assinatura Literária ao Final (Sem travessão, com quebra de linha em Baskervville Italic) */}
+        {/* Assinatura Literária ao Final (Sem travessão, com quebra de linha em Baskervville Italic escalável) */}
         {(prayer.author || prayer.source) && (
           <View style={styles.signatureContainer}>
             {prayer.author ? (
-              <Text style={styles.signatureAuthor}>{prayer.author}</Text>
+              <Text
+                style={[
+                  styles.signatureAuthor,
+                  {
+                    fontSize: getAuthorSize(),
+                    lineHeight: Math.round(getAuthorSize() * 1.35),
+                  },
+                ]}
+              >
+                {prayer.author}
+              </Text>
             ) : null}
             {prayer.source ? (
-              <Text style={styles.signatureSource}>{prayer.source}</Text>
+              <Text
+                style={[
+                  styles.signatureSource,
+                  {
+                    fontSize: getSourceSize(),
+                    lineHeight: Math.round(getSourceSize() * 1.35),
+                  },
+                ]}
+              >
+                {prayer.source}
+              </Text>
             ) : null}
           </View>
         )}

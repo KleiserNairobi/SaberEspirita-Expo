@@ -1,31 +1,33 @@
 import React, { useState } from "react";
+
 import {
   ActivityIndicator,
   Alert,
   ScrollView,
+  Share,
   Text,
   TouchableOpacity,
   View,
-  Share,
 } from "react-native";
+
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { MessageCircle } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { GlossaryStackParamList } from "@/routers/types";
-import { MessageCircle } from "lucide-react-native";
-
+import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
+import { ReadingToolbar } from "@/components/ReadingToolbar";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { GlossaryStackParamList } from "@/routers/types";
 import { useGlossaryFavoritesStore } from "@/stores/glossaryFavoritesStore";
 import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
-import { useGlossaryTerm } from "../hooks/useGlossaryTerms";
 import { GLOSSARY_CATEGORIES } from "@/types/glossary";
-import { createStyles } from "./styles";
-import { speakText, stopSpeaking, isSpeaking } from "@/utils/textToSpeech";
-import { ReadingToolbar } from "@/components/ReadingToolbar";
-import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { SHARE_FOOTER } from "@/utils/constants";
+import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
+
+import { useGlossaryTerm } from "../hooks/useGlossaryTerms";
+import { createStyles } from "./styles";
 
 export function TermDetailScreen() {
   const { theme } = useAppTheme();
@@ -39,7 +41,13 @@ export function TermDetailScreen() {
   const { data: term, isLoading } = useGlossaryTerm(id);
   const isFavorite = useGlossaryFavoritesStore((s) => s.isFavorite(id));
   const toggleFavorite = useGlossaryFavoritesStore((s) => s.toggleFavorite);
-  const { getFontSize, getLineHeight } = useReaderPreferencesStore();
+  const {
+    getFontSize,
+    getLineHeight,
+    getScreenTitleSize,
+    getTitleSize,
+    getMetadataSize,
+  } = useReaderPreferencesStore();
   const readerPreferencesRef = React.useRef<BottomSheetModal>(null);
 
   const handleOpenPreferences = () => {
@@ -143,21 +151,40 @@ export function TermDetailScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Título e Categoria do Termo */}
+        {/* Título e Categoria do Termo (Escaláveis) */}
         <View style={styles.header}>
-          <Text style={styles.title}>{term.term}</Text>
+          <Text
+            style={[
+              styles.title,
+              {
+                fontSize: getScreenTitleSize(),
+                lineHeight: Math.round(getScreenTitleSize() * 1.25),
+              },
+            ]}
+          >
+            {term.term}
+          </Text>
 
           {/* Metadata */}
           <View style={styles.metadata}>
             <CategoryIcon size={14} color={theme.colors.textSecondary} strokeWidth={2} />
             <View style={styles.divider} />
-            <Text style={styles.metadataText}>{term.category}</Text>
+            <Text
+              style={[
+                styles.metadataText,
+                { fontSize: getMetadataSize() },
+              ]}
+            >
+              {term.category}
+            </Text>
           </View>
         </View>
 
         {/* Definição */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Definição</Text>
+          <Text style={[styles.sectionTitle, { fontSize: getTitleSize() }]}>
+            Definição
+          </Text>
           <Text
             style={[
               styles.content,
