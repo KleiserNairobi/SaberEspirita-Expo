@@ -193,12 +193,15 @@ export function PrayerScreen() {
           {prayer.content}
         </Text>
 
-        {/* Assinatura Literária ao Final com Travessão */}
+        {/* Assinatura Literária ao Final (Sem travessão, com quebra de linha em Baskervville Italic) */}
         {(prayer.author || prayer.source) && (
           <View style={styles.signatureContainer}>
-            <Text style={styles.signatureText}>
-              — {[prayer.author, prayer.source].filter(Boolean).join(" • ")}
-            </Text>
+            {prayer.author ? (
+              <Text style={styles.signatureAuthor}>{prayer.author}</Text>
+            ) : null}
+            {prayer.source ? (
+              <Text style={styles.signatureSource}>{prayer.source}</Text>
+            ) : null}
           </View>
         )}
       </ScrollView>

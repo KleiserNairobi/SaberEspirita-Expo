@@ -25,10 +25,18 @@ export const createStyles = (theme: ITheme) =>
       marginTop: theme.spacing.xl,
       alignItems: "flex-end",
       paddingTop: theme.spacing.sm,
+      gap: 3,
     },
-    signatureText: {
-      ...theme.text("sm", "medium", theme.colors.textSecondary),
-      fontStyle: "italic",
+    signatureAuthor: {
+      fontFamily: "Baskervville_400Regular_Italic",
+      fontSize: 15,
+      color: theme.colors.textSecondary,
+      textAlign: "right",
+    },
+    signatureSource: {
+      fontFamily: "Baskervville_400Regular_Italic",
+      fontSize: 13,
+      color: theme.colors.muted,
       textAlign: "right",
     },
     metadata: {
