@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { InteractionManager, StyleSheet, View } from "react-native";
 
@@ -53,7 +53,7 @@ import { useAuthStore } from "./src/stores/authStore";
 SplashScreen.preventAutoHideAsync();
 
 // React Query Cache Buster (usado para rastreamento de compatibilidade de cache em deploys OTA)
-const cacheConfig = { buster: "2026-10-28-v2.0.24" };
+const cacheConfig = { buster: "2026-10-30-v2.0.24-ota.1" };
 
 // Criar QueryClient fora do componente para evitar recriação
 const queryClient = new QueryClient({
@@ -98,6 +98,9 @@ function useCheckUpdate(appIsReady: boolean) {
 
 function App() {
   const [showAnimatedSplash, setShowAnimatedSplash] = useState(true);
+  const handleSplashFinish = useCallback(() => {
+    setShowAnimatedSplash(false);
+  }, []);
 
   const [fontsLoaded] = useFonts({
     Allura_400Regular,
@@ -182,7 +185,7 @@ function App() {
       {showAnimatedSplash && (
         <AnimatedSplashScreen
           isReady={appIsReady}
-          onFinish={() => setShowAnimatedSplash(false)}
+          onFinish={handleSplashFinish}
         />
       )}
     </View>

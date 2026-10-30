@@ -24,6 +24,15 @@ export function AnimatedSplashScreen({ isReady, onFinish }: AnimatedSplashScreen
 
   const mountTimestampRef = useRef(Date.now());
   const hasTriggeredExitRef = useRef(false);
+  const hasCalledFinishRef = useRef(false);
+  const onFinishRef = useRef(onFinish);
+  onFinishRef.current = onFinish;
+
+  const triggerFinishOnce = () => {
+    if (hasCalledFinishRef.current) return;
+    hasCalledFinishRef.current = true;
+    onFinishRef.current();
+  };
 
   // Valores compartilhados para animações
   const containerOpacity = useSharedValue(1);
@@ -84,9 +93,16 @@ export function AnimatedSplashScreen({ isReady, onFinish }: AnimatedSplashScreen
     const elapsed = Date.now() - mountTimestampRef.current;
     const remainingDelay = Math.max(0, MINIMUM_DISPLAY_TIME_MS - elapsed);
 
+    let fallbackTimer: ReturnType<typeof setTimeout> | undefined;
+
     const timer = setTimeout(() => {
       if (hasTriggeredExitRef.current) return;
       hasTriggeredExitRef.current = true;
+
+      // Fallback de segurança caso animações estejam reduzidas/desativadas no SO
+      fallbackTimer = setTimeout(() => {
+        triggerFinishOnce();
+      }, 450);
 
       // Animação suave de saída (fade-out cinematográfico com leve expansão)
       containerScale.value = withTiming(1.03, {
@@ -100,16 +116,17 @@ export function AnimatedSplashScreen({ isReady, onFinish }: AnimatedSplashScreen
           duration: 380,
           easing: Easing.out(Easing.cubic),
         },
-        (finished) => {
-          if (finished) {
-            runOnJS(onFinish)();
-          }
+        () => {
+          runOnJS(triggerFinishOnce)();
         }
       );
     }, remainingDelay);
 
-    return () => clearTimeout(timer);
-  }, [isReady, onFinish]);
+    return () => {
+      clearTimeout(timer);
+      if (fallbackTimer) clearTimeout(fallbackTimer);
+    };
+  }, [isReady]);
 
   const animatedContainerStyle = useAnimatedStyle(() => ({
     opacity: containerOpacity.value,

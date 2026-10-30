@@ -12,10 +12,13 @@ const PRODUCTION_FINGERPRINTS = {
 };
 
 function uuidv7() {
+  if (crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
   const now = Date.now();
   const bytes = crypto.randomBytes(16);
   bytes.writeUIntBE(Math.floor(now / 0x100000000), 0, 2);
-  bytes.writeUInt32BE(now & 0xffffffff, 2);
+  bytes.writeUInt32BE(now >>> 0, 2);
   bytes[6] = (bytes[6] & 0x0f) | 0x70;
   bytes[8] = (bytes[8] & 0x3f) | 0x80;
   const hex = bytes.toString('hex');
@@ -68,6 +71,7 @@ async function run() {
 
     // Caso contrário, insere um registro associando aos assets desse bundle mais recente
     const newId = uuidv7();
+    const shouldForceUpdate = latestBundle.should_force_update ? 1 : 0;
     const insertSql = `
       INSERT INTO bundles (
         id, platform, should_force_update, enabled, file_hash, git_commit_hash,
@@ -77,7 +81,7 @@ async function run() {
       ) VALUES (
         '${newId}',
         '${platform}',
-        1,
+        ${shouldForceUpdate},
         1,
         '${latestBundle.file_hash}',
         '${latestBundle.git_commit_hash}',

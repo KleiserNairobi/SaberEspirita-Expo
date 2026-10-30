@@ -217,6 +217,17 @@ export function ForgotPasswordScreen() {
     setCode(cleaned);
   }
 
+  function focusOtpInput() {
+    if (inputRef.current?.isFocused()) {
+      inputRef.current.blur();
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+    } else {
+      inputRef.current?.focus();
+    }
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
@@ -318,14 +329,16 @@ export function ForgotPasswordScreen() {
               <TouchableOpacity
                 activeOpacity={1}
                 style={styles.otpContainer}
-                onPress={() => inputRef.current?.focus()}
+                onPress={focusOtpInput}
               >
                 <TextInput
                   ref={inputRef}
                   value={code}
                   onChangeText={handleCodeChange}
                   keyboardType="number-pad"
-                  maxLength={6}
+                  textContentType="oneTimeCode"
+                  autoComplete="one-time-code"
+                  maxLength={12}
                   style={styles.hiddenInput}
                   autoFocus
                   caretHidden
@@ -339,7 +352,7 @@ export function ForgotPasswordScreen() {
                     <TouchableOpacity
                       key={index}
                       activeOpacity={0.9}
-                      onPress={() => inputRef.current?.focus()}
+                      onPress={focusOtpInput}
                       style={[
                         styles.otpBox,
                         digit ? styles.otpBoxFilled : null,
@@ -357,7 +370,7 @@ export function ForgotPasswordScreen() {
                   style={styles.clearCodeButton}
                   onPress={() => {
                     setCode("");
-                    inputRef.current?.focus();
+                    focusOtpInput();
                   }}
                   activeOpacity={0.7}
                 >
@@ -502,9 +515,11 @@ export function ForgotPasswordScreen() {
         </ScrollView>
 
         {/* Modal BottomSheet de Feedback */}
-        {bottomSheetConfig && (
-          <BottomSheetMessage ref={bottomSheetModalRef} config={bottomSheetConfig} />
-        )}
+        <BottomSheetMessage
+          ref={bottomSheetModalRef}
+          config={bottomSheetConfig}
+          onDismiss={() => setBottomSheetConfig(null)}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

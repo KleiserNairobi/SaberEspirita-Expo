@@ -55,10 +55,12 @@ interface AuthState {
   error: string | null;
   lastSeenUpdate: number | null;
   isDeviceBanned: boolean;
+  pendingVerificationEmail: string | null;
 
   // Actions
   setUser: (user: AppUser | null) => void;
   setLastSeenUpdate: (timestamp: number | null) => void;
+  setPendingVerificationEmail: (email: string | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   clearError: () => void;
@@ -142,9 +144,12 @@ export const useAuthStore = create<AuthState>()(
       error: null,
       lastSeenUpdate: null,
       isDeviceBanned: false,
+      pendingVerificationEmail: null,
 
       setUser: (user) => set({ user }),
       setLastSeenUpdate: (lastSeenUpdate) => set({ lastSeenUpdate }),
+      setPendingVerificationEmail: (pendingVerificationEmail) =>
+        set({ pendingVerificationEmail }),
       setLoading: (loading) => set({ loading }),
       setError: (error) => set({ error }),
       clearError: () => set({ error: null }),
@@ -170,7 +175,12 @@ export const useAuthStore = create<AuthState>()(
             res.displayName
           );
 
-          set({ user: appUser, isGuest: false, loading: false });
+          set({
+            user: appUser,
+            isGuest: false,
+            loading: false,
+            pendingVerificationEmail: null,
+          });
 
           // Sincronizar dados pendentes de onboarding com o backend se existirem
           try {
@@ -215,8 +225,12 @@ export const useAuthStore = create<AuthState>()(
             false
           );
 
-          // Não publicamos user na store principal ainda para não forçar navegação prematura pelo RootNavigator
-          set({ loading: false });
+          // Não publicamos user na store principal ainda para não forçar navegação prematura pelo RootNavigator,
+          // mas persistimos pendingVerificationEmail para retomar VerifyEmail caso o app reinicie ao alternar para o e-mail
+          set({
+            loading: false,
+            pendingVerificationEmail: email.trim().toLowerCase(),
+          });
           return { user: appUser };
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
@@ -239,7 +253,12 @@ export const useAuthStore = create<AuthState>()(
             true
           );
 
-          set({ user: appUser, isGuest: false, loading: false });
+          set({
+            user: appUser,
+            isGuest: false,
+            loading: false,
+            pendingVerificationEmail: null,
+          });
 
           // Sincronizar dados pendentes de onboarding com o backend
           try {
@@ -305,7 +324,12 @@ export const useAuthStore = create<AuthState>()(
               photoUrl
           );
 
-          set({ user: appUser, isGuest: false, loading: false });
+          set({
+            user: appUser,
+            isGuest: false,
+            loading: false,
+            pendingVerificationEmail: null,
+          });
 
           // Sincronizar dados pendentes de onboarding com o backend
           try {
@@ -364,7 +388,12 @@ export const useAuthStore = create<AuthState>()(
             res.displayName
           );
 
-          set({ user: appUser, isGuest: false, loading: false });
+          set({
+            user: appUser,
+            isGuest: false,
+            loading: false,
+            pendingVerificationEmail: null,
+          });
 
           // Sincronizar dados pendentes de onboarding com o backend
           try {
@@ -390,7 +419,12 @@ export const useAuthStore = create<AuthState>()(
       loginAsGuest: async () => {
         set({ loading: true, error: null });
         try {
-          set({ user: null, isGuest: true, loading: false });
+          set({
+            user: null,
+            isGuest: true,
+            loading: false,
+            pendingVerificationEmail: null,
+          });
         } catch (error) {
           set({ error: "Erro ao entrar como convidado", loading: false });
         }
@@ -401,7 +435,12 @@ export const useAuthStore = create<AuthState>()(
         try {
           console.log("AuthStore: Encerrando sessão...");
           await authApiService.logout();
-          set({ user: null, isGuest: false, loading: false });
+          set({
+            user: null,
+            isGuest: false,
+            loading: false,
+            pendingVerificationEmail: null,
+          });
 
           try {
             await GoogleSignin.signOut();
@@ -409,7 +448,12 @@ export const useAuthStore = create<AuthState>()(
         } catch (error: any) {
           Storage.remove("jwt_token");
           Storage.remove("refresh_token");
-          set({ user: null, isGuest: false, loading: false });
+          set({
+            user: null,
+            isGuest: false,
+            loading: false,
+            pendingVerificationEmail: null,
+          });
         }
       },
 
@@ -431,7 +475,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           console.log("AuthStore: Redefinindo senha com código OTP...");
           await authApiService.resetPassword(email, code, newPassword);
-          set({ loading: false });
+          set({ loading: false, pendingVerificationEmail: null });
         } catch (error: any) {
           const errorMessage = getErrorMessage(error);
           set({ error: errorMessage, loading: false });
@@ -541,6 +585,7 @@ export const useAuthStore = create<AuthState>()(
         isGuest: state.isGuest,
         lastSeenUpdate: state.lastSeenUpdate,
         isDeviceBanned: state.isDeviceBanned,
+        pendingVerificationEmail: state.pendingVerificationEmail,
       }),
       onRehydrateStorage: () => (state) => {
         if (state?.user) {

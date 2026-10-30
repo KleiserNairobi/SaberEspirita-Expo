@@ -2,6 +2,19 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.24-ota.1] - 2026-10-30 (Hot-Update)
+
+### Corrigido / Aprimorado
+
+- **Resiliência do Fluxo de Cadastro e Verificação de E-mail (`authStore`, `AuthNavigator`, `VerifyEmailScreen`, `RegisterScreen`)**:
+  - Implementada persistência de `pendingVerificationEmail` no MMKV para retomar automaticamente a tela de confirmação de código (`VerifyEmailScreen`) caso o aplicativo seja reiniciado ou o sistema operacional libere memória ao alternar para o app de e-mail.
+  - Criado helper de foco forçado (`focusOtpInput`) com ciclo `blur` + `focus` para garantir a reabertura do teclado virtual no Android ao retornar de outro aplicativo.
+  - Adicionado suporte a colagem de código OTP com espaços e preenchimento automático (`textContentType="oneTimeCode"` e `autoComplete="one-time-code"`).
+  - Adicionado atalho direto "Já tenho código de confirmação" na tela de cadastro para usuários que já iniciaram o registro.
+- **Estabilidade do Boot e Deploy OTA (`sync-ota-fingerprints`, `AnimatedSplashScreen`, `App`)**:
+  - Ajustado o script de pós-deploy OTA (`sync-ota-fingerprints.js`) para respeitar a flag de atualização forçada do bundle, evitando reloads intempestivos durante a navegação inicial do usuário.
+  - Blindada a saída da `AnimatedSplashScreen` com fallback de segurança de 450ms e chamada idempotente garantida para dispositivos com configurações de acessibilidade de animações reduzidas.
+
 ## [2.0.24] - 2026-10-28 (Build 61)
 
 ### Adicionado / Aprimorado / Otimizado

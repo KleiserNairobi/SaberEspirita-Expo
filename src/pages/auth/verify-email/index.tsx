@@ -38,9 +38,16 @@ export function VerifyEmailScreen() {
   const navigation = useNavigation<VerifyEmailScreenNavigationProp>();
   const route = useRoute<VerifyEmailScreenRouteProp>();
 
-  const email = route.params?.email || "";
+  const {
+    verifyEmailCode,
+    resendVerificationCode,
+    pendingVerificationEmail,
+    setPendingVerificationEmail,
+    loading,
+    clearError,
+  } = useAuthStore();
 
-  const { verifyEmailCode, resendVerificationCode, loading, clearError } = useAuthStore();
+  const email = route.params?.email || pendingVerificationEmail || "";
 
   const [code, setCode] = useState("");
   const [timer, setTimer] = useState(60);
@@ -149,6 +156,26 @@ export function VerifyEmailScreen() {
     setCode(cleaned);
   }
 
+  function focusOtpInput() {
+    if (inputRef.current?.isFocused()) {
+      inputRef.current.blur();
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+    } else {
+      inputRef.current?.focus();
+    }
+  }
+
+  function handleBack() {
+    setPendingVerificationEmail(null);
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate("Login");
+    }
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
@@ -166,7 +193,7 @@ export function VerifyEmailScreen() {
             <View style={styles.headerSide}>
               <TouchableOpacity
                 style={styles.backButton}
-                onPress={() => navigation.goBack()}
+                onPress={handleBack}
                 activeOpacity={0.7}
               >
                 <ArrowLeft size={20} color={theme.colors.text} />
@@ -200,14 +227,16 @@ export function VerifyEmailScreen() {
           <TouchableOpacity
             activeOpacity={1}
             style={styles.otpContainer}
-            onPress={() => inputRef.current?.focus()}
+            onPress={focusOtpInput}
           >
             <TextInput
               ref={inputRef}
               value={code}
               onChangeText={handleCodeChange}
               keyboardType="number-pad"
-              maxLength={6}
+              textContentType="oneTimeCode"
+              autoComplete="one-time-code"
+              maxLength={12}
               style={styles.hiddenInput}
               autoFocus
               caretHidden
@@ -221,7 +250,7 @@ export function VerifyEmailScreen() {
                 <TouchableOpacity
                   key={index}
                   activeOpacity={0.9}
-                  onPress={() => inputRef.current?.focus()}
+                  onPress={focusOtpInput}
                   style={[
                     styles.otpBox,
                     digit ? styles.otpBoxFilled : null,
@@ -240,7 +269,7 @@ export function VerifyEmailScreen() {
               style={styles.clearCodeButton}
               onPress={() => {
                 setCode("");
-                inputRef.current?.focus();
+                focusOtpInput();
               }}
               activeOpacity={0.7}
             >
@@ -309,9 +338,11 @@ export function VerifyEmailScreen() {
         </ScrollView>
 
         {/* BottomSheet Modal de Feedback */}
-        {bottomSheetConfig && (
-          <BottomSheetMessage ref={bottomSheetModalRef} config={bottomSheetConfig} />
-        )}
+        <BottomSheetMessage
+          ref={bottomSheetModalRef}
+          config={bottomSheetConfig}
+          onDismiss={() => setBottomSheetConfig(null)}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

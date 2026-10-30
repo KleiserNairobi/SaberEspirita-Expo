@@ -35,8 +35,14 @@ type RegisterScreenNavigationProp = NativeStackNavigationProp<
 export function RegisterScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-  const { signUp, loading, clearError, signInWithGoogle, signInWithApple } =
-    useAuthStore();
+  const {
+    signUp,
+    loading,
+    clearError,
+    signInWithGoogle,
+    signInWithApple,
+    setPendingVerificationEmail,
+  } = useAuthStore();
   const navigation = useNavigation<RegisterScreenNavigationProp>();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -77,7 +83,8 @@ export function RegisterScreen() {
     }
 
     const emailRegex = /\S+@\S+\.\S+/;
-    if (!email || !emailRegex.test(email)) {
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
       newErrors.email = "Por favor, informe um e-mail válido.";
       valid = false;
     }
@@ -167,13 +174,15 @@ export function RegisterScreen() {
       let errorMessage = apiErrorMessage || "Ocorreu um erro ao tentar criar sua conta.\nTente novamente mais tarde.";
       let errorTitle = "Erro no Cadastro";
 
-      if (
+      const isEmailAlreadyInUse =
         err.code === "auth/email-already-in-use" ||
         apiErrorMessage?.toLowerCase().includes("já existe") ||
-        apiErrorMessage?.toLowerCase().includes("em uso")
-      ) {
+        apiErrorMessage?.toLowerCase().includes("em uso");
+
+      if (isEmailAlreadyInUse) {
         errorTitle = "E-mail Já Cadastrado";
-        errorMessage = "Já existe uma conta registrada com este e-mail.\nFaça login ou recupere sua senha.";
+        errorMessage =
+          "Já existe uma conta registrada com este e-mail.\nFaça login ou, se recebeu um código de 6 dígitos por e-mail, confirme-o agora.";
       } else if (
         apiErrorMessage?.toLowerCase().includes("permitido") ||
         apiErrorMessage?.toLowerCase().includes("bloquead") ||
@@ -186,14 +195,32 @@ export function RegisterScreen() {
         errorMessage = "O e-mail informado não é válido.";
       }
 
+      const normalizedEmail = email.trim().toLowerCase();
+
       setBottomSheetConfig({
         type: "error",
         title: errorTitle,
         message: errorMessage,
-        primaryButton: {
-          label: "Ok",
-          onPress: () => {},
-        },
+        primaryButton: isEmailAlreadyInUse
+          ? {
+              label: "Fazer Login",
+              onPress: () => {
+                navigation.navigate("Login");
+              },
+            }
+          : {
+              label: "Ok",
+              onPress: () => {},
+            },
+        secondaryButton: isEmailAlreadyInUse
+          ? {
+              label: "Já tenho código de confirmação",
+              onPress: () => {
+                setPendingVerificationEmail(normalizedEmail);
+                navigation.navigate("VerifyEmail", { email: normalizedEmail });
+              },
+            }
+          : undefined,
       });
       setTimeout(() => {
         bottomSheetModalRef.current?.present();

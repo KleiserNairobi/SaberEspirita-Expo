@@ -34,8 +34,15 @@ type LoginScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, "
 export function LoginScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-  const { signIn, loading, clearError, loginAsGuest, signInWithGoogle, signInWithApple } =
-    useAuthStore();
+  const {
+    signIn,
+    loading,
+    clearError,
+    loginAsGuest,
+    signInWithGoogle,
+    signInWithApple,
+    setPendingVerificationEmail,
+  } = useAuthStore();
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -203,6 +210,8 @@ export function LoginScreen() {
         apiErrorMessage?.toLowerCase().includes("não verificado") ||
         apiErrorMessage?.toLowerCase().includes("código enviado")
       ) {
+        const normalizedEmail = email.trim().toLowerCase();
+        setPendingVerificationEmail(normalizedEmail);
         setBottomSheetConfig({
           type: "error",
           title: "E-mail Não Verificado",
@@ -211,7 +220,7 @@ export function LoginScreen() {
           primaryButton: {
             label: "Digitar Código OTP",
             onPress: () => {
-              navigation.navigate("VerifyEmail", { email: email.trim().toLowerCase() });
+              navigation.navigate("VerifyEmail", { email: normalizedEmail });
             },
           },
         });
