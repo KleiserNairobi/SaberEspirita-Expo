@@ -46,7 +46,6 @@ export function TermDetailScreen() {
     getLineHeight,
     getScreenTitleSize,
     getTitleSize,
-    getMetadataSize,
   } = useReaderPreferencesStore();
   const readerPreferencesRef = React.useRef<BottomSheetModal>(null);
 
@@ -151,7 +150,7 @@ export function TermDetailScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Título e Categoria do Termo (Escaláveis) */}
+        {/* Título do Termo (Alinhado à esquerda e escalável) */}
         <View style={styles.header}>
           <Text
             style={[
@@ -164,20 +163,6 @@ export function TermDetailScreen() {
           >
             {term.term}
           </Text>
-
-          {/* Metadata */}
-          <View style={styles.metadata}>
-            <CategoryIcon size={14} color={theme.colors.textSecondary} strokeWidth={2} />
-            <View style={styles.divider} />
-            <Text
-              style={[
-                styles.metadataText,
-                { fontSize: getMetadataSize() },
-              ]}
-            >
-              {term.category}
-            </Text>
-          </View>
         </View>
 
         {/* Definição */}
@@ -224,6 +209,14 @@ export function TermDetailScreen() {
             ))}
           </View>
         )}
+
+        {/* Categoria do Termo */}
+        <View style={styles.categoryContainer}>
+          <View style={styles.categoryTag}>
+            <CategoryIcon size={13} color={theme.colors.primary} strokeWidth={2} />
+            <Text style={styles.categoryTagText}>{term.category}</Text>
+          </View>
+        </View>
 
         {/* Botão Perguntar ao Sr. Allan */}
         <TouchableOpacity

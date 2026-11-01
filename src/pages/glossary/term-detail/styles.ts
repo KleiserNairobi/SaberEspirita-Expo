@@ -13,29 +13,31 @@ export const createStyles = (theme: ITheme) =>
       paddingBottom: 150,
     },
     header: {
-      marginTop: theme.spacing.sm,
-      marginBottom: theme.spacing.lg,
+      marginTop: theme.spacing.md,
+      marginBottom: theme.spacing.md,
     },
     title: {
-      ...theme.readingText("xxxl", "bold"),
-      marginBottom: theme.spacing.sm,
-      textAlign: "center",
+      ...theme.readingText("xxl", "semibold"),
+      color: theme.colors.text,
+      textAlign: "left",
     },
-    metadata: {
+    categoryContainer: {
+      flexDirection: "row",
+      marginTop: theme.spacing.xs,
+      marginBottom: theme.spacing.lg,
+    },
+    categoryTag: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "center",
-      gap: theme.spacing.sm,
-      marginTop: theme.spacing.xs,
+      gap: 6,
+      backgroundColor: theme.isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.04)",
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: theme.radius.full,
     },
-    metadataText: {
-      ...theme.text("sm", "regular", theme.colors.textSecondary),
-    },
-    divider: {
-      width: 4,
-      height: 4,
-      borderRadius: 2,
-      backgroundColor: theme.colors.textSecondary,
+    categoryTagText: {
+      ...theme.text("xs", "medium"),
+      color: theme.colors.textSecondary,
     },
     actionsContainer: {
       flexDirection: "row",
@@ -65,8 +67,8 @@ export const createStyles = (theme: ITheme) =>
       textAlign: "left",
     },
     reference: {
-      ...theme.readingText("md", "regular", theme.colors.textSecondary),
-      lineHeight: 24,
+      ...theme.literaryText(15, theme.colors.textSecondary),
+      lineHeight: 22,
       marginBottom: theme.spacing.xs,
     },
     askButton: {
