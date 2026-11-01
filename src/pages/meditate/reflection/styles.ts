@@ -15,39 +15,55 @@ export const createStyles = (theme: ITheme) =>
       paddingBottom: 150,
     },
     header: {
-      marginTop: theme.spacing.sm,
-      marginBottom: theme.spacing.lg,
+      marginTop: theme.spacing.md,
+      marginBottom: theme.spacing.md,
     },
     title: {
-      ...theme.readingText("xxxl", "bold"),
-      marginBottom: theme.spacing.sm,
-      textAlign: "center",
+      ...theme.readingText("xxl", "semibold"),
+      marginBottom: theme.spacing.xs,
+      textAlign: "left",
       color: theme.colors.text,
     },
     subtitle: {
       ...theme.text("lg", "regular", theme.colors.textSecondary),
-      textAlign: "center",
-      marginBottom: theme.spacing.sm,
+      textAlign: "left",
+      marginBottom: theme.spacing.xs,
     },
-    metadata: {
-      gap: theme.spacing.sm,
-      alignItems: "flex-start",
-      alignSelf: "stretch", // Ocupa toda a largura interna e garante que o item da extrema esquerda encoste no limite interno do box do texto
-      marginBottom: theme.spacing.md,
-    },
-    content: {
-      // padding removed since scrollContent handles horizontal padding
-    },
-    metadataItem: {
+    metaRow: {
       flexDirection: "row",
-      alignItems: "flex-start",
-      gap: 12,
+      alignItems: "center",
+      gap: theme.spacing.sm,
+      marginTop: theme.spacing.xs,
     },
-    metadataText: {
+    metaItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+    },
+    metaText: {
       ...theme.text("sm", "regular"),
       color: theme.colors.muted,
-      flexShrink: 1, // Permite que a fonte longa de um livro caia para a próxima linha sem furar o tamanho da tela
-      marginTop: -2, // Compensação fina para alinhar com o topo do ícone
+    },
+    metaDivider: {
+      width: 3,
+      height: 3,
+      borderRadius: 1.5,
+      backgroundColor: theme.colors.muted,
+    },
+    signatureContainer: {
+      marginTop: theme.spacing.xl,
+      alignItems: "flex-start",
+      paddingTop: theme.spacing.sm,
+      gap: 3,
+    },
+    signatureAuthor: {
+      ...theme.literaryText(15, theme.colors.textSecondary),
+      textAlign: "left",
+    },
+    signatureSource: {
+      ...theme.literaryText(13, theme.colors.textSecondary),
+      opacity: 0.85,
+      textAlign: "left",
     },
     actionsContainer: {
       flexDirection: "row",

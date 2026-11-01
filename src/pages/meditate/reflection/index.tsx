@@ -6,7 +6,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery } from "@tanstack/react-query";
-import { BookOpen, Clock, Tag, User } from "lucide-react-native";
+import { Clock, Tag } from "lucide-react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
@@ -38,6 +38,8 @@ export function ReflectionScreen() {
     getFontSize,
     getLineHeight,
     getScreenTitleSize,
+    getAuthorSize,
+    getSourceSize,
     getMetadataSize,
   } = useReaderPreferencesStore();
   const readerPreferencesRef = useRef<BottomSheetModal>(null);
@@ -165,7 +167,7 @@ export function ReflectionScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header (Título e Subtítulo escaláveis) */}
+        {/* Header (Título e Metadados discretos à esquerda) */}
         <View style={styles.header}>
           <Text
             style={[
@@ -191,90 +193,95 @@ export function ReflectionScreen() {
               {reflection.subtitle}
             </Text>
           )}
-        </View>
 
-        {/* Conteúdo */}
-        <View style={styles.content}>
-          {/* Metadados - Envolvidos em uma View para gerenciar margem caso a caso */}
-          <View style={styles.metadata}>
-            {/* 1. Referência / Fonte */}
-            {reflection.source && (
-              <View style={styles.metadataItem}>
-                <BookOpen size={16} color={theme.colors.muted} />
-                <Text
-                  style={[
-                    styles.metadataText,
-                    { fontSize: getMetadataSize() },
-                  ]}
-                >
-                  {reflection.source}
-                </Text>
-              </View>
-            )}
-
-            {/* 2. Autor */}
-            {reflection.author && (
-              <View style={styles.metadataItem}>
-                <User size={16} color={theme.colors.muted} />
-                <Text
-                  style={[
-                    styles.metadataText,
-                    { fontSize: getMetadataSize() },
-                  ]}
-                >
-                  {reflection.author}
-                </Text>
-              </View>
-            )}
-
-            {/* 3. Tempo de leitura */}
-            <View style={styles.metadataItem}>
-              <Clock size={16} color={theme.colors.muted} />
-              <Text
-                style={[
-                  styles.metadataText,
-                  { fontSize: getMetadataSize() },
-                ]}
-              >
-                {reflection.readingTimeMinutes} min de leitura
-              </Text>
-            </View>
-
-            {/* 4. Tópico / Categoria */}
-            <View style={styles.metadataItem}>
-              <Tag size={16} color={theme.colors.muted} />
-              <Text
-                style={[
-                  styles.metadataText,
-                  { fontSize: getMetadataSize() },
-                ]}
-              >
-                {topicLabel}
-              </Text>
-            </View>
-          </View>
-
-          {/* Conteúdo da reflexão */}
-          <Text
-            style={[
-              styles.bodyText,
-              { fontSize: getFontSize(), lineHeight: getLineHeight() },
-            ]}
-          >
-            {reflection.content}
-          </Text>
-
-          {/* Tags */}
-          {Array.isArray(reflection.tags) && reflection.tags.length > 0 && (
-            <View style={styles.tagsContainer}>
-              {reflection.tags.map((tag, index) => (
-                <View key={index} style={styles.tag}>
-                  <Text style={styles.tagText}>#{tag}</Text>
+          {/* Metadados contextuais discretos (Tempo de leitura e Tópico) */}
+          {(reflection.readingTimeMinutes || topicLabel) && (
+            <View style={styles.metaRow}>
+              {reflection.readingTimeMinutes ? (
+                <View style={styles.metaItem}>
+                  <Clock size={13} color={theme.colors.muted} />
+                  <Text
+                    style={[
+                      styles.metaText,
+                      { fontSize: getMetadataSize() },
+                    ]}
+                  >
+                    {reflection.readingTimeMinutes} min de leitura
+                  </Text>
                 </View>
-              ))}
+              ) : null}
+              {reflection.readingTimeMinutes && topicLabel ? (
+                <View style={styles.metaDivider} />
+              ) : null}
+              {topicLabel ? (
+                <View style={styles.metaItem}>
+                  <Tag size={13} color={theme.colors.muted} />
+                  <Text
+                    style={[
+                      styles.metaText,
+                      { fontSize: getMetadataSize() },
+                    ]}
+                  >
+                    {topicLabel}
+                  </Text>
+                </View>
+              ) : null}
             </View>
           )}
         </View>
+
+        {/* Conteúdo da reflexão */}
+        <Text
+          style={[
+            styles.bodyText,
+            { fontSize: getFontSize(), lineHeight: getLineHeight() },
+          ]}
+        >
+          {reflection.content}
+        </Text>
+
+        {/* Assinatura Literária ao Final (Sem travessão, em duas linhas em Baskervville Italic escalável) */}
+        {(reflection.author || reflection.source) && (
+          <View style={styles.signatureContainer}>
+            {reflection.author ? (
+              <Text
+                style={[
+                  styles.signatureAuthor,
+                  {
+                    fontSize: getAuthorSize(),
+                    lineHeight: Math.round(getAuthorSize() * 1.35),
+                  },
+                ]}
+              >
+                {reflection.author}
+              </Text>
+            ) : null}
+            {reflection.source ? (
+              <Text
+                style={[
+                  styles.signatureSource,
+                  {
+                    fontSize: getSourceSize(),
+                    lineHeight: Math.round(getSourceSize() * 1.35),
+                  },
+                ]}
+              >
+                {reflection.source}
+              </Text>
+            ) : null}
+          </View>
+        )}
+
+        {/* Tags */}
+        {Array.isArray(reflection.tags) && reflection.tags.length > 0 && (
+          <View style={styles.tagsContainer}>
+            {reflection.tags.map((tag, index) => (
+              <View key={index} style={styles.tag}>
+                <Text style={styles.tagText}>#{tag}</Text>
+              </View>
+            ))}
+          </View>
+        )}
       </ScrollView>
 
       {/* Rodapé Fixo com Botão Finalizar */}
