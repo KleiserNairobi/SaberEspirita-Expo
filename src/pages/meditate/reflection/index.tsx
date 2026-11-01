@@ -6,7 +6,6 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery } from "@tanstack/react-query";
-import { Clock, Tag } from "lucide-react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
@@ -40,7 +39,6 @@ export function ReflectionScreen() {
     getScreenTitleSize,
     getAuthorSize,
     getSourceSize,
-    getMetadataSize,
   } = useReaderPreferencesStore();
   const readerPreferencesRef = useRef<BottomSheetModal>(null);
 
@@ -146,8 +144,6 @@ export function ReflectionScreen() {
     );
   }
 
-  const topicLabel = reflection.topic;
-
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       {/* 1. Barra de Ações no Topo (Voltar à esquerda; Favoritar, Narrar, Compartilhar, Aa à direita) */}
@@ -167,7 +163,7 @@ export function ReflectionScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header (Título e Metadados discretos à esquerda) */}
+        {/* Header (Título e Subtítulo alinhados à esquerda) */}
         <View style={styles.header}>
           <Text
             style={[
@@ -192,41 +188,6 @@ export function ReflectionScreen() {
             >
               {reflection.subtitle}
             </Text>
-          )}
-
-          {/* Metadados contextuais discretos (Tempo de leitura e Tópico) */}
-          {(reflection.readingTimeMinutes || topicLabel) && (
-            <View style={styles.metaRow}>
-              {reflection.readingTimeMinutes ? (
-                <View style={styles.metaItem}>
-                  <Clock size={13} color={theme.colors.muted} />
-                  <Text
-                    style={[
-                      styles.metaText,
-                      { fontSize: getMetadataSize() },
-                    ]}
-                  >
-                    {reflection.readingTimeMinutes} min de leitura
-                  </Text>
-                </View>
-              ) : null}
-              {reflection.readingTimeMinutes && topicLabel ? (
-                <View style={styles.metaDivider} />
-              ) : null}
-              {topicLabel ? (
-                <View style={styles.metaItem}>
-                  <Tag size={13} color={theme.colors.muted} />
-                  <Text
-                    style={[
-                      styles.metaText,
-                      { fontSize: getMetadataSize() },
-                    ]}
-                  >
-                    {topicLabel}
-                  </Text>
-                </View>
-              ) : null}
-            </View>
           )}
         </View>
 

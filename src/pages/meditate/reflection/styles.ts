@@ -29,27 +29,6 @@ export const createStyles = (theme: ITheme) =>
       textAlign: "left",
       marginBottom: theme.spacing.xs,
     },
-    metaRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: theme.spacing.sm,
-      marginTop: theme.spacing.xs,
-    },
-    metaItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 6,
-    },
-    metaText: {
-      ...theme.text("sm", "regular"),
-      color: theme.colors.muted,
-    },
-    metaDivider: {
-      width: 3,
-      height: 3,
-      borderRadius: 1.5,
-      backgroundColor: theme.colors.muted,
-    },
     signatureContainer: {
       marginTop: theme.spacing.xl,
       alignItems: "flex-start",
