@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+
 import { ITheme } from "@/configs/theme/types";
 
 export const createStyles = (theme: ITheme) =>
@@ -64,6 +65,11 @@ export const createStyles = (theme: ITheme) =>
     },
     continueReadingText: {
       ...theme.text("sm", "semibold", theme.colors.primary),
+      includeFontPadding: false,
+      textAlignVertical: "center",
+    },
+    continueReadingIcon: {
+      marginTop: 1.5,
     },
     moodPromptContainer: {
       flexDirection: "row",

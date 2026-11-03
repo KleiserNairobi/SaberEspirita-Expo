@@ -172,7 +172,11 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
           {/* Ação de Continuação de Leitura */}
           <View style={styles.continueReadingRow}>
             <Text style={styles.continueReadingText}>Continuar lendo</Text>
-            <ChevronRight size={15} color={theme.colors.primary} />
+            <ChevronRight
+              size={15}
+              color={theme.colors.primary}
+              style={styles.continueReadingIcon}
+            />
           </View>
         </TouchableOpacity>
 
