@@ -33,24 +33,9 @@ export const createStyles = (theme: ITheme) =>
     badgeText: {
       ...theme.text("xs", "semibold", theme.colors.primary),
     },
-    topActions: {
-      position: "absolute",
-      top: theme.spacing.sm,
-      right: theme.spacing.sm,
-      zIndex: 2,
-    },
-    readFullButton: {
-      width: 32,
-      height: 32,
-      borderRadius: theme.radius.full,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: `${theme.colors.primary}18`,
-    },
     title: {
       ...theme.text("md", "semibold", theme.colors.text),
       marginBottom: theme.spacing.sm,
-      paddingRight: 36, // Espaço para não colidir com o readFullButton
     },
     quoteContainer: {
       backgroundColor: `${theme.colors.background}80`,
@@ -67,8 +52,18 @@ export const createStyles = (theme: ITheme) =>
     contentSnippet: {
       ...theme.text("md", "regular", theme.colors.text),
       lineHeight: 22,
-      marginBottom: theme.spacing.md,
+      marginBottom: theme.spacing.sm,
       opacity: 0.9,
+    },
+    continueReadingRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      marginBottom: theme.spacing.md,
+      alignSelf: "flex-start",
+    },
+    continueReadingText: {
+      ...theme.text("sm", "semibold", theme.colors.primary),
     },
     moodPromptContainer: {
       flexDirection: "row",
