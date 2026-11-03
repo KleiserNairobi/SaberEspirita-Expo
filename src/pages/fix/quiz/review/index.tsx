@@ -5,13 +5,14 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { ArrowLeft, CheckCircle2, Flag, Star, XCircle } from "lucide-react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button } from "@/components/Button";
 import { ReportQuestionBottomSheet } from "@/components/ReportQuestionBottomSheet";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { FixStackParamList } from "@/routers/types";
 import { IQuizAnswer } from "@/types/quiz";
+import { getFooterVerticalPadding } from "@/utils/layout";
 
 import { createStyles } from "./styles";
 
@@ -20,6 +21,7 @@ type QuizReviewRouteProp = RouteProp<FixStackParamList, "QuizReview">;
 export function QuizReviewScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
+  const insets = useSafeAreaInsets();
   const route = useRoute<QuizReviewRouteProp>();
   const navigation = useNavigation<any>(); // Usando any para permitir navegação entre stacks (FIXE e APP)
 
@@ -89,7 +91,7 @@ export function QuizReviewScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.container}>
         {/* Custom Header */}
         <View style={styles.header}>
@@ -223,7 +225,12 @@ export function QuizReviewScreen() {
         </ScrollView>
 
         {/* Footer */}
-        <View style={styles.footer}>
+        <View
+          style={[
+            styles.footer,
+            getFooterVerticalPadding(insets, theme.spacing.md),
+          ]}
+        >
           <Button title="Continuar" onPress={handleContinue} fullWidth />
         </View>
       </View>

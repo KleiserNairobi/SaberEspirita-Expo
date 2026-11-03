@@ -156,7 +156,7 @@ export function createStyles(theme: ITheme) {
       lineHeight: 18,
     },
     footer: {
-      padding: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.lg,
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
       backgroundColor: theme.colors.background,

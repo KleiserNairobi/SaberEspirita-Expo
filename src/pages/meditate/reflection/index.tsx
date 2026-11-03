@@ -18,6 +18,7 @@ import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
 import { useReflectionFavoritesStore } from "@/stores/reflectionFavoritesStore";
 import { shareReflection } from "@/utils/sharing";
 import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
+import { getFooterVerticalPadding } from "@/utils/layout";
 
 import { createStyles } from "./styles";
 
@@ -246,7 +247,12 @@ export function ReflectionScreen() {
       </ScrollView>
 
       {/* Rodapé Fixo com Botão Finalizar */}
-      <View style={[styles.fixedFooter, { paddingBottom: Math.max(insets.bottom, 24) }]}>
+      <View
+        style={[
+          styles.fixedFooter,
+          getFooterVerticalPadding(insets, theme.spacing.md),
+        ]}
+      >
         <TouchableOpacity
           style={styles.finishButton}
           onPress={handleFinishReading}

@@ -16,7 +16,8 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { getFooterVerticalPadding } from "@/utils/layout";
 
 import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
@@ -75,6 +76,7 @@ export function LessonPlayerScreen() {
   const { width } = useResponsiveLayout();
   const { user, isGuest } = useAuthStore();
   const styles = createStyles(theme);
+  const insets = useSafeAreaInsets();
   const route = useRoute<LessonPlayerRouteProp>();
   const navigation = useNavigation<NavigationProp>();
   const queryClient = useQueryClient();
@@ -625,7 +627,7 @@ export function LessonPlayerScreen() {
   if (!lesson) return null;
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       {/* 1. Barra de Ações no Topo (Voltar à esquerda; Narrar, Compartilhar, Aa à direita) */}
       <ReadingToolbar
         onBack={handleGoBack}
@@ -679,7 +681,12 @@ export function LessonPlayerScreen() {
       />
 
       {/* Navegação Inferior */}
-      <View style={styles.bottomNavigation}>
+      <View
+        style={[
+          styles.bottomNavigation,
+          getFooterVerticalPadding(insets, theme.spacing.md),
+        ]}
+      >
         <TouchableOpacity
           style={[styles.navButton, isFirstSlide && styles.navButtonDisabled]}
           onPress={handlePrevious}

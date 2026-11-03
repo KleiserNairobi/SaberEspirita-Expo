@@ -29,6 +29,7 @@ import { usePrayerFavoritesStore } from "@/stores/prayerFavoritesStore";
 import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
 import { sharePrayer } from "@/utils/sharing";
 import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
+import { getFooterVerticalPadding } from "@/utils/layout";
 
 export function PrayerScreen() {
   const { theme } = useAppTheme();
@@ -245,7 +246,7 @@ export function PrayerScreen() {
       <View
         style={[
           styles.fixedFooter,
-          { paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : 32 },
+          getFooterVerticalPadding(insets, theme.spacing.md),
         ]}
       >
         <AmbientPlayerControls />

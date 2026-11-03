@@ -68,7 +68,7 @@ export const FilterBottomSheet = forwardRef<BottomSheetModal, FilterBottomSheetP
         handleIndicatorStyle={styles.handleIndicator}
       >
         <BottomSheetView
-          style={[styles.container, { paddingBottom: Math.max(insets.bottom, 40) + 10 }]}
+          style={[styles.container, { paddingBottom: theme.spacing.lg + insets.bottom }]}
         >
           <Text style={styles.title}>{title}</Text>
 

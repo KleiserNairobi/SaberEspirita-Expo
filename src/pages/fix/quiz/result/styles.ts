@@ -77,7 +77,6 @@ export function createStyles(theme: ITheme) {
       lineHeight: 24,
     },
     footer: {
-      paddingVertical: theme.spacing.md,
       paddingHorizontal: theme.spacing.lg,
       gap: theme.spacing.sm,
       borderTopWidth: 1,

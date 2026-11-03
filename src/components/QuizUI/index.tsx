@@ -14,6 +14,7 @@ import { useQuizAudio } from "@/hooks/useQuizAudio";
 import { IQuestion, IQuizAnswer } from "@/types/quiz";
 import { ReportQuestionBottomSheet } from "@/components/ReportQuestionBottomSheet";
 import { normalizeQuestion } from "@/services/api/quizApiService";
+import { getFooterVerticalPadding } from "@/utils/layout";
 
 import { createStyles } from "./styles";
 
@@ -191,7 +192,7 @@ export function QuizUI({
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={goToBack}>
@@ -239,7 +240,12 @@ export function QuizUI({
       </ScrollView>
 
       {/* Botões de Ação */}
-      <View style={styles.footer}>
+      <View
+        style={[
+          styles.footer,
+          getFooterVerticalPadding(insets, theme.spacing.md),
+        ]}
+      >
         {showStopButton && selectedAnswer === null && (
           <View style={styles.sheetButton}>
             <Button

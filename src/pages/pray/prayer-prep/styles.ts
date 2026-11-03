@@ -1,5 +1,6 @@
-import { ITheme } from "@/configs/theme/types";
 import { StyleSheet } from "react-native";
+
+import { ITheme } from "@/configs/theme/types";
 
 export const createStyles = (theme: ITheme) =>
   StyleSheet.create({
@@ -105,7 +106,6 @@ export const createStyles = (theme: ITheme) =>
       borderTopColor: theme.colors.border,
       backgroundColor: theme.colors.background,
       paddingHorizontal: theme.spacing.lg,
-      paddingVertical: theme.spacing.md,
     },
     startButton: {
       flexDirection: "row",

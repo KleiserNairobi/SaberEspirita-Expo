@@ -1,13 +1,14 @@
 import React, { forwardRef } from "react";
+
 import { Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { CheckCircle2, Crown, Lock, Sparkles } from "lucide-react-native";
+import { CheckCircle2, Crown } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 
@@ -93,7 +94,8 @@ export const PremiumContentNoticeModal = forwardRef<
     const resolvedTitle = title || DEFAULT_TITLES[type] || "Conteúdo Exclusivo";
     const resolvedDescription =
       description || DEFAULT_DESCRIPTIONS[type] || DEFAULT_DESCRIPTIONS.material;
-    const resolvedBenefits = benefits || DEFAULT_BENEFITS[type] || DEFAULT_BENEFITS.material;
+    const resolvedBenefits =
+      benefits || DEFAULT_BENEFITS[type] || DEFAULT_BENEFITS.material;
 
     function handleButtonPress() {
       if (onPressButton) {
@@ -130,10 +132,7 @@ export const PremiumContentNoticeModal = forwardRef<
         handleIndicatorStyle={styles.handleIndicator}
       >
         <BottomSheetView
-          style={[
-            styles.container,
-            { paddingBottom: Math.max(insets.bottom, 24) + 16 },
-          ]}
+          style={[styles.container, { paddingBottom: theme.spacing.lg + insets.bottom }]}
         >
           <View style={styles.iconContainer}>
             <Crown size={32} color={theme.colors.warning} />
@@ -172,5 +171,3 @@ export const PremiumContentNoticeModal = forwardRef<
     );
   }
 );
-
-export default PremiumContentNoticeModal;

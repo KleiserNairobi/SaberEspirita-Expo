@@ -236,7 +236,7 @@ export const createStyles = (theme: ITheme) =>
       left: 0,
       right: 0,
       backgroundColor: theme.colors.background,
-      padding: theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
     },

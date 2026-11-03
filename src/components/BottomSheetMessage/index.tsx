@@ -122,7 +122,7 @@ export const BottomSheetMessage = forwardRef<BottomSheetModal, BottomSheetMessag
         <BottomSheetScrollView
           contentContainerStyle={[
             styles.container,
-            { paddingBottom: Math.max(insets.bottom, 40) + 10 },
+            { paddingBottom: theme.spacing.lg + insets.bottom },
           ]}
           keyboardShouldPersistTaps="handled"
         >

@@ -15,7 +15,6 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { Button } from "@/components/Button";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { navigationRef } from "@/routers/RootNavigator";
 import { logEvent } from "@/services/analytics/analyticsService";
 import { useAuthStore } from "@/stores/authStore";
 import { getInitialTabForGoal, useOnboardingStore } from "@/stores/onboardingStore";
@@ -336,7 +335,7 @@ export function OnboardingFlowScreen() {
             style={styles.welcomeScroll}
             contentContainerStyle={[
               styles.welcomeScrollContent,
-              { paddingBottom: Math.max(insets.bottom + 16, 28) },
+              { paddingBottom: theme.spacing.md + insets.bottom },
             ]}
             showsVerticalScrollIndicator={false}
           >

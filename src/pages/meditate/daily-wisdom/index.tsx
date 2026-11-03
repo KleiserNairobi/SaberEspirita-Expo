@@ -28,6 +28,7 @@ import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
 import { IDailyWisdom } from "@/types/dailyWisdom";
 import { SHARE_FOOTER } from "@/utils/constants";
 import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
+import { getFooterVerticalPadding } from "@/utils/layout";
 
 import { useTodayWisdom, useWisdomById } from "../hooks/useDailyWisdom";
 import { createStyles } from "./styles";
@@ -321,7 +322,10 @@ export function DailyWisdomScreen() {
 
         {/* 3. Rodapé Fixo Focado na Ação de Leitura Concluída */}
         <View
-          style={[styles.fixedFooter, { paddingBottom: Math.max(insets.bottom, 16) }]}
+          style={[
+            styles.fixedFooter,
+            getFooterVerticalPadding(insets, theme.spacing.md),
+          ]}
         >
           <TouchableOpacity
             style={styles.finishButton}

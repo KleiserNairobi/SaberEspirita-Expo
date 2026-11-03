@@ -68,8 +68,8 @@ export const AmbientSelectionBottomSheet = forwardRef<
     >
       <BottomSheetView
         style={{
-          padding: 24,
-          paddingBottom: Math.max(insets.bottom, 24),
+          padding: theme.spacing.lg,
+          paddingBottom: theme.spacing.lg + insets.bottom,
         }}
       >
         <View style={styles.modalHeader}>

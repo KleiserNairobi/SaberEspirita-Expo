@@ -115,7 +115,7 @@ export const ReportQuestionBottomSheet = forwardRef<
       <BottomSheetScrollView
         contentContainerStyle={[
           styles.container,
-          { paddingBottom: Math.max(insets.bottom, 24) },
+          { paddingBottom: theme.spacing.lg + insets.bottom },
         ]}
         keyboardShouldPersistTaps="handled"
       >

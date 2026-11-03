@@ -201,7 +201,7 @@ export const ChatHistoryBottomSheet = forwardRef<
       handleIndicatorStyle={{ backgroundColor: theme.colors.border }}
     >
       <BottomSheetView
-        style={[styles.container, { paddingBottom: Math.max(insets.bottom, 16) }]}
+        style={[styles.container, { paddingBottom: theme.spacing.md + insets.bottom }]}
       >
         {/* Cabeçalho com Botão Fechar à Esquerda */}
         <View style={styles.header}>

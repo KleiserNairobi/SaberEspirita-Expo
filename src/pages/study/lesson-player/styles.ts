@@ -31,7 +31,6 @@ export const createStyles = (theme: ITheme) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      paddingVertical: theme.spacing.sm,
       paddingHorizontal: theme.spacing.md,
       borderTopWidth: 1,
       borderTopColor: `${theme.colors.border}30`,

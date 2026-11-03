@@ -12,6 +12,7 @@ import { createStyles } from "./styles";
 import { useAmbientPlayerStore } from "@/stores/ambientPlayerStore";
 import { statsApiService } from "@/services/api/statsApiService";
 import { useAmbientAudios } from "@/pages/pray/hooks/useAmbientAudios";
+import { getFooterVerticalPadding } from "@/utils/layout";
 
 type NavigationProp = NativeStackNavigationProp<PrayStackParamList, "PrayerPrep">;
 type RouteParam = RouteProp<PrayStackParamList, "PrayerPrep">;
@@ -201,9 +202,7 @@ export function PrayerPrepScreen() {
       <View
         style={[
           styles.footerContainer,
-          {
-            paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : 28,
-          },
+          getFooterVerticalPadding(insets, theme.spacing.md),
         ]}
       >
         <TouchableOpacity

@@ -91,7 +91,7 @@ export const ReaderPreferencesBottomSheet = forwardRef<
       <BottomSheetScrollView
         contentContainerStyle={[
           styles.container,
-          { paddingBottom: Math.max(insets.bottom, 24) + 16 },
+          { paddingBottom: theme.spacing.lg + insets.bottom },
         ]}
         showsVerticalScrollIndicator={false}
       >

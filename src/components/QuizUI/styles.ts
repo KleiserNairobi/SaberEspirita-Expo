@@ -44,7 +44,7 @@ export function createStyles(theme: ITheme) {
       lineHeight: 22,
     },
     footer: {
-      padding: theme.spacing.md,
+      paddingHorizontal: theme.spacing.md,
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
       flexDirection: "row",

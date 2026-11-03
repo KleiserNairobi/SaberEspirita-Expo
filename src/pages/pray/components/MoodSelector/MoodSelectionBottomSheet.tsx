@@ -72,7 +72,7 @@ export const MoodSelectionBottomSheet = forwardRef<BottomSheetModal>(
         <BottomSheetScrollView
           contentContainerStyle={[
             styles.scrollContent,
-            { paddingBottom: Math.max(insets.bottom, 24) + 48 },
+            { paddingBottom: theme.spacing.lg + insets.bottom },
           ]}
           showsVerticalScrollIndicator={false}
         >

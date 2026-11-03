@@ -34,6 +34,7 @@ import {
   getCourseActiveLesson,
   getLessonSlideProgress,
 } from "@/utils/lessonProgressStorage";
+import { getFooterVerticalPadding } from "@/utils/layout";
 
 import { CourseMaterialsTab } from "./components/CourseMaterialsTab";
 import { createStyles } from "./styles";
@@ -556,7 +557,7 @@ export function CourseDetailsScreen() {
       <View
         style={[
           styles.footer,
-          { paddingBottom: insets.bottom > 0 ? insets.bottom + 10 : theme.spacing.md },
+          getFooterVerticalPadding(insets, theme.spacing.md),
         ]}
       >
         {isComingSoon ? (

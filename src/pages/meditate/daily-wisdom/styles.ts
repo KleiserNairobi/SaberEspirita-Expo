@@ -87,7 +87,6 @@ export const createStyles = (theme: ITheme) =>
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
       paddingHorizontal: theme.spacing.lg,
-      paddingTop: theme.spacing.md,
     },
     finishButton: {
       backgroundColor: theme.colors.primary,

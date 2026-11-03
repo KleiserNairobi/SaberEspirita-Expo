@@ -112,7 +112,6 @@ export const createStyles = (theme: ITheme) =>
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
       paddingHorizontal: theme.spacing.lg,
-      paddingTop: theme.spacing.md,
       gap: theme.spacing.md,
     },
   });

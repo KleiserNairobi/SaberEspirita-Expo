@@ -6,13 +6,14 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button } from "@/components/Button";
 import { COURSE_PROGRESS_KEYS } from "@/hooks/queries/useCourseProgress";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList, FixStackParamList } from "@/routers/types";
 import { useAuthStore } from "@/stores/authStore";
+import { getFooterVerticalPadding } from "@/utils/layout";
 
 import { createStyles } from "./styles";
 
@@ -25,6 +26,7 @@ type QuizResultNavigationProp = NativeStackNavigationProp<
 export function QuizResultScreen() {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
+  const insets = useSafeAreaInsets();
   const route = useRoute<QuizResultRouteProp>();
   const navigation = useNavigation<QuizResultNavigationProp>();
   const queryClient = useQueryClient();
@@ -138,7 +140,7 @@ export function QuizResultScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -190,7 +192,12 @@ export function QuizResultScreen() {
       </ScrollView>
 
       {/* Botões de Ação */}
-      <View style={styles.footer}>
+      <View
+        style={[
+          styles.footer,
+          getFooterVerticalPadding(insets, theme.spacing.md),
+        ]}
+      >
         <Button title="Continuar" onPress={handleContinue} variant="outline" fullWidth />
         <Button title="Revisar e Aprender" onPress={handleReview} fullWidth />
       </View>
