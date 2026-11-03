@@ -35,10 +35,10 @@ export const createStyles = (theme: ITheme) =>
     contentSheetScroll: {
       paddingHorizontal: theme.spacing.md,
       paddingTop: theme.spacing.md - 2,
-      paddingBottom: 120, // Respiro confortável para o botão fixo no rodapé
+      paddingBottom: 180, // Respiro confortável para o botão fixo no rodapé
     },
     signatureContainer: {
-      marginTop: theme.spacing.xl,
+      marginTop: theme.spacing.md,
       alignItems: "flex-start",
       paddingTop: theme.spacing.sm,
       gap: 3,
@@ -53,12 +53,10 @@ export const createStyles = (theme: ITheme) =>
       textAlign: "left",
     },
     openingQuoteContainer: {
-      backgroundColor: `${theme.colors.primary}08`,
       borderLeftWidth: 3,
       borderLeftColor: theme.colors.primary,
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.sm + 2,
-      borderRadius: theme.radius.xs,
+      paddingLeft: theme.spacing.md,
+      paddingVertical: 2,
       marginBottom: theme.spacing.md,
     },
     openingQuoteText: {
