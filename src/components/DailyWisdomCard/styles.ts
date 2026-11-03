@@ -49,24 +49,8 @@ export const createStyles = (theme: ITheme) =>
     },
     title: {
       ...theme.text("md", "semibold", theme.colors.text),
-      marginBottom: 2,
-      paddingRight: 36, // Espaço para não colidir com o readFullButton
-    },
-    referenceRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      flexWrap: "wrap",
-      gap: theme.spacing.xs,
       marginBottom: theme.spacing.sm,
-    },
-    referenceText: {
-      ...theme.text("xs", "medium", theme.colors.textSecondary),
-    },
-    dividerDot: {
-      ...theme.text("xs", "regular", theme.colors.textSecondary),
-    },
-    authorText: {
-      ...theme.text("xs", "semibold", theme.colors.primary),
+      paddingRight: 36, // Espaço para não colidir com o readFullButton
     },
     quoteContainer: {
       backgroundColor: `${theme.colors.background}80`,

@@ -167,17 +167,6 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
             {activeWisdom.title}
           </Text>
 
-          {/* Metadados: Referência / Livro / Autor */}
-          <View style={styles.referenceRow}>
-            {activeWisdom.bookReference ? (
-              <>
-                <Text style={styles.referenceText}>{activeWisdom.bookReference}</Text>
-                <Text style={styles.dividerDot}>•</Text>
-              </>
-            ) : null}
-            <Text style={styles.authorText}>{activeWisdom.author}</Text>
-          </View>
-
           {/* Citação de abertura / Destaque */}
           {activeWisdom.openingQuote ? (
             <View style={styles.quoteContainer}>
