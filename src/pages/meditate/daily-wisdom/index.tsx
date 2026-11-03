@@ -14,7 +14,7 @@ import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Image } from "expo-image";
-import { BookOpen, Share2, User, Volume2, VolumeX } from "lucide-react-native";
+import { Share2, Volume2, VolumeX } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ContentSheet } from "@/components/ContentSheet";
@@ -56,7 +56,12 @@ export function DailyWisdomScreen() {
   const paramId = route.params?.id;
   const paramWisdom = route.params?.wisdom;
 
-  const { getFontSize, getLineHeight } = useReaderPreferencesStore();
+  const {
+    getFontSize,
+    getLineHeight,
+    getAuthorSize,
+    getSourceSize,
+  } = useReaderPreferencesStore();
 
   const readerPreferencesRef = useRef<BottomSheetModal>(null);
   const hasLogged = useRef(false);
@@ -283,23 +288,6 @@ export function DailyWisdomScreen() {
           key={activeWisdom?.id}
           contentContainerStyle={styles.contentSheetScroll}
         >
-          {/* Metadados Editoriais com Simbologia de Ícones */}
-          <View style={styles.metadataList}>
-            {activeWisdom?.bookReference ? (
-              <View style={styles.metadataItem}>
-                <BookOpen size={16} color={theme.colors.muted} />
-                <Text style={styles.metadataText}>{activeWisdom.bookReference}</Text>
-              </View>
-            ) : null}
-
-            {activeWisdom?.author ? (
-              <View style={styles.metadataItem}>
-                <User size={16} color={theme.colors.muted} />
-                <Text style={styles.metadataText}>{activeWisdom.author}</Text>
-              </View>
-            ) : null}
-          </View>
-
           {/* Epígrafe / Citação de Abertura */}
           {sanitizedOpeningQuote ? (
             <View style={styles.openingQuoteContainer}>
@@ -318,6 +306,38 @@ export function DailyWisdomScreen() {
               {sanitizedContent}
             </Text>
           </View>
+
+          {/* Assinatura Literária ao Final (Autor e Obra em Baskervville Italic escalável) */}
+          {(activeWisdom?.author || activeWisdom?.bookReference) && (
+            <View style={styles.signatureContainer}>
+              {activeWisdom.author ? (
+                <Text
+                  style={[
+                    styles.signatureAuthor,
+                    {
+                      fontSize: getAuthorSize(),
+                      lineHeight: Math.round(getAuthorSize() * 1.35),
+                    },
+                  ]}
+                >
+                  {activeWisdom.author}
+                </Text>
+              ) : null}
+              {activeWisdom.bookReference ? (
+                <Text
+                  style={[
+                    styles.signatureSource,
+                    {
+                      fontSize: getSourceSize(),
+                      lineHeight: Math.round(getSourceSize() * 1.35),
+                    },
+                  ]}
+                >
+                  {activeWisdom.bookReference}
+                </Text>
+              ) : null}
+            </View>
+          )}
         </ContentSheet>
 
         {/* 3. Rodapé Fixo Focado na Ação de Leitura Concluída */}

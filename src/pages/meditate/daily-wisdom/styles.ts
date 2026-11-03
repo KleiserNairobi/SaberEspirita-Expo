@@ -37,24 +37,20 @@ export const createStyles = (theme: ITheme) =>
       paddingTop: theme.spacing.md + 4,
       paddingBottom: 120, // Respiro confortável para o botão fixo no rodapé
     },
-    // Metadados com simbologia de ícones (cada item em sua linha)
-    metadataList: {
-      gap: theme.spacing.sm,
+    signatureContainer: {
+      marginTop: theme.spacing.xl,
       alignItems: "flex-start",
-      alignSelf: "stretch",
-      marginBottom: theme.spacing.md,
-      paddingHorizontal: 2,
+      paddingTop: theme.spacing.sm,
+      gap: 3,
     },
-    metadataItem: {
-      flexDirection: "row",
-      alignItems: "flex-start",
-      gap: 10,
+    signatureAuthor: {
+      ...theme.literaryText(15, theme.colors.textSecondary),
+      textAlign: "left",
     },
-    metadataText: {
-      ...theme.text("sm", "regular"),
-      color: theme.colors.muted,
-      flexShrink: 1,
-      marginTop: -2,
+    signatureSource: {
+      ...theme.literaryText(13, theme.colors.textSecondary),
+      opacity: 0.85,
+      textAlign: "left",
     },
     openingQuoteContainer: {
       backgroundColor: `${theme.colors.primary}08`,
