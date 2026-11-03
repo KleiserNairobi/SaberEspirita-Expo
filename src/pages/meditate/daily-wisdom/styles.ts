@@ -34,7 +34,7 @@ export const createStyles = (theme: ITheme) =>
     // Conteúdo da folha de leitura
     contentSheetScroll: {
       paddingHorizontal: theme.spacing.md,
-      paddingTop: theme.spacing.md + 4,
+      paddingTop: theme.spacing.sm,
       paddingBottom: 120, // Respiro confortável para o botão fixo no rodapé
     },
     signatureContainer: {
@@ -53,16 +53,14 @@ export const createStyles = (theme: ITheme) =>
       textAlign: "left",
     },
     openingQuoteContainer: {
-      backgroundColor: `${theme.colors.primary}08`,
       borderLeftWidth: 3,
       borderLeftColor: theme.colors.primary,
-      paddingHorizontal: theme.spacing.md,
-      paddingVertical: theme.spacing.sm + 2,
-      borderRadius: theme.radius.xs,
-      marginBottom: theme.spacing.md,
+      paddingLeft: theme.spacing.md,
+      paddingVertical: 2,
+      marginBottom: theme.spacing.lg,
     },
     openingQuoteText: {
-      ...theme.literaryText(16, theme.colors.text, 24),
+      ...theme.literaryText(16, theme.colors.text, 25),
     },
     bodyContainer: {
       paddingTop: theme.spacing.xs,

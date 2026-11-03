@@ -59,6 +59,7 @@ export function DailyWisdomScreen() {
   const {
     getFontSize,
     getLineHeight,
+    getQuoteSize,
     getAuthorSize,
     getSourceSize,
   } = useReaderPreferencesStore();
@@ -291,7 +292,17 @@ export function DailyWisdomScreen() {
           {/* Epígrafe / Citação de Abertura */}
           {sanitizedOpeningQuote ? (
             <View style={styles.openingQuoteContainer}>
-              <Text style={styles.openingQuoteText}>"{sanitizedOpeningQuote}"</Text>
+              <Text
+                style={[
+                  styles.openingQuoteText,
+                  {
+                    fontSize: getQuoteSize(),
+                    lineHeight: Math.round(getQuoteSize() * 1.5),
+                  },
+                ]}
+              >
+                "{sanitizedOpeningQuote}"
+              </Text>
             </View>
           ) : null}
 
