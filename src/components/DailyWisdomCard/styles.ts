@@ -39,13 +39,11 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.sm,
     },
     quoteContainer: {
-      backgroundColor: `${theme.colors.background}80`,
-      paddingHorizontal: theme.spacing.sm + 2,
-      paddingVertical: theme.spacing.xs + 3,
-      borderRadius: theme.radius.xs,
-      marginBottom: theme.spacing.sm,
       borderLeftWidth: 2,
       borderLeftColor: theme.colors.primary,
+      paddingLeft: theme.spacing.sm + 2,
+      paddingVertical: 2,
+      marginBottom: theme.spacing.sm,
     },
     quoteText: {
       ...theme.literaryText(15, theme.colors.text, 22),
