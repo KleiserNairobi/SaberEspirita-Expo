@@ -5,7 +5,7 @@ import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
-import { ArrowRight, ChevronDown, Sparkles } from "lucide-react-native";
+import { ChevronDown, ChevronRight, Sparkles } from "lucide-react-native";
 
 import { WisdomMomentBottomSheet } from "@/components/WisdomMomentBottomSheet";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -172,7 +172,7 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
           {/* Ação de Continuação de Leitura */}
           <View style={styles.continueReadingRow}>
             <Text style={styles.continueReadingText}>Continuar lendo</Text>
-            <ArrowRight size={14} color={theme.colors.primary} />
+            <ChevronRight size={15} color={theme.colors.primary} />
           </View>
         </TouchableOpacity>
 

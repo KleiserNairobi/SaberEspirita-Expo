@@ -58,7 +58,7 @@ export const createStyles = (theme: ITheme) =>
     continueReadingRow: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 6,
+      gap: 3,
       marginBottom: theme.spacing.md,
       alignSelf: "flex-start",
     },
