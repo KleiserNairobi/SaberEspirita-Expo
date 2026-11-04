@@ -270,18 +270,18 @@ export const EditProfileBottomSheet = forwardRef<
 
         <View style={styles.actions}>
           <Button
-            title="Cancelar"
-            variant="outline"
-            onPress={handleCancel}
-            disabled={isLoading}
-            fullWidth
-          />
-
-          <Button
             title="Salvar Alterações"
             onPress={handleSave}
             loading={isLoading}
             disabled={isSaveDisabled}
+            fullWidth
+          />
+
+          <Button
+            title="Cancelar"
+            variant="outline"
+            onPress={handleCancel}
+            disabled={isLoading}
             fullWidth
           />
         </View>

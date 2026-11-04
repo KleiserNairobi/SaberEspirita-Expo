@@ -272,18 +272,18 @@ export const DeleteAccountBottomSheet = forwardRef<
 
         <View style={styles.actions}>
           <Button
-            title="Cancelar"
-            variant="outline"
-            onPress={handleCancel}
-            disabled={isLoading}
-            fullWidth
-          />
-
-          <Button
             title="Excluir Permanentemente"
             onPress={handleConfirm}
             loading={isLoading}
             disabled={isConfirmDisabled}
+            fullWidth
+          />
+
+          <Button
+            title="Cancelar"
+            variant="outline"
+            onPress={handleCancel}
+            disabled={isLoading}
             fullWidth
           />
         </View>

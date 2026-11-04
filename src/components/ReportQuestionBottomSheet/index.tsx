@@ -202,14 +202,6 @@ export const ReportQuestionBottomSheet = forwardRef<
 
             <View style={styles.actions}>
               <Button
-                title="Cancelar"
-                variant="outline"
-                onPress={handleClose}
-                disabled={isLoading}
-                fullWidth
-              />
-
-              <Button
                 title="Enviar Relatório"
                 onPress={handleSendReport}
                 loading={isLoading}
@@ -217,6 +209,14 @@ export const ReportQuestionBottomSheet = forwardRef<
                   isSubmitDisabled ||
                   (selectedReason === "outro" && !customComment.trim())
                 }
+                fullWidth
+              />
+
+              <Button
+                title="Cancelar"
+                variant="outline"
+                onPress={handleClose}
+                disabled={isLoading}
                 fullWidth
               />
             </View>

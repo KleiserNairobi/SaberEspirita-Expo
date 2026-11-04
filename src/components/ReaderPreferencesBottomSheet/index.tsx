@@ -249,13 +249,13 @@ export const ReaderPreferencesBottomSheet = forwardRef<
 
         {/* Rodapé de Ações */}
         <View style={styles.actionsContainer}>
+          <Button title="Aplicar na Leitura" onPress={handleApply} fullWidth />
           <Button
             title="Restaurar preferências padrão"
             onPress={handleReset}
             variant="outline"
             fullWidth
           />
-          <Button title="Aplicar na Leitura" onPress={handleApply} fullWidth />
         </View>
       </BottomSheetScrollView>
     </BottomSheetModal>

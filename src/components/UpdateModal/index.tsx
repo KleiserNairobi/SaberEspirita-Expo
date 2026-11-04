@@ -95,16 +95,16 @@ export function UpdateModal({
         <Text style={styles.body}>{getBody()}</Text>
 
         <View style={styles.buttonContainer}>
-          {!critical && !maintenance && (
-            <Button title="Depois" onPress={onClose} variant="outline" fullWidth />
-          )}
-
           <Button
             title={getButtonText()}
             onPress={handleUpdate}
             variant="primary"
             fullWidth
           />
+
+          {!critical && !maintenance && (
+            <Button title="Depois" onPress={onClose} variant="outline" fullWidth />
+          )}
         </View>
       </View>
     </Modal>
