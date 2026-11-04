@@ -39,8 +39,10 @@ export function createStyles(theme: ITheme) {
       borderColor: "transparent",
     },
     containerDangerDisabled: {
-      backgroundColor: `${theme.colors.error}18`,
-      borderColor: "transparent",
+      backgroundColor: `${theme.colors.error}25`,
+      borderWidth: 1,
+      borderColor: `${theme.colors.error}40`,
+      opacity: 0.85,
     },
     containerOutlineDisabled: {
       backgroundColor: "transparent",
@@ -67,7 +69,7 @@ export function createStyles(theme: ITheme) {
       color: theme.colors.primary,
     },
     textDangerDisabled: {
-      color: `${theme.colors.error}70`,
+      color: theme.colors.error,
     },
     textOutlineDisabled: {
       color: theme.colors.muted,
