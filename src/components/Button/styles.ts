@@ -28,11 +28,18 @@ export function createStyles(theme: ITheme) {
       borderWidth: 1,
       borderColor: theme.colors.muted,
     },
+    containerDanger: {
+      backgroundColor: theme.colors.error,
+    },
     containerFullWidth: {
       width: "100%",
     },
     containerDisabled: {
       backgroundColor: `${theme.colors.primary}15`,
+      borderColor: "transparent",
+    },
+    containerDangerDisabled: {
+      backgroundColor: `${theme.colors.error}18`,
       borderColor: "transparent",
     },
     containerOutlineDisabled: {
@@ -53,8 +60,14 @@ export function createStyles(theme: ITheme) {
     textOutline: {
       color: theme.colors.text,
     },
+    textDanger: {
+      color: "white",
+    },
     textDisabled: {
       color: theme.colors.primary,
+    },
+    textDangerDisabled: {
+      color: `${theme.colors.error}70`,
     },
     textOutlineDisabled: {
       color: theme.colors.muted,

@@ -13,7 +13,7 @@ import { createStyles } from "./styles";
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: "primary" | "outline";
+  variant?: "primary" | "outline" | "danger";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   loading?: boolean;
@@ -43,8 +43,14 @@ export function Button({
     size === "sm" && styles.containerSm,
     size === "lg" && styles.containerLg,
     variant === "outline" && styles.containerOutline,
+    variant === "danger" && styles.containerDanger,
     fullWidth && styles.containerFullWidth,
-    disabled && (variant === "outline" ? styles.containerOutlineDisabled : styles.containerDisabled),
+    disabled &&
+      (variant === "outline"
+        ? styles.containerOutlineDisabled
+        : variant === "danger"
+        ? styles.containerDangerDisabled
+        : styles.containerDisabled),
     style,
   ];
 
@@ -53,7 +59,13 @@ export function Button({
     size === "sm" && styles.textSm,
     size === "lg" && styles.textLg,
     variant === "outline" && styles.textOutline,
-    disabled && (variant === "outline" ? styles.textOutlineDisabled : styles.textDisabled),
+    variant === "danger" && styles.textDanger,
+    disabled &&
+      (variant === "outline"
+        ? styles.textOutlineDisabled
+        : variant === "danger"
+        ? styles.textDangerDisabled
+        : styles.textDisabled),
     customTextStyle,
   ];
 

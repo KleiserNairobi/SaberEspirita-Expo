@@ -273,6 +273,7 @@ export const DeleteAccountBottomSheet = forwardRef<
         <View style={styles.actions}>
           <Button
             title="Excluir Permanentemente"
+            variant="danger"
             onPress={handleConfirm}
             loading={isLoading}
             disabled={isConfirmDisabled}
