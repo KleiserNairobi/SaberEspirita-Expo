@@ -198,8 +198,8 @@ export function QuizResultScreen() {
           getFooterVerticalPadding(insets, theme.spacing.md),
         ]}
       >
-        <Button title="Continuar" onPress={handleContinue} variant="outline" fullWidth />
-        <Button title="Revisar e Aprender" onPress={handleReview} fullWidth />
+        <Button title="Continuar" onPress={handleContinue} fullWidth />
+        <Button title="Revisar e Aprender" onPress={handleReview} variant="outline" fullWidth />
       </View>
     </SafeAreaView>
   );
