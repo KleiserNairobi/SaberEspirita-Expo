@@ -11,6 +11,7 @@ import {
 } from "lucide-react-native";
 
 import { AnimatedTabBar } from "@/components/AnimatedTabBar";
+import { useMoodLifecycle } from "@/hooks/useMoodLifecycle";
 import { AccountScreen } from "@/pages/account";
 import { StudyScreen } from "@/pages/study";
 import {
@@ -27,6 +28,7 @@ import { TabParamList } from "./types";
 const Tab = createBottomTabNavigator<TabParamList>();
 
 export function TabNavigator() {
+  useMoodLifecycle();
   const answers = useOnboardingStore((state) => state.answers);
   const initialTabConsumed = useOnboardingStore((state) => state.initialTabConsumed);
   const consumeInitialTab = useOnboardingStore((state) => state.consumeInitialTab);

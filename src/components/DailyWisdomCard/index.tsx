@@ -31,9 +31,14 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
 
   const momentBottomSheetRef = useRef<BottomSheetModal>(null);
 
-  const { currentMoment, setMoment } = useMoodStore();
+  const { currentMoment, setMoment, checkDayTransition } = useMoodStore();
   const { data: todayWisdom } = useTodayWisdom();
   const [selectedWisdom, setSelectedWisdom] = useState<IDailyWisdom | null>(null);
+
+  // Garante que virada de dia civil restaure a leitura padrão
+  useEffect(() => {
+    checkDayTransition();
+  }, [checkDayTransition]);
 
   // Sincroniza a lição exibida com o currentMoment do store (que pode ter sido alterado em Ore ou Medite)
   useEffect(() => {
@@ -129,10 +134,15 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
 
   if (!activeWisdom) return null;
 
-  const momentMeta = WISDOM_MOMENTS.find(
-    (m) => m.key === (currentMoment || activeWisdom.moment)
-  );
-  const momentLabel = momentMeta ? momentMeta.label : "Momento da Alma";
+  // Apenas considera momento customizado se o usuário explicitamente escolheu algo diferente do geral/diário
+  const hasCustomMoment = Boolean(currentMoment && currentMoment !== "GERAL");
+  const momentMeta = hasCustomMoment
+    ? WISDOM_MOMENTS.find((m) => m.key === currentMoment)
+    : null;
+  const momentLabel = momentMeta ? momentMeta.label : "Selecionar";
+  const promptLabel = hasCustomMoment
+    ? "Sentindo algo diferente?"
+    : "Sentindo algo específico?";
 
   return (
     <>
@@ -186,9 +196,9 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
           onPress={handleOpenMomentSelection}
           activeOpacity={0.7}
           accessibilityRole="button"
-          accessibilityLabel={`Sentindo algo específico? ${momentLabel}`}
+          accessibilityLabel={`${promptLabel} ${momentLabel}`}
         >
-          <Text style={styles.moodPromptLabel}>Sentindo algo específico?</Text>
+          <Text style={styles.moodPromptLabel}>{promptLabel}</Text>
           <View style={styles.moodPromptButton}>
             <Text style={styles.moodPromptButtonText}>{momentLabel}</Text>
             <ChevronDown size={16} color={theme.colors.primary} />
@@ -199,7 +209,7 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
       {/* BottomSheet de seleção de momento renderizado localmente sem navegar */}
       <WisdomMomentBottomSheet
         ref={momentBottomSheetRef}
-        currentMoment={currentMoment || activeWisdom.moment}
+        currentMoment={hasCustomMoment && currentMoment ? currentMoment : "GERAL"}
         onSelectMoment={handleSelectMoment}
       />
     </>

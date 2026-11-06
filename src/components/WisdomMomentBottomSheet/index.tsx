@@ -28,7 +28,7 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { WISDOM_MOMENTS, WisdomMoment } from "@/types/dailyWisdom";
 
 export interface WisdomMomentBottomSheetProps {
-  currentMoment?: WisdomMoment | string;
+  currentMoment?: WisdomMoment | string | null;
   onSelectMoment: (moment: WisdomMoment | "RANDOM" | "GERAL") => void;
   onDismiss?: () => void;
 }

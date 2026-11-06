@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React from "react";
 import {
@@ -22,6 +22,7 @@ import { meditationApiService } from "@/services/api/meditationApiService";
 import { reflectionApiService } from "@/services/api/reflectionApiService";
 import { REFLECTION_KEYS } from "./hooks/useReflections";
 import { useAuthStore } from "@/stores/authStore";
+import { useMoodStore } from "@/stores/moodStore";
 import { useMeditationPlayerStore } from "@/stores/meditationPlayerStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { Compass, Heart } from "lucide-react-native";
@@ -43,6 +44,14 @@ export function MeditateScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<MeditateStackParamList>>();
   const syncWithFirebase = useReflectionFavoritesStore((state) => state.syncWithFirebase);
   const setCurrentMeditation = useMeditationPlayerStore((s) => s.setCurrentMeditation);
+  const checkDayTransition = useMoodStore((s) => s.checkDayTransition);
+
+  // Garante que virada de dia civil renove a sintonia reflexiva ao focar na tela
+  useFocusEffect(
+    React.useCallback(() => {
+      checkDayTransition();
+    }, [checkDayTransition])
+  );
 
   React.useEffect(() => {
     if (user?.uid) {

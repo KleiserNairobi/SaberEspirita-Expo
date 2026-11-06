@@ -20,8 +20,13 @@ export function WelcomingHero({ style }: WelcomingHeroProps = {}) {
   const navigation =
     useNavigation<NativeStackNavigationProp<AppStackParamList & PrayStackParamList>>();
 
-  const { currentMood, lastMood, lastMoodDate } = useMoodStore();
+  const { currentMood, lastMood, lastMoodDate, checkDayTransition } = useMoodStore();
   const { suggestedContent, isLoading } = useSuggestedContent(currentMood);
+
+  // Garante que virada de dia civil atualize a mensagem de acolhimento
+  useEffect(() => {
+    checkDayTransition();
+  }, [checkDayTransition]);
 
   // Animações para comportamento retrátil (Padrão LegalSection)
   const [expanded, setExpanded] = useState(false);
@@ -66,11 +71,11 @@ export function WelcomingHero({ style }: WelcomingHeroProps = {}) {
   // Lógica de Saudação (Curadoria e Acolhimento)
   const greeting = React.useMemo(() => {
     if (currentMood) {
-      return `O melhor auxílio para o seu momento.`;
+      return `Auxílio para seu momento atual. Sentimento mudou? Toque acima.`;
     }
 
     if (lastMood && lastMoodDate) {
-      return `Como seu coração está hoje? Identifique seu sentimento abaixo.`;
+      return `Novo dia! Como seu coração está hoje? Escolha seu sentimento acima.`;
     }
 
     return `Como podemos acompanhar seu coração hoje?`;

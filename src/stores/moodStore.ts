@@ -25,6 +25,20 @@ export type UserMood =
   | "DESCONHECIDO";
 
 /**
+ * Utilitário: Verifica se uma data ISO pertence a um dia civil anterior ao dia atual
+ */
+export function isDifferentDay(dateStr: string | null | undefined, now: Date = new Date()): boolean {
+  if (!dateStr) return false;
+  const recorded = new Date(dateStr);
+  if (isNaN(recorded.getTime())) return false;
+  return (
+    recorded.getFullYear() !== now.getFullYear() ||
+    recorded.getMonth() !== now.getMonth() ||
+    recorded.getDate() !== now.getDate()
+  );
+}
+
+/**
  * Mapeamento: Humor Emocional (Ore) ➔ Momento da Alma (Medite)
  */
 export const MOOD_TO_WISDOM_MOMENT: Record<UserMood, WisdomMoment> = {
@@ -56,12 +70,14 @@ interface MoodState {
   currentMood: UserMood | null;
   currentMoment: WisdomMoment | "RANDOM" | "GERAL" | null;
   lastMood: UserMood | null;
-  lastMoodDate: string | null; // ISO Date String
+  lastMoodDate: string | null; // ISO Date String do último registro
 
   // Actions
   setMood: (mood: UserMood | null) => void;
   setMoment: (moment: WisdomMoment | "RANDOM" | "GERAL" | null) => void;
+  resetToDailyDefault: () => void;
   clearMood: () => void;
+  checkDayTransition: () => boolean;
 }
 
 /**
@@ -75,6 +91,23 @@ export const useMoodStore = create<MoodState>()(
       currentMoment: null,
       lastMood: null,
       lastMoodDate: null,
+
+      // Verifica virada de dia civil: se o dia mudou, reseta o humor ativo do dia anterior
+      checkDayTransition: () => {
+        const { lastMoodDate, currentMood, lastMood } = get();
+        if (!lastMoodDate) return false;
+
+        if (isDifferentDay(lastMoodDate)) {
+          console.log("[MoodStore] Virada de dia civil detectada. Renovando sintonia diária.");
+          set({
+            lastMood: currentMood || lastMood,
+            currentMood: null,
+            currentMoment: null,
+          });
+          return true;
+        }
+        return false;
+      },
 
       // 1. Ação a partir de Ore ➔ reflete em Medite
       setMood: (mood) => {
@@ -90,7 +123,7 @@ export const useMoodStore = create<MoodState>()(
 
         set({
           lastMood: currentMood,
-          lastMoodDate: currentMood ? now.toISOString() : get().lastMoodDate,
+          lastMoodDate: now.toISOString(),
           currentMood: mood,
           currentMoment: mappedMoment,
         });
@@ -104,6 +137,7 @@ export const useMoodStore = create<MoodState>()(
         if (!moment || moment === "GERAL") {
           set({
             currentMoment: "GERAL",
+            lastMoodDate: now.toISOString(),
           });
           return;
         }
@@ -111,27 +145,34 @@ export const useMoodStore = create<MoodState>()(
         if (moment === "RANDOM") {
           set({
             currentMoment: "RANDOM",
+            lastMoodDate: now.toISOString(),
           });
           return;
         }
 
-        // Apenas reflete em Ore se houver correspondência emocional genuína.
-        // Se o momento for situacional (ex: Saúde e Cura, Decisão e Discernimento),
-        // não força humor artificial e mantém a escolha do usuário.
         const mappedMood = WISDOM_MOMENT_TO_MOOD[moment];
 
         if (mappedMood) {
           set({
             lastMood: currentMood,
-            lastMoodDate: currentMood ? now.toISOString() : get().lastMoodDate,
+            lastMoodDate: now.toISOString(),
             currentMoment: moment,
             currentMood: mappedMood,
           });
         } else {
           set({
             currentMoment: moment,
+            lastMoodDate: now.toISOString(),
           });
         }
+      },
+
+      // Restaura para a lição oficial do dia e humor neutro
+      resetToDailyDefault: () => {
+        set({
+          currentMood: null,
+          currentMoment: null,
+        });
       },
 
       clearMood: () => set({ currentMood: null, currentMoment: null }),
@@ -146,19 +187,8 @@ export const useMoodStore = create<MoodState>()(
         lastMoodDate: state.lastMoodDate,
       }),
       onRehydrateStorage: () => (state) => {
-        if (state?.lastMoodDate) {
-          const lastDate = new Date(state.lastMoodDate);
-          const now = new Date();
-          const diffInHours = (now.getTime() - lastDate.getTime()) / (1000 * 60 * 60);
-
-          // Se passou mais de 24h, limpamos o rastro para resetar o acolhimento
-          if (diffInHours > 24) {
-            console.log("MoodStore: Passaram-se 24h, resetando rastro emocional.");
-            state.lastMood = null;
-            state.lastMoodDate = null;
-            state.currentMood = null;
-            state.currentMoment = null;
-          }
+        if (state) {
+          state.checkDayTransition?.();
         }
       },
     }

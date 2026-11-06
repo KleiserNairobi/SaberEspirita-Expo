@@ -30,7 +30,7 @@ export default function PrayScreen() {
   const styles = createStyles(theme);
   const navigation = useNavigation<NativeStackNavigationProp<PrayStackParamList>>();
   const { user } = useAuth();
-  const { currentMood } = useMoodStore();
+  const { currentMood, checkDayTransition } = useMoodStore();
 
   const { setPlaying, setCurrentTrack } = useAmbientPlayerStore();
   const { syncWithFirebase } = usePrayerFavoritesStore();
@@ -57,12 +57,13 @@ export default function PrayScreen() {
     }
   }, [queryClient]);
 
-  // Desliga áudio da Oração passada ao retornar
+  // Checa virada de dia e desliga áudio da Oração passada ao focar na tela
   useFocusEffect(
     React.useCallback(() => {
+      checkDayTransition();
       setPlaying(false);
       setCurrentTrack(null);
-    }, [setPlaying, setCurrentTrack])
+    }, [checkDayTransition, setPlaying, setCurrentTrack])
   );
 
   function handleAIChatPress() {
