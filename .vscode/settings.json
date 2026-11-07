@@ -3,5 +3,13 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "never"
   },
-  "java.compile.nullAnalysis.mode": "disabled"
+  "java.server.launchMode": "disabled",
+  "java.autobuild.enabled": false,
+  "java.configuration.updateBuildConfiguration": "disabled",
+  "java.import.gradle.enabled": false,
+  "java.import.maven.enabled": false,
+  "java.compile.nullAnalysis.mode": "disabled",
+  "gradle.autoDetect": "off",
+  "gradle.buildServer.enabled": false
 }
+
