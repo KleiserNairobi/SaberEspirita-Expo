@@ -23,7 +23,9 @@ export function useCoursesProgressList() {
     enabled: !!userId,
     staleTime: 0,
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em memória
+    placeholderData: (previousData) => previousData,
     refetchOnMount: true,
+    retry: 2,
   });
 }
 
@@ -56,6 +58,8 @@ export function useAllCoursesProgress() {
     enabled: !!userId,
     staleTime: 0,
     gcTime: 1000 * 60 * 60 * 24 * 7,
+    placeholderData: (previousData) => previousData,
     refetchOnMount: true,
+    retry: 2,
   });
 }

@@ -2,6 +2,17 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.24-ota.1] - 2026-11-07 (Resiliência Offline)
+
+### Corrigido / Aprimorado
+
+- **Resiliência Offline e Preservação de Cursos (`StudyScreen`, `OfflineCoursesCard`, `useCourses`, `courseApiService`)**:
+  - Implementada preservação de cache no TanStack Query com `placeholderData` e `retry` para evitar que o catálogo de séries e o progresso do usuário sumam em caso de oscilação ou ausência de conexão.
+  - Removido tratamento silencioso com retorno de array vazio no `courseApiService`, propagando erros de rede para a camada de queries.
+  - Criado o componente `OfflineCoursesCard` com visual acolhedor e botão de tentar novamente quando não há dados em cache.
+  - Adicionado banner informativo sutil no topo da tela de estudos quando o aplicativo opera offline exibindo conteúdo do cache local.
+  - Aprimorado tratamento de erro e ação de refetch no catálogo de séries espirituais (`CoursesCatalogScreen`).
+
 ## [2.0.24-ota.1] - 2026-10-30 (Hot-Update)
 
 ### Corrigido / Aprimorado

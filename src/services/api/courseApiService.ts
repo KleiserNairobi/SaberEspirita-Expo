@@ -108,23 +108,19 @@ export const courseApiService = {
     };
     */
 
-    try {
-      const response = await apiClient.get<ICourse[]>("/courses", { params });
-      const list: ICourse[] = (response.data || []).map((course) => ({
-        ...course,
-        categoryId:
-          course.categoryId ||
-          (course as any).category?.id ||
-          (course as any).category_id,
-        imageUrl:
-          typeof course.imageUrl === "string" ? resolveCdnUrl(course.imageUrl) : course.imageUrl,
-        certification: parseCertification(course.certification),
-      }));
+    const response = await apiClient.get<ICourse[]>("/courses", { params });
+    const list: ICourse[] = (response.data || []).map((course) => ({
+      ...course,
+      categoryId:
+        course.categoryId ||
+        (course as any).category?.id ||
+        (course as any).category_id,
+      imageUrl:
+        typeof course.imageUrl === "string" ? resolveCdnUrl(course.imageUrl) : course.imageUrl,
+      certification: parseCertification(course.certification),
+    }));
 
-      return list;
-    } catch {
-      return [];
-    }
+    return list;
   },
 
   /**

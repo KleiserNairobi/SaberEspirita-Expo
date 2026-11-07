@@ -1,13 +1,20 @@
 import React, { useCallback, useRef, useState } from "react";
 
-import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { differenceInDays } from "date-fns";
-import { Bell, ChevronRight, Leaf, Sprout, TreePalm } from "lucide-react-native";
+import { Bell, ChevronRight, Leaf, Sprout, TreePalm, WifiOff } from "lucide-react-native";
 import { Feather } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -42,6 +49,7 @@ import {
   InProgressCourseItem,
 } from "./components/ContinueStudyingSection";
 import { ExploreByTheme } from "./components/ExploreByTheme";
+import { OfflineCoursesCard } from "./components/OfflineCoursesCard";
 import { PremiumBanner } from "./components/PremiumBanner";
 import { createStyles } from "./styles";
 
@@ -97,9 +105,15 @@ export function StudyScreen() {
 
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
+  const [isRetryingCourses, setIsRetryingCourses] = useState(false);
 
   // Fetching de todos os cursos para o Explore por tema
-  const { data: allCourses = [] } = useCourses();
+  const {
+    data: allCourses = [],
+    isLoading: isCoursesLoading,
+    isError: isCoursesError,
+    refetch: refetchCourses,
+  } = useCourses();
 
   // Fetching de cursos populares via React Query
   const { data: featuredCourses = [] } = useFeaturedCourses();
@@ -123,6 +137,21 @@ export function StudyScreen() {
       queryClient.invalidateQueries({ queryKey: ["allCoursesProgress"] });
     }, [queryClient])
   );
+
+  const handleRetryCourses = useCallback(async () => {
+    setIsRetryingCourses(true);
+    try {
+      await Promise.all([
+        refetchCourses(),
+        queryClient.invalidateQueries({ queryKey: COURSES_KEYS.featured }),
+        queryClient.invalidateQueries({ queryKey: ["lastAccessedCourse"] }),
+        queryClient.invalidateQueries({ queryKey: ["coursesProgressList"] }),
+        queryClient.invalidateQueries({ queryKey: ["allCoursesProgress"] }),
+      ]);
+    } finally {
+      setIsRetryingCourses(false);
+    }
+  }, [refetchCourses, queryClient]);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -454,6 +483,32 @@ export function StudyScreen() {
         {(() => {
           const studyContent = (
             <>
+              {/* Banner sutil quando sem conexão mas exibindo cursos em cache */}
+              {isCoursesError && allCourses.length > 0 && (
+                <View style={styles.offlineBanner}>
+                  <WifiOff size={16} color={theme.colors.warning} />
+                  <Text style={styles.offlineBannerText}>
+                    Sem conexão com a internet. Exibindo cursos salvos no dispositivo.
+                  </Text>
+                </View>
+              )}
+
+              {/* Card amigável de reconexão quando não há cursos em cache */}
+              {isCoursesError && allCourses.length === 0 && (
+                <OfflineCoursesCard
+                  onRetry={handleRetryCourses}
+                  isRetrying={isRetryingCourses}
+                />
+              )}
+
+              {/* Loading inicial suave quando não há dados em cache */}
+              {isCoursesLoading && allCourses.length === 0 && (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="small" color={theme.colors.primary} />
+                  <Text style={styles.loadingText}>Carregando séries de estudo...</Text>
+                </View>
+              )}
+
               {/* Carrossel de Cursos em Andamento (com histórico real e barra de progresso verde fina) */}
               {inProgressCourses.length > 0 && (
                 <ContinueStudyingSection

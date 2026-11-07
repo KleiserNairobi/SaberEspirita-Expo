@@ -131,6 +131,34 @@ export const createStyles = (theme: ITheme) =>
       marginBottom: theme.spacing.lg,
       marginTop: theme.spacing.sm,
     },
+    offlineBanner: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: theme.spacing.sm,
+      marginHorizontal: theme.spacing.lg,
+      marginTop: theme.spacing.xs,
+      marginBottom: theme.spacing.sm,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
+      backgroundColor: `${theme.colors.warning}15`,
+      borderRadius: theme.radius.md,
+      borderWidth: 1,
+      borderColor: `${theme.colors.warning}30`,
+    },
+    offlineBannerText: {
+      ...theme.text("xs", "medium", theme.colors.warning),
+      flex: 1,
+    },
+    loadingContainer: {
+      marginHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.xl,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: theme.spacing.sm,
+    },
+    loadingText: {
+      ...theme.text("sm", "regular", theme.colors.textSecondary),
+    },
     // Estilos específicos para Tablet
     tabletRow: {
       flexDirection: "row",

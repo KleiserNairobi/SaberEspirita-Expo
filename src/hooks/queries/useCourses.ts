@@ -10,40 +10,20 @@ export const COURSES_KEYS = {
 };
 
 async function fetchCourses(): Promise<ICourse[]> {
-  try {
-    return await courseApiService.getCourses();
-  } catch (error) {
-    console.warn("useCourses: Erro ao buscar cursos:", error);
-    return [];
-  }
+  return await courseApiService.getCourses();
 }
 
 async function fetchFeaturedCourses(): Promise<ICourse[]> {
-  try {
-    return await courseApiService.getFeaturedCourses();
-  } catch (error) {
-    console.warn("useFeaturedCourses: Erro ao buscar cursos em destaque:", error);
-    return [];
-  }
+  return await courseApiService.getFeaturedCourses();
 }
 
 async function fetchCourseById(id: string): Promise<ICourse | null> {
-  try {
-    const course = await courseApiService.getCourseById(id);
-    if (course) return course;
-  } catch (error) {
-    console.warn(`useCourse(${id}): Erro ao buscar curso:`, error);
-  }
-  return null;
+  const course = await courseApiService.getCourseById(id);
+  return course || null;
 }
 
 async function fetchCourseMaterials(courseId: string): Promise<ICourseMaterialsResponse> {
-  try {
-    return await courseApiService.getCourseMaterials(courseId);
-  } catch (error) {
-    console.warn(`useCourseMaterials(${courseId}): Erro ao buscar materiais do curso:`, error);
-    return { booklets: [], podcasts: [], reflections: [], meditations: [] };
-  }
+  return await courseApiService.getCourseMaterials(courseId);
 }
 
 export function useCourses() {
@@ -52,7 +32,9 @@ export function useCourses() {
     queryFn: fetchCourses,
     staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    placeholderData: (previousData) => previousData,
     refetchOnReconnect: true,
+    retry: 2,
   });
 }
 
@@ -62,7 +44,9 @@ export function useFeaturedCourses() {
     queryFn: fetchFeaturedCourses,
     staleTime: 1000 * 60 * 3, // 3 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    placeholderData: (previousData) => previousData,
     refetchOnReconnect: true,
+    retry: 2,
   });
 }
 
@@ -73,8 +57,10 @@ export function useCourse(id: string) {
     enabled: !!id,
     staleTime: 1000 * 60 * 1, // 1 minuto
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    placeholderData: (previousData) => previousData,
     refetchOnMount: "always",
     refetchOnReconnect: true,
+    retry: 2,
   });
 }
 
@@ -85,7 +71,9 @@ export function useCourseMaterials(courseId: string) {
     enabled: !!courseId,
     staleTime: 1000 * 60 * 5, // 5 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    placeholderData: (previousData) => previousData,
     refetchOnReconnect: true,
+    retry: 2,
   });
 }
 

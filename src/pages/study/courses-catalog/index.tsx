@@ -95,7 +95,7 @@ export function CoursesCatalogScreen({ navigation }: any) {
   const [filterType, setFilterType] = useState<ContentFilterType>("ALL");
 
   // React Query Fetch
-  const { data: courses = [], isLoading, error } = useCourses();
+  const { data: courses = [], isLoading, error, refetch } = useCourses();
   const { data: allProgress = {} } = useAllCoursesProgress();
 
   // Prefetch automático e deduplicado de todas as capas de curso do catálogo
@@ -193,14 +193,14 @@ export function CoursesCatalogScreen({ navigation }: any) {
           Não foi possível buscar as séries espirituais. Verifique sua conexão e tente
           novamente.
         </Text>
-        <TouchableOpacity style={styles.retryButton}>
+        <TouchableOpacity style={styles.retryButton} onPress={() => refetch()} activeOpacity={0.7}>
           <Text style={styles.retryButtonText}>Tentar Novamente</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
-  if (error) {
+  if (error && courses.length === 0) {
     return (
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
         <StatusBar style={theme.isDark ? "light" : "dark"} />
@@ -209,7 +209,7 @@ export function CoursesCatalogScreen({ navigation }: any) {
     );
   }
 
-  if (isLoading) {
+  if (isLoading && courses.length === 0) {
     return (
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
         <StatusBar style={theme.isDark ? "light" : "dark"} />
