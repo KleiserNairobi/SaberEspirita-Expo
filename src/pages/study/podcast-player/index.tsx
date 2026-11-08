@@ -30,7 +30,7 @@ import { getCachedAudioUri } from "@/services/audio/audioCacheService";
 import { ensureTrackPlayerReady } from "@/services/audio/trackPlayerService";
 import { useAuth } from "@/stores/authStore";
 import { usePodcastPlayerStore } from "@/stores/podcastPlayerStore";
-import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
+import { sharePodcast } from "@/utils/sharing";
 
 import { createStyles } from "./styles";
 
@@ -200,19 +200,7 @@ export function PodcastPlayerScreen() {
   async function handleShare() {
     if (!podcast) return;
     try {
-      const parts = [
-        `Confira o episódio de podcast "${podcast.title}" do Saber Espírita!`,
-      ];
-      if (podcast.description) {
-        parts.push(`\nSobre o Episódio:\n${podcast.description}`);
-      }
-      parts.push("\nBaixe o app e ouça agora mesmo:");
-      parts.push(`🤖 Android: ${PLAY_STORE_URL}`);
-      parts.push(`🍎 iOS: ${APP_STORE_URL}`);
-
-      await Share.share({
-        message: parts.join("\n"),
-      });
+      await sharePodcast(podcast);
     } catch (error) {
       console.error("Erro ao compartilhar podcast:", error);
     }

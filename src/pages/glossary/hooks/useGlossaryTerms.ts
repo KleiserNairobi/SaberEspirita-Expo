@@ -1,8 +1,9 @@
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { GlossaryFilterType } from "@/types/glossaryFilter";
 import { glossaryApiService } from "@/services/api/glossaryApiService";
+import { IGlossaryTerm } from "@/types/glossary";
 
 export const GLOSSARY_KEYS = {
   all: ["glossary", "v1"] as const,
@@ -32,13 +33,21 @@ export function useGlossaryTerms() {
 }
 
 export function useGlossaryTerm(id: string) {
+  const queryClient = useQueryClient();
+
   return useQuery({
     queryKey: GLOSSARY_KEYS.term(id),
     queryFn: () => glossaryApiService.getGlossaryTermById(id),
     enabled: !!id,
-    staleTime: 1000 * 60 * 60 * 24,
-    gcTime: 1000 * 60 * 60 * 24 * 7,
+    initialData: () => {
+      const allTerms = queryClient.getQueryData<IGlossaryTerm[]>(GLOSSARY_KEYS.all);
+      return allTerms?.find((t) => t.id === id);
+    },
+    staleTime: 1000 * 60 * 60 * 24, // 24 horas
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    placeholderData: (previousData) => previousData,
     refetchOnMount: false,
+    retry: 2,
   });
 }
 

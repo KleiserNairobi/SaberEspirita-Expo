@@ -1,4 +1,4 @@
-import { Linking, Share } from "react-native";
+import { Linking } from "react-native";
 
 import { Sun, Moon, Smartphone, type LucideIcon } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -13,6 +13,7 @@ import {
   INSTAGRAM_URL,
   SHARE_MESSAGE,
 } from "../constants";
+import { shareAppInvite } from "@/utils/sharing";
 import { useRateApp } from "@/hooks/useRateApp";
 import { authApiService } from "@/services/api/authApiService";
 
@@ -95,7 +96,7 @@ export function useAccountScreen() {
 
   async function handleShareApp() {
     try {
-      await Share.share({ message: SHARE_MESSAGE });
+      await shareAppInvite(SHARE_MESSAGE);
     } catch (error) {
       console.error("Erro ao compartilhar:", error);
     }

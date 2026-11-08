@@ -26,7 +26,7 @@ import { logEvent } from "@/services/analytics/analyticsService";
 import { statsApiService } from "@/services/api/statsApiService";
 import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
 import { IDailyWisdom } from "@/types/dailyWisdom";
-import { SHARE_FOOTER } from "@/utils/constants";
+import { shareDailyWisdom } from "@/utils/sharing";
 import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
 import { getFooterVerticalPadding } from "@/utils/layout";
 
@@ -125,17 +125,7 @@ export function DailyWisdomScreen() {
   async function handleShare() {
     if (!activeWisdom) return;
     try {
-      const sanitizedQuote = activeWisdom.openingQuote
-        ? `"${activeWisdom.openingQuote.replace(/\\n/g, "\n")}"\n\n`
-        : "";
-      const sanitizedContent = activeWisdom.content
-        ? activeWisdom.content.replace(/\\n/g, "\n")
-        : "";
-      const message = `${activeWisdom.title}\n${sanitizedQuote}${sanitizedContent}\n\n— ${
-        activeWisdom.author
-      }${activeWisdom.bookReference ? ` (${activeWisdom.bookReference})` : ""}${SHARE_FOOTER}`;
-
-      await Share.share({ message });
+      await shareDailyWisdom(activeWisdom);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível compartilhar a mensagem");
     }

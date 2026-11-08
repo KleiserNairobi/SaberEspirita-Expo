@@ -29,6 +29,7 @@ import { useAppTheme } from "@/hooks/useAppTheme";
 import { AppStackParamList } from "@/routers/types";
 import { useAuthStore } from "@/stores/authStore";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
+import { shareCourse } from "@/utils/sharing";
 import { prefetchImages } from "@/utils/imagePrefetch";
 import {
   getCourseActiveLesson,
@@ -83,31 +84,9 @@ export function CourseDetailsScreen() {
   async function handleShare() {
     if (!course) return;
     try {
-      const parts = [`Confira a série "${course.title}" no Saber Espírita!`];
-
-      if (course.description) {
-        parts.push(`\nSobre a Série:\n${course.description}`);
-      }
-
-      if (course.learningObjectives && course.learningObjectives.length > 0) {
-        parts.push(
-          `\nObjetivos da Série:\n${course.learningObjectives.map((obj) => `✅ ${obj}`).join("\n")}`
-        );
-      }
-
-      if (typeof course.imageUrl === "string") {
-        parts.push(`\nImagem de Capa: ${course.imageUrl}`);
-      }
-
-      parts.push("\nBaixe o app e comece a estudar agora mesmo:");
-      parts.push(`🤖 Android: ${PLAY_STORE_URL}`);
-      parts.push(`🍎 iOS: ${APP_STORE_URL}`);
-
-      await Share.share({
-        message: parts.join("\n"),
-      });
+      await shareCourse(course);
     } catch (error) {
-      console.error("Erro ao compartilhar:", error);
+      console.error("Erro ao compartilhar curso:", error);
     }
   }
 

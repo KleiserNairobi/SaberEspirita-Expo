@@ -16,6 +16,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MessageCircle } from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { OfflineStateCard } from "@/components/OfflineStateCard";
 import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
 import { ReadingToolbar } from "@/components/ReadingToolbar";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -23,7 +24,7 @@ import { GlossaryStackParamList } from "@/routers/types";
 import { useGlossaryFavoritesStore } from "@/stores/glossaryFavoritesStore";
 import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
 import { GLOSSARY_CATEGORIES } from "@/types/glossary";
-import { SHARE_FOOTER } from "@/utils/constants";
+import { shareGlossaryTerm } from "@/utils/sharing";
 import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
 
 import { useGlossaryTerm } from "../hooks/useGlossaryTerms";
@@ -38,7 +39,13 @@ export function TermDetailScreen() {
 
   const [isNarrating, setIsNarrating] = useState(false);
 
-  const { data: term, isLoading } = useGlossaryTerm(id);
+  const {
+    data: term,
+    isLoading,
+    isError,
+    refetch,
+    isRefetching,
+  } = useGlossaryTerm(id);
   const isFavorite = useGlossaryFavoritesStore((s) => s.isFavorite(id));
   const toggleFavorite = useGlossaryFavoritesStore((s) => s.toggleFavorite);
   const {
@@ -57,9 +64,7 @@ export function TermDetailScreen() {
     if (!term) return;
 
     try {
-      await Share.share({
-        message: `${term.term}\n\n${term.definition}\n\nReferências:\n${term.references.join("\n")}${SHARE_FOOTER}`,
-      });
+      await shareGlossaryTerm(term);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível compartilhar o termo");
     }
@@ -109,9 +114,10 @@ export function TermDetailScreen() {
     });
   }
 
-  if (isLoading) {
+  if (isLoading && !term) {
     return (
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
+        <ReadingToolbar onBack={handleGoBack} showActions={false} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
@@ -119,11 +125,17 @@ export function TermDetailScreen() {
     );
   }
 
-  if (!term) {
+  if (isError || !term) {
     return (
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Termo não encontrado</Text>
+        <ReadingToolbar onBack={handleGoBack} showActions={false} />
+        <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 20 }}>
+          <OfflineStateCard
+            title="Não foi possível carregar o termo"
+            description="Verifique sua conexão com a internet para consultar este termo do glossário."
+            onRetry={() => refetch()}
+            isRetrying={isRefetching}
+          />
         </View>
       </SafeAreaView>
     );

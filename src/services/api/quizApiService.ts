@@ -230,7 +230,7 @@ export const quizApiService = {
       });
     } catch (error) {
       console.warn("quizApiService: Erro ao buscar categorias:", error);
-      return [];
+      throw error;
     }
   },
 
@@ -253,7 +253,7 @@ export const quizApiService = {
       return [];
     } catch (error) {
       console.warn(`quizApiService: Erro ao buscar subcategorias (${categoryId}):`, error);
-      return [];
+      throw error;
     }
   },
 
@@ -277,7 +277,7 @@ export const quizApiService = {
       return list.map((q: any) => normalizeQuiz(q)!).filter(Boolean);
     } catch (error) {
       console.warn(`quizApiService: Erro ao buscar quizzes da categoria (${categoryId}):`, error);
-      return [];
+      throw error;
     }
   },
 

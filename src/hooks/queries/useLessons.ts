@@ -10,26 +10,16 @@ export const LESSONS_KEYS = {
 };
 
 async function fetchLessonsByCourse(courseId: string): Promise<ILesson[]> {
-  try {
-    const lessons = await lessonApiService.getLessonsByCourseId(courseId);
-    if (lessons && lessons.length > 0) return lessons;
-  } catch (error) {
-    console.warn(`useLessons(${courseId}): Erro ao buscar liçoes:`, error);
-  }
-  return [];
+  const lessons = await lessonApiService.getLessonsByCourseId(courseId);
+  return lessons || [];
 }
 
 async function fetchLessonById(
   courseId: string,
   lessonId: string
 ): Promise<ILesson | null> {
-  try {
-    const lesson = await lessonApiService.getLessonById(lessonId);
-    if (lesson) return lesson;
-  } catch (error) {
-    console.warn(`useLesson(${lessonId}): Erro ao buscar lição:`, error);
-  }
-  return null;
+  const lesson = await lessonApiService.getLessonById(lessonId);
+  return lesson || null;
 }
 
 export function useLessons(courseId: string) {
@@ -37,10 +27,12 @@ export function useLessons(courseId: string) {
     queryKey: LESSONS_KEYS.byCourse(courseId),
     queryFn: () => fetchLessonsByCourse(courseId),
     enabled: !!courseId,
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    placeholderData: (previousData) => previousData,
     refetchOnMount: true,
     refetchOnReconnect: true,
+    retry: 2,
   });
 }
 
@@ -49,9 +41,9 @@ export function useLesson(courseId: string, lessonId: string) {
     queryKey: LESSONS_KEYS.detail(courseId, lessonId),
     queryFn: () => fetchLessonById(courseId, lessonId),
     enabled: !!courseId && !!lessonId,
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 1000 * 60 * 60, // 1 hora
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
-    refetchOnMount: true,
-    refetchOnReconnect: true,
+    placeholderData: (previousData) => previousData,
+    retry: 2,
   });
 }

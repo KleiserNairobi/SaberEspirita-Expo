@@ -30,7 +30,7 @@ import { getCachedAudioUri } from "@/services/audio/audioCacheService";
 import { ensureTrackPlayerReady } from "@/services/audio/trackPlayerService";
 import { useAuth } from "@/stores/authStore";
 import { useMeditationPlayerStore } from "@/stores/meditationPlayerStore";
-import { APP_STORE_URL, PLAY_STORE_URL } from "@/utils/constants";
+import { shareMeditation } from "@/utils/sharing";
 
 import { createStyles } from "./styles";
 
@@ -207,19 +207,7 @@ export function MeditationPlayerScreen() {
   async function handleShare() {
     if (!meditation) return;
     try {
-      const parts = [
-        `Confira a meditação guiada "${meditation.title}" no Saber Espírita!`,
-      ];
-      if (meditation.description) {
-        parts.push(`\nSobre esta Meditação:\n${meditation.description}`);
-      }
-      parts.push("\nBaixe o app e ouça agora mesmo:");
-      parts.push(`🤖 Android: ${PLAY_STORE_URL}`);
-      parts.push(`🍎 iOS: ${APP_STORE_URL}`);
-
-      await Share.share({
-        message: parts.join("\n"),
-      });
+      await shareMeditation(meditation);
     } catch (error) {
       console.error("Erro ao compartilhar meditação:", error);
     }

@@ -16,6 +16,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import TrackPlayer from "react-native-track-player";
 
+import { OfflineStateCard } from "@/components/OfflineStateCard";
 import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
 import { ReadingToolbar } from "@/components/ReadingToolbar";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -42,7 +43,13 @@ export function PrayerScreen() {
   const hasLogged = useRef(false);
   const [isNarrating, setIsNarrating] = useState(false);
 
-  const { data: prayer, isLoading } = usePrayer(id);
+  const {
+    data: prayer,
+    isLoading,
+    isError,
+    refetch,
+    isRefetching,
+  } = usePrayer(id);
   const { isFavorite, toggleFavorite } = usePrayerFavoritesStore();
   const {
     getFontSize,
@@ -144,9 +151,10 @@ export function PrayerScreen() {
     }
   }
 
-  if (isLoading) {
+  if (isLoading && !prayer) {
     return (
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
+        <ReadingToolbar onBack={handleGoBack} showActions={false} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
@@ -154,11 +162,17 @@ export function PrayerScreen() {
     );
   }
 
-  if (!prayer) {
+  if (isError || !prayer) {
     return (
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Oração não encontrada</Text>
+        <ReadingToolbar onBack={handleGoBack} showActions={false} />
+        <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 20 }}>
+          <OfflineStateCard
+            title="Não foi possível carregar a oração"
+            description="Verifique sua conexão com a internet para ler esta prece."
+            onRetry={() => refetch()}
+            isRetrying={isRefetching}
+          />
         </View>
       </SafeAreaView>
     );

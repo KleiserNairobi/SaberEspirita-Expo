@@ -5,7 +5,7 @@ import { User, Compass, Share2 } from "lucide-react-native";
 
 import { Message } from "@/types/chat";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { SHARE_FOOTER } from "@/utils/constants";
+import { shareChatMessage } from "@/utils/sharing";
 import { createStyles } from "./styles";
 
 interface MessageBubbleProps {
@@ -31,9 +31,7 @@ export function MessageBubble({ message, shareTitle }: MessageBubbleProps) {
   async function handleShare() {
     try {
       const title = shareTitle || "Resposta do Assistente";
-      await Share.share({
-        message: `${title}:\n\n${message.text}\n\n---${SHARE_FOOTER}`,
-      });
+      await shareChatMessage(message.text, title);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível compartilhar a mensagem");
     }

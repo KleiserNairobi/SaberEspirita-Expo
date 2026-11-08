@@ -19,6 +19,8 @@ import { BottomSheetMessage } from "@/components/BottomSheetMessage";
 import { BottomSheetMessageConfig } from "@/components/BottomSheetMessage/types";
 import { Button } from "@/components/Button";
 import { CourseFeedbackBottomSheet } from "@/components/CourseFeedbackBottomSheet";
+import { OfflineStateCard } from "@/components/OfflineStateCard";
+import { OfflineStatusBanner } from "@/components/OfflineStatusBanner";
 import { PremiumContentNoticeModal } from "@/components/PremiumContentNoticeModal";
 import {
   useCourseProgress,
@@ -73,7 +75,13 @@ export function CourseCurriculumScreen() {
   );
 
   // Fetch das aulas reais
-  const { data: lessons = [], isLoading: isLoadingLessons } = useLessons(courseId);
+  const {
+    data: lessons = [],
+    isLoading: isLoadingLessons,
+    isError: isLessonsError,
+    refetch: refetchLessons,
+    isRefetching: isRefetchingLessons,
+  } = useLessons(courseId);
 
   // ✅ Fetch do curso para exibir título
   const { data: course, isLoading: isLoadingCourse } = useCourse(courseId);
@@ -941,20 +949,27 @@ export function CourseCurriculumScreen() {
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={
               activeTab === "lessons" ? (
-                <ProgressSummaryCard
-                  courseTitle={course?.title || "Série"}
-                  lessonsProgress={lessonsProgress}
-                  exercisesProgress={exercisesProgress}
-                  totalLessons={totalLessons}
-                  completedLessons={completedLessons}
-                  totalExercises={totalExercises}
-                  completedExercises={completedExercises}
-                  certificateEligible={isReadyForCertificate}
-                  hasCertificate={certificateEnabled}
-                  onRateCourse={
-                    hasGloballySubmittedState ? undefined : handleOpenFeedback
-                  }
-                />
+                <>
+                  {isLessonsError && lessons.length > 0 && (
+                    <View style={{ marginHorizontal: 20, marginBottom: 12 }}>
+                      <OfflineStatusBanner message="Sem conexão. Exibindo aulas salvas no dispositivo." />
+                    </View>
+                  )}
+                  <ProgressSummaryCard
+                    courseTitle={course?.title || "Série"}
+                    lessonsProgress={lessonsProgress}
+                    exercisesProgress={exercisesProgress}
+                    totalLessons={totalLessons}
+                    completedLessons={completedLessons}
+                    totalExercises={totalExercises}
+                    completedExercises={completedExercises}
+                    certificateEligible={isReadyForCertificate}
+                    hasCertificate={certificateEnabled}
+                    onRateCourse={
+                      hasGloballySubmittedState ? undefined : handleOpenFeedback
+                    }
+                  />
+                </>
               ) : (
                 <View style={styles.materialsContent}>
                   <CourseMaterialsTab
@@ -968,15 +983,25 @@ export function CourseCurriculumScreen() {
             renderItem={activeTab === "lessons" ? renderLessonItem : null}
             ListEmptyComponent={
               activeTab === "lessons" ? (
-                <Text
-                  style={{
-                    textAlign: "center",
-                    color: theme.colors.textSecondary,
-                    marginTop: 40,
-                  }}
-                >
-                  Nenhuma aula encontrada.
-                </Text>
+                isLessonsError ? (
+                  <OfflineStateCard
+                    title="Não foi possível carregar as aulas"
+                    description="Verifique sua conexão com a internet para carregar o conteúdo desta série."
+                    onRetry={() => refetchLessons()}
+                    isRetrying={isRefetchingLessons}
+                    style={{ marginHorizontal: 20, marginTop: 24 }}
+                  />
+                ) : (
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      color: theme.colors.textSecondary,
+                      marginTop: 40,
+                    }}
+                  >
+                    Nenhuma aula encontrada.
+                  </Text>
+                )
               ) : null
             }
           />

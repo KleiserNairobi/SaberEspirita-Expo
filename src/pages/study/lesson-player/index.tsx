@@ -52,7 +52,7 @@ import {
 import { useAuthStore } from "@/stores/authStore";
 import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
 import { IGlossaryTerm } from "@/types/glossary";
-import { SHARE_FOOTER } from "@/utils/constants";
+import { shareLessonSlide } from "@/utils/sharing";
 import { isLessonFreeTrial } from "@/utils/courseAccess";
 import {
   clearLessonSlideProgress,
@@ -571,16 +571,14 @@ export function LessonPlayerScreen() {
   async function handleShare() {
     if (!currentSlide) return;
     try {
-      let shareMessage = `${currentSlide.title}\n\n${currentSlide.content}`;
-      if (currentSlide.highlights?.length) {
-        shareMessage +=
-          "\n\n💡 Destaques:\n" +
-          currentSlide.highlights.map((h) => `• ${h.title}: ${h.content}`).join("\n");
-      }
-      shareMessage += SHARE_FOOTER;
-      await Share.share({ message: shareMessage });
+      await shareLessonSlide(
+        currentSlide.title,
+        currentSlide.content,
+        lessonId,
+        currentSlide.highlights
+      );
     } catch (error) {
-      console.error(error);
+      console.error("Erro ao compartilhar aula:", error);
     }
   }
 

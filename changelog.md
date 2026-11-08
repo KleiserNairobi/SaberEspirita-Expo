@@ -12,6 +12,10 @@ Este documento registra todas as alterações relevantes do projeto a partir da 
 - **Componentes Globais de UX Offline (`OfflineStateCard`, `OfflineStatusBanner`)**:
   - Criado o componente global `OfflineStateCard` com ilustração amigável, título contextual, descrição e botão "Tentar novamente" com loading para estados de erro sem dados locais.
   - Criado o componente `OfflineStatusBanner` para sinalizar de forma discreta no topo das seções quando o usuário está offline visualizando conteúdo recuperado do cache.
+- **Telemetria e Rastreamento Centralizado de Compartilhamento (`sharing.ts`, Firebase Analytics, `statsApiService`)**:
+  - Criado o pipeline centralizado `shareContent` em `src/utils/sharing.ts` cobrindo os 12 pontos de compartilhamento do aplicativo (orações, reflexões, gotas de sabedoria, pensamento diário, cursos, aulas, podcasts, meditações guiadas, termos do glossário, certificados, convite do app e chat assistente).
+  - Integrado o evento oficial `share` do Firebase Analytics com metadados estruturados (`content_type`, `item_id`, `method`).
+  - Sincronizado registro de telemetria no backend via `statsApiService.logEvent` para métricas consolidadas de viralidade e engajamento externo no painel de administração.
 - **Tratamento Offline em Todas as Abas do Aplicativo**:
   - **Aba Fixe (`FixScreen`, `useQuiz`)**: Adicionados `placeholderData`, `retry: 2` e `staleTime`/`gcTime` em todas as queries de categorias e progresso. Quando offline sem dados, o `ListEmptyComponent` renderiza `OfflineStateCard`; quando houver dados em cache, exibe o `OfflineStatusBanner`.
   - **Aba Podcasts (`AllPodcastsScreen`, `usePodcasts`)**: Adicionado `OfflineStatusBanner` quando offline com cache e `OfflineStateCard` ao invés da mensagem ambígua "Nenhum episódio disponível" quando houver falha de rede.

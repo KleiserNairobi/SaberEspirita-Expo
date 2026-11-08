@@ -8,6 +8,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQuery } from "@tanstack/react-query";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { OfflineStateCard } from "@/components/OfflineStateCard";
 import { ReaderPreferencesBottomSheet } from "@/components/ReaderPreferencesBottomSheet";
 import { ReadingToolbar } from "@/components/ReadingToolbar";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -20,6 +21,7 @@ import { shareReflection } from "@/utils/sharing";
 import { isSpeaking, speakText, stopSpeaking } from "@/utils/textToSpeech";
 import { getFooterVerticalPadding } from "@/utils/layout";
 
+import { useReflection } from "../hooks/useReflections";
 import { createStyles } from "./styles";
 
 type ReflectionScreenRouteProp = RouteProp<MeditateStackParamList, "Reflection">;
@@ -49,16 +51,14 @@ export function ReflectionScreen() {
 
   const { isFavorite, toggleFavorite } = useReflectionFavoritesStore();
 
-  // Buscar reflexão do Firestore usando React Query
+  // Buscar reflexão com suporte a cache instantâneo e offline
   const {
     data: reflection,
     isLoading,
     isError,
-  } = useQuery({
-    queryKey: ["reflection", route.params.id],
-    queryFn: () => reflectionApiService.getReflectionById(route.params.id),
-    staleTime: 1000 * 60 * 5, // 5 minutos
-  });
+    refetch,
+    isRefetching,
+  } = useReflection(route.params.id);
 
   // Registrar leitura da reflexão
   function handleFinishReading() {
@@ -124,11 +124,12 @@ export function ReflectionScreen() {
   }
 
   // Estado de loading
-  if (isLoading) {
+  if (isLoading && !reflection) {
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
+        <ReadingToolbar onBack={handleGoBack} showActions={false} />
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Carregando...</Text>
+          <Text style={styles.errorText}>Carregando reflexão...</Text>
         </View>
       </SafeAreaView>
     );
@@ -137,9 +138,15 @@ export function ReflectionScreen() {
   // Estado de erro ou reflexão não encontrada
   if (isError || !reflection) {
     return (
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Reflexão não encontrada</Text>
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
+        <ReadingToolbar onBack={handleGoBack} showActions={false} />
+        <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 20 }}>
+          <OfflineStateCard
+            title="Não foi possível carregar a reflexão"
+            description="Verifique sua conexão com a internet para ler este texto de reflexão."
+            onRetry={() => refetch()}
+            isRetrying={isRefetching}
+          />
         </View>
       </SafeAreaView>
     );
