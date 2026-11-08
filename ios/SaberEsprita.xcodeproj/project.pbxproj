@@ -183,8 +183,8 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = XRJDMVY267;
 						LastSwiftMigration = 1250;
-						DevelopmentTeam = "XRJDMVY267";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -359,7 +359,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 61;
-				DEVELOPMENT_TEAM = "XRJDMVY267";
+				DEVELOPMENT_TEAM = XRJDMVY267;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XRJDMVY267;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -406,7 +406,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 61;
-				DEVELOPMENT_TEAM = "XRJDMVY267";
+				DEVELOPMENT_TEAM = XRJDMVY267;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XRJDMVY267;
 				INFOPLIST_FILE = SaberEsprita/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
