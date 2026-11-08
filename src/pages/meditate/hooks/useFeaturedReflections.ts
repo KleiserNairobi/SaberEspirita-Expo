@@ -14,6 +14,9 @@ export function useFeaturedReflections() {
     },
     staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
+    placeholderData: (previousData) => previousData,
     refetchOnMount: true,
+    refetchOnReconnect: true,
+    retry: 2,
   });
 }

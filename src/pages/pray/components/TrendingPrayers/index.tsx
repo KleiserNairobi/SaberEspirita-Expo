@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ActivityIndicator, Animated, StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native";
-import { ChevronRight, TrendingUp, ChevronDown, Users } from "lucide-react-native";
+import { ChevronRight, TrendingUp, ChevronDown, Users, WifiOff } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+import { Button } from "@/components/Button";
+import { OfflineStatusBanner } from "@/components/OfflineStatusBanner";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { PrayStackParamList } from "@/routers/types";
 import { useTrendingPrayers, TrendingPeriod } from "@/pages/pray/hooks/useTrendingPrayers";
@@ -22,7 +24,13 @@ export function TrendingPrayers({ style, defaultExpanded }: TrendingPrayersProps
   const [expanded, setExpanded] = useState(defaultExpanded ?? false);
   const [period, setPeriod] = useState<TrendingPeriod>("day");
   
-  const { data: prayers, isLoading } = useTrendingPrayers(period);
+  const {
+    data: prayers,
+    isLoading,
+    isError,
+    refetch,
+    isRefetching,
+  } = useTrendingPrayers(period);
 
   // Animações para comportamento retrátil
   const animatedHeight = useRef(new Animated.Value(0)).current;
@@ -133,49 +141,69 @@ export function TrendingPrayers({ style, defaultExpanded }: TrendingPrayersProps
                   <ActivityIndicator color={theme.colors.primary} />
                 </View>
               ) : prayers && prayers.length > 0 ? (
-                prayers.map((prayer, index) => {
-                  const isLast = index === prayers.length - 1;
-                  const rank = index + 1;
-                  
-                  return (
-                    <TouchableOpacity
-                      key={prayer.id}
-                      style={[styles.prayerItem, isLast && styles.prayerItemLast]}
-                      onPress={() => handlePrayerPress(prayer.id)}
-                      activeOpacity={0.7}
-                    >
-                      <View style={styles.rankWrapper}>
-                        <Text style={styles.rankText}>{rank}</Text>
-                      </View>
-                      
-                      <View style={styles.prayerInfo}>
-                        <Text style={styles.prayerTitle} numberOfLines={1}>
-                          {prayer.title}
-                        </Text>
-                        <Text style={styles.prayerAuthor} numberOfLines={1}>
-                          {prayer.author || prayer.source || "Autoria Desconhecida"}
-                        </Text>
-                      </View>
+                <>
+                  {isError && (
+                    <OfflineStatusBanner message="Sem conexão. Exibindo ranking salvo em cache." />
+                  )}
+                  {prayers.map((prayer, index) => {
+                    const isLast = index === prayers.length - 1;
+                    const rank = index + 1;
+                    
+                    return (
+                      <TouchableOpacity
+                        key={prayer.id}
+                        style={[styles.prayerItem, isLast && styles.prayerItemLast]}
+                        onPress={() => handlePrayerPress(prayer.id)}
+                        activeOpacity={0.7}
+                      >
+                        <View style={styles.rankWrapper}>
+                          <Text style={styles.rankText}>{rank}</Text>
+                        </View>
+                        
+                        <View style={styles.prayerInfo}>
+                          <Text style={styles.prayerTitle} numberOfLines={1}>
+                            {prayer.title}
+                          </Text>
+                          <Text style={styles.prayerAuthor} numberOfLines={1}>
+                            {prayer.author || prayer.source || "Autoria Desconhecida"}
+                          </Text>
+                        </View>
 
-                      <View style={styles.countContainer}>
-                        <Users size={12} color={theme.colors.textSecondary} />
-                        <Text style={styles.countText}>
-                          {formatCount(
-                            prayer.displayCount ??
-                              (period === "week"
-                                ? prayer.viewsWeek
-                                : period === "total"
-                                ? prayer.viewsTotal
-                                : prayer.viewsDay) ??
-                              0
-                          )}
-                        </Text>
-                      </View>
-                      
-                      <ChevronRight size={18} color={theme.colors.primary} />
-                    </TouchableOpacity>
-                  );
-                })
+                        <View style={styles.countContainer}>
+                          <Users size={12} color={theme.colors.textSecondary} />
+                          <Text style={styles.countText}>
+                            {formatCount(
+                              prayer.displayCount ??
+                                (period === "week"
+                                  ? prayer.viewsWeek
+                                  : period === "total"
+                                  ? prayer.viewsTotal
+                                  : prayer.viewsDay) ??
+                                0
+                            )}
+                          </Text>
+                        </View>
+                        
+                        <ChevronRight size={18} color={theme.colors.primary} />
+                      </TouchableOpacity>
+                    );
+                  })}
+                </>
+              ) : isError ? (
+                <View style={{ alignItems: "center", paddingVertical: 16, gap: 8 }}>
+                  <WifiOff size={22} color={theme.colors.textSecondary} />
+                  <Text style={[styles.emptyText, { textAlign: "center" }]}>
+                    Não foi possível carregar o ranking de orações. Verifique sua conexão.
+                  </Text>
+                  <Button
+                    title="Tentar novamente"
+                    size="sm"
+                    variant="outline"
+                    loading={isRefetching}
+                    onPress={() => refetch()}
+                    style={{ marginTop: 4 }}
+                  />
+                </View>
               ) : (
                 <View style={styles.emptyContainer}>
                   <Text style={styles.emptyText}>

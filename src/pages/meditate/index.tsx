@@ -14,6 +14,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AssistantCard } from "@/components/AssistantCard";
 import { DailyWisdomCard } from "@/components/DailyWisdomCard";
+import { OfflineStateCard } from "@/components/OfflineStateCard";
+import { OfflineStatusBanner } from "@/components/OfflineStatusBanner";
 import { MEDITATION_KEYS, useFeaturedMeditations } from "@/hooks/queries/useMeditations";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useResponsiveLayout } from "@/hooks/useResponsiveLayout";
@@ -61,11 +63,21 @@ export function MeditateScreen() {
 
   const [activeTab, setActiveTab] = React.useState<TabType>("REFLECTIONS");
 
-  const { data: featuredReflections, isLoading: reflectionsLoading } =
-    useFeaturedReflections();
+  const {
+    data: featuredReflections,
+    isLoading: reflectionsLoading,
+    isError: reflectionsError,
+    refetch: refetchReflections,
+    isRefetching: isRefetchingReflections,
+  } = useFeaturedReflections();
 
-  const { data: featuredMeditations, isLoading: meditationsLoading } =
-    useFeaturedMeditations();
+  const {
+    data: featuredMeditations,
+    isLoading: meditationsLoading,
+    isError: meditationsError,
+    refetch: refetchMeditations,
+    isRefetching: isRefetchingMeditations,
+  } = useFeaturedMeditations();
 
   // Prefetch automático e deduplicado das capas das meditações assim que a lista é obtida
   React.useEffect(() => {
@@ -258,6 +270,9 @@ export function MeditateScreen() {
                   </View>
                 ) : featuredReflections && featuredReflections.length > 0 ? (
                   <View style={[styles.reflectionsContainer, isTablet && { paddingHorizontal: 0 }]}>
+                    {reflectionsError && (
+                      <OfflineStatusBanner message="Sem conexão. Exibindo reflexões salvas em cache." />
+                    )}
                     {featuredReflections.slice(0, 3).map((reflection) => (
                       <ReflectionCard
                         key={reflection.id}
@@ -267,6 +282,14 @@ export function MeditateScreen() {
                       />
                     ))}
                   </View>
+                ) : reflectionsError ? (
+                  <OfflineStateCard
+                    title="Não foi possível carregar as reflexões"
+                    description="Verifique sua conexão com a internet para ler os textos de estudo e reflexão."
+                    onRetry={() => refetchReflections()}
+                    isRetrying={isRefetchingReflections}
+                    style={isTablet ? undefined : { marginHorizontal: 20 }}
+                  />
                 ) : (
                   <View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>Nenhuma reflexão disponível</Text>
@@ -278,6 +301,9 @@ export function MeditateScreen() {
                 </View>
               ) : featuredMeditations && featuredMeditations.length > 0 ? (
                 <View style={[styles.reflectionsContainer, isTablet && { paddingHorizontal: 0 }]}>
+                  {meditationsError && (
+                    <OfflineStatusBanner message="Sem conexão. Exibindo meditações salvas em cache." />
+                  )}
                   {featuredMeditations.slice(0, 3).map((meditation) => (
                     <View
                       key={meditation.id}
@@ -292,6 +318,14 @@ export function MeditateScreen() {
                     </View>
                   ))}
                 </View>
+              ) : meditationsError ? (
+                <OfflineStateCard
+                  title="Não foi possível carregar as meditações"
+                  description="Verifique sua conexão com a internet para ouvir as meditações guiadas."
+                  onRetry={() => refetchMeditations()}
+                  isRetrying={isRefetchingMeditations}
+                  style={isTablet ? undefined : { marginHorizontal: 20 }}
+                />
               ) : (
                 <View style={styles.emptyContainer}>
                   <Text style={styles.emptyText}>Em breve novas meditações</Text>

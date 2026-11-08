@@ -24,8 +24,12 @@ export function useCategories() {
   return useQuery({
     queryKey: QUIZ_KEYS.categories(),
     queryFn: () => quizApiService.getCategories(),
-    staleTime: 0,
+    staleTime: 1000 * 60 * 15,
+    gcTime: 1000 * 60 * 60 * 24 * 7,
+    placeholderData: (previousData) => previousData,
     refetchOnMount: true,
+    refetchOnReconnect: true,
+    retry: 2,
   });
 }
 
@@ -37,8 +41,12 @@ export function useSubcategories(categoryId: string) {
     queryKey: QUIZ_KEYS.subcategories(categoryId),
     queryFn: () => quizApiService.getSubcategories(categoryId),
     enabled: !!categoryId,
-    staleTime: 0,
+    staleTime: 1000 * 60 * 15,
+    gcTime: 1000 * 60 * 60 * 24 * 7,
+    placeholderData: (previousData) => previousData,
     refetchOnMount: true,
+    refetchOnReconnect: true,
+    retry: 2,
   });
 }
 
@@ -50,8 +58,12 @@ export function useQuiz(quizId: string, enabled = true) {
     queryKey: QUIZ_KEYS.quiz(quizId),
     queryFn: () => quizApiService.getQuizById(quizId),
     enabled: !!quizId && enabled,
-    staleTime: 0,
+    staleTime: 1000 * 60 * 15,
+    gcTime: 1000 * 60 * 60 * 24 * 7,
+    placeholderData: (previousData) => previousData,
     refetchOnMount: true,
+    refetchOnReconnect: true,
+    retry: 2,
   });
 }
 
@@ -63,8 +75,12 @@ export function useUserQuizProgress(userId: string) {
     queryKey: QUIZ_KEYS.userProgress(userId),
     queryFn: () => quizApiService.getUserProgress(userId),
     enabled: !!userId,
-    staleTime: 0,
+    staleTime: 1000 * 60 * 15,
+    gcTime: 1000 * 60 * 60 * 24 * 7,
+    placeholderData: (previousData) => previousData,
     refetchOnMount: true,
+    refetchOnReconnect: true,
+    retry: 2,
   });
 }
 
@@ -76,8 +92,12 @@ export function useUserDetailedStats(userId: string) {
     queryKey: QUIZ_KEYS.detailedStats(userId),
     queryFn: () => quizApiService.getUserDetailedStats(userId),
     enabled: !!userId && userId !== "guest",
-    staleTime: 0,
+    staleTime: 1000 * 60 * 15,
+    gcTime: 1000 * 60 * 60 * 24 * 7,
+    placeholderData: (previousData) => previousData,
     refetchOnMount: true,
+    refetchOnReconnect: true,
+    retry: 2,
   });
 }
 
@@ -88,8 +108,12 @@ export function useQuizHistory() {
   return useQuery({
     queryKey: QUIZ_KEYS.history(),
     queryFn: () => quizApiService.getUserQuizHistory(),
-    staleTime: 0,
+    staleTime: 1000 * 60 * 15,
+    gcTime: 1000 * 60 * 60 * 24 * 7,
+    placeholderData: (previousData) => previousData,
     refetchOnMount: true,
+    refetchOnReconnect: true,
+    retry: 2,
   });
 }
 

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 
-import { FlatList, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Text, View } from "react-native";
 
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
@@ -8,6 +8,9 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useQueryClient } from "@tanstack/react-query";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { OfflineStateCard } from "@/components/OfflineStateCard";
+import { OfflineStatusBanner } from "@/components/OfflineStatusBanner";
 
 import {
   QUIZ_KEYS,
@@ -51,7 +54,12 @@ export default function FixHomeScreen() {
   // Combine padding
   const paddingBottom = tabBarHeight + insets.bottom + theme.spacing.lg;
 
-  const { data: categories, refetch: refetchCategories } = useCategories();
+  const {
+    data: categories,
+    isLoading: isCategoriesLoading,
+    isError: isCategoriesError,
+    refetch: refetchCategories,
+  } = useCategories();
   const { data: userProgress, refetch: refetchUserProgress } = useUserQuizProgress(
     user?.uid || ""
   );
@@ -206,6 +214,10 @@ export default function FixHomeScreen() {
         {/* Meu Progresso Section */}
         <ProgressSummary />
 
+        {isCategoriesError && categoriesWithProgress.length > 0 && (
+          <OfflineStatusBanner message="Sem conexão. Exibindo categorias salvas no dispositivo." />
+        )}
+
         {/* Título da Seção */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Categorias</Text>
@@ -222,6 +234,20 @@ export default function FixHomeScreen() {
         numColumns={isTablet ? 3 : 2}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={renderHeader}
+        ListEmptyComponent={
+          isCategoriesError ? (
+            <OfflineStateCard
+              title="Não foi possível carregar as categorias"
+              description="Verifique sua conexão com a internet para carregar os quizzes."
+              onRetry={() => refetchCategories()}
+              style={{ marginHorizontal: theme.spacing.lg }}
+            />
+          ) : isCategoriesLoading ? (
+            <View style={{ padding: theme.spacing.xl, alignItems: "center" }}>
+              <ActivityIndicator size="small" color={theme.colors.primary} />
+            </View>
+          ) : null
+        }
         contentContainerStyle={[
           styles.contentContainer,
           { paddingBottom: paddingBottom },

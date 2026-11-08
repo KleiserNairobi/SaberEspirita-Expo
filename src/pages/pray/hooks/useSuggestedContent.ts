@@ -35,7 +35,13 @@ export function useSuggestedContent(mood: UserMood | null) {
   const audioId = MOOD_TO_AUDIO_ID[currentMood];
 
   // Busca orações da categoria sugerida com fallback para todas as orações
-  const { data: prayers, isLoading: isPrayersLoading } = useQuery({
+  const {
+    data: prayers,
+    isLoading: isPrayersLoading,
+    isError: isPrayersError,
+    refetch: refetchPrayers,
+    isRefetching: isPrayersRefetching,
+  } = useQuery({
     queryKey: ["prayers", "suggested", categoryId],
     queryFn: async () => {
       const categoryPrayers = await prayerApiService.getPrayers({ categoryId });
@@ -47,6 +53,10 @@ export function useSuggestedContent(mood: UserMood | null) {
     },
     enabled: !!categoryId,
     staleTime: 1000 * 60 * 15,
+    gcTime: 1000 * 60 * 60 * 24 * 7,
+    placeholderData: (previousData) => previousData,
+    refetchOnReconnect: true,
+    retry: 2,
   });
 
   // Busca lista de áudios para encontrar o sugerido
@@ -68,5 +78,8 @@ export function useSuggestedContent(mood: UserMood | null) {
   return {
     suggestedContent,
     isLoading: isPrayersLoading,
+    isError: isPrayersError,
+    refetch: refetchPrayers,
+    isRefetching: isPrayersRefetching,
   };
 }

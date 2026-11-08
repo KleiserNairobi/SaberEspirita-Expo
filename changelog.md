@@ -2,7 +2,23 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
-## [2.0.24-ota.1] - 2026-11-07 (Resiliência Offline)
+## [2.0.24-ota.1] - 2026-11-08 (Resiliência Offline e Persistência MMKV)
+
+### Adicionado / Aprimorado
+
+- **Persistência Global de Cache em Disco (`PersistQueryClientProvider`, `queryPersister`, `App`)**:
+  - Implementado adaptador síncrono ultra-rápido via MMKV integrado ao `createAsyncStoragePersister` do TanStack Query.
+  - O cache de consultas do aplicativo agora é preservado no armazenamento local do aparelho por até 7 dias, eliminando telas em branco e garantindo navegação offline instantânea (0ms) mesmo ao fechar e reabrir o app sem internet.
+- **Componentes Globais de UX Offline (`OfflineStateCard`, `OfflineStatusBanner`)**:
+  - Criado o componente global `OfflineStateCard` com ilustração amigável, título contextual, descrição e botão "Tentar novamente" com loading para estados de erro sem dados locais.
+  - Criado o componente `OfflineStatusBanner` para sinalizar de forma discreta no topo das seções quando o usuário está offline visualizando conteúdo recuperado do cache.
+- **Tratamento Offline em Todas as Abas do Aplicativo**:
+  - **Aba Fixe (`FixScreen`, `useQuiz`)**: Adicionados `placeholderData`, `retry: 2` e `staleTime`/`gcTime` em todas as queries de categorias e progresso. Quando offline sem dados, o `ListEmptyComponent` renderiza `OfflineStateCard`; quando houver dados em cache, exibe o `OfflineStatusBanner`.
+  - **Aba Podcasts (`AllPodcastsScreen`, `usePodcasts`)**: Adicionado `OfflineStatusBanner` quando offline com cache e `OfflineStateCard` ao invés da mensagem ambígua "Nenhum episódio disponível" quando houver falha de rede.
+  - **Aba Medite (`MeditateScreen`, `useFeaturedReflections`, `useFeaturedMeditations`, `useReflections`, `useMeditations`)**: Padronizados estados de erro com `OfflineStateCard` e `OfflineStatusBanner` nas seções de "Páginas do Saber" e "Meditação Guiada".
+  - **Aba Ore (`WelcomingHero`, `TrendingPrayers`, `useSuggestedContent`, `useTrendingPrayers`)**: Adicionados tratamentos com reconexão amigável para preces recomendadas por humor e preces em alta dentro dos accordions.
+
+## [2.0.24-ota.1] - 2026-11-07 (Resiliência Offline Inicial)
 
 ### Corrigido / Aprimorado
 

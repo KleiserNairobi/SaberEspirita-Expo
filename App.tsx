@@ -27,7 +27,8 @@ import {
 } from "@expo-google-fonts/oswald";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { HotUpdater } from "@hot-updater/react-native";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { registerRootComponent } from "expo";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -47,6 +48,7 @@ import {
   playbackService,
   setupTrackPlayer,
 } from "./src/services/audio/trackPlayerService";
+import { queryPersister } from "./src/services/query/queryPersister";
 import { useAuthStore } from "./src/stores/authStore";
 
 // Prevenir que o splash screen seja ocultado automaticamente
@@ -202,14 +204,21 @@ function AppContent() {
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaProvider>
         <BottomSheetModalProvider>
-          <QueryClientProvider client={queryClient}>
+          <PersistQueryClientProvider
+            client={queryClient}
+            persistOptions={{
+              persister: queryPersister,
+              buster: cacheConfig.buster,
+              maxAge: 1000 * 60 * 60 * 24 * 7,
+            }}
+          >
             <StatusBar
               style={resolvedThemeType === "dark" ? "light" : "dark"}
               translucent={true}
               backgroundColor="transparent"
             />
             <RootNavigator />
-          </QueryClientProvider>
+          </PersistQueryClientProvider>
         </BottomSheetModalProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ActivityIndicator, Animated, ScrollView, StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native";
-import { ChevronDown, Compass, ChevronRight } from "lucide-react-native";
+import { ChevronDown, Compass, ChevronRight, WifiOff } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+import { Button } from "@/components/Button";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useMoodStore } from "@/stores/moodStore";
 import { useSuggestedContent } from "@/pages/pray/hooks/useSuggestedContent";
@@ -21,7 +22,8 @@ export function WelcomingHero({ style }: WelcomingHeroProps = {}) {
     useNavigation<NativeStackNavigationProp<AppStackParamList & PrayStackParamList>>();
 
   const { currentMood, lastMood, lastMoodDate, checkDayTransition } = useMoodStore();
-  const { suggestedContent, isLoading } = useSuggestedContent(currentMood);
+  const { suggestedContent, isLoading, isError, refetch, isRefetching } =
+    useSuggestedContent(currentMood);
 
   // Garante que virada de dia civil atualize a mensagem de acolhimento
   useEffect(() => {
@@ -135,42 +137,63 @@ export function WelcomingHero({ style }: WelcomingHeroProps = {}) {
             </View>
           )}
 
-          {suggestedContent?.prayers && hasMood && !isLoading && (
-            <View style={{ marginTop: 0 }}>
-              <Text style={styles.scrollTip}>Role a lista para ver outras orações</Text>
-              <View style={[styles.prayerList, { maxHeight: 243, paddingHorizontal: 4 }]}>
-                <ScrollView
-                  showsVerticalScrollIndicator={true}
-                  nestedScrollEnabled={true}
-                  style={{ transform: [{ scaleX: -1 }] }}
-                >
-                  <View style={{ transform: [{ scaleX: -1 }] }}>
-                    {suggestedContent.prayers.map((prayer, index) => {
-                      const isLast =
-                        index === (suggestedContent.prayers?.length || 0) - 1;
-                      return (
-                        <TouchableOpacity
-                          key={prayer.id}
-                          style={[styles.prayerItem, isLast && styles.prayerItemLast]}
-                          onPress={() => handlePrayerPress(prayer.id)}
-                          activeOpacity={0.7}
-                        >
-                          <View style={styles.prayerInfo}>
-                            <Text style={styles.prayerTitle}>{prayer.title}</Text>
-                            {(prayer.author || prayer.source) && (
-                              <Text style={styles.prayerCategory}>
-                                {prayer.author || prayer.source}
-                              </Text>
-                            )}
-                          </View>
-                          <ChevronRight size={18} color={theme.colors.primary} />
-                        </TouchableOpacity>
-                      );
-                    })}
-                  </View>
-                </ScrollView>
+          {hasMood && !isLoading && (
+            suggestedContent?.prayers && suggestedContent.prayers.length > 0 ? (
+              <View style={{ marginTop: 0 }}>
+                <Text style={styles.scrollTip}>Role a lista para ver outras orações</Text>
+                <View style={[styles.prayerList, { maxHeight: 243, paddingHorizontal: 4 }]}>
+                  <ScrollView
+                    showsVerticalScrollIndicator={true}
+                    nestedScrollEnabled={true}
+                    style={{ transform: [{ scaleX: -1 }] }}
+                  >
+                    <View style={{ transform: [{ scaleX: -1 }] }}>
+                      {suggestedContent.prayers.map((prayer, index) => {
+                        const isLast =
+                          index === (suggestedContent.prayers?.length || 0) - 1;
+                        return (
+                          <TouchableOpacity
+                            key={prayer.id}
+                            style={[styles.prayerItem, isLast && styles.prayerItemLast]}
+                            onPress={() => handlePrayerPress(prayer.id)}
+                            activeOpacity={0.7}
+                          >
+                            <View style={styles.prayerInfo}>
+                              <Text style={styles.prayerTitle}>{prayer.title}</Text>
+                              {(prayer.author || prayer.source) && (
+                                <Text style={styles.prayerCategory}>
+                                  {prayer.author || prayer.source}
+                                </Text>
+                              )}
+                            </View>
+                            <ChevronRight size={18} color={theme.colors.primary} />
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </View>
+                  </ScrollView>
+                </View>
               </View>
-            </View>
+            ) : isError ? (
+              <View style={{ alignItems: "center", paddingVertical: 12, gap: 8 }}>
+                <WifiOff size={22} color={theme.colors.textSecondary} />
+                <Text style={[styles.description, { textAlign: "center" }]}>
+                  Não foi possível carregar as preces recomendadas. Verifique sua conexão com a internet.
+                </Text>
+                <Button
+                  title="Tentar novamente"
+                  size="sm"
+                  variant="outline"
+                  loading={isRefetching}
+                  onPress={() => refetch()}
+                  style={{ marginTop: 4 }}
+                />
+              </View>
+            ) : (
+              <Text style={styles.description}>
+                Nenhuma prece disponível para este momento.
+              </Text>
+            )
           )}
         </View>
       </Animated.View>

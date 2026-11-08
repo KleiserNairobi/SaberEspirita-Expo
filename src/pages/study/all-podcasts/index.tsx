@@ -27,6 +27,8 @@ import { usePodcastPlayerStore } from "@/stores/podcastPlayerStore";
 import { ContentFilterType } from "@/types/prayer";
 import { useQueryClient } from "@tanstack/react-query";
 import { prefetchImages } from "@/utils/imagePrefetch";
+import { OfflineStateCard } from "@/components/OfflineStateCard";
+import { OfflineStatusBanner } from "@/components/OfflineStatusBanner";
 import { PodcastCard } from "../components/PodcastCard";
 import { createStyles } from "./styles";
 
@@ -50,7 +52,7 @@ export function AllPodcastsScreen() {
   const [filterType, setFilterType] = useState<ContentFilterType>("ALL");
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
-  const { data: podcasts, isLoading } = usePodcasts();
+  const { data: podcasts, isLoading, isError, refetch } = usePodcasts();
   const setCurrentPodcast = usePodcastPlayerStore((s) => s.setCurrentPodcast);
 
   // Prefetch automático e deduplicado das capas dos podcasts assim que a lista é obtida
@@ -211,6 +213,10 @@ export function AllPodcastsScreen() {
                   placeholder="Buscar episódio ou autor..."
                 />
               </View>
+
+              {isError && filteredPodcasts.length > 0 && (
+                <OfflineStatusBanner message="Sem conexão. Exibindo episódios salvos no dispositivo." />
+              )}
             </>
           }
           renderItem={({ item }) => (
@@ -228,13 +234,21 @@ export function AllPodcastsScreen() {
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>
-                {searchQuery || filterType !== "ALL"
-                  ? "Nenhum podcast encontrado para os filtros atuais"
-                  : "Nenhum episódio disponível no momento"}
-              </Text>
-            </View>
+            isError ? (
+              <OfflineStateCard
+                title="Não foi possível carregar os podcasts"
+                description="Verifique sua conexão com a internet para carregar os episódios."
+                onRetry={() => refetch()}
+              />
+            ) : (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>
+                  {searchQuery || filterType !== "ALL"
+                    ? "Nenhum podcast encontrado para os filtros atuais"
+                    : "Nenhum episódio disponível no momento"}
+                </Text>
+              </View>
+            )
           }
         />
 

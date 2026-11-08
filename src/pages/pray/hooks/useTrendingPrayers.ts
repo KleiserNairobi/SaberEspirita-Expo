@@ -8,8 +8,11 @@ export function useTrendingPrayers(period: TrendingPeriod) {
     queryKey: ["prayers", "trending", period],
     queryFn: () => prayerApiService.getTrendingPrayers(period),
     staleTime: 1000 * 60 * 5, // 5 minutos de validade do cache
-    gcTime: 1000 * 60 * 60, // 1 hora na memória
+    gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias em disco
+    placeholderData: (previousData) => previousData,
     refetchOnWindowFocus: false, // Evita requisições ao minimizar/maximizar
     refetchOnMount: false, // Usa o cache existente se montar de novo
+    refetchOnReconnect: true,
+    retry: 2,
   });
 }
