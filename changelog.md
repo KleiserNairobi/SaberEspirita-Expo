@@ -2,7 +2,7 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
-## [2.0.24-ota.1] - 2026-11-08 (Resiliência Offline e Persistência MMKV)
+## [2.0.24-ota.2] - 2026-11-08 (Resiliência Offline e Persistência MMKV)
 
 ### Adicionado / Aprimorado
 
