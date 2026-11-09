@@ -51,7 +51,7 @@ async function run() {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      sql: 'SELECT * FROM bundles ORDER BY id DESC LIMIT 10;',
+      sql: 'SELECT * FROM bundles ORDER BY rowid DESC LIMIT 10;',
     }),
   });
 
