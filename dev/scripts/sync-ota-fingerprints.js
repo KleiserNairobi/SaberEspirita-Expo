@@ -6,10 +6,16 @@
 require('dotenv').config({ path: '.env.hotupdater' });
 const crypto = require('crypto');
 
-const PRODUCTION_FINGERPRINTS = {
-  android: '46bd7a25d89c886d0b3fa6ccbbd0e091ba4d8286',
-  ios: '6bb2d6832b56fbb16e4aaa173e6067bb235f7203',
-};
+const KNOWN_FINGERPRINTS = [
+  // Android
+  { platform: 'android', hash: '46bd7a25d89c886d0b3fa6ccbbd0e091ba4d8286' },
+  { platform: 'android', hash: '77251b3cb98f26e52f122debead22c57b627ba5a' },
+  { platform: 'android', hash: '30f9831427ccb6a8b25e58094cdebb292b49d3d4' },
+  // iOS
+  { platform: 'ios', hash: '6bb2d6832b56fbb16e4aaa173e6067bb235f7203' },
+  { platform: 'ios', hash: 'f6e190d66027b9c920fce2443f0fecfb6f43398a' },
+  { platform: 'ios', hash: '8b9977f7589a6f5cd93e62bacd5e48dc3b0e34a2' },
+];
 
 function uuidv7() {
   if (crypto.randomUUID) {
@@ -58,20 +64,26 @@ async function run() {
   const data = await res.json();
   const bundles = data?.result?.[0]?.results || [];
 
-  for (const [platform, prodFingerprint] of Object.entries(PRODUCTION_FINGERPRINTS)) {
-    // Acha o bundle mais recente dessa plataforma
-    const latestBundle = bundles.find((b) => b.platform === platform);
+  for (const { platform, hash: targetFingerprint } of KNOWN_FINGERPRINTS) {
+    // Acha o bundle original mais recente compilado para essa plataforma
+    const latestBundle = bundles.find(
+      (b) => b.platform === platform && b.message && b.message.includes('2.0.24-ota.2')
+    ) || bundles.find((b) => b.platform === platform);
+
     if (!latestBundle) continue;
 
-    // Se o bundle mais recente já usa o fingerprint de prod, nada a fazer
-    if (latestBundle.fingerprint_hash === prodFingerprint) {
-      console.log(`[sync-ota-fingerprints] Plataforma ${platform} já está associada ao fingerprint de produção (${prodFingerprint}).`);
+    // Verifica se já existe um bundle com esse fingerprint e mesmo file_hash
+    const alreadyLinked = bundles.some(
+      (b) => b.platform === platform && b.fingerprint_hash === targetFingerprint && b.file_hash === latestBundle.file_hash
+    );
+
+    if (alreadyLinked) {
+      console.log(`[sync-ota-fingerprints] Plataforma ${platform} já está vinculada ao fingerprint ${targetFingerprint}.`);
       continue;
     }
 
     // Caso contrário, insere um registro associando aos assets desse bundle mais recente
     const newId = uuidv7();
-    const shouldForceUpdate = latestBundle.should_force_update ? 1 : 0;
     const insertSql = `
       INSERT INTO bundles (
         id, platform, should_force_update, enabled, file_hash, git_commit_hash,
@@ -81,7 +93,7 @@ async function run() {
       ) VALUES (
         '${newId}',
         '${platform}',
-        ${shouldForceUpdate},
+        1,
         1,
         '${latestBundle.file_hash}',
         '${latestBundle.git_commit_hash}',
@@ -89,7 +101,7 @@ async function run() {
         '${latestBundle.channel}',
         '${latestBundle.storage_uri}',
         ${latestBundle.target_app_version ? `'${latestBundle.target_app_version}'` : 'NULL'},
-        '${prodFingerprint}',
+        '${targetFingerprint}',
         '${latestBundle.metadata}',
         1000,
         NULL,
@@ -110,9 +122,9 @@ async function run() {
 
     const insertData = await insertRes.json();
     if (insertData.success) {
-      console.log(`[sync-ota-fingerprints] Plataforma ${platform} vinculada com sucesso ao fingerprint de produção (${prodFingerprint}) com id ${newId}.`);
+      console.log(`[sync-ota-fingerprints] Plataforma ${platform} vinculada com sucesso ao fingerprint ${targetFingerprint} com id ${newId}.`);
     } else {
-      console.error(`[sync-ota-fingerprints] Falha ao vincular ${platform}:`, insertData.errors);
+      console.error(`[sync-ota-fingerprints] Falha ao vincular ${platform} (${targetFingerprint}):`, insertData.errors);
     }
   }
 }
