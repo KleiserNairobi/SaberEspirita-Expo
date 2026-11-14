@@ -5,6 +5,7 @@
 
 require('dotenv').config({ path: '.env.hotupdater' });
 const crypto = require('crypto');
+const pkg = require('../../package.json');
 
 const KNOWN_FINGERPRINTS = [
   // Android
@@ -66,8 +67,9 @@ async function run() {
 
   for (const { platform, hash: targetFingerprint } of KNOWN_FINGERPRINTS) {
     // Acha o bundle original mais recente compilado para essa plataforma
+    const targetVersion = pkg.version;
     const latestBundle = bundles.find(
-      (b) => b.platform === platform && b.message && b.message.includes('2.0.24-ota.2')
+      (b) => b.platform === platform && b.message && b.message.includes(targetVersion)
     ) || bundles.find((b) => b.platform === platform);
 
     if (!latestBundle) continue;

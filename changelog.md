@@ -2,6 +2,26 @@
 
 Este documento registra todas as alterações relevantes do projeto a partir da versão 2.0.0.
 
+## [2.0.24-ota.3] - 2026-11-14 (Gestão de Cursos em Rascunho e Perfil Pedagógico)
+
+### Adicionado / Aprimorado
+
+- **Controle de Acesso e Cursos em Rascunho (`useCourses`, `useIsAdmin`, `authStore`, `CourseCard`, `VerticalCourseCard`)**:
+  - Implementada restrição de visibilidade para cursos com status `DRAFT` via TanStack Query, garantindo que cursos em desenvolvimento permaneçam 100% invisíveis para usuários comuns nas listagens públicas (Home, Catálogo, Explore por tema e Carrossel).
+  - Criado o hook `useIsAdmin` no `authStore` para detecção reativa de privilégios de administrador.
+  - Para administradores, os cursos em rascunho são identificados com o badge discreto `Rascunho` e navegação liberada para testes em tempo real diretamente com o banco de dados de produção.
+  - Bloqueada a recuperação direta de detalhes de curso em rascunho (`useCourse`) por ID para usuários não autenticados como administrador.
+- **Perfil Pedagógico e Design System de Cursos (`CourseCard`, `VerticalCourseCard`, `coursePedagogy`, `CourseDetailsScreen`)**:
+  - Padronizado o badge reflexivo (`reflective`) no `CourseCard` seguindo rigorosamente os tokens do tema com fundo em 15% da cor primária (`${theme.colors.primary}15`), borda com opacidade da primária e texto temático, eliminando gradiente escuro e cores hardcoded fora da paleta.
+  - Exibido o perfil pedagógico reflexivo no `VerticalCourseCard` e nos metadados detalhados de requisitos da série (`CourseDetailsScreen`).
+  - Adicionado destaque condicional para cursos em breve (`COMING_SOON`) na tela inicial de estudos.
+- **Aprimoramentos de Avaliação e Sincronização de Feedback (`CourseFeedbackBottomSheet`, `CourseCurriculumScreen`, `courseApiService`)**:
+  - Implementada sincronização de status de avaliação com o backend no carregamento do currículo, prevenindo exibições redundantes do modal caso a avaliação já tenha sido realizada em outro dispositivo.
+  - Adicionado texto de apoio e placeholder contextual dinâmico no bottom sheet de feedback para notas entre 1 e 3 estrelas.
+  - Encerramento definitivo do ciclo de avaliação ao atingir 100% de conclusão da série.
+- **Estabilidade do Pós-Deploy OTA (`sync-ota-fingerprints.js`)**:
+  - Automatizada a resolução da versão do bundle a partir do `package.json`, eliminando strings manuais no script de sincronização com o Cloudflare D1.
+
 ## [2.0.24-ota.2] - 2026-11-08 (Resiliência Offline e Persistência MMKV)
 
 ### Adicionado / Aprimorado
