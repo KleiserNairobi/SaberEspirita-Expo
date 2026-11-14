@@ -7,6 +7,7 @@ import { BarChart3, BookOpen, Clock } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { ICourse } from "@/types/course";
+import { getCoursePedagogicalProfile } from "@/utils/coursePedagogy";
 
 import { createStyles } from "./styles";
 
@@ -16,6 +17,18 @@ interface CourseCardProps {
   onPress: () => void;
 }
 
+const DIFFICULTY_MAP: Record<string, string> = {
+  beginner: "Iniciante",
+  intermediate: "Intermediário",
+  advanced: "Avançado",
+  INICIANTE: "Iniciante",
+  INTERMEDIARIO: "Intermediário",
+  AVANCADO: "Avançado",
+  iniciante: "Iniciante",
+  intermediario: "Intermediário",
+  avancado: "Avançado",
+};
+
 export function CourseCard({ course, progress, onPress }: CourseCardProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
@@ -23,6 +36,13 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
   const hours = Math.floor(course.workloadMinutes / 60);
   const minutes = course.workloadMinutes % 60;
   const durationText = hours > 0 ? `${hours}h ${minutes}min` : `${minutes} min`;
+  const pedagogicalProfile = getCoursePedagogicalProfile(course);
+
+  const rawLevel = String(course.difficultyLevel || "").toLowerCase();
+  const displayLevel =
+    DIFFICULTY_MAP[course.difficultyLevel as string] ||
+    DIFFICULTY_MAP[rawLevel] ||
+    "Iniciante";
 
   const imageSource =
     typeof course.imageUrl === "string" && course.imageUrl.trim().length > 0
@@ -31,7 +51,6 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
         ? course.imageUrl
         : require("@/assets/images/imgPhV.webp");
 
-  // Verificar se o curso está em breve ou encerrado
   const isComingSoon = course.status === "COMING_SOON";
   const isLegacy = course.status === "LEGACY" || course.allowNewEnrollments === false;
 
@@ -42,6 +61,7 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
       activeOpacity={isComingSoon ? 1 : 0.7}
       disabled={isComingSoon}
     >
+      {/* Coluna da Esquerda: Capa com badge apenas para a exceção (Reflexivo) */}
       <View style={styles.imagePlaceholder}>
         <Image
           source={imageSource as any}
@@ -52,75 +72,84 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
           priority="high"
           placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
         />
-        <View style={styles.gradientOverlay} />
+
+        {/* Topo da Imagem: Em Breve ou Encerrado */}
+        {isComingSoon ? (
+          <View style={styles.imageTopBadge}>
+            <Text style={styles.imageTopBadgeText}>Em breve</Text>
+          </View>
+        ) : isLegacy ? (
+          <View
+            style={[
+              styles.imageTopBadge,
+              { backgroundColor: theme.colors.muted },
+            ]}
+          >
+            <Text
+              style={[
+                styles.imageTopBadgeText,
+                { color: theme.colors.background },
+              ]}
+            >
+              Encerrado
+            </Text>
+          </View>
+        ) : null}
+
+        {/* Base da Imagem: Destaca apenas a exceção (Reflexivo) */}
+        {pedagogicalProfile.kind === "reflective" && (
+          <View style={styles.imageTypeBadgeReflectiveContainer}>
+            <View style={styles.imageTypeBadgeReflective}>
+              <Text style={styles.imageTypeTextReflective} numberOfLines={1}>
+                {pedagogicalProfile.label}
+              </Text>
+            </View>
+          </View>
+        )}
       </View>
 
-      {/* Conteúdo à Direita */}
+      {/* Coluna da Direita: Conteúdo Textual Despoluído */}
       <View style={styles.content}>
         <View style={styles.topContent}>
-          {/* Título */}
           <Text style={styles.title} numberOfLines={2}>
             {course.title}
           </Text>
 
-          {/* Descrição */}
           <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">
             {course.description}
           </Text>
         </View>
 
-        {/* Se COMING_SOON ou LEGACY: Badge no lugar dos metadados */}
-        {isComingSoon ? (
-          <View style={styles.comingSoonBadgeLarge}>
-            <Text style={styles.comingSoonTextLarge}>EM BREVE</Text>
+        {/* Metadados: Aulas • Duração • Nível (Linha única sem quebra) */}
+        <View style={styles.metadataRow}>
+          <View style={styles.metadataItem}>
+            <BookOpen size={12} color={theme.colors.muted} />
+            <Text style={styles.metadataText}>{course.lessonCount} aulas</Text>
           </View>
-        ) : isLegacy ? (
-          <View
-            style={[styles.comingSoonBadgeLarge, { backgroundColor: theme.colors.muted }]}
-          >
-            <Text
-              style={[styles.comingSoonTextLarge, { color: theme.colors.background }]}
-            >
-              ENCERRADO
-            </Text>
+
+          <Text style={styles.metadataSeparator}>•</Text>
+
+          <View style={styles.metadataItem}>
+            <Clock size={12} color={theme.colors.muted} />
+            <Text style={styles.metadataText}>{durationText}</Text>
           </View>
-        ) : (
-          <>
-            {/* Metadados */}
-            <View style={styles.metadataRow}>
-              {/* Aulas */}
-              <View style={styles.metadataItem}>
-                <BookOpen size={12} color={theme.colors.muted} />
-                <Text style={styles.metadataText}>{course.lessonCount} aulas</Text>
-              </View>
 
-              <Text style={styles.metadataSeparator}>•</Text>
+          <Text style={styles.metadataSeparator}>•</Text>
 
-              {/* Duração */}
-              <View style={styles.metadataItem}>
-                <Clock size={12} color={theme.colors.muted} />
-                <Text style={styles.metadataText}>{durationText}</Text>
-              </View>
+          <View style={styles.metadataItem}>
+            <BarChart3 size={12} color={theme.colors.muted} />
+            <Text style={styles.metadataText}>{displayLevel}</Text>
+          </View>
+        </View>
 
-              <Text style={styles.metadataSeparator}>•</Text>
-
-              {/* Nível */}
-              <View style={styles.metadataItem}>
-                <BarChart3 size={12} color={theme.colors.muted} />
-                <Text style={styles.metadataText}>{course.difficultyLevel}</Text>
-              </View>
+        {/* Barra de Progresso (se houver) */}
+        {progress !== undefined && progress > 0 && (
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBar}>
+              <View style={[styles.progressFill, { width: `${progress}%` }]} />
             </View>
-
-            {/* Barra de Progresso (se houver) */}
-            {progress !== undefined && progress > 0 && (
-              <View style={styles.progressContainer}>
-                <View style={styles.progressBar}>
-                  <View style={[styles.progressFill, { width: `${progress}%` }]} />
-                </View>
-                <Text style={styles.progressText}>{progress}% concluído</Text>
-              </View>
-            )}
-          </>
+            <Text style={styles.progressText}>{progress}% concluído</Text>
+          </View>
         )}
       </View>
     </TouchableOpacity>

@@ -15,10 +15,11 @@ export const createStyles = (theme: ITheme) =>
       minHeight: 130,
     },
     imagePlaceholder: {
-      width: 100,
+      width: 104,
       backgroundColor: theme.colors.accent,
       justifyContent: "center",
       alignItems: "center",
+      position: "relative",
     },
     courseImage: {
       ...StyleSheet.absoluteFillObject,
@@ -27,7 +28,46 @@ export const createStyles = (theme: ITheme) =>
     },
     gradientOverlay: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: "rgba(0, 0, 0, 0.2)",
+      backgroundColor: "rgba(0, 0, 0, 0.12)",
+    },
+    imageTypeBadgeReflectiveContainer: {
+      position: "absolute",
+      width: "80%",
+      bottom: 6,
+      backgroundColor: "rgba(255, 255, 255, 0.8)",
+      borderRadius: theme.radius.xs,
+      zIndex: 2,
+    },
+    imageTypeBadgeReflective: {
+      backgroundColor: `${theme.colors.primary}15`,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: theme.radius.xs,
+      borderWidth: 1,
+      borderColor: `${theme.colors.primary}30`,
+    },
+    imageTypeTextReflective: {
+      ...theme.text("xs", "semibold", theme.colors.primary),
+      fontSize: 10,
+      lineHeight: 13,
+      letterSpacing: 0.3,
+      textAlign: "center",
+    },
+    imageTopBadge: {
+      position: "absolute",
+      top: 6,
+      left: 6,
+      backgroundColor: theme.colors.warning,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: theme.radius.xs,
+      zIndex: 2,
+    },
+    imageTopBadgeText: {
+      ...theme.text("xs", "semibold", theme.colors.onSecondary),
+      fontSize: 9,
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
     },
     content: {
       flex: 1,
@@ -50,14 +90,14 @@ export const createStyles = (theme: ITheme) =>
     metadataRow: {
       flexDirection: "row",
       alignItems: "center",
-      flexWrap: "wrap",
+      flexWrap: "nowrap",
       gap: theme.spacing.xs,
       marginBottom: theme.spacing.xs,
     },
     metadataItem: {
       flexDirection: "row",
       alignItems: "center",
-      gap: theme.spacing.xs,
+      gap: theme.spacing.xs / 2,
     },
     metadataText: {
       ...theme.text("xs", "regular", theme.colors.muted),
@@ -84,19 +124,6 @@ export const createStyles = (theme: ITheme) =>
     },
     cardDisabled: {
       opacity: 0.6,
-    },
-    comingSoonBadge: {
-      position: "absolute",
-      top: theme.spacing.sm,
-      right: theme.spacing.sm,
-      backgroundColor: theme.colors.primary,
-      paddingHorizontal: theme.spacing.sm,
-      paddingVertical: theme.spacing.xs,
-      borderRadius: theme.radius.sm,
-    },
-    comingSoonText: {
-      ...theme.text("xs", "semibold", theme.colors.onPrimary),
-      letterSpacing: 0.5,
     },
     comingSoonBadgeLarge: {
       alignSelf: "flex-start",

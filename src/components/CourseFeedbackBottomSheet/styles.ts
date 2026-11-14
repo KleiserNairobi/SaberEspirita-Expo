@@ -24,6 +24,12 @@ export const createStyles = (theme: ITheme) => {
       textAlign: "center",
       marginBottom: 20,
     },
+    supportHint: {
+      ...theme.text("xs", "regular", theme.colors.textSecondary),
+      textAlign: "center",
+      marginBottom: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.sm,
+    },
     inputContainer: {
       width: "100%",
     },

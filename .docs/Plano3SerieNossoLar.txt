@@ -1,0 +1,52 @@
+Plano revisado: Nosso Lar — Estudo Guiado
+
+Com esses três pontos, o plano muda em três frentes: o tom, o nível das aulas e o papel do aluno.
+
+1. O que muda por causa do público (espíritas que já estudam Kardec)
+Sem aulas introdutórias. Quem estuda Kardec já conhece perturbação, erraticidade e mediunidade. O curso parte desse repertório. Os níveis passam a ser só intermediário e avançado; a NL-02 e a NL-05, que eram introdutórias, sobem de nível.
+Glossário quase sempre vazio. O aluno não precisa de definição de “perturbação”. Pela seção 16 do prompt, o glossário só entra quando o termo é necessário e tem tratamento explícito na fonte. Aqui, "glossary": [] passa a ser o padrão, não a exceção.
+O interesse está nos pontos de tensão. Esse público já ouviu “Nosso Lar concorda com Kardec”. O valor premium está em mostrar onde se aproxima, onde se distancia e onde a leitura precisa de cuidado, como na hierarquia (NL-11) e na descrição da colônia (NL-03).
+A aplicação moral tem de ser exigente. Para quem já conhece “a lei do trabalho”, uma receita genérica é fraca. A aplicação precisa nascer de uma cena concreta e deixar uma pergunta que o aluno ainda não tinha feito.
+2. O que muda por causa da abordagem equilibrada
+
+Cada aula tem os quatro fios (narrativa, estudo doutrinário, comparação, aplicação moral). Para não virar fórmula, um fio conduz e os outros o sustentam:
+
+Aula	Título (≤45)	Fio condutor	Tensão de estudo
+NL-01	Entre duas vidas	Narrativa	A perturbação narrada e a perturbação sistematizada
+NL-02	O auxílio que chega	Doutrinário	Auxílio e merecimento: o que a cena mostra e o que Kardec formula
+NL-03	Uma colônia, não o mundo espiritual	Comparação	Relato de uma colônia versus princípios gerais da vida espírita
+NL-04	Aprender a receber	Aplicação moral	Humildade de quem precisa de ajuda
+NL-05	A prece em Nosso Lar	Comparação	A prece na cena e na Codificação
+NL-06	O trabalho como lei	Doutrinário	Lei do trabalho e serviço organizado
+NL-07	Laços que continuam	Narrativa	Afeto, família e seus limites na narrativa
+NL-08	Regeneração e Auxílio	Aplicação moral	Fraternidade em ação
+NL-09	Esclarecimento e responsabilidade	Doutrinário	Livre-arbítrio e justiça
+NL-10	Comunicação e Elevação	Comparação	Mediunidade narrada e mediunidade sistematizada
+NL-11	Uma hierarquia narrada	Comparação	Estrutura da colônia e escala espírita
+NL-12	Entre dois planos	Narrativa	Influência espiritual na cena do lar terreno
+NL-13	O que a palestra do governador pede	Aplicação moral	O que a exortação pede de quem a ouve
+NL-14	O regresso à tarefa	Doutrinário	Missão e reencarnação
+NL-15	Como ler uma obra mediúnica	Comparação	Controle Universal do Ensino dos Espíritos
+
+Assim o curso fica equilibrado no conjunto, com ritmo variado de aula para aula. Mantenho o aviso anterior: a faixa de capítulos de cada aula precisa ser confirmada na sua edição, e as questões da Codificação só entram quando eu tiver segurança da referência.
+
+3. “Eu estudo com você”: como isso vira decisão de design
+
+Essa frase precisa aparecer na estrutura dos slides, não só na intenção. Proponho cinco traços fixos:
+
+A aula começa por uma pergunta que a obra provoca, e não por uma explicação. O aluno entra como alguém que também ainda não sabe a resposta.
+Leitura lado a lado. Em vez de “Kardec confirma”, a aula coloca a passagem de Nosso Lar e a da Codificação juntas e deixa o aluno perceber o que se aproxima e o que se afasta (seção 12).
+Voz de quem estuda junto, com “vamos notar”, “repare que”, “podemos aproximar”, “uma leitura possível é”. Isso também protege a fidelidade, porque marca o que é interpretação.
+Limites declarados. Todo slide de comparação diz até onde a comparação vai. É o what_the_work_does_not_say, que nesse público pesa mais.
+Perguntas finais sem resposta pronta (seção 23: nada de resposta “correta” imposta), conduzindo de autoconhecimento a aplicação e transformação moral.
+
+Teste rápido por aula: o aluno saiu sabendo mais coisas ou vendo a obra com mais clareza? Só a segunda resposta conta como premium.
+
+4. Reflexos nos campos do JSON
+cognitiveIntensity.level: sempre “intermediário” ou “avançado”, com a descrição apontando o raciocínio exigido (por exemplo, distinguir narrativa de princípio).
+premiumDifferential: sempre específico, como na seção 31. Exemplo para a NL-01: “Coloca a cena inicial de André Luiz ao lado das questões de O Livro dos Espíritos sobre a perturbação e mostra onde a aproximação é legítima e onde a experiência narrada não pode ser tomada como regra.”
+narrativeStrategy: abertura pela cena e pela pergunta, com retorno à cena depois da comparação.
+glossary: [] na maioria das aulas.
+Próximo passo
+
+Quer que eu monte agora o JSON de entrada da NL-01, no formato da seção 35, já com público e abordagem incorporados em additionalInstructions? Para isso preciso saber quais capítulos e trechos você quer estudar nela.

@@ -107,11 +107,22 @@ export const CourseFeedbackBottomSheet = forwardRef<
                     : "Excelente!"}
         </Text>
 
+        {rating > 0 && rating <= 3 && (
+          <Text style={styles.supportHint}>
+            Sentiu falta de algo ou teve alguma dificuldade? Conte para nós para
+            que possamos aprimorar o estudo.
+          </Text>
+        )}
+
         {/* Campo de Comentário */}
         <View style={styles.inputContainer}>
           <BottomSheetTextInput
             style={styles.textInput}
-            placeholder="Escreva um comentário sobre sua experiência (opcional)..."
+            placeholder={
+              rating > 0 && rating <= 3
+                ? "Conte-nos o que podemos melhorar..."
+                : "Escreva um comentário sobre sua experiência (opcional)..."
+            }
             placeholderTextColor={theme.colors.textSecondary}
             multiline
             numberOfLines={4}

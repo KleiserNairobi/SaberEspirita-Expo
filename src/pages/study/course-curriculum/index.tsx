@@ -169,8 +169,41 @@ export function CourseCurriculumScreen() {
     }
   );
 
+  // Sincroniza status de avaliação com o backend caso o usuário tenha avaliado em outro aparelho ou reinstalado
+  useEffect(() => {
+    if (!user?.uid || !courseId || hasGloballySubmittedState) return;
+
+    let isMounted = true;
+    courseApiService
+      .getCourseFeedbacks(courseId)
+      .then((feedbacks) => {
+        if (!isMounted) return;
+        const alreadyReviewed = feedbacks.some((f) => f.userId === user.uid);
+        if (alreadyReviewed) {
+          saveBoolean(`course_${courseId}_review_submitted`, true);
+          setHasGloballySubmittedState(true);
+        }
+      })
+      .catch((err) => {
+        console.warn("[CourseCurriculum] Erro ao sincronizar status de avaliação:", err);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.uid, courseId, hasGloballySubmittedState]);
+
   const handleOpenFeedback = () => {
+    if (hasGloballySubmittedState || lessonsProgress === 100) return;
     feedbackSheetRef.current?.present();
+  };
+
+  const handleFeedbackDismiss = () => {
+    // Se o curso atingiu 100%, encerra o ciclo definitivamente mesmo se o aluno optar por não avaliar
+    if (lessonsProgress === 100) {
+      saveBoolean(`course_${courseId}_review_submitted`, true);
+      setHasGloballySubmittedState(true);
+    }
   };
 
   const handleSubmitFeedback = async (rating: number, comment: string) => {
@@ -966,7 +999,9 @@ export function CourseCurriculumScreen() {
                     certificateEligible={isReadyForCertificate}
                     hasCertificate={certificateEnabled}
                     onRateCourse={
-                      hasGloballySubmittedState ? undefined : handleOpenFeedback
+                      hasGloballySubmittedState || lessonsProgress === 100
+                        ? undefined
+                        : handleOpenFeedback
                     }
                   />
                 </>
@@ -1039,6 +1074,7 @@ export function CourseCurriculumScreen() {
         courseId={courseId}
         courseTitle={course?.title || "Série"}
         onSubmit={handleSubmitFeedback}
+        onDismiss={handleFeedbackDismiss}
       />
 
       {/* ✅ Modal de Conteúdo Premium */}

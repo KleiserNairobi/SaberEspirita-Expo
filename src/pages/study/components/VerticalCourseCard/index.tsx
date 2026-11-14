@@ -6,6 +6,7 @@ import { Crown, Star } from "lucide-react-native";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { ICourse, IUserCourseProgress } from "@/types/course";
+import { getCoursePedagogicalProfile } from "@/utils/coursePedagogy";
 
 import { createStyles } from "./styles";
 
@@ -50,6 +51,8 @@ export const VerticalCourseCard = React.memo(function VerticalCourseCard({
         ? course.imageUrl
         : require("@/assets/images/imgPhV.webp");
 
+  const pedagogicalProfile = getCoursePedagogicalProfile(course);
+
   return (
     <TouchableOpacity
       style={[styles.card, width ? { width } : undefined]}
@@ -91,9 +94,13 @@ export const VerticalCourseCard = React.memo(function VerticalCourseCard({
         </LinearGradient>
       </View>
 
-      {/* Faixa inferior limpa: [Nível] à esquerda e [Nota] à direita */}
+      {/* Faixa inferior limpa: [Nível] (ou [Nível • Reflexivo] na exceção) à esquerda e [Nota] à direita */}
       <View style={styles.footerRow}>
-        <Text style={styles.levelText}>{displayLevel}</Text>
+        <Text style={styles.levelText} numberOfLines={1} ellipsizeMode="tail">
+          {pedagogicalProfile.kind === "reflective"
+            ? `${displayLevel} • ${pedagogicalProfile.label}`
+            : displayLevel}
+        </Text>
 
         {finalRating !== undefined && finalRating !== null && finalRating > 0 && (
           <View style={styles.ratingBox}>

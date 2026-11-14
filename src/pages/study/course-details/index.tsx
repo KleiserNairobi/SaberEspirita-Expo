@@ -14,6 +14,7 @@ import {
   FileText,
   MessageCircle,
   PlayCircle,
+  Sparkles,
   Star,
 } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -36,6 +37,7 @@ import {
   getLessonSlideProgress,
 } from "@/utils/lessonProgressStorage";
 import { getFooterVerticalPadding } from "@/utils/layout";
+import { getCoursePedagogicalProfile } from "@/utils/coursePedagogy";
 
 import { CourseMaterialsTab } from "./components/CourseMaterialsTab";
 import { createStyles } from "./styles";
@@ -184,40 +186,11 @@ export function CourseDetailsScreen() {
     course?.hasForum || lessons.some((l) => Boolean(l.forumEnabled))
   );
 
-  // Texto dinâmico de apoio pedagógico baseado nas características da série
-  const pedagogicalSupportText = useMemo(() => {
-    const profile = course?.pedagogicalProfile;
-
-    // 1. Perfil explícito (se configurado no curso)
-    if (profile === "introductory" || profile === "reflective") {
-      return "Esta série prioriza a reflexão pessoal e a escuta sensível, sem avaliações formais.";
-    }
-    if (profile === "formative" || profile === "advanced") {
-      return "Esta série conta com atividades práticas de fixação e fórum reflexivo de autoconhecimento.";
-    }
-    if (profile === "mixed") {
-      return "Esta série combina pausas reflexivas com atividades práticas e fórum de autoconhecimento.";
-    }
-
-    // 2. Inferência por regras de negócio:
-    // Regra 1: Perfil Reflexivo / Introdutório (sem exercícios de fixação)
-    if (exerciseCount === 0) {
-      return "Esta série prioriza a reflexão pessoal e a escuta sensível, sem avaliações formais.";
-    }
-
-    // Regra 3: Perfil Formativo / Aprofundado (estudo formal com exercícios e avaliações/certificação)
-    if (exerciseCount > 0 && hasCertification) {
-      return "Esta série conta com atividades práticas de fixação e fórum reflexivo de autoconhecimento.";
-    }
-
-    // Regra 2: Perfil Misto (combina reflexão com exercícios e/ou fórum)
-    if (exerciseCount > 0) {
-      return "Esta série combina pausas reflexivas com atividades práticas e fórum de autoconhecimento.";
-    }
-
-    // Regra 4: Fallback / Padrão
-    return "Esta série utiliza uma metodologia ativa com foco em pausas reflexivas.";
-  }, [course?.pedagogicalProfile, exerciseCount, hasCertification]);
+  const pedagogicalProfile = useMemo(
+    () => getCoursePedagogicalProfile(course),
+    [course]
+  );
+  const pedagogicalSupportText = pedagogicalProfile.supportText;
 
   // Formatação de duração (igual ao CourseCard)
   const workloadMinutes = course?.workloadMinutes || 0;
@@ -290,6 +263,16 @@ export function CourseDetailsScreen() {
             <BarChart2 size={12} color={theme.colors.muted} />
             <Text style={styles.metadataText}>
               {course.difficultyLevel || "Iniciante"}
+            </Text>
+          </View>
+
+          <Text style={styles.metadataSeparator}>•</Text>
+
+          {/* Perfil Pedagógico */}
+          <View style={styles.metadataItem}>
+            <Sparkles size={12} color={theme.colors.muted} />
+            <Text style={styles.metadataText}>
+              {pedagogicalProfile.label}
             </Text>
           </View>
 
@@ -414,12 +397,20 @@ export function CourseDetailsScreen() {
                 </Text>
               </View>
 
-              {/* Exercícios */}
+              {/* Exercícios / Perfil Pedagógico */}
               <View style={styles.statItem}>
                 <View style={styles.iconCircle}>
-                  <FileText size={16} color={theme.colors.primary} />
+                  {exerciseCount > 0 ? (
+                    <FileText size={16} color={theme.colors.primary} />
+                  ) : (
+                    <Sparkles size={16} color={theme.colors.primary} />
+                  )}
                 </View>
-                <Text style={styles.statText}>{exerciseCount} Exercícios</Text>
+                <Text style={styles.statText}>
+                  {exerciseCount > 0
+                    ? `${exerciseCount} Exercícios`
+                    : "Estudo reflexivo"}
+                </Text>
               </View>
 
               {/* Fórum */}
@@ -480,19 +471,22 @@ export function CourseDetailsScreen() {
             ) : (
               <View style={[styles.requirementsCard, styles.noCertificateCard]}>
                 <View style={styles.requirementsHeader}>
-                  <Award size={20} color={theme.colors.textSecondary} />
+                  <Sparkles size={20} color={theme.colors.primary} />
                   <Text
                     style={[
                       styles.requirementsTitle,
-                      { color: theme.colors.textSecondary },
+                      { color: theme.colors.text },
                     ]}
                   >
-                    Não Emite Certificado
+                    {pedagogicalProfile.kind === "reflective"
+                      ? "Estudo Livre & Reflexivo"
+                      : "Sem Certificação Formal"}
                   </Text>
                 </View>
                 <Text style={styles.noCertificateText}>
-                  Esta série é livre e voltada para estudo reflexivo, sem emissão de
-                  certificado formal de conclusão.
+                  {pedagogicalProfile.kind === "reflective"
+                    ? "Esta série prioriza a escuta sensível e o acolhimento, sem avaliações ou exigência de certificado formal."
+                    : "Esta série é focada no estudo contínuo e na fixação de conhecimento, sem emissão de certificado formal."}
                 </Text>
               </View>
             )}
