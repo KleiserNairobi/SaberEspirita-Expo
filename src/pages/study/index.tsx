@@ -44,6 +44,7 @@ import {
   getLessonSlideProgress,
 } from "@/utils/lessonProgressStorage";
 
+import { ComingSoonSection } from "./components/ComingSoonSection";
 import {
   ContinueStudyingSection,
   InProgressCourseItem,
@@ -122,6 +123,10 @@ export function StudyScreen() {
   const featuredCourseIds = React.useMemo(() => {
     return new Set((featuredCourses || []).map((c) => c.id));
   }, [featuredCourses]);
+
+  const comingSoonCourses = React.useMemo(() => {
+    return allCourses.filter((c) => c.status === "COMING_SOON");
+  }, [allCourses]);
 
   // Fetching de todos os progressos para o Carrossel Inteligente
   const { data: allProgress = {} } = useAllCoursesProgress();
@@ -368,6 +373,19 @@ export function StudyScreen() {
     setTimeout(() => bottomSheetRef.current?.present(), 100);
   }, []);
 
+  const handleComingSoonPress = useCallback((course: ICourse) => {
+    setMessageConfig({
+      type: "info",
+      title: course.title,
+      message: `${course.description}\n\nEste curso está em fase de preparação e entrará na grade em breve.`,
+      primaryButton: {
+        label: "Entendido",
+        onPress: () => bottomSheetRef.current?.dismiss(),
+      },
+    });
+    setTimeout(() => bottomSheetRef.current?.present(), 100);
+  }, []);
+
   function handleExploreCoursePress(course: ICourse, hasProgress: boolean) {
     if (course.status === "COMING_SOON") return;
     const activeLocal = getCourseActiveLesson(user?.uid, course.id);
@@ -517,6 +535,14 @@ export function StudyScreen() {
                 />
               )}
 
+              {/* Destaque condicional de novos cursos / Em Breve na Grade */}
+              {comingSoonCourses.length > 0 && (
+                <ComingSoonSection
+                  courses={comingSoonCourses}
+                  onPressCourse={handleComingSoonPress}
+                />
+              )}
+
               {/* Seção Explore por tema (Trilhas em Carrossel Horizontal e Subcategorias) */}
               {allCourses.length > 0 && (
                 <ExploreByTheme
@@ -540,7 +566,7 @@ export function StudyScreen() {
             <>
               {/* Seção Biblioteca */}
               <View style={[styles.sectionHeader, isTablet && styles.sectionHeaderNoMargin]}>
-                <Text style={styles.sectionTitle}>Explore a Biblioteca</Text>
+                <Text style={styles.sectionTitle}>Explore a biblioteca</Text>
               </View>
 
               {Biblioteca.map((item) => {

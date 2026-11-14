@@ -57,7 +57,7 @@ export const ContinueStudyingSection = React.memo(function ContinueStudyingSecti
           activeOpacity={onSeeAllPress ? 0.7 : 1}
           disabled={!onSeeAllPress}
         >
-          <Text style={styles.sectionTitle}>Continue Estudando</Text>
+          <Text style={styles.sectionTitle}>Continue estudando</Text>
         </TouchableOpacity>
 
         {items.length > 1 && (
