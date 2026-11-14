@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
+
+import seedMessages from "@/assets/dailyWisdom/seed.json";
 import { dailyWisdomApiService } from "@/services/api/dailyWisdomApiService";
 import { IDailyWisdom, WisdomMoment } from "@/types/dailyWisdom";
 import * as Storage from "@/utils/Storage";
-import seedMessages from "@/assets/dailyWisdom/seed.json";
 
 export const DAILY_WISDOM_KEYS = {
   all: ["dailyWisdom"] as const,
@@ -18,9 +19,30 @@ const STORAGE_KEYS = {
 };
 
 /**
+ * Retorna uma mensagem de sabedoria aleatória a partir do seed local embutido
+ */
+export function getRandomLocalSeedWisdom(moment?: WisdomMoment | string): IDailyWisdom {
+  const seeds = seedMessages as IDailyWisdom[];
+  if (moment && moment !== "GERAL" && moment !== "RANDOM") {
+    const filtered = seeds.filter((s) => s.moment === moment);
+    if (filtered.length > 0) {
+      const randomIndex = Math.floor(Math.random() * filtered.length);
+      return filtered[randomIndex];
+    }
+  }
+
+  const randomIndex = Math.floor(Math.random() * seeds.length);
+  return seeds[randomIndex];
+}
+
+/**
  * Retorna uma mensagem de sabedoria padrão a partir do seed local embutido
  */
 export function getLocalSeedWisdom(moment?: WisdomMoment | string): IDailyWisdom {
+  if (moment === "RANDOM") {
+    return getRandomLocalSeedWisdom();
+  }
+
   const seeds = seedMessages as IDailyWisdom[];
   if (moment && moment !== "GERAL") {
     const filtered = seeds.filter((s) => s.moment === moment);
@@ -37,7 +59,7 @@ export function getLocalSeedWisdom(moment?: WisdomMoment | string): IDailyWisdom
   const oneDay = 1000 * 60 * 60 * 24;
   const dayOfYear = Math.floor(diff / oneDay);
 
-  const matched = seeds.find((s) => s.dayOfYear === ((dayOfYear % seeds.length) + 1));
+  const matched = seeds.find((s) => s.dayOfYear === (dayOfYear % seeds.length) + 1);
   return matched || seeds[dayOfYear % seeds.length] || seeds[0];
 }
 
@@ -84,12 +106,16 @@ export function useRandomWisdom(moment?: WisdomMoment | string, enabled = true) 
     queryKey: DAILY_WISDOM_KEYS.random(moment),
     queryFn: async () => {
       try {
-        const remote = await dailyWisdomApiService.getRandomWisdom(moment);
+        const queryMoment = moment === "RANDOM" ? undefined : moment;
+        const remote = await dailyWisdomApiService.getRandomWisdom(queryMoment);
         if (remote) return remote;
       } catch (e) {
-        console.warn("useRandomWisdom: falha ao sortear remoto, usando fallback do seed", e);
+        console.warn(
+          "useRandomWisdom: falha ao sortear remoto, usando fallback do seed",
+          e
+        );
       }
-      return getLocalSeedWisdom(moment);
+      return getRandomLocalSeedWisdom(moment);
     },
     enabled,
     staleTime: 0, // Sempre novo ao solicitar sorteio

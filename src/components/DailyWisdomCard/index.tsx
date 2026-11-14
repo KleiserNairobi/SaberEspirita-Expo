@@ -10,7 +10,7 @@ import { ChevronDown, ChevronRight, Sparkles } from "lucide-react-native";
 import { WisdomMomentBottomSheet } from "@/components/WisdomMomentBottomSheet";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import {
-  getLocalSeedWisdom,
+  getRandomLocalSeedWisdom,
   useTodayWisdom,
 } from "@/pages/meditate/hooks/useDailyWisdom";
 import { dailyWisdomApiService } from "@/services/api/dailyWisdomApiService";
@@ -30,6 +30,7 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
   const navigation = useNavigation<any>();
 
   const momentBottomSheetRef = useRef<BottomSheetModal>(null);
+  const isSelectingMomentRef = useRef(false);
 
   const { currentMoment, setMoment, checkDayTransition } = useMoodStore();
   const { data: todayWisdom } = useTodayWisdom();
@@ -54,16 +55,21 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
         return;
       }
 
+      if (isSelectingMomentRef.current) {
+        isSelectingMomentRef.current = false;
+        return;
+      }
+
       try {
         const items = await dailyWisdomApiService.getWisdomByMoment(currentMoment);
         if (!isCancelled && items && items.length > 0) {
           const randomIndex = Math.floor(Math.random() * items.length);
           setSelectedWisdom(items[randomIndex]);
         } else if (!isCancelled) {
-          setSelectedWisdom(getLocalSeedWisdom(currentMoment));
+          setSelectedWisdom(getRandomLocalSeedWisdom(currentMoment));
         }
       } catch (err) {
-        if (!isCancelled) setSelectedWisdom(getLocalSeedWisdom(currentMoment));
+        if (!isCancelled) setSelectedWisdom(getRandomLocalSeedWisdom(currentMoment));
       }
     }
 
@@ -102,13 +108,13 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
   }
 
   async function handleSelectMoment(moment: WisdomMoment | "RANDOM" | "GERAL") {
+    isSelectingMomentRef.current = true;
     try {
       if (moment === "RANDOM") {
         const randomItem =
-          (await dailyWisdomApiService.getRandomWisdom()) || getLocalSeedWisdom();
+          (await dailyWisdomApiService.getRandomWisdom()) || getRandomLocalSeedWisdom();
         setSelectedWisdom(randomItem);
-        // Atualiza o store com o momento da sabedoria sorteada, refletindo em Ore
-        setMoment(randomItem.moment as WisdomMoment);
+        setMoment("RANDOM");
       } else if (moment === "GERAL") {
         setSelectedWisdom(null);
         setMoment("GERAL");
@@ -118,15 +124,18 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
           const randomIndex = Math.floor(Math.random() * items.length);
           setSelectedWisdom(items[randomIndex]);
         } else {
-          setSelectedWisdom(getLocalSeedWisdom(moment));
+          setSelectedWisdom(getRandomLocalSeedWisdom(moment));
         }
         setMoment(moment);
       }
     } catch (error) {
       console.warn("DailyWisdomCard: falha ao atualizar momento no card", error);
-      const fallback = getLocalSeedWisdom(
-        moment === "RANDOM" || moment === "GERAL" ? undefined : moment
-      );
+      const fallback =
+        moment === "RANDOM"
+          ? getRandomLocalSeedWisdom()
+          : moment === "GERAL"
+            ? null
+            : getRandomLocalSeedWisdom(moment);
       setSelectedWisdom(fallback);
       setMoment(moment);
     }
@@ -139,7 +148,12 @@ export function DailyWisdomCard({ style, onSelectMoment }: DailyWisdomCardProps)
   const momentMeta = hasCustomMoment
     ? WISDOM_MOMENTS.find((m) => m.key === currentMoment)
     : null;
-  const momentLabel = momentMeta ? momentMeta.label : "Selecionar";
+  const momentLabel =
+    currentMoment === "RANDOM"
+      ? "Ao Acaso"
+      : momentMeta
+        ? momentMeta.label
+        : "Selecionar";
   const promptLabel = hasCustomMoment
     ? "Sentindo algo diferente?"
     : "Sentindo algo específico?";

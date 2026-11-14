@@ -40,8 +40,10 @@ export const dailyWisdomApiService = {
    */
   async getRandomWisdom(moment?: string): Promise<IDailyWisdom | null> {
     try {
+      const validMoment =
+        moment && moment !== "RANDOM" && moment !== "GERAL" ? moment : undefined;
       const response = await apiClient.get<IDailyWisdom>("/daily-wisdom/random", {
-        params: moment ? { moment } : undefined,
+        params: validMoment ? { moment: validMoment } : undefined,
       });
       if (!response.data) return null;
       return formatDailyWisdom(response.data);
@@ -56,8 +58,10 @@ export const dailyWisdomApiService = {
    */
   async getWisdomByMoment(moment?: string): Promise<IDailyWisdom[]> {
     try {
+      const validMoment =
+        moment && moment !== "RANDOM" && moment !== "GERAL" ? moment : undefined;
       const response = await apiClient.get<IDailyWisdom[]>("/daily-wisdom/by-moment", {
-        params: moment ? { moment } : undefined,
+        params: validMoment ? { moment: validMoment } : undefined,
       });
       return (response.data || []).map(formatDailyWisdom);
     } catch (error) {
