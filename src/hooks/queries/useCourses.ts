@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { courseApiService } from "@/services/api/courseApiService";
+import { useIsAdmin } from "@/stores/authStore";
 import { ICourse, ICourseMaterialsResponse } from "@/types/course";
 
 export const COURSES_KEYS = {
@@ -27,9 +28,15 @@ async function fetchCourseMaterials(courseId: string): Promise<ICourseMaterialsR
 }
 
 export function useCourses() {
+  const isAdmin = useIsAdmin();
+
   return useQuery({
     queryKey: COURSES_KEYS.all,
     queryFn: fetchCourses,
+    select: (courses) => {
+      if (isAdmin) return courses;
+      return (courses || []).filter((c) => c.status !== "DRAFT");
+    },
     staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
     placeholderData: (previousData) => previousData,
@@ -39,9 +46,15 @@ export function useCourses() {
 }
 
 export function useFeaturedCourses() {
+  const isAdmin = useIsAdmin();
+
   return useQuery({
     queryKey: COURSES_KEYS.featured,
     queryFn: fetchFeaturedCourses,
+    select: (courses) => {
+      if (isAdmin) return courses;
+      return (courses || []).filter((c) => c.status !== "DRAFT");
+    },
     staleTime: 1000 * 60 * 3, // 3 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
     placeholderData: (previousData) => previousData,
@@ -51,10 +64,17 @@ export function useFeaturedCourses() {
 }
 
 export function useCourse(id: string) {
+  const isAdmin = useIsAdmin();
+
   return useQuery({
     queryKey: COURSES_KEYS.detail(id),
     queryFn: () => fetchCourseById(id),
     enabled: !!id,
+    select: (course) => {
+      if (!course) return null;
+      if (course.status === "DRAFT" && !isAdmin) return null;
+      return course;
+    },
     staleTime: 1000 * 60 * 1, // 1 minuto
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
     placeholderData: (previousData) => previousData,

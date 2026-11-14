@@ -52,6 +52,7 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
         : require("@/assets/images/imgPhV.webp");
 
   const isComingSoon = course.status === "COMING_SOON";
+  const isDraft = course.status === "DRAFT";
   const isLegacy = course.status === "LEGACY" || course.allowNewEnrollments === false;
 
   return (
@@ -73,10 +74,26 @@ export function CourseCard({ course, progress, onPress }: CourseCardProps) {
           placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
         />
 
-        {/* Topo da Imagem: Em Breve ou Encerrado */}
+        {/* Topo da Imagem: Em Breve, Rascunho ou Encerrado */}
         {isComingSoon ? (
           <View style={styles.imageTopBadge}>
             <Text style={styles.imageTopBadgeText}>Em breve</Text>
+          </View>
+        ) : isDraft ? (
+          <View
+            style={[
+              styles.imageTopBadge,
+              { backgroundColor: theme.colors.muted },
+            ]}
+          >
+            <Text
+              style={[
+                styles.imageTopBadgeText,
+                { color: theme.colors.background },
+              ]}
+            >
+              Rascunho
+            </Text>
           </View>
         ) : isLegacy ? (
           <View

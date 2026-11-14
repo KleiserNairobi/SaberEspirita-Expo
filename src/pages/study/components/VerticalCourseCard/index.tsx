@@ -36,6 +36,7 @@ export const VerticalCourseCard = React.memo(function VerticalCourseCard({
   const styles = createStyles(theme);
 
   const isComingSoon = course.status === "COMING_SOON";
+  const isDraft = course.status === "DRAFT";
   const finalRating = course.averageRating ?? course.rating;
 
   const rawLevel = String(course.difficultyLevel || "").toLowerCase();
@@ -70,10 +71,26 @@ export const VerticalCourseCard = React.memo(function VerticalCourseCard({
           cachePolicy="memory-disk"
         />
 
-        {/* Topo Esquerdo: "Em breve" ou "Premium" */}
+        {/* Topo Esquerdo: "Em breve", "Rascunho" ou "Premium" */}
         {isComingSoon ? (
           <View style={styles.comingSoonBadge}>
             <Text style={styles.comingSoonText}>Em breve</Text>
+          </View>
+        ) : isDraft ? (
+          <View
+            style={[
+              styles.comingSoonBadge,
+              { backgroundColor: theme.colors.muted },
+            ]}
+          >
+            <Text
+              style={[
+                styles.comingSoonText,
+                { color: theme.colors.background },
+              ]}
+            >
+              Rascunho
+            </Text>
           </View>
         ) : course.isPremium ? (
           <View style={styles.premiumBadge}>

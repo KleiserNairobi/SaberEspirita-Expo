@@ -611,3 +611,11 @@ export function useIsPremium(): boolean {
   if (!user) return false;
   return Boolean(user.isPremium || user.role === "admin");
 }
+
+/**
+ * Hook para checar se o usuário atual possui permissão de Administrador.
+ */
+export function useIsAdmin(): boolean {
+  const user = useAuthStore((state) => state.user);
+  return Boolean(user && user.role === "admin");
+}
