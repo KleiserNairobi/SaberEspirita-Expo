@@ -74,40 +74,38 @@ function parseCertification(cert: any): ICourse["certification"] {
   };
 }
 
+export const MOCK_NOSSO_LAR_COURSE: ICourse = {
+  id: "nosso-lar-estudo-guiado",
+  title: "Nosso Lar — Estudo Guiado",
+  description:
+    "Estudo aprofundado da obra de André Luiz em diálogo permanente com a Codificação Kardequiana.",
+  order: 999,
+  workloadMinutes: 730,
+  difficultyLevel: "Intermediário",
+  author: "André Luiz / Chico Xavier",
+  lessonCount: 15,
+  isPremium: true,
+  categoryId: "COMP",
+  status: "DRAFT",
+  allowNewEnrollments: true,
+  certification: {
+    enabled: true,
+    minimumGrade: 70,
+    requiredLessonsPercent: 100,
+    requiredExercisesPercent: 100,
+  },
+  hasForum: true,
+  stats: {
+    exerciseCount: 0,
+    totalDurationMinutes: 730,
+  },
+};
+
 export const courseApiService = {
   /**
    * Obtém a lista de cursos com suporte a filtros.
    */
   async getCourses(params?: GetCoursesParams): Promise<ICourse[]> {
-    /* Curso Nosso Lar em desenvolvimento (comentado para release)
-    const mockNossoLarCourse: ICourse = {
-      id: "nosso-lar-estudo-guiado",
-      title: "Nosso Lar — Estudo Guiado",
-      description:
-        "Estudo aprofundado da obra de André Luiz em diálogo permanente com a Codificação Kardequiana.",
-      order: 999,
-      workloadMinutes: 65,
-      difficultyLevel: "Intermediário",
-      author: "André Luiz / Chico Xavier",
-      lessonCount: 2,
-      isPremium: true,
-      categoryId: "COMP",
-      status: "PUBLISHED",
-      allowNewEnrollments: true,
-      certification: {
-        enabled: true,
-        minimumGrade: 70,
-        requiredLessonsPercent: 100,
-        requiredExercisesPercent: 100,
-      },
-      hasForum: true,
-      stats: {
-        exerciseCount: 0,
-        totalDurationMinutes: 65,
-      },
-    };
-    */
-
     const response = await apiClient.get<ICourse[]>("/courses", { params });
     const list: ICourse[] = (response.data || []).map((course) => ({
       ...course,
@@ -119,6 +117,15 @@ export const courseApiService = {
         typeof course.imageUrl === "string" ? resolveCdnUrl(course.imageUrl) : course.imageUrl,
       certification: parseCertification(course.certification),
     }));
+
+    if (
+      !params?.category &&
+      !params?.searchTerm &&
+      !params?.difficultyLevel &&
+      !list.some((course) => course.id === MOCK_NOSSO_LAR_COURSE.id)
+    ) {
+      list.push(MOCK_NOSSO_LAR_COURSE);
+    }
 
     return list;
   },
@@ -144,36 +151,9 @@ export const courseApiService = {
    */
   async getCourseById(courseId: string): Promise<ICourse | null> {
     if (!courseId) return null;
-    /* Mock do curso Nosso Lar comentado para release
-    if (courseId === "nosso-lar-estudo-guiado") {
-      return {
-        id: "nosso-lar-estudo-guiado",
-        title: "Nosso Lar — Estudo Guiado",
-        description:
-          "Estudo aprofundado da obra de André Luiz em diálogo permanente com a Codificação Kardequiana.",
-        order: 99,
-        workloadMinutes: 65,
-        difficultyLevel: "Intermediário",
-        author: "André Luiz / Chico Xavier",
-        lessonCount: 2,
-        isPremium: true,
-        categoryId: "COMP",
-        status: "PUBLISHED",
-        allowNewEnrollments: true,
-        certification: {
-          enabled: true,
-          minimumGrade: 70,
-          requiredLessonsPercent: 100,
-          requiredExercisesPercent: 100,
-        },
-        hasForum: true,
-        stats: {
-          exerciseCount: 0,
-          totalDurationMinutes: 65,
-        },
-      };
+    if (courseId.trim() === MOCK_NOSSO_LAR_COURSE.id) {
+      return MOCK_NOSSO_LAR_COURSE;
     }
-    */
     const response = await apiClient.get<any>(`/courses/${courseId}`);
     if (!response.data) return null;
 
@@ -222,7 +202,7 @@ export const courseApiService = {
    * Obtém os materiais complementares vinculados ao curso (apostilas, podcasts, reflexões e meditações).
    */
   async getCourseMaterials(courseId: string): Promise<ICourseMaterialsResponse> {
-    if (!courseId) {
+    if (!courseId || courseId.trim() === MOCK_NOSSO_LAR_COURSE.id) {
       return { booklets: [], podcasts: [], reflections: [], meditations: [] };
     }
 

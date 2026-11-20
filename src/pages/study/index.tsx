@@ -125,7 +125,9 @@ export function StudyScreen() {
   }, [featuredCourses]);
 
   const comingSoonCourses = React.useMemo(() => {
-    return allCourses.filter((c) => c.status === "COMING_SOON");
+    return allCourses.filter(
+      (c) => c.status === "COMING_SOON" || c.status === "DRAFT"
+    );
   }, [allCourses]);
 
   // Fetching de todos os progressos para o Carrossel Inteligente
@@ -373,18 +375,31 @@ export function StudyScreen() {
     setTimeout(() => bottomSheetRef.current?.present(), 100);
   }, []);
 
-  const handleComingSoonPress = useCallback((course: ICourse) => {
-    setMessageConfig({
-      type: "info",
-      title: course.title,
-      message: `${course.description}\n\nEste curso está em fase de preparação e entrará na grade em breve.`,
-      primaryButton: {
-        label: "Entendido",
-        onPress: () => bottomSheetRef.current?.dismiss(),
-      },
-    });
-    setTimeout(() => bottomSheetRef.current?.present(), 100);
-  }, []);
+  const handleComingSoonPress = useCallback(
+    (course: ICourse) => {
+      if (course.status === "DRAFT") {
+        const activeLocal = getCourseActiveLesson(user?.uid, course.id);
+        if (activeLocal) {
+          navigation.navigate("CourseCurriculum", { courseId: course.id });
+        } else {
+          navigation.navigate("CourseDetails", { courseId: course.id });
+        }
+        return;
+      }
+
+      setMessageConfig({
+        type: "info",
+        title: course.title,
+        message: `${course.description}\n\nEste curso está em fase de preparação e entrará na grade em breve.`,
+        primaryButton: {
+          label: "Entendido",
+          onPress: () => bottomSheetRef.current?.dismiss(),
+        },
+      });
+      setTimeout(() => bottomSheetRef.current?.present(), 100);
+    },
+    [navigation, user?.uid]
+  );
 
   function handleExploreCoursePress(course: ICourse, hasProgress: boolean) {
     if (course.status === "COMING_SOON") return;

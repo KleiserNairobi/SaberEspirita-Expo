@@ -55,7 +55,7 @@ import { useAuthStore } from "./src/stores/authStore";
 SplashScreen.preventAutoHideAsync();
 
 // React Query Cache Buster (usado para rastreamento de compatibilidade de cache em deploys OTA)
-const cacheConfig = { buster: "2026-11-14-v2.0.24-ota.3" };
+const cacheConfig = { buster: "2026-11-20-v2.0.24-ota.4" };
 
 // Criar QueryClient fora do componente para evitar recriação
 const queryClient = new QueryClient({

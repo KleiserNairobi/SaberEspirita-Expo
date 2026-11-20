@@ -1,0 +1,309 @@
+{
+  "id": "NL-07",
+  "courseId": "nosso-lar-estudo-guiado",
+  "title": "O que faz um lar",
+  "source": "Nosso Lar",
+  "chapter": "Caps. 18–21",
+  "durationMinutes": 45,
+  "forumEnabled": true,
+  "subtitle": "Convivência e noções de lar a partir das cenas da obra",
+  "mainWork": {
+    "title": "Nosso Lar",
+    "author": "André Luiz",
+    "psychography": "Francisco Cândido Xavier"
+  },
+  "theme": "Convivência e noções de lar a partir das cenas da obra",
+  "objective": "Examinar o que a obra pede de quem convive — amor, a jovem desencarnada, noções de lar — e que o aluno ainda não se perguntou.",
+  "cognitiveIntensity": {
+    "level": "intermediário",
+    "description": "Exige distinguir o que a obra narra sobre convivência do que ela formula como noção de lar, sem transformar cenas particulares em princípio geral; pede leitura atenta ao que os títulos sustentam e ao que permanece em aberto."
+  },
+  "premiumDifferential": "Parte de cenas concretas de convivência (o amor como alimento, o caso da jovem desencarnada, as noções de lar) e mostra o que a obra pede de quem convive, sem universalizar experiências narradas nem completar o que a fonte não diz.",
+  "narrativeStrategy": "Abre pela pergunta que os títulos provocam — o que faz um lar — e conduz o aluno a observar, cena por cena, o que a convivência exige, deixando as questões finais em aberto.",
+  "slides": [
+    {
+      "slideType": "opening",
+      "slideNumber": 1,
+      "title": "O que faz um lar",
+      "learningGoal": "Apresentar a pergunta central da aula a partir dos títulos dos capítulos estudados.",
+      "content": "Quatro capítulos, quatro cenas de convivência: **amor como alimento**, uma **jovem desencarnada**, **noções de lar** e uma palestra que continua. Antes de qualquer resposta, a obra nos obriga a perguntar: o que, afinal, **faz um lar**? Não o que o define em teoria, mas o que a convivência concreta exige de quem vive nela. Vamos estudar juntos, deixando que os títulos sustentem o que podemos afirmar.",
+      "highlights": [
+        {
+          "title": "A pergunta da aula",
+          "content": "Não o que é um lar em abstrato, mas o que a **convivência** pede de quem o habita."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 18–21",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "curiosidade",
+      "commonMisunderstanding": "Pensar que a aula vai definir 'lar' doutrinariamente, quando a obra narra cenas de convivência.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "Os títulos dos capítulos 18 a 21 — Amor, Alimento das Almas; A Jovem Desencarnada; Noções de Lar; Continuando a palestra — são o ponto de partida. A aula se mantém no que eles sustentam."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 2,
+      "title": "Amor, alimento das almas",
+      "learningGoal": "Observar o que o título do cap. 18 sustenta sobre o amor na convivência.",
+      "content": "O capítulo 18 traz uma imagem forte: o **amor** como **alimento das almas**. Repare que a obra não diz apenas que o amor é importante — ela o apresenta como algo que **nutre**, que sustenta a vida de quem convive. Uma leitura possível é que a convivência não se mantém apenas por regras ou organização, mas por algo que se oferece e se recebe. O que esse alimento exige de quem o dá e de quem o recebe?",
+      "highlights": [
+        {
+          "title": "Amor que nutre",
+          "content": "A imagem do **alimento** desloca o amor de sentimento para algo que sustenta a convivência."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 18 — Amor, Alimento das Almas",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "ternura",
+      "commonMisunderstanding": "Reduzir o amor a sentimento, perdendo a imagem do alimento que sustenta.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não define formalmente o que é o amor nem o apresenta como princípio doutrinário sistematizado neste capítulo; ela oferece uma imagem — alimento — que a aula não deve transformar em definição."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 3,
+      "title": "A jovem desencarnada",
+      "learningGoal": "Reconhecer que a obra narra um caso particular, sem universalizá-lo.",
+      "content": "O capítulo 19 nos apresenta **uma jovem desencarnada**. Aqui é preciso cuidado: a obra narra **um caso**, uma experiência específica, e não uma regra para todos. O que essa cena nos pede é atenção ao **particular** — alguém que chega numa condição própria, com necessidades próprias. Uma leitura possível é que a convivência começa quando deixamos de aplicar categorias gerais e passamos a olhar quem está diante de nós.",
+      "highlights": [
+        {
+          "title": "Um caso, não uma regra",
+          "content": "A cena narra **uma** jovem; não autoriza generalizar para todos os desencarnados."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 19 — A Jovem Desencarnada",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "atenção",
+      "commonMisunderstanding": "Transformar o caso da jovem em descrição geral do que acontece a todos após a desencarnação.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Experiência narrada não é princípio universal. A obra conta um caso; a Doutrina, quando sistematiza, o faz em outra fonte. A aula preserva essa diferença."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 4,
+      "title": "Noções de lar",
+      "learningGoal": "Observar que a obra fala de 'noções' de lar, no plural, e não de uma definição única.",
+      "content": "O capítulo 20 é decisivo para o nosso tema: ele fala de **noções de lar** — no plural. Isso já é um indício de que a obra não pretende oferecer **uma definição única**, mas **noções** que se constroem na convivência. Repare que o título não diz 'o lar', mas 'noções de lar'. Talvez o lar não seja um conceito a ser definido, mas algo que se aprende a reconhecer nas relações que se estabelecem.",
+      "highlights": [
+        {
+          "title": "No plural",
+          "content": "'**Noções** de lar' sugere aprendizado progressivo, não definição fechada."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 20 — Noções de Lar",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "descoberta",
+      "commonMisunderstanding": "Esperar do capítulo uma definição única e formal de lar.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "O título 'Noções de Lar' é o dado mais seguro que temos. A aula se apoia nele e não avança além do que ele sustenta."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 5,
+      "title": "Continuando a palestra",
+      "learningGoal": "Perceber que a obra apresenta o ensino como continuidade, não como bloco fechado.",
+      "content": "O capítulo 21 se chama **Continuando a palestra**. O detalhe é significativo: o ensino não termina no capítulo anterior, ele **continua**. A convivência e as noções de lar não são entregues de uma vez; são ditas, ouvidas, retomadas. Uma leitura possível é que o próprio modo de ensinar da obra espelha o que ela diz sobre o lar: algo que se constrói **na continuidade**, na presença que retoma a palavra.",
+      "highlights": [
+        {
+          "title": "Ensino em continuidade",
+          "content": "A palestra que **continua** sugere aprendizado construído na retomada, não na posse."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 21 — Continuando a palestra",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "paciência",
+      "commonMisunderstanding": "Tratar cada capítulo como unidade isolada, perdendo o movimento de continuidade.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "O que muda quando pensamos o aprendizado da convivência como algo que continua, em vez de algo que se conclui?"
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 6,
+      "title": "O que a obra não diz",
+      "learningGoal": "Declarar os limites do que os títulos sustentam.",
+      "content": "É importante declarar o que **a obra não diz** nestes capítulos. Ela não oferece uma **definição doutrinária formal** de lar, não estabelece **regras universais** de convivência, não sistematiza o que acontece a todos os desencarnados. O que temos são **cenas e noções** — amor como alimento, um caso particular, noções plurais, um ensino que continua. Reconhecer esses limites não empobrece o estudo: torna-o mais honesto.",
+      "highlights": [
+        {
+          "title": "Limite preservado",
+          "content": "A obra narra e sugere; não define nem universaliza. A aula respeita esse limite."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 18–21",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "honestidade",
+      "commonMisunderstanding": "Completar com doutrina o que a narrativa deixou em aberto, como se a obra tivesse dito.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não define lar, não universaliza a experiência da jovem, não sistematiza a convivência. O que ela oferece são cenas e noções que a aula estuda sem ultrapassar."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 7,
+      "title": "Diálogo com a Codificação",
+      "learningGoal": "Colocar a convivência em diálogo com a lei de sociedade e a lei de amor da Codificação.",
+      "content": "Aqui a Codificação entra porque a obra levantou a pergunta. Em **O Livro dos Espíritos**, a **lei de sociedade** mostra que a vida social é natural ao Espírito, e a **lei de amor** apresenta o amor como a lei mais importante. A aproximação é específica: a obra narra a convivência como **alimento** e como **noção a construir**; a Codificação a sistematiza como **lei**. Uma ilumina a outra, mas cada uma fala a seu modo.",
+      "highlights": [
+        {
+          "title": "Convergência em quê",
+          "content": "Aproximam-se quanto à **centralidade da convivência e do amor**, não quanto ao modo de dizer."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 18 e 20",
+        "codificacao": "O Livro dos Espíritos — lei de sociedade; lei de amor",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "compreensão",
+      "commonMisunderstanding": "Dizer que 'as obras convergem' sem especificar em quê.",
+      "microStory": "",
+      "specialElement": {
+        "type": "dialogue_with_codification",
+        "content": "A obra narra a convivência; a Codificação a sistematiza como lei. A aproximação é quanto ao valor da vida social e do amor, não quanto à forma: uma conta, a outra formula."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 8,
+      "title": "Narrar e sistematizar",
+      "learningGoal": "Distinguir o modo narrativo da obra do modo doutrinário da Codificação.",
+      "content": "A diferença entre as fontes também é conteúdo. **Nosso Lar narra** — mostra cenas, casos, palestras que continuam. A **Codificação sistematiza** — organiza leis e princípios. Isso não é problema: é o que torna o estudo rico. A narrativa nos dá o **concreto**, o caso da jovem, a imagem do alimento; a doutrina nos dá o **princípio**, a lei de sociedade, a lei de amor. Ler as duas juntas é aprender a não confundir o exemplo com a regra.",
+      "highlights": [
+        {
+          "title": "Dois modos",
+          "content": "A obra **narra**; a Codificação **sistematiza**. A diferença é ganho, não defeito."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 19–21",
+        "codificacao": "O Livro dos Espíritos — lei de sociedade; lei de amor",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "clareza",
+      "commonMisunderstanding": "Exigir da narrativa a precisão da doutrina, ou da doutrina a vivacidade da narrativa.",
+      "microStory": "",
+      "specialElement": {
+        "type": "comparative_study",
+        "content": "Comparação real: a obra oferece cenas e noções; a Codificação oferece leis e princípios. A comparação produz compreensão porque mostra o que cada fonte faz melhor."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 9,
+      "title": "O que a convivência pede",
+      "learningGoal": "Aplicar a compreensão a partir de elemento concreto da obra.",
+      "content": "Se o amor é **alimento**, ele precisa ser oferecido — não basta existir em potência. Se a jovem é **um caso**, a convivência pede atenção ao particular, não à categoria. Se o lar é **noção** que se constrói, ele pede tempo e continuidade. Repare que nenhuma dessas exigências é receita: são deslocamentos de olhar. A obra não nos dá um manual de convivência; ela nos faz perguntar o que estamos oferecendo a quem convive conosco.",
+      "highlights": [
+        {
+          "title": "Deslocamentos, não receitas",
+          "content": "Alimento oferecido, atenção ao particular, tempo construído: **exigências**, não fórmulas."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 18–21",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "exigência",
+      "commonMisunderstanding": "Transformar as cenas em lista de regras de convivência.",
+      "microStory": "",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "A aplicação nasce das cenas: amor como alimento oferecido, caso particular que pede atenção, lar como noção em construção. Nada disso é receita; é deslocamento de olhar."
+      }
+    },
+    {
+      "slideType": "synthesis",
+      "slideNumber": 10,
+      "title": "O que faz um lar",
+      "learningGoal": "Sintetizar a compreensão construída, deixando a pergunta em aberto.",
+      "content": "Voltamos à pergunta inicial. O que faz um lar? A obra não responde com uma definição — e talvez essa seja a resposta mais honesta. Ela mostra que o lar se faz de **amor que alimenta**, de **atenção ao caso particular**, de **noções que se constroem** e de **ensino que continua**. Não é um lugar que se possui, mas uma convivência que se constrói. A pergunta permanece aberta — e é isso que a torna nossa.",
+      "highlights": [
+        {
+          "title": "Resposta em aberto",
+          "content": "A obra não fecha a pergunta; mostra o que a **convivência** vai construindo."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 18–21",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "abertura",
+      "commonMisunderstanding": "Esperar que a aula entregue uma definição final de lar.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "O que você ainda não se perguntou sobre a convivência no seu próprio lar, depois de observar estas cenas?"
+      }
+    }
+  ],
+  "reflectionQuestions": [
+    {
+      "question": "Que amor você tem oferecido como alimento a quem convive com você — e que amor tem deixado apenas em potência, sem se tornar alimento?",
+      "focus": "Autoconhecimento"
+    },
+    {
+      "question": "Onde você tem tratado alguém como categoria (o jovem, o desencarnado, o difícil) em vez de olhar o caso particular que está diante de você?",
+      "focus": "Aplicação prática"
+    },
+    {
+      "question": "Se o lar é noção que se constrói na continuidade, que construção você tem adiado por esperar que ela já estivesse pronta?",
+      "focus": "Transformação moral"
+    }
+  ]
+}

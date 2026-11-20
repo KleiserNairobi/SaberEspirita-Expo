@@ -76,7 +76,7 @@ export const userActivityApiService = {
         userId: "mock-user",
         completedLessons: [],
         exerciseResults: [],
-        lastLessonId: "LESSON-NL-M1-A01",
+        lastLessonId: "NL-01",
         certificateEligible: false,
         certificateIssued: false,
         startedAt: new Date(),

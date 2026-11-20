@@ -12,6 +12,10 @@ export const exerciseApiService = {
    */
   async getExercisesByLesson(lessonId: string): Promise<IExercise[]> {
     if (!lessonId) return [];
+    const cleanLessonId = lessonId.trim();
+    if (/^NL-\d+$/i.test(cleanLessonId) || cleanLessonId.startsWith("LESSON-NL")) {
+      return [];
+    }
     const response = await apiClient.get<IExercise[]>(`/exercises/lesson/${lessonId}`);
     return response.data || [];
   },
@@ -21,6 +25,9 @@ export const exerciseApiService = {
    */
   async getExercisesByCourse(courseId: string): Promise<IExercise[]> {
     if (!courseId) return [];
+    if (courseId.trim() === "nosso-lar-estudo-guiado") {
+      return [];
+    }
     const response = await apiClient.get<IExercise[]>(`/exercises/course/${courseId}`);
     return response.data || [];
   },

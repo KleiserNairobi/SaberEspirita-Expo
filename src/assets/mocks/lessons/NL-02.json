@@ -1,0 +1,345 @@
+{
+  "id": "NL-02",
+  "courseId": "nosso-lar-estudo-guiado",
+  "title": "O auxílio que chega",
+  "source": "Nosso Lar",
+  "chapter": "Caps. 3–5",
+  "durationMinutes": 50,
+  "forumEnabled": true,
+  "subtitle": "Auxílio, merecimento e prece em Nosso Lar e na Codificação",
+  "mainWork": {
+    "title": "Nosso Lar",
+    "author": "André Luiz",
+    "psychography": "Francisco Cândido Xavier"
+  },
+  "theme": "Auxílio, merecimento e prece: a ideia da obra e a formulação de Kardec",
+  "objective": "Compreender que ideia de auxílio e de merecimento aparece na oração coletiva, no médico espiritual e na assistência recebida, e como Kardec a formula.",
+  "cognitiveIntensity": {
+    "level": "intermediário",
+    "description": "Exige distinguir o que a narrativa apresenta como experiência particular do que a Codificação formula como princípio geral, sem confundir auxílio narrado com merecimento doutrinário, e sem transformar a cena em regra universal."
+  },
+  "premiumDifferential": "Coloca a oração coletiva, o médico espiritual e a assistência recebida em diálogo com a formulação de Kardec sobre prece e merecimento, mostrando onde a experiência narrada ilustra um princípio e onde ela permanece experiência particular que não pode ser universalizada.",
+  "narrativeStrategy": "Abre pela pergunta que a cena da oração coletiva provoca — por que o auxílio chega a uns e não a outros? — e conduz o aluno a ler a narrativa lado a lado com a Codificação, sem carimbar a obra com a doutrina.",
+  "slides": [
+    {
+      "slideType": "opening",
+      "slideNumber": 1,
+      "title": "Por que o auxílio chega?",
+      "learningGoal": "Apresentar a pergunta central da aula a partir da cena da oração coletiva.",
+      "content": "Em **Nosso Lar**, a prece coletiva é o momento em que a assistência se torna visível: a cidade se reúne, e algo chega. A pergunta que a obra provoca não é se o auxílio existe, mas **por que ele chega** — e a quem. Vamos notar que a narrativa não explica o critério; ela mostra o efeito. É dessa cena que nasce a questão desta aula: **auxílio e merecimento** andam juntos? E o que Kardec formula sobre isso?",
+      "highlights": [
+        {
+          "title": "A pergunta da cena",
+          "content": "A obra mostra o auxílio chegando; **não explica o critério** que o faz chegar."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 3 — A Oração Coletiva",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "curiosidade",
+      "commonMisunderstanding": "Pensar que a cena já responde doutrinariamente quem merece o auxílio.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "A cena central está em Nosso Lar, cap. 3 — A Oração Coletiva. A prece segue como marcador transversal do curso: voltaremos a ela em outras aulas."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 2,
+      "title": "A oração coletiva em cena",
+      "learningGoal": "Observar o que a narrativa efetivamente apresenta na cena da oração coletiva.",
+      "content": "Repare que a **oração coletiva** é apresentada como um acontecimento da cidade, não como um gesto isolado. A narrativa mostra a prece reunindo os habitantes e, nesse movimento, **algo chega** — a assistência se torna perceptível. Uma leitura possível é que a obra esteja sugerindo uma relação entre **prece e auxílio**, mas a cena em si não desenvolve o mecanismo. Vamos notar o que ela diz e o que ela deixa em aberto: a prece aparece como **caminho** pelo qual o amparo se aproxima.",
+      "highlights": [
+        {
+          "title": "Prece como acontecimento",
+          "content": "A oração coletiva é narrada como **acontecimento da cidade**, não como gesto privado."
+        },
+        {
+          "title": "O que a cena deixa aberto",
+          "content": "A obra mostra o **amparo chegando**, mas não explica o critério do merecimento."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 3 — A Oração Coletiva",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "atenção",
+      "commonMisunderstanding": "Concluir que a prece coletiva, por si só, garante o auxílio a todos os que dela participam.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A cena não afirma que a prece coletiva produza automaticamente o auxílio, nem estabelece quem o recebe. Ela narra o encontro entre a prece da cidade e a assistência que chega."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 3,
+      "title": "O médico espiritual",
+      "learningGoal": "Apresentar o cap. 4 e a figura do médico espiritual como forma de auxílio narrado.",
+      "content": "No cap. 4, a obra apresenta o **médico espiritual**. Aqui o auxílio deixa de ser um acontecimento coletivo e ganha rosto: alguém que examina, orienta, acompanha. Vamos notar a diferença de registro — a oração coletiva mostra o amparo chegando à cidade; o médico espiritual mostra o amparo chegando a **alguém em particular**. A narrativa não transforma esse atendimento em regra geral; ela o apresenta como **experiência de assistência**. Uma leitura possível é que a obra esteja mostrando o auxílio em duas escalas: a coletiva e a individual.",
+      "highlights": [
+        {
+          "title": "Auxílio com rosto",
+          "content": "O médico espiritual mostra o amparo chegando a **alguém em particular**."
+        },
+        {
+          "title": "Duas escalas do auxílio",
+          "content": "A obra apresenta o amparo na **cidade** e no **indivíduo**, sem fundi-los."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 4 — O Médico Espiritual",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "interesse",
+      "commonMisunderstanding": "Tomar o atendimento do médico espiritual como descrição universal do modo como todo Espírito é assistido.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não afirma que todo Espírito passa por um médico espiritual, nem que esse atendimento siga sempre a mesma forma. Ela narra um caso de assistência."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 4,
+      "title": "Recebendo assistência",
+      "learningGoal": "Observar como o cap. 5 apresenta a recepção da assistência e o que isso sugere sobre a disposição de quem recebe.",
+      "content": "O cap. 5 tem como título **Recebendo Assistência**, e o próprio título já desloca a atenção: o foco não está apenas em quem auxilia, mas em **quem recebe**. Repare que a obra não trata a assistência como algo que se impõe; ela é **recebida**. Uma leitura possível é que a narrativa esteja sugerindo uma relação entre o auxílio que chega e a disposição de quem o acolhe — mas a cena não formaliza isso como princípio. Vamos guardar a distinção: a obra **narra** a recepção; a Codificação é que **formula** o merecimento.",
+      "highlights": [
+        {
+          "title": "O foco no recebedor",
+          "content": "O cap. 5 desloca a atenção para **quem recebe** a assistência."
+        },
+        {
+          "title": "Narrar não é formular",
+          "content": "A obra narra a recepção; **formular o merecimento** é tarefa da Codificação."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 5 — Recebendo Assistência",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "reflexão",
+      "commonMisunderstanding": "Ler o cap. 5 como tratado sobre merecimento, quando ele narra uma recepção específica.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Nosso Lar narra a assistência recebida; O Livro dos Espíritos formula a relação entre prece, auxílio e merecimento. São registros diferentes: experiência e princípio."
+      }
+    },
+    {
+      "slideType": "dialogue",
+      "slideNumber": 5,
+      "title": "Kardec: prece e auxílio",
+      "learningGoal": "Trazer a formulação de Kardec sobre a prece e o auxílio espiritual, por tema.",
+      "content": "Quando passamos de **Nosso Lar** para **O Livro dos Espíritos**, o registro muda. Kardec trata da prece e do auxílio espiritual não como cena, mas como **formulação**: a prece é apresentada como recurso do Espírito, e o auxílio dos bons Espíritos como algo que se articula com a **disposição** de quem ora. Repare que a Codificação não descreve a cidade, nem o médico espiritual; ela **sistematiza** o que a narrativa mostra em ação. É aqui que a pergunta da aula começa a ganhar contorno doutrinário.",
+      "highlights": [
+        {
+          "title": "Do cena ao princípio",
+          "content": "Kardec **sistematiza** o que a narrativa mostra em ação."
+        },
+        {
+          "title": "Prece e disposição",
+          "content": "A Codificação articula o auxílio à **disposição** de quem ora."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "",
+        "codificacao": "O Livro dos Espíritos — prece e auxílio espiritual",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "clareza",
+      "commonMisunderstanding": "Esperar que a Codificação descreva as mesmas cenas de Nosso Lar.",
+      "microStory": "",
+      "specialElement": {
+        "type": "dialogue_with_codification",
+        "content": "A Codificação entra por tema, sem numeração de questões: prece, auxílio espiritual e merecimento. O objetivo é formular o que a narrativa apresenta, não explicar a narrativa pela doutrina."
+      }
+    },
+    {
+      "slideType": "comparison",
+      "slideNumber": 6,
+      "title": "Onde as fontes se aproximam",
+      "learningGoal": "Estabelecer com precisão em que aspecto Nosso Lar e a Codificação se aproximam.",
+      "content": "Vamos ser precisos: em que aspecto as fontes se **aproximam**? Não é no cenário — a obra narra uma cidade espiritual, Kardec não a descreve. A aproximação ocorre quanto à **relação entre prece e auxílio**: em Nosso Lar, a oração coletiva é o momento em que o amparo se torna presente; na Codificação, a prece aparece como recurso que articula o auxílio espiritual. Repare que a aproximação é **temática**, não de forma: uma mostra, a outra formula. Declarar convergência sem dizer em quê seria perder o ponto.",
+      "highlights": [
+        {
+          "title": "Convergência em quê",
+          "content": "As fontes se aproximam quanto à **relação entre prece e auxílio**."
+        },
+        {
+          "title": "Mostrar e formular",
+          "content": "Uma fonte **mostra** a prece em cena; a outra **formula** seu papel."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 3 — A Oração Coletiva",
+        "codificacao": "O Livro dos Espíritos — prece e auxílio espiritual",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "compreensão",
+      "commonMisunderstanding": "Dizer que as obras 'dizem a mesma coisa' sem especificar o aspecto da aproximação.",
+      "microStory": "",
+      "specialElement": {
+        "type": "comparative_study",
+        "content": "Aproximação: relação entre prece e auxílio. Diferença: Nosso Lar narra uma cena coletiva; a Codificação formula o papel da prece. A experiência narrada não pode ser universalizada como regra."
+      }
+    },
+    {
+      "slideType": "comparison",
+      "slideNumber": 7,
+      "title": "Merecimento: o que a obra não diz",
+      "learningGoal": "Distinguir o que a narrativa apresenta sobre merecimento do que a Codificação formula.",
+      "content": "Aqui está o ponto delicado. A pergunta 'por que o auxílio chega a uns e não a outros?' atravessa os caps. 3–5, mas **Nosso Lar não a responde como doutrina**. A obra mostra a assistência chegando; não estabelece o **critério de merecimento**. Quem formula essa relação é a Codificação, ao tratar do merecimento no contexto da prece e do auxílio. Vamos notar a diferença de tarefa: a narrativa **suscita** a pergunta; a doutrina **a enfrenta**. Confundir as duas seria carimbar a obra com uma resposta que ela não dá.",
+      "highlights": [
+        {
+          "title": "A obra suscita, não responde",
+          "content": "Nosso Lar levanta a pergunta do merecimento, mas **não a formula como doutrina**."
+        },
+        {
+          "title": "Tarefas distintas",
+          "content": "A narrativa **suscita** a pergunta; a Codificação **a enfrenta**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 3–5",
+        "codificacao": "O Livro dos Espíritos — merecimento",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "tensão intelectual",
+      "commonMisunderstanding": "Atribuir a Nosso Lar uma doutrina do merecimento que a narrativa não formula.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "Nosso Lar não estabelece o critério pelo qual o auxílio é concedido. A obra narra a assistência; a formulação do merecimento está na Codificação. Não se deve completar a cena com uma doutrina que ela não enuncia."
+      }
+    },
+    {
+      "slideType": "distinction",
+      "slideNumber": 8,
+      "title": "Experiência e princípio",
+      "learningGoal": "Consolidar a distinção entre experiência narrada e princípio doutrinário.",
+      "content": "Chegamos a uma distinção que sustenta toda a aula. O **médico espiritual** atende um caso; a **oração coletiva** acontece numa cidade; a **assistência recebida** é vivida por alguém. Nada disso é, por si, **princípio universal**. A Codificação é que oferece o princípio: prece, auxílio e merecimento articulados. Uma leitura possível é que a obra funcione como **ilustração narrativa** de algo que a doutrina formula em abstrato. Repare que ilustrar não é provar: a cena torna a ideia visível, mas não a estabelece como regra.",
+      "highlights": [
+        {
+          "title": "Caso não é regra",
+          "content": "O atendimento e a recepção são **experiências**, não princípios universais."
+        },
+        {
+          "title": "Ilustrar não é provar",
+          "content": "A cena torna a ideia visível, mas **não a estabelece** como regra."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 3–5",
+        "codificacao": "O Livro dos Espíritos — prece, auxílio e merecimento",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "lucidez",
+      "commonMisunderstanding": "Tomar a experiência de um personagem como experiência de todos os Espíritos.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Experiência narrada: o que acontece com personagens em Nosso Lar. Princípio doutrinário: o que a Codificação formula sobre prece, auxílio e merecimento. A aula lê as duas coisas lado a lado, sem fundi-las."
+      }
+    },
+    {
+      "slideType": "application",
+      "slideNumber": 9,
+      "title": "Quando o auxílio chega",
+      "learningGoal": "Construir aplicação ancorada na cena da recepção da assistência.",
+      "content": "Voltemos ao cap. 5: a assistência é **recebida**. Se a obra insiste nesse verbo, a aplicação nasce daí — não de uma moral genérica. Receber exige **disposição**: reconhecer que se precisa, acolher o que chega, não confundir o auxílio com o que se esperava. Repare que a cena não promete que o amparo virá na forma desejada; ela mostra alguém **recebendo** o que lhe é dado. Uma leitura possível é que a prece, na vida prática, prepare menos para exigir e mais para **reconhecer** o auxílio quando ele chega.",
+      "highlights": [
+        {
+          "title": "Receber é disposição",
+          "content": "A aplicação nasce do verbo **receber**: acolher o auxílio que chega."
+        },
+        {
+          "title": "Prece e reconhecimento",
+          "content": "A prece prepara menos para **exigir** e mais para **reconhecer**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 5 — Recebendo Assistência",
+        "codificacao": "O Livro dos Espíritos — prece",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "disposição",
+      "commonMisunderstanding": "Transformar 'receber assistência' em receita moral válida para qualquer contexto.",
+      "microStory": "",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "A aplicação parte do cap. 5: a assistência é recebida. O exercício é examinar a própria disposição diante do auxílio que chega — sem prometer forma, prazo ou resultado."
+      }
+    },
+    {
+      "slideType": "synthesis",
+      "slideNumber": 10,
+      "title": "O que fica desta aula",
+      "learningGoal": "Sintetizar o percurso e devolver a pergunta ao aluno.",
+      "content": "Retomemos o percurso. A **oração coletiva** mostrou o auxílio chegando à cidade; o **médico espiritual**, o auxílio chegando a alguém; a **assistência recebida**, o auxílio sendo acolhido. Em nenhum desses momentos a obra formulou o **merecimento** — ela suscitou a pergunta. A Codificação é que articula prece, auxílio e merecimento como **princípio**. Fica a distinção que sustenta o estudo: a narrativa **mostra**, a doutrina **formula**. E fica a pergunta que a obra provoca e não encerra: o que, em nós, faz o auxílio chegar?",
+      "highlights": [
+        {
+          "title": "Mostrar e formular",
+          "content": "A narrativa **mostra**; a doutrina **formula**. A aula lê as duas juntas."
+        },
+        {
+          "title": "Pergunta em aberto",
+          "content": "A obra suscita o merecimento e **não o encerra**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 3–5",
+        "codificacao": "O Livro dos Espíritos — prece, auxílio e merecimento",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "síntese",
+      "commonMisunderstanding": "Sair da aula com uma definição de merecimento que a obra não deu.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "O aluno é convidado a reler os caps. 3–5 com a pergunta: em que momento a obra mostra o auxílio, e em que momento ela apenas o pressupõe? O que a Codificação acrescenta a essa leitura?"
+      }
+    }
+  ],
+  "reflectionQuestions": [
+    {
+      "question": "Quando você ora, o que espera que aconteça — e o que essa expectativa revela sobre como você entende o auxílio?",
+      "focus": "Autoconhecimento"
+    },
+    {
+      "question": "Diante de um auxílio que chega em forma diferente da esperada, o que você costuma fazer: reconhecê-lo ou recusá-lo por não corresponder à expectativa?",
+      "focus": "Aplicação prática"
+    },
+    {
+      "question": "Se o auxílio não é garantia, mas relação entre prece, disposição e merecimento, o que isso muda na sua forma de pedir e de agradecer?",
+      "focus": "Transformação moral"
+    }
+  ]
+}

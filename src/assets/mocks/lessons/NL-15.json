@@ -1,0 +1,387 @@
+{
+  "id": "NL-15",
+  "courseId": "nosso-lar-estudo-guiado",
+  "title": "Como ler uma obra mediúnica",
+  "source": "Nosso Lar",
+  "chapter": "Cap. 50 e abertura",
+  "durationMinutes": 50,
+  "forumEnabled": true,
+  "subtitle": "O critério que a própria obra pede ao leitor",
+  "mainWork": {
+    "title": "Nosso Lar",
+    "author": "André Luiz",
+    "psychography": "Francisco Cândido Xavier"
+  },
+  "theme": "Critério de leitura de uma obra mediúnica",
+  "objective": "Reunir o que o aluno aprendeu a distinguir ao longo do curso e ler a obra com o critério que o próprio prefácio pede.",
+  "cognitiveIntensity": {
+    "level": "avançado",
+    "description": "Exige retomar distinções construídas em catorze aulas (narrativa e princípio, caso e regra, comparação e carimbo) e aplicá-las ao ato de ler: o aluno precisa reconhecer o que a obra sustenta, o que apenas narra e o que o leitor acrescenta por conta própria."
+  },
+  "premiumDifferential": "Não apresenta um método externo de leitura: reconstrói o critério a partir do próprio prefácio de Emmanuel e da mensagem de André Luiz, coloca-o em diálogo com o Controle Universal do Ensino dos Espíritos e mostra onde a comparação ilumina e onde ela apenas carimba o texto.",
+  "narrativeStrategy": "Abre pela pergunta que o prefácio provoca (por que analisar o que se lê e não apenas o fenômeno), percorre os dois textos de abertura e o último capítulo lado a lado com a Codificação, e fecha num quadro de síntese com os pares de distinção que o curso ensinou.",
+  "slides": [
+    {
+      "slideType": "opening",
+      "slideNumber": 1,
+      "title": "O pedido que abre o livro",
+      "learningGoal": "Colocar o aluno diante da pergunta que o prefácio de Emmanuel faz ao leitor, antes de qualquer explicação.",
+      "content": "Antes da primeira cena, **Nosso Lar** faz um pedido. No texto de abertura **\"Novo amigo\"**, Emmanuel não apresenta o autor pelo nome: convida o leitor a **analisar o que lê** e adverte contra investigar fenômenos sem trabalhar a si mesmo. A obra começa, portanto, com uma exigência de leitura — não com uma promessa de revelação. Que critério um livro assim pede de quem o abre?",
+      "highlights": [
+        {
+          "title": "Anonimato como método",
+          "content": "Emmanuel explica o **anonimato do autor** e desloca a atenção do nome para o **conteúdo**."
+        },
+        {
+          "title": "Análise, não fascínio",
+          "content": "O leitor é convidado a **analisar o que lê**, não a se encantar com o fenômeno."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, \"Novo amigo\" (p. 5)",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "curiosidade",
+      "commonMisunderstanding": "Pensar que o prefácio é apenas formalidade editorial e que o estudo começa no capítulo 1.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "O texto de abertura \"Novo amigo\" (p. 5), prefácio de Emmanuel (1943), explica o anonimato do autor, convida o leitor a analisar o que lê e adverte contra investigar fenômenos sem trabalhar a si mesmo."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 2,
+      "title": "Duas advertências de Emmanuel",
+      "learningGoal": "Separar as duas advertências do prefácio: analisar o conteúdo e não separar o fenômeno do trabalho moral.",
+      "content": "Repare que Emmanuel não pede **credulidade** nem **desconfiança**: pede **análise**. E acrescenta uma advertência que o curso inteiro vinha preparando — não investigar fenômenos sem **trabalhar a si mesmo**. São duas exigências distintas: uma sobre o que fazer com o texto, outra sobre o que fazer com a própria vida. Uma leitura possível é que o prefácio já indica o critério: **o valor do livro se mede pelo que ele ajuda a compreender e a transformar**, não pelo que ele faz admirar.",
+      "highlights": [
+        {
+          "title": "Análise, não adesão",
+          "content": "O prefácio pede **exame do conteúdo**, não aceitação imediata nem suspeita prévia."
+        },
+        {
+          "title": "Fenômeno e trabalho interior",
+          "content": "Investigar o fenômeno sem **trabalhar a si mesmo** é o que a advertência separa."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, \"Novo amigo\" (p. 5)",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "atenção",
+      "commonMisunderstanding": "Ler o prefácio como elogio à obra, quando ele é antes uma advertência ao leitor.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Duas advertências distintas: sobre o conteúdo (analisar o que se lê) e sobre o leitor (não separar o estudo do fenômeno do trabalho de si mesmo)."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 3,
+      "title": "A mensagem que abre o livro",
+      "learningGoal": "Apresentar a \"Mensagem de André Luiz\" como segundo texto de abertura e observar o que ela acrescenta ao critério.",
+      "content": "Depois do prefácio, **\"Mensagem de André Luiz\"** abre a obra pela voz do próprio narrador. Vamos notar o que isso muda: o leitor não recebe primeiro uma tese, mas um **relato** — alguém que conta o que viveu. O critério do prefácio continua valendo, e agora incide sobre uma narrativa: o que se analisa não é uma doutrina exposta, e sim uma **experiência contada**. Distinguir essas duas coisas é o que o curso vinha treinando desde a primeira aula.",
+      "highlights": [
+        {
+          "title": "Voz narrativa",
+          "content": "A mensagem fala em **primeira pessoa**: o livro se abre como **relato**, não como tratado."
+        },
+        {
+          "title": "Critério sobre narrativa",
+          "content": "O pedido de análise do prefácio recai agora sobre uma **experiência narrada**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, \"Mensagem de André Luiz\" (p. 8)",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "proximidade",
+      "commonMisunderstanding": "Tomar a mensagem inicial como resumo doutrinário da obra, quando ela é abertura narrativa.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "\"Mensagem de André Luiz\" (p. 8) abre o livro pela voz do narrador; o critério do prefácio passa a incidir sobre um relato."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 4,
+      "title": "O último capítulo: cidadão",
+      "learningGoal": "Situar o capítulo 50 como fecho da narrativa e observar o que ele apresenta sobre o percurso de André Luiz.",
+      "content": "O capítulo 50 — **Cidadão de \"Nosso Lar\"** — encerra a obra. Depois de quatorze aulas acompanhando o fio da narrativa, sabemos que esse título não é detalhe: ele marca um **percurso concluído** dentro da colônia. Repare que a obra termina como começou, contando um caso: o de **André Luiz**. O que se lê no fecho é a conclusão de uma **experiência individual**, e é assim que ela deve ser lida — sem transformar o desfecho de um personagem em regra para todos.",
+      "highlights": [
+        {
+          "title": "Fecho de um percurso",
+          "content": "O título do capítulo 50 marca a **conclusão de um percurso** dentro da colônia."
+        },
+        {
+          "title": "Caso, não regra",
+          "content": "O desfecho é de **André Luiz**; a obra narra um caso, não universaliza."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 50 — Cidadão de \"Nosso Lar\"",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "conclusão",
+      "commonMisunderstanding": "Ler o título do capítulo como promoção garantida a todo Espírito que passa pela colônia.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "O capítulo 50 narra a conclusão do percurso de André Luiz; a obra não afirma que todo Espírito alcance a mesma condição nem que esse seja o destino universal."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 5,
+      "title": "O que o curso ensinou a ver",
+      "learningGoal": "Retomar os pares de distinção construídos ao longo do curso como ferramenta de leitura.",
+      "content": "Ao longo de catorze aulas, o curso foi separando coisas que se confundem à primeira vista. **Narrativa e princípio**: o que é cena e o que é doutrina. **Caso e regra**: o que vale para um personagem e o que vale para todos. **Comparação e carimbo**: o que ilumina o texto e o que apenas o rotula. Agora essas distinções deixam de ser exercício e se tornam **critério de leitura**. Ler uma obra mediúnica com maturidade é aplicar esse crivo a cada página — inclusive às que parecem óbvias.",
+      "highlights": [
+        {
+          "title": "Três pares",
+          "content": "**Narrativa e princípio**, **caso e regra**, **comparação e carimbo**: o crivo do curso."
+        },
+        {
+          "title": "Do exercício ao critério",
+          "content": "As distinções das aulas anteriores passam a valer como **modo de ler**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar (percurso do curso, NL-01 a NL-14)",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "reconhecimento",
+      "commonMisunderstanding": "Achar que as distinções do curso eram conteúdo a memorizar, e não ferramenta de leitura.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Os pares do curso — narrativa e princípio, caso e regra, comparação e carimbo — são o critério de leitura que esta aula aplica à obra."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 6,
+      "title": "O Controle Universal do Ensino",
+      "learningGoal": "Apresentar o eixo metodológico kardecista como critério de leitura de obras mediúnicas.",
+      "content": "Kardec propôs um critério para lidar com o ensino dos Espíritos: o **Controle Universal do Ensino dos Espíritos**. A ideia central é que uma comunicação isolada não basta; o que se confirma pelo **consenso de comunicações** dadas por Espíritos diversos, em lugares diversos, e pela **razão** que as examina, ganha outro estatuto. Vamos notar o que isso significa para nós: o prefácio pede **análise**; Kardec mostra **como** analisar. As duas coisas se encontram — e é nesse encontro que a aula se sustenta.",
+      "highlights": [
+        {
+          "title": "Consenso e razão",
+          "content": "O critério articula **concordância de comunicações** e **exame pela razão**."
+        },
+        {
+          "title": "Comunicação isolada",
+          "content": "Uma só comunicação não se basta: o **controle** é o que dá estatuto ao ensino."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "",
+        "codificacao": "Kardec — Controle Universal do Ensino dos Espíritos",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "clareza",
+      "commonMisunderstanding": "Tomar o controle universal como carimbo automático de aprovação, e não como critério de exame.",
+      "microStory": "",
+      "specialElement": {
+        "type": "dialogue_with_codification",
+        "content": "O prefácio de Emmanuel pede análise; o Controle Universal do Ensino dos Espíritos, proposto por Kardec, oferece o eixo metodológico desse exame: consenso de comunicações e razão."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 7,
+      "title": "Comparar sem carimbar",
+      "learningGoal": "Aplicar a distinção entre comparação e carimbo à leitura conjunta de Nosso Lar e da Codificação.",
+      "content": "Aqui está o risco que o curso vinha evitando. Colocar **Nosso Lar** ao lado da Codificação pode iluminar — ou pode apenas **carimbar**: usar Kardec para \"provar\" a narrativa, como se a obra precisasse de aval. Repare na diferença. A comparação pergunta: o que a obra apresenta que a Codificação ajuda a **compreender melhor**? O carimbo pergunta: como uso a Codificação para **confirmar** o que já li? Uma produz entendimento; a outra, apenas selo.",
+      "highlights": [
+        {
+          "title": "Comparação que ilumina",
+          "content": "A obra levanta algo; a Codificação **ajuda a compreender** esse algo."
+        },
+        {
+          "title": "Carimbo que encerra",
+          "content": "Usar a Codificação só para **validar** a narrativa não acrescenta compreensão."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar (leitura conjunta)",
+        "codificacao": "Kardec — Controle Universal do Ensino dos Espíritos",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "cuidado",
+      "commonMisunderstanding": "Confundir estudo comparado com acúmulo de citações que confirmam a obra.",
+      "microStory": "",
+      "specialElement": {
+        "type": "comparative_study",
+        "content": "A comparação pertinente pergunta o que a obra apresenta e o que a Codificação ajuda a compreender; o carimbo apenas usa a Codificação para confirmar a narrativa."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 8,
+      "title": "O que a obra não diz",
+      "learningGoal": "Exercitar a declaração explícita do que a obra não afirma, como parte do critério de leitura.",
+      "content": "Ler com critério inclui dizer o que o texto **não** diz. **Nosso Lar** narra a experiência de André Luiz numa colônia; não afirma que toda vida espiritual se organize assim, nem que todo Espírito passe pelos mesmos lugares. O prefácio pede análise — e análise honesta reconhece **limites**. Quando declaramos o que a obra não sustenta, não a diminuímos: protegemos o que ela realmente oferece. Uma leitura possível é que o respeito ao texto começa exatamente aqui.",
+      "highlights": [
+        {
+          "title": "Limite declarado",
+          "content": "Dizer o que a obra **não afirma** é parte do critério de leitura."
+        },
+        {
+          "title": "Respeito ao texto",
+          "content": "Reconhecer **limites** preserva o que a obra realmente oferece."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 50 e abertura",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "honestidade",
+      "commonMisunderstanding": "Achar que apontar limites enfraquece a obra, quando é o que a mantém fiel.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra narra uma experiência em uma colônia; não diz que toda a vida espiritual se organiza assim, nem universaliza o percurso de André Luiz."
+      }
+    },
+    {
+      "slideType": "synthesis",
+      "slideNumber": 9,
+      "title": "O crivo da leitura",
+      "learningGoal": "Fechar o critério de leitura num quadro de síntese com os pares de distinção do curso.",
+      "content": "Reunindo o que o curso ensinou e o que o prefácio pede, o critério de leitura cabe num quadro de pares. **Narrativa e princípio**: o que é cena e o que é doutrina. **Caso e regra**: o que vale para um personagem e o que vale para todos. **Comparação e carimbo**: o que ilumina e o que apenas rotula. Aplicar esse crivo a **Nosso Lar** é ler com o critério que o próprio prefácio pede — análise, não fascínio.",
+      "highlights": [
+        {
+          "title": "Os três pares",
+          "content": "**Narrativa e princípio**, **caso e regra**, **comparação e carimbo** — o crivo completo."
+        },
+        {
+          "title": "Critério do prefácio",
+          "content": "Aplicar o crivo é atender ao pedido de **análise** feito na abertura."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, \"Novo amigo\" (p. 5) e cap. 50",
+        "codificacao": "Kardec — Controle Universal do Ensino dos Espíritos",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "síntese",
+      "commonMisunderstanding": "Tomar o quadro como resumo a decorar, em vez de crivo a aplicar na leitura.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "O quadro de síntese reúne os pares do curso: narrativa e princípio, caso e regra, comparação e carimbo — o critério de leitura que o prefácio pede."
+      },
+      "image": {
+        "url": "",
+        "caption": "Os três pares de distinção que formam o crivo de leitura",
+        "alt": "Quadro com três colunas de pares: narrativa e princípio, caso e regra, comparação e carimbo",
+        "aspectRatio": 1.33
+      },
+      "imagePrompt": "Quadro de síntese em três colunas paralelas. Coluna 1: 'Narrativa' e 'Princípio', com uma linha separando o que é cena do que é doutrina. Coluna 2: 'Caso' e 'Regra', separando o que vale para um personagem do que vale para todos. Coluna 3: 'Comparação' e 'Carimbo', separando o que ilumina do que apenas rotula. Rótulos em português; cada par disposto lado a lado, com uma seta ou traço indicando a distinção entre os dois termos."
+    },
+    {
+      "slideType": "application",
+      "slideNumber": 10,
+      "title": "Ler a obra com esse crivo",
+      "learningGoal": "Transportar o critério para a leitura concreta dos três trechos estudados.",
+      "content": "Vamos aplicar o crivo aos três trechos desta aula. No prefácio, o critério é **análise**: examinar o que se lê. Na mensagem de André Luiz, o critério recai sobre um **relato**: distinguir experiência de doutrina. No capítulo 50, o critério lembra que se trata de um **caso**: não universalizar o desfecho. Repare que o mesmo crivo serve aos três — e servirá a qualquer página da obra. É isso que torna a leitura mediúnica madura: não depender do texto, mas do **critério** com que se lê.",
+      "highlights": [
+        {
+          "title": "Crivo nos três trechos",
+          "content": "Prefácio (análise), mensagem (relato), capítulo 50 (caso) — o mesmo **crivo**."
+        },
+        {
+          "title": "Critério, não texto",
+          "content": "A maturidade da leitura está no **critério**, não no trecho lido."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, \"Novo amigo\", \"Mensagem de André Luiz\" e cap. 50",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "confiança",
+      "commonMisunderstanding": "Esperar que a obra traga o critério pronto, quando ele é construído pelo leitor.",
+      "microStory": "",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "Aplicar o crivo aos três trechos: análise no prefácio, relato na mensagem, caso no capítulo 50 — o mesmo critério em textos de naturezas diferentes."
+      }
+    },
+    {
+      "slideType": "reflection",
+      "slideNumber": 11,
+      "title": "O leitor que a obra pede",
+      "learningGoal": "Conduzir o aluno da compreensão do critério à reflexão sobre sua própria prática de leitura.",
+      "content": "Emmanuel não pediu admiração: pediu **análise**. E advertiu que investigar fenômenos sem trabalhar a si mesmo não basta. Fica a pergunta que atravessa o curso inteiro: que **leitor** você tem sido diante de obras como esta? Um leitor que busca confirmação, ou um leitor que examina? O critério não se aplica só ao texto — ele revela também **quem lê**. Talvez seja essa a última distinção que o curso tinha a ensinar.",
+      "highlights": [
+        {
+          "title": "Análise, não admiração",
+          "content": "O prefácio pede **exame**, e o exame revela o **leitor**."
+        },
+        {
+          "title": "Quem lê",
+          "content": "O critério aplica-se ao texto e também a **quem o lê**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, \"Novo amigo\" (p. 5)",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "introspecção",
+      "commonMisunderstanding": "Separar o critério de leitura da postura moral de quem lê, como se fossem coisas independentes.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "O critério do prefácio não incide apenas sobre o texto: ele revela também o leitor — se busca confirmação ou exame."
+      }
+    }
+  ],
+  "reflectionQuestions": [
+    {
+      "question": "Quando você lê uma obra mediúnica, você busca primeiro confirmar o que já pensa ou examinar o que o texto realmente apresenta?",
+      "focus": "Autoconhecimento"
+    },
+    {
+      "question": "Que mudança concreta você pode fazer na sua próxima leitura para aplicar o critério do prefácio: análise, não fascínio?",
+      "focus": "Aplicação prática"
+    },
+    {
+      "question": "Se o critério de leitura revela também quem lê, o que isso pede de você quanto ao trabalho de si mesmo que o prefácio adverte?",
+      "focus": "Transformação moral"
+    }
+  ]
+}

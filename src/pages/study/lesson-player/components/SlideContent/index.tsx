@@ -3,14 +3,18 @@ import { View, Text, Linking } from "react-native";
 import Markdown from "react-native-markdown-display";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { SlideImageCard } from "@/pages/study/lesson-player/components/SlideImageCard";
+import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
+import { ISlideImage } from "@/types/course";
 import { IGlossaryTerm } from "@/types/glossary";
 import { injectGlossaryLinks } from "@/utils/glossaryParser";
-import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
+
 import { createStyles } from "./styles";
 
 interface SlideContentProps {
   title: string;
   content: string; // Markdown formatted
+  image?: ISlideImage;
   imagePrompt?: string;
   fontSize?: number;
   slideType?: string; // Tipo do slide (ex: "Contexto do Capítulo", "Tese Central")
@@ -22,6 +26,7 @@ interface SlideContentProps {
 export function SlideContent({
   title,
   content,
+  image,
   fontSize: propFontSize,
   slideType,
   glossaryTerms = [],
@@ -160,6 +165,7 @@ export function SlideContent({
       >
         {title}
       </Text>
+      <SlideImageCard image={image} />
       <Markdown
         style={markdownStyles}
         mergeStyle={false}

@@ -1,0 +1,349 @@
+{
+  "id": "NL-08",
+  "courseId": "nosso-lar-estudo-guiado",
+  "title": "O trabalho como lei",
+  "source": "Nosso Lar",
+  "chapter": "Caps. 22–26",
+  "durationMinutes": 50,
+  "forumEnabled": true,
+  "subtitle": "Serviço, escuta e reorganização interior entre a narrativa e a Codificação",
+  "mainWork": {
+    "title": "Nosso Lar",
+    "author": "André Luiz",
+    "psychography": "Francisco Cândido Xavier"
+  },
+  "theme": "Serviço como reorganização interior e a lei do trabalho",
+  "objective": "Compreender por que a obra liga reorganização interior a preparo e serviço (bônus-hora, saber ouvir, apelo, alvitre).",
+  "cognitiveIntensity": {
+    "level": "avançado",
+    "description": "Exige distinguir experiência narrada de princípio doutrinário, comparar a sequência dos capítulos com a lei do trabalho na Codificação e perceber onde a obra silencia — sem transformar o enredo em tratado."
+  },
+  "premiumDifferential": "Não trata o serviço em Nosso Lar como salário nem como punição: lê os capítulos 22–26 como uma sequência de reorganização interior e a confronta com a lei do trabalho em O Livro dos Espíritos, mostrando o que a narrativa apresenta, o que a Doutrina sistematiza e o que a obra não diz.",
+  "narrativeStrategy": "Abre pela pergunta que os títulos provocam — por que preparo e serviço vêm juntos? — e conduz o aluno pela sequência dos capítulos como quem acompanha um processo, deixando a Codificação entrar quando a narrativa já levantou a questão.",
+  "slides": [
+    {
+      "slideType": "opening",
+      "slideNumber": 1,
+      "title": "Por que preparo antes do serviço?",
+      "learningGoal": "Instalar a pergunta central da aula a partir dos próprios títulos dos capítulos 22–26.",
+      "content": "Os títulos desta etapa de **Nosso Lar** chamam atenção por sua ordem: **bônus-hora**, **saber ouvir**, um **apelo**, um **alvitre**, novas perspectivas. Antes de qualquer tarefa, aparece preparo. A obra parece sugerir que o serviço não começa quando as mãos se movem, mas quando algo interior se reorganiza. Vamos notar o que essa sequência tem a dizer sobre a **lei do trabalho** — e o que ela não diz.",
+      "highlights": [
+        {
+          "title": "Preparo antes da tarefa",
+          "content": "A ordem dos capítulos sugere **reorganização interior** anterior ao serviço."
+        },
+        {
+          "title": "Pergunta condutora",
+          "content": "Serviço seria **salário**, **punição** ou **reorganização**?"
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 22–26",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "curiosidade",
+      "commonMisunderstanding": "Pensar que o serviço em Nosso Lar funciona como pagamento por estadia ou como pena imposta.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "Os cinco títulos dos capítulos 22–26 são o único material de cena desta aula. Trabalhamos com o que eles sustentam em termos gerais, sem detalhar falas ou desdobramentos."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 2,
+      "title": "O bônus-hora como linguagem",
+      "learningGoal": "Explorar o que o título 'O Bônus-Hora' permite compreender sobre trabalho e medida.",
+      "content": "O título **O Bônus-Hora** introduz uma linguagem de **medida** e **aproveitamento do tempo**. Repare que a obra escolhe falar de trabalho com vocabulário de contabilidade — algo que se computa, se registra. Uma leitura possível é que o serviço, na colônia, é acompanhado e valorizado, mas isso **não equivale** a dizer que se compra o direito de permanecer. A obra não afirma que o trabalho seja moeda de troca; o título apenas abre a questão.",
+      "highlights": [
+        {
+          "title": "Vocabulário de medida",
+          "content": "O título sugere **acompanhamento** do tempo e do serviço prestado."
+        },
+        {
+          "title": "Cuidado com a leitura",
+          "content": "Medir não é o mesmo que **comprar** ou **pagar**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 22 — O Bônus-Hora",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "reflexão",
+      "commonMisunderstanding": "Ler o bônus-hora como salário espiritual que se acumula como crédito.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não diz, pelo título, que o trabalho seja moeda de troca nem que garanta privilégios. O que o capítulo sustenta em detalhe fica em aberto nesta aula."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 3,
+      "title": "Saber ouvir como preparo",
+      "learningGoal": "Compreender a escuta como etapa de reorganização interior, não como passividade.",
+      "content": "**Saber Ouvir** vem logo depois do bônus-hora. A sequência é significativa: antes de agir, aprende-se a **escutar**. Numa perspectiva espírita, isso dialoga com a ideia de que a **perturbação** pós-desencarnação dificulta situar-se diante da nova condição — e a escuta atenta é justamente o que permite reorganizar-se. Não se trata de passividade, mas de **preparo**: quem não ouve dificilmente compreende a tarefa que lhe é proposta.",
+      "highlights": [
+        {
+          "title": "Escuta como etapa",
+          "content": "Ouvir aparece como **preparo** anterior ao agir."
+        },
+        {
+          "title": "Diálogo com a perturbação",
+          "content": "A escuta ajuda a **reorganizar-se** diante da nova condição."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 23 — Saber Ouvir",
+        "codificacao": "O Livro dos Espíritos — perturbação após a desencarnação (por tema)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "atenção",
+      "commonMisunderstanding": "Confundir escuta com obediência passiva ou com ausência de iniciativa.",
+      "microStory": "",
+      "specialElement": {
+        "type": "dialogue_with_codification",
+        "content": "A Codificação trata da perturbação que acompanha a desencarnação como dificuldade de compreensão da nova situação. A narrativa mostra a escuta como caminho de reorganização. A aproximação é quanto ao papel da compreensão — não quanto a detalhes de cena."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 4,
+      "title": "O apelo que convoca",
+      "learningGoal": "Perceber o apelo como chamado ao serviço, sem transformá-lo em regra universal.",
+      "content": "**O Impressionante Apelo** marca a passagem da escuta ao **chamado**. Depois de ouvir, algo é proposto. O título indica que o apelo toca o interior — é *impressionante* —, e não apenas informa. Aqui vale um cuidado: a obra narra um **caso específico**; não podemos concluir que todo Espírito receba o mesmo apelo, da mesma forma. O que o título sustenta é que o serviço se apresenta como **convite**, não como imposição.",
+      "highlights": [
+        {
+          "title": "Chamado, não imposição",
+          "content": "O apelo aparece como **convite** ao serviço."
+        },
+        {
+          "title": "Caso, não regra",
+          "content": "A obra narra uma **experiência**; não universaliza."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 24 — O Impressionante Apelo",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "expectativa",
+      "commonMisunderstanding": "Generalizar o apelo como experiência obrigatória de todos os Espíritos.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não afirma, pelo título, que todos recebam o mesmo apelo nem que o chamado ocorra sempre dessa forma. Trata-se de uma experiência narrada."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 5,
+      "title": "O alvitre: proposta e escolha",
+      "learningGoal": "Distinguir alvitre de ordem, preservando a dimensão de escolha.",
+      "content": "**Generoso Alvitre** — a palavra importa. *Alvitre* é parecer, sugestão, proposta. A obra escolhe não dizer *ordem*, mas **conselho generoso**. Isso muda a compreensão do serviço: ele não é imposto, é **proposto**. Repare que a generosidade está no fato de a proposta vir de quem já compreendeu a lei do trabalho e a oferece a quem ainda se reorganiza. O serviço, aqui, respeita o tempo de quem o recebe.",
+      "highlights": [
+        {
+          "title": "Alvitre é proposta",
+          "content": "O termo escolhido preserva a dimensão de **escolha**."
+        },
+        {
+          "title": "Generosidade na oferta",
+          "content": "A proposta respeita o **tempo** de quem a recebe."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 25 — Generoso Alvitre",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "acolhimento",
+      "commonMisunderstanding": "Ler o alvitre como determinação disfarçada, sem espaço real de adesão.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Ordem × alvitre: a obra distingue serviço imposto de serviço proposto. O título sustenta a segunda leitura."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 6,
+      "title": "Novas perspectivas",
+      "learningGoal": "Compreender o resultado do processo: reorganização que abre novas perspectivas.",
+      "content": "**Novas Perspectivas** fecha a sequência. Depois do preparo, da escuta, do apelo e da proposta, o que surge são **novas perspectivas** — não recompensa material, não status, mas uma forma diferente de ver. Uma leitura possível é que o serviço, ao ser assumido, **reorganiza** quem o assume. O trabalho deixa de ser encargo e passa a ser caminho de compreensão. A obra não promete resultados imediatos nem iguais para todos.",
+      "highlights": [
+        {
+          "title": "Resultado interior",
+          "content": "O fruto do serviço é **nova compreensão**, não recompensa."
+        },
+        {
+          "title": "Reorganização",
+          "content": "Serviço **reorganiza** quem o assume."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 26 — Novas Perspectivas",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "esperança",
+      "commonMisunderstanding": "Esperar que o serviço produza resultados imediatos e idênticos para todos.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não promete, pelo título, resultados imediatos nem uniformes. As 'novas perspectivas' são o desfecho de um caso narrado."
+      }
+    },
+    {
+      "slideType": "comparative",
+      "slideNumber": 7,
+      "title": "A lei do trabalho na Codificação",
+      "learningGoal": "Colocar a sequência narrativa em diálogo com a lei do trabalho em O Livro dos Espíritos.",
+      "content": "Em **O Livro dos Espíritos**, a lei do trabalho é tratada como **lei natural**: o trabalho é condição de progresso, não castigo. A aproximação com a narrativa é específica: ambas ligam trabalho a **progresso interior**. A diferença também importa — a Codificação **sistematiza um princípio**; a obra **narra uma experiência**. Não há convergência total: a narrativa mostra um caso, a Doutrina enuncia a lei. As duas se iluminam, sem se substituir.",
+      "highlights": [
+        {
+          "title": "Convergência em quê",
+          "content": "Ambas ligam trabalho a **progresso interior** — nisso se aproximam."
+        },
+        {
+          "title": "Diferença de natureza",
+          "content": "A Codificação **sistematiza**; a obra **narra**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 22–26",
+        "codificacao": "O Livro dos Espíritos — lei do trabalho (por tema)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "clareza",
+      "commonMisunderstanding": "Tomar a narrativa como se fosse a enunciação do princípio doutrinário, ou vice-versa.",
+      "microStory": "",
+      "specialElement": {
+        "type": "comparative_study",
+        "content": "Aproximação: trabalho como condição de progresso. Diferença: a Codificação enuncia a lei; a obra narra um percurso. A comparação vale quanto ao papel do trabalho no progresso, não quanto a detalhes de cena."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 8,
+      "title": "Serviço não é salário nem pena",
+      "learningGoal": "Fixar a distinção central da aula: reorganização, não punição nem pagamento.",
+      "content": "Talvez a confusão mais comum seja ler o serviço como **pagamento** ou **punição**. A sequência dos capítulos 22–26 não sustenta nenhuma das duas leituras: o bônus-hora mede, mas não compra; o apelo convida, não obriga; o alvitre propõe, não impõe. O que a obra apresenta é **reorganização interior** — o trabalho como meio de o Espírito reencontrar-se. Uma leitura possível: a lei do trabalho não cobra; **educa**.",
+      "highlights": [
+        {
+          "title": "Nem salário, nem pena",
+          "content": "A obra não sustenta leitura de **pagamento** ou **castigo**."
+        },
+        {
+          "title": "Trabalho que educa",
+          "content": "A lei do trabalho **reorganiza**, não cobra."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 22–26",
+        "codificacao": "O Livro dos Espíritos — lei do trabalho (por tema)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "serenidade",
+      "commonMisunderstanding": "Achar que o serviço precisa ser sofrido para valer, ou que gera créditos.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Salário × punição × reorganização: só a terceira leitura é compatível com a sequência dos títulos e com a lei do trabalho como lei natural de progresso."
+      }
+    },
+    {
+      "slideType": "application",
+      "slideNumber": 9,
+      "title": "Ouvir antes de agir",
+      "learningGoal": "Transportar a sequência escuta→serviço para a vida cotidiana.",
+      "content": "A sequência **saber ouvir → apelo → alvitre** tem uma tradução concreta: quantas tarefas assumimos antes de compreender o que nos é pedido? A obra sugere que o serviço fecundo nasce da **escuta** — de si, do outro, da situação. A aplicação não é uma receita moral: é um convite a **desacelerar a resposta** e deixar que a compreensão preceda a ação. Onde você tem agido antes de ouvir?",
+      "highlights": [
+        {
+          "title": "Escuta precede ação",
+          "content": "Compreender antes de agir muda a **qualidade** do serviço."
+        },
+        {
+          "title": "Aplicação ancorada",
+          "content": "Nasce da sequência **ouvir → apelo → alvitre**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 23–25",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "introspecção",
+      "commonMisunderstanding": "Transformar a escuta em desculpa para nunca agir.",
+      "microStory": "",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "A aplicação nasce da ordem concreta dos capítulos: ouvir antes de responder ao chamado. Retirada a obra, a aplicação perde a âncora."
+      }
+    },
+    {
+      "slideType": "reflection",
+      "slideNumber": 10,
+      "title": "O que o serviço reorganiza",
+      "learningGoal": "Conduzir o aluno da compreensão à transformação interior.",
+      "content": "Se o serviço **reorganiza** quem o assume, então a pergunta deixa de ser *o que eu ganho* e passa a ser *o que se transforma em mim quando sirvo*. Repare que a obra não promete recompensa: promete **novas perspectivas**. Isso desloca o eixo da recompensa para a **compreensão**. Antes de responder, retome a sequência: o que em você precisaria ser ouvido antes de ser servido?",
+      "highlights": [
+        {
+          "title": "Eixo deslocado",
+          "content": "Da **recompensa** para a **compreensão**."
+        },
+        {
+          "title": "Pergunta que fica",
+          "content": "O que se **transforma** em mim quando sirvo?"
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 26 — Novas Perspectivas",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "recolhimento",
+      "commonMisunderstanding": "Buscar no serviço apenas alívio imediato ou reconhecimento.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "A reflexão parte do desfecho narrado — 'novas perspectivas' — e não de um ideal abstrato de serviço."
+      }
+    }
+  ],
+  "reflectionQuestions": [
+    {
+      "question": "Quando você assume uma tarefa, costuma ouvir antes de agir — de si, do outro e da situação — ou responde primeiro e compreende depois?",
+      "focus": "Autoconhecimento"
+    },
+    {
+      "question": "Que tarefa concreta, na sua vida atual, você poderia retomar começando por escutar em vez de executar no automático?",
+      "focus": "Aplicação prática"
+    },
+    {
+      "question": "Se o serviço reorganiza quem serve, o que em você precisa ser reorganizado — e o que você está disposto a deixar mudar nesse processo?",
+      "focus": "Transformação moral"
+    }
+  ]
+}

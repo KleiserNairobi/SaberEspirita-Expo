@@ -1,0 +1,325 @@
+{
+  "id": "NL-03",
+  "courseId": "nosso-lar-estudo-guiado",
+  "title": "Uma colônia, não o mundo espiritual",
+  "source": "Nosso Lar",
+  "chapter": "Caps. 6–8",
+  "durationMinutes": 50,
+  "forumEnabled": true,
+  "subtitle": "O aviso, Lísias e a organização dos serviços: o que é próprio desta colônia",
+  "mainWork": {
+    "title": "Nosso Lar",
+    "author": "André Luiz",
+    "psychography": "Francisco Cândido Xavier"
+  },
+  "theme": "Colônia narrada e princípios gerais da vida espiritual",
+  "objective": "Distinguir, no aviso, em Lísias e na organização de serviços, o que é próprio desta colônia e o que seria princípio geral da vida espiritual.",
+  "cognitiveIntensity": {
+    "level": "intermediário",
+    "description": "Exige separar, a cada passo, o que a narrativa apresenta como traço desta colônia do que pode ser lido como princípio geral da vida espiritual, sem transformar cenário em organograma do além."
+  },
+  "premiumDifferential": "Coloca o aviso, a fala de Lísias e a organização por ministérios em diálogo com o tema da erraticidade na Codificação, mostrando em que ponto há aproximação e em que ponto a obra apenas narra uma colônia particular.",
+  "narrativeStrategy": "Abre pela pergunta que o aviso provoca, lê as passagens lado a lado com a Codificação e termina com perguntas que não se fecham.",
+  "slides": [
+    {
+      "slideType": "opening",
+      "slideNumber": 1,
+      "title": "Por que esta colônia não é o além",
+      "learningGoal": "Apresentar a pergunta central da aula a partir do aviso do cap. 6.",
+      "content": "No cap. 6, um **aviso** chega até André Luiz e muda o modo como ele olha para onde está. A pergunta que fica não é 'como é o mundo espiritual?', mas algo mais estreito e mais honesto: **o que é próprio desta colônia** e o que, aqui, poderia valer como **princípio geral da vida espiritual**? Repare que a própria obra nos obriga a esse cuidado: ela narra uma **colônia**, não desenha o além inteiro. Vamos notar, então, o que o texto sustenta e o que ele deixa em aberto.",
+      "highlights": [
+        {
+          "title": "A pergunta da aula",
+          "content": "Distinguir **traço desta colônia** de **princípio geral** da vida espiritual."
+        },
+        {
+          "title": "Cuidado de leitura",
+          "content": "Cenário narrado **não é organograma** do mundo espiritual."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 6 — Precioso Aviso",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "curiosidade",
+      "commonMisunderstanding": "Tomar a descrição de Nosso Lar como retrato do mundo espiritual em geral.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "A obra narra uma colônia particular; a Codificação trata, por tema, das condições da vida espiritual. São naturezas diferentes de texto."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 2,
+      "title": "O que o aviso apresenta",
+      "learningGoal": "Fixar o que o cap. 6 efetivamente traz, sem completar cenas de memória.",
+      "content": "O cap. 6 é apresentado como **Precioso Aviso**. A conferência é parcial: só aberturas e trechos foram verificados, então afirmamos apenas o que os trechos fornecem. O aviso chega como **orientação** dirigida a André Luiz num momento em que ele ainda se situa na colônia. Repare que o texto não o transforma em regra para todos os Espíritos: é um **aviso a alguém**, numa circunstância. Guarde essa diferença — ela vai voltar quando Lísias explicar e quando os serviços forem organizados.",
+      "highlights": [
+        {
+          "title": "Aviso é orientação",
+          "content": "Chega a **André Luiz**, numa circunstância — não é decreto universal."
+        },
+        {
+          "title": "Conferência parcial",
+          "content": "Afirmamos só o que os **trechos fornecidos** sustentam."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 6 — Precioso Aviso",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "atenção",
+      "commonMisunderstanding": "Ler o aviso como princípio doutrinário válido para todos.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "O cap. 6 é tratado aqui apenas pelo que os trechos conferidos permitem afirmar."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 3,
+      "title": "Lísias explica: escuta e clareza",
+      "learningGoal": "Observar o papel de Lísias como quem explica, sem inventar intenções.",
+      "content": "No cap. 7, **Lísias** aparece explicando. A narrativa mostra **alguém que esclarece** outro que ainda não compreende bem onde está. Repare no que isso é: uma **cena de explicação**, não um tratado. Lísias fala a partir do lugar em que vive — a colônia. Uma leitura possível é que a explicação organiza, para André Luiz, o que ele está vendo. O que a obra **não diz** é que todo Espírito receba esse tipo de explicação, nem que a explicação de Lísias valha como lei geral da vida espiritual.",
+      "highlights": [
+        {
+          "title": "Lísias esclarece",
+          "content": "A cena mostra **alguém que explica** a quem ainda não compreende."
+        },
+        {
+          "title": "Limite da cena",
+          "content": "É explicação **situada**, não tratado sobre o além."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 7 — Explicações de Lísias",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "acolhimento",
+      "commonMisunderstanding": "Transformar a fala de um personagem em princípio geral.",
+      "microStory": "Alguém chega a um lugar desconhecido e precisa que outra pessoa lhe explique o que vê.",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não afirma que a explicação de Lísias seja regra para todos os Espíritos, nem que todos passem por esse tipo de esclarecimento."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 4,
+      "title": "Diálogo com a erraticidade",
+      "learningGoal": "Comparar, por tema, a experiência narrada com as condições da vida espiritual na Codificação.",
+      "content": "A Codificação trata, **por tema**, da **erraticidade** e das condições da vida espiritual: o Espírito, entre uma existência e outra, passa por estados que exigem compreensão nova. Vamos notar o ponto exato de aproximação: em **Nosso Lar**, André Luiz vive um momento em que precisa **se situar** diante de uma condição que não compreende — e recebe aviso e explicação. A aproximação ocorre quanto a essa **necessidade de se situar**; não quanto a ministérios, nomes ou geografia. A obra narra; a Codificação sistematiza. As duas naturezas não se confundem.",
+      "highlights": [
+        {
+          "title": "Convergência em quê",
+          "content": "Quanto à **necessidade de se situar** numa condição nova — não quanto a cenário."
+        },
+        {
+          "title": "Naturezas diferentes",
+          "content": "A obra **narra**; a Codificação **sistematiza** por tema."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 6–7",
+        "codificacao": "O Livro dos Espíritos — erraticidade e condições da vida espiritual (por tema)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "compreensão",
+      "commonMisunderstanding": "Dizer que 'as obras convergem' sem especificar em quê.",
+      "microStory": "",
+      "specialElement": {
+        "type": "comparative_study",
+        "content": "Aproximação específica: a necessidade de o Espírito se situar diante de uma condição nova. Diferença preservada: narrativa de colônia versus sistematização por tema."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 5,
+      "title": "Ministérios: organização desta colônia",
+      "learningGoal": "Apresentar o cap. 8 como organização de serviços desta colônia, a partir do Ministério do Auxílio.",
+      "content": "No cap. 8, a cidade é apresentada por **ministérios**, e o ponto de partida é o **Ministério do Auxílio**. Repare no que isso é: a **organização de serviços desta colônia**, descrita pela narrativa. O texto estrutura o atendimento a partir do auxílio, e os demais serviços se organizam nessa relação. Uma leitura possível é que a obra mostra uma **cidade que serve** antes de mostrar uma cidade que manda. O que a obra **não diz** é que todo o mundo espiritual se organize assim, nem que esses ministérios sejam divisão universal do além.",
+      "highlights": [
+        {
+          "title": "Ponto de partida",
+          "content": "A organização começa pelo **Ministério do Auxílio**."
+        },
+        {
+          "title": "Caráter narrado",
+          "content": "É organização **desta colônia**, não do além inteiro."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 8 — Organização de Serviços",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "admiração",
+      "commonMisunderstanding": "Tomar os ministérios como organograma do mundo espiritual.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não afirma que os ministérios sejam divisão universal do mundo espiritual, nem que toda colônia se organize a partir do Ministério do Auxílio."
+      },
+      "image": {
+        "url": "",
+        "caption": "Nesta colônia, os serviços se organizam a partir do Ministério do Auxílio",
+        "alt": "Esquema da colônia narrada: o Ministério do Auxílio como ponto de partida, com os demais serviços organizados em relação a ele",
+        "aspectRatio": 1.33
+      },
+      "imagePrompt": "Esquema da organização de serviços narrada em Nosso Lar, cap. 8: o Ministério do Auxílio destacado como ponto de partida; os demais ministérios e serviços dispostos em relação a ele, com rótulos em português; título interno 'Nesta colônia'. Não representar o mundo espiritual em geral."
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 6,
+      "title": "Cenário não é organograma",
+      "learningGoal": "Reforçar a distinção entre cenário narrado e estrutura doutrinária.",
+      "content": "Aqui está o ponto que mais se perde na leitura apressada: um **cenário narrativo** não é **organograma do além**. Quando o cap. 8 apresenta ministérios, ele descreve como **esta colônia** organiza seus serviços — não como o mundo espiritual se divide em geral. Vamos notar a consequência: se tomarmos o esquema como mapa universal, passamos a afirmar mais do que a obra disse. A leitura possível, e mais fiel, é manter o esquema **dentro da colônia** e deixar em aberto o que valeria fora dela.",
+      "highlights": [
+        {
+          "title": "Regra de leitura",
+          "content": "**Cenário narrado** não vira **mapa do além**."
+        },
+        {
+          "title": "Fidelidade",
+          "content": "Manter o esquema **dentro da colônia** e o resto em aberto."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 8",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "cautela",
+      "commonMisunderstanding": "Universalizar a organização por ministérios.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Cenário narrativo: o que a obra descreve nesta colônia. Organograma doutrinário: o que a Codificação sistematiza. Não confundir um com o outro."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 7,
+      "title": "O que pode valer como princípio",
+      "learningGoal": "Distinguir, nas três passagens, o que pode ser lido como princípio geral.",
+      "content": "Feita a distinção, podemos perguntar: o que, nessas passagens, **pode ser lido** como princípio geral da vida espiritual? Uma leitura possível: que o Espírito, em condição nova, **precisa de orientação** e **se organiza em serviços** que auxiliam. Repare que isso é uma **aproximação**, não uma tese da obra. O aviso, a explicação de Lísias e os ministérios **mostram** essa necessidade e essa organização nesta colônia; a Codificação trata, por tema, das condições da vida espiritual. O que a obra não diz é que todo Espírito receba exatamente esse auxílio, nem nessa forma.",
+      "highlights": [
+        {
+          "title": "Princípio possível",
+          "content": "Necessidade de **orientação** e de **serviço** que auxilia — como leitura, não tese."
+        },
+        {
+          "title": "Limite",
+          "content": "A obra **mostra** nesta colônia; não legisla para todo o além."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 6–8",
+        "codificacao": "O Livro dos Espíritos — condições da vida espiritual (por tema)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "equilíbrio",
+      "commonMisunderstanding": "Transformar leitura possível em doutrina estabelecida.",
+      "microStory": "",
+      "specialElement": {
+        "type": "dialogue_with_codification",
+        "content": "A Codificação trata, por tema, das condições da vida espiritual. A aproximação com Nosso Lar é quanto à necessidade de orientação e de auxílio — não quanto a formas, nomes ou organização."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 8,
+      "title": "Aplicação: onde eu universalizo",
+      "learningGoal": "Levar o aluno a perceber, em si, a tendência a universalizar um caso.",
+      "content": "A aplicação nasce de um elemento concreto: o aviso chega a **um** Espírito, a explicação é dada a **um** ouvinte, a organização é de **uma** colônia. Em cada caso, o texto fala de alguém ou de um lugar. Trazer isso para a vida é perguntar onde também tomamos **um caso** e o transformamos em **regra para todos**. Repare que a obra não nos pede desconfiança de tudo: pede **cuidado na passagem do particular ao geral**. É o mesmo movimento de quem lê uma experiência e pergunta, antes de concluir: 'isso vale para todos ou só para este caso?'",
+      "highlights": [
+        {
+          "title": "Elemento concreto",
+          "content": "Aviso a **um**, explicação a **um**, organização de **uma** colônia."
+        },
+        {
+          "title": "Movimento",
+          "content": "Cuidado na passagem do **particular** ao **geral**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 6–8",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "autopercepção",
+      "commonMisunderstanding": "Concluir que toda experiência narrada é regra.",
+      "microStory": "",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "Ancorada no caráter particular de cada cena: antes de generalizar uma experiência, perguntar a que caso ela pertence."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 9,
+      "title": "O que fica em aberto",
+      "learningGoal": "Fechar a aula com perguntas abertas e remeter à NL-04.",
+      "content": "Chegamos ao fim com mais perguntas do que certezas — e isso é próprio do estudo. Fica em aberto: **o que desta colônia** poderia valer como princípio geral, e **o que é só dela**? O aviso, Lísias e os ministérios nos deram material para distinguir, mas não para fechar. A **hierarquia** narrada, que aparece nos capítulos seguintes, será o assunto da **NL-04** — lá a comparação vai continuar. Por ora, repare que estudar a obra é, muitas vezes, aprender a **não concluir cedo demais**.",
+      "highlights": [
+        {
+          "title": "Pergunta aberta",
+          "content": "O que é **desta colônia** e o que é **princípio geral**?"
+        },
+        {
+          "title": "Próximo passo",
+          "content": "A **hierarquia narrada** fica para a **NL-04**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 6–8",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "abertura",
+      "commonMisunderstanding": "Achar que a aula esgota o assunto.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "A aula termina sem resposta pronta: distinguir o que é desta colônia do que seria princípio geral permanece como tarefa de leitura."
+      }
+    }
+  ],
+  "reflectionQuestions": [
+    {
+      "question": "Quando você lê uma experiência espiritual narrada, em que momento costuma tratá-la como regra para todos — e o que o leva a isso?",
+      "focus": "Autoconhecimento"
+    },
+    {
+      "question": "Diante de uma situação concreta da sua vida, como distinguir o que é próprio daquele caso do que poderia valer como princípio mais amplo?",
+      "focus": "Aplicação prática"
+    },
+    {
+      "question": "Que mudança de postura pede de você o cuidado de não universalizar cedo demais o que ainda é apenas uma experiência particular?",
+      "focus": "Transformação moral"
+    }
+  ]
+}

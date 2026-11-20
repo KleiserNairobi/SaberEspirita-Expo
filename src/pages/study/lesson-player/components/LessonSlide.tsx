@@ -85,6 +85,7 @@ export const LessonSlide = memo(
             <SlideContent
               title={slide.title}
               content={slide.content}
+              image={slide.image}
               imagePrompt={slide.imagePrompt}
               fontSize={fontSize}
               slideType={slideType}

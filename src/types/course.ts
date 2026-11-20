@@ -119,10 +119,18 @@ export interface IPremiumLesson extends ILesson {
   slides: IPremiumSlide[];
 }
 
+export interface ISlideImage {
+  url: string;
+  caption?: string;
+  alt?: string;
+  aspectRatio?: number;
+}
+
 export interface ISlide {
   slideType?: SlideType;
   title: string;
   content: string;
+  image?: ISlideImage;
   imagePrompt?: string;
   highlights?: { title: string; content: string }[];
   references?: {

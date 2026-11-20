@@ -1,0 +1,309 @@
+{
+  "id": "NL-10",
+  "courseId": "nosso-lar-estudo-guiado",
+  "title": "Regeneração e acolhimento",
+  "source": "Nosso Lar",
+  "chapter": "Caps. 32–36",
+  "durationMinutes": 50,
+  "forumEnabled": true,
+  "subtitle": "Acolher quem chega sem julgá-lo: Veneranda e os recém-chegados do Umbral",
+  "mainWork": {
+    "title": "Nosso Lar",
+    "author": "André Luiz",
+    "psychography": "Francisco Cândido Xavier"
+  },
+  "theme": "Acolhimento sem julgamento",
+  "objective": "Examinar como acolher quem chega sem julgá-lo, a partir de Veneranda e dos recém-chegados do Umbral.",
+  "cognitiveIntensity": {
+    "level": "avançado",
+    "description": "Exige distinguir o que a narrativa mostra sobre acolhimento do que a Codificação sistematiza sobre regeneração e caridade, sem transformar uma cena particular em regra geral nem projetar intenções nos personagens."
+  },
+  "premiumDifferential": "Coloca a cena dos recém-chegados do Umbral e o trabalho de Veneranda em diálogo com a Codificação sobre regeneração e caridade, mostrando onde a narrativa ilustra um princípio e onde ela permanece experiência particular que não pode ser universalizada.",
+  "narrativeStrategy": "Abre pela pergunta que a cena provoca — como receber quem chega marcado pela própria perturbação sem que o julgamento feche a porta — e conduz da observação de Veneranda ao diálogo com a Codificação, voltando à narrativa para a aplicação moral.",
+  "slides": [
+    {
+      "slideType": "opening",
+      "slideNumber": 1,
+      "title": "Quem chega não escolhe como chega",
+      "learningGoal": "Apresentar a pergunta central da aula a partir da chegada dos recém-chegados do Umbral.",
+      "content": "Nos capítulos 34 a 36, **Nosso Lar** mostra recém-chegados vindos do Umbral. Eles não chegam serenos: trazem a marca do que viveram. A pergunta que a obra provoca não é teórica — é prática: **como acolher alguém assim sem julgá-lo?** Repare que a narrativa não pede que se decida primeiro se merecem; ela mostra o acolhimento acontecendo. Vamos notar o que Veneranda faz e o que a Codificação acrescenta a essa cena.",
+      "highlights": [
+        {
+          "title": "A pergunta da cena",
+          "content": "A obra não pergunta se merecem acolhida; mostra **como** ela acontece."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 34–36",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "curiosidade",
+      "commonMisunderstanding": "Pensar que acolher é concordar com o estado em que a pessoa chega.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "A cena dos recém-chegados do Umbral está em Nosso Lar, cap. 34; o encontro singular e o sonho aparecem nos caps. 35–36. A conferência é parcial: afirmamos apenas o que os trechos fornecidos sustentam."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 2,
+      "title": "Veneranda e o trabalho de receber",
+      "learningGoal": "Observar o que a narrativa apresenta sobre o trabalho de Veneranda, sem inventar intenções.",
+      "content": "O capítulo 32 traz **notícias de Veneranda e de seu trabalho**. A narrativa a apresenta ligada a uma obra de receber e amparar. Não sabemos, pelos trechos, o que ela pensa ou sente por dentro — sabemos o que **faz** e como é descrita. Essa distinção importa: a força do exemplo está no que a obra mostra de seu trabalho, não em uma psicologia que inventemos para ela. **Acolher, aqui, aparece como trabalho**, não como impulso momentâneo.",
+      "highlights": [
+        {
+          "title": "Exemplo pelo que se faz",
+          "content": "A obra mostra o **trabalho** de Veneranda; não narra seus pensamentos íntimos."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 32",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "admiração",
+      "commonMisunderstanding": "Preencher a cena com motivações psicológicas que o texto não apresenta.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não diz o que Veneranda sente ou pensa interiormente ao acolher; descreve seu trabalho. Não transformemos descrição de ação em retrato psicológico."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 3,
+      "title": "Curiosas observações",
+      "learningGoal": "Reconhecer o olhar de André Luiz sobre o que observa nos capítulos 33–36.",
+      "content": "No capítulo 33, **curiosas observações** precedem a chegada dos recém-vindos do Umbral. A narrativa é contada por **André Luiz**, que observa e relata. Isso significa que estamos diante de um **testemunho narrado**, não de um tratado: o que ele vê é apresentado como sua observação. Uma leitura possível é que a obra prepara o leitor para o contraste entre a ordem de Nosso Lar e o estado de quem chega de fora, sem que o texto formule uma doutrina do acolhimento.",
+      "highlights": [
+        {
+          "title": "Testemunho, não tratado",
+          "content": "O relato é de **André Luiz**; a obra narra o que ele observa."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 33",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "expectativa",
+      "commonMisunderstanding": "Ler a narrativa de André Luiz como se fosse um princípio doutrinário universal.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "Cap. 33 — Curiosas Observações. A conferência é parcial: não completamos a cena de memória; afirmamos apenas o que o trecho fornecido indica."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 4,
+      "title": "Os recém-chegados do Umbral",
+      "learningGoal": "Compreender o estado dos recém-chegados conforme a narrativa o apresenta.",
+      "content": "O capítulo 34 apresenta **os recém-chegados do Umbral**. A obra os mostra chegando em condição de **perturbação** — trazendo consigo o que viveram. Não se trata de uma descrição de todos os Espíritos, mas do caso que a narrativa acompanha. Repare que a cena não os apresenta como casos perdidos nem como exemplos de virtude: são pessoas chegando de um estado difícil. **A acolhida se dirige ao que chega**, não ao que se gostaria que fosse.",
+      "highlights": [
+        {
+          "title": "Caso narrado, não regra",
+          "content": "A obra mostra **um caso** de chegada do Umbral; não descreve a experiência de todos."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 34",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "apreensão",
+      "commonMisunderstanding": "Generalizar: 'todo Espírito que desencarna passa por isso assim'.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não afirma que todo desencarnado chegue nesse estado, nem descreve o interior dos recém-chegados além do que a cena mostra. Preservemos o caráter de caso particular."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 5,
+      "title": "Encontro singular e o sonho",
+      "learningGoal": "Situar os caps. 35–36 como desdobramentos da mesma linha de acolhimento.",
+      "content": "Nos capítulos 35 e 36 — **Encontro Singular** e **O Sonho** — a narrativa continua a acompanhar esses encontros. A conferência é parcial: só afirmamos o que os trechos fornecidos sustentam, sem completar cenas de memória. O que podemos notar é que a obra mantém o fio do **acolhimento concreto**: alguém se aproxima, algo se comunica, algo se transforma. A doutrina do acolhimento, se quisermos formulá-la, terá de nascer dessas cenas — não de uma ideia prévia sobre elas.",
+      "highlights": [
+        {
+          "title": "Fio que continua",
+          "content": "Os caps. 35–36 prolongam o **acolhimento concreto** iniciado no cap. 34."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 35–36",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "reflexão",
+      "commonMisunderstanding": "Preencher os caps. 35–36 com detalhes que não constam dos trechos conferidos.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "Caps. 35 — Encontro Singular; 36 — O Sonho. Conferência parcial: não completamos cenas ausentes dos trechos fornecidos."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 6,
+      "title": "Regeneração: o que a Codificação diz",
+      "learningGoal": "Trazer a compreensão doutrinária de regeneração sem usá-la para 'validar' a cena.",
+      "content": "A Codificação trata da **regeneração** como processo de progresso moral, ligado à lei de causa e efeito e à possibilidade de recomeço. Em **O Livro dos Espíritos**, o tema aparece nas questões sobre progresso e expiação; em **O Evangelho segundo o Espiritismo**, na caridade e no perdão. Note o cuidado: não usamos Kardec para 'explicar' a cena, mas para perguntar o que a cena ilumina dessa compreensão. **Aproximação, não validação.** A narrativa mostra; a Codificação sistematiza.",
+      "highlights": [
+        {
+          "title": "Convergência em quê",
+          "content": "A aproximação é quanto à **possibilidade de recomeço** após o erro — não quanto ao caso específico."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 32–36",
+        "codificacao": "O Livro dos Espíritos (progresso e expiação); O Evangelho segundo o Espiritismo (caridade e perdão)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "compreensão",
+      "commonMisunderstanding": "Usar a Codificação como prova de que a cena 'aconteceu assim'.",
+      "microStory": "",
+      "specialElement": {
+        "type": "dialogue_with_codification",
+        "content": "A obra narra um acolhimento particular; a Codificação sistematiza a regeneração como processo. A aproximação ocorre quanto à possibilidade de recomeço, não quanto aos detalhes da cena. As fontes têm naturezas diferentes: uma narra, outra principia."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 7,
+      "title": "Acolher sem julgar: caridade em ato",
+      "learningGoal": "Distinguir acolhimento de concordância, à luz da caridade evangélica.",
+      "content": "A caridade, na Codificação, não é aprovar o erro — é **agir bem para com o outro** apesar dele. Em **O Evangelho segundo o Espiritismo**, o perdão e a benevolência aparecem como exigências morais. Uma leitura possível é que o acolhimento de Veneranda ilustre esse ponto: receber quem chega **sem fazer do julgamento a porta de entrada**. Distinção essencial: acolher não é dizer que está tudo bem; é não fechar a porta a quem ainda não está bem. A obra não formula essa frase — ela a encena.",
+      "highlights": [
+        {
+          "title": "Acolher ≠ concordar",
+          "content": "Caridade é **agir bem apesar do erro**, não aprová-lo."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 32–36",
+        "codificacao": "O Evangelho segundo o Espiritismo (caridade e perdão)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "serenidade",
+      "commonMisunderstanding": "Confundir acolhimento com permissividade ou indiferença moral.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Acolher não é concordar. A Codificação sustenta a caridade como ação benevolente diante do erro; a obra encena esse acolhimento. A distinção é da aula, construída a partir de ambas — não é definição formal de nenhuma das fontes."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 8,
+      "title": "O que a obra não diz",
+      "learningGoal": "Explicitar os limites do que a narrativa permite afirmar.",
+      "content": "A obra **não diz** que todo recém-chegado é acolhido do mesmo modo; **não diz** que o acolhimento dispensa o esforço do próprio regenerando; **não descreve** os pensamentos íntimos de Veneranda nem dos recém-chegados; **não formula** uma doutrina do acolhimento. O que ela faz é **narrar encontros**. Reconhecer esses limites não enfraquece a aula — fortalece: evita transformar uma cena bela em regra que a fonte não estabeleceu. A aplicação moral nascerá do que a cena mostra, não do que gostaríamos que dissesse.",
+      "highlights": [
+        {
+          "title": "Limite preservado",
+          "content": "A obra **narra encontros**; não formula doutrina do acolhimento."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 32–36",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "honestidade",
+      "commonMisunderstanding": "Tomar a cena como norma universal de como o acolhimento 'deve' ocorrer.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "Não universalizamos a experiência narrada; não inventamos o interior dos personagens; não transformamos a cena em princípio geral. A conferência é parcial: afirmamos apenas o que os trechos fornecidos sustentam."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 9,
+      "title": "Do caso à vida: a aplicação",
+      "learningGoal": "Ancorar a aplicação moral na cena concreta do acolhimento dos recém-chegados.",
+      "content": "Retire a cena de Nosso Lar e a aplicação desaba — é esse o teste. O que a obra mostra é alguém **recebendo quem chega em mau estado** sem que o julgamento seja a primeira palavra. Transportado para a vida: quando alguém chega a mim marcado pelo que viveu, o que faço primeiro — avalio ou acolho? A pergunta não tem receita. A cena sugere uma **ordem**: primeiro o acolhimento, depois o que for possível fazer. Uma leitura possível é que a regeneração do outro começa onde alguém não o tratou como caso perdido.",
+      "highlights": [
+        {
+          "title": "A ordem da cena",
+          "content": "Primeiro **acolher**, depois o que for possível fazer — não o inverso."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 32–36",
+        "codificacao": "O Evangelho segundo o Espiritismo (caridade)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "exigência",
+      "commonMisunderstanding": "Transformar a aplicação em receita moral pronta para qualquer situação.",
+      "microStory": "",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "A aplicação nasce da cena concreta do cap. 34: alguém chega em perturbação e é recebido. Retirada a obra, a aplicação perde a âncora — por isso ela é específica, e não genérica."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 10,
+      "title": "O que muda na minha forma de ver",
+      "learningGoal": "Conduzir da compreensão à transformação moral, sem impor resposta.",
+      "content": "Se o acolhimento é trabalho, e não impulso, ele **pode ser aprendido**. Se a cena mostra alguém recebendo quem chega em mau estado, a pergunta se volta para nós: quem chega até mim marcado pelo que viveu? Repare que a obra não promete que o acolhimento transforma o outro — ela mostra o acolhimento acontecendo. O que ele produz, a narrativa não antecipa. **A transformação moral começa onde a cena me encontra**: no modo como recebo quem ainda não está bem.",
+      "highlights": [
+        {
+          "title": "Aprendível, não espontâneo",
+          "content": "Acolher como **trabalho** pode ser aprendido — a cena o mostra em ato."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 32–36",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "responsabilidade",
+      "commonMisunderstanding": "Esperar que o acolhimento produza resultado garantido no outro.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "A reflexão não impõe resposta: parte da cena e devolve a pergunta ao leitor. A obra mostra o acolhimento; não promete o resultado."
+      }
+    }
+  ],
+  "reflectionQuestions": [
+    {
+      "question": "Quando alguém chega até você marcado pelo que viveu, qual é a sua primeira reação: avaliar ou acolher?",
+      "focus": "Autoconhecimento"
+    },
+    {
+      "question": "Que pessoa concreta, no seu convívio, você tem tratado mais pelo que ela fez do que pelo que ela precisa?",
+      "focus": "Aplicação prática"
+    },
+    {
+      "question": "Se acolher é trabalho e não impulso, o que você precisa mudar em si para receber sem que o julgamento feche a porta?",
+      "focus": "Transformação moral"
+    }
+  ]
+}

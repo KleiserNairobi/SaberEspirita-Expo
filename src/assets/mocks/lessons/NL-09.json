@@ -1,0 +1,380 @@
+{
+  "id": "NL-09",
+  "courseId": "nosso-lar-estudo-guiado",
+  "title": "O primeiro trabalho",
+  "source": "Nosso Lar",
+  "chapter": "Caps. 27–31",
+  "durationMinutes": 50,
+  "forumEnabled": true,
+  "subtitle": "Primeiros casos de serviço e os limites da leitura",
+  "mainWork": {
+    "title": "Nosso Lar",
+    "author": "André Luiz",
+    "psychography": "Francisco Cândido Xavier"
+  },
+  "theme": "Primeiros casos de serviço e os limites da leitura",
+  "objective": "Examinar o que os primeiros casos de serviço (a visão de Francisco, herança e eutanásia, o vampiro) ensinam e onde pedem leitura cuidadosa.",
+  "cognitiveIntensity": {
+    "level": "avançado",
+    "description": "Exige distinguir o que a narrativa apresenta como caso específico do que a Codificação formula como princípio, sustentando comparações precisas e reconhecendo os limites do que a obra não diz."
+  },
+  "premiumDifferential": "Coloca os primeiros casos de serviço narrados por André Luiz em diálogo com a Codificação e mostra onde há aproximação quanto à responsabilidade moral e onde a experiência particular não pode ser universalizada nem julgada de forma simplista.",
+  "narrativeStrategy": "Começa pelo espanto de André Luiz diante do primeiro serviço e deixa as perguntas nascerem dos casos, alternando a leitura da obra com a da Codificação.",
+  "slides": [
+    {
+      "slideType": "opening",
+      "slideNumber": 1,
+      "title": "O trabalho, enfim",
+      "learningGoal": "Situar o início do serviço nas câmaras da Regeneração e abrir a pergunta da aula.",
+      "content": "Depois de aprender a receber, **André Luiz** é chamado ao serviço nas câmaras da **Regeneração**, ao lado de **Tobias e Narcisa**. A narrativa não apresenta um herói em missão: apresenta alguém que começa a **trabalhar** e, com isso, passa a ver de perto casos que não compreende de imediato. É desse lugar que nascem as perguntas desta aula: o que os primeiros casos ensinam — e até onde podemos afirmar sobre eles?",
+      "highlights": [
+        {
+          "title": "Serviço como começo",
+          "content": "O primeiro trabalho abre uma **nova etapa** na experiência de André Luiz."
+        },
+        {
+          "title": "Ver de perto",
+          "content": "Os casos chegam pelo **serviço**, não por explicação prévia."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 27 — O Trabalho, Enfim",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "expectativa",
+      "commonMisunderstanding": "Pensar que o serviço chega como missão gloriosa, quando a narrativa o apresenta como trabalho ao lado de outros.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "A cena de abertura do serviço está em Nosso Lar, cap. 27, com André Luiz iniciando o trabalho nas câmaras da Regeneração ao lado de Tobias e Narcisa."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 2,
+      "title": "Um serviço que ensina a ver",
+      "learningGoal": "Mostrar que o aprendizado de André Luiz passa pela observação de casos concretos.",
+      "content": "Em **Em Serviço**, o aprendizado não vem de uma aula teórica: vem do **contato com os casos**. André Luiz observa, acompanha, participa — e é aí que suas certezas começam a ser **testadas**. Vamos notar que a obra escolhe mostrar antes de explicar. Repare que essa escolha narrativa importa: o leitor é colocado na mesma posição do aprendiz, vendo primeiro, compreendendo depois. Uma leitura possível é que o serviço, aqui, é também **escola de olhar**.",
+      "highlights": [
+        {
+          "title": "Mostrar antes de explicar",
+          "content": "A narrativa conduz o leitor pelo **caso concreto**, não pelo conceito."
+        },
+        {
+          "title": "Certezas testadas",
+          "content": "O serviço coloca André Luiz diante do que ele **ainda não compreende**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 28 — Em Serviço",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "curiosidade",
+      "commonMisunderstanding": "Ler o serviço apenas como tarefa cumprida, sem notar que ele é ocasião de aprendizado.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "Antes de seguir, vale perguntar: o que muda quando aprendemos vendo um caso, e não ouvindo uma explicação?"
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 3,
+      "title": "A visão de Francisco",
+      "learningGoal": "Apresentar o caso da visão de Francisco e o cuidado de leitura que ele exige.",
+      "content": "O capítulo **A Visão de Francisco** traz um caso que pede leitura cuidadosa. A narrativa apresenta uma **experiência de percepção** vivida por Francisco, acompanhada por André Luiz. O que a obra mostra é um **caso narrado**, com contornos próprios — não uma regra geral sobre como todos percebem o mundo espiritual. Vamos notar a diferença: a obra conta o que aconteceu com alguém; ela não formula, ali, um princípio universal. Confundir as duas coisas é o primeiro limite de leitura que este caso nos ensina.",
+      "highlights": [
+        {
+          "title": "Caso, não regra",
+          "content": "A visão de Francisco é **experiência narrada**, não princípio geral."
+        },
+        {
+          "title": "Limite de leitura",
+          "content": "Não universalizar o que a obra apresenta como **caso específico**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 29 — A Visão de Francisco",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "cuidado",
+      "commonMisunderstanding": "Transformar uma experiência individual narrada em regra sobre a percepção espiritual de todos.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não diz que todos os Espíritos têm a mesma percepção, nem generaliza a experiência de Francisco. Ela narra um caso."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 4,
+      "title": "Quando a Codificação ilumina",
+      "learningGoal": "Relacionar o caso narrado com a Codificação sem transformar narrativa em doutrina.",
+      "content": "O que a Codificação acrescenta aqui? Ela trata, por tema, da **percepção espiritual** e da **variedade das faculdades** dos Espíritos — sem falar do caso de Francisco. A aproximação é possível quanto à **diversidade de percepção**, mas as naturezas das fontes são diferentes: uma **narra**, a outra **sistematiza**. Uma leitura possível é que a Codificação ajuda a compreender o caso sem explicá-lo. O limite permanece: o caso de Francisco não se torna exemplo universal.",
+      "highlights": [
+        {
+          "title": "Aproximação precisa",
+          "content": "As fontes se aproximam quanto à **diversidade de percepção**, não além."
+        },
+        {
+          "title": "Naturezas distintas",
+          "content": "Uma **narra** um caso; a outra **sistematiza** princípios."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 29 — A Visão de Francisco",
+        "codificacao": "O Livro dos Espíritos, q. 400–406 (por tema)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "descoberta",
+      "commonMisunderstanding": "Usar a Codificação para 'provar' o caso narrado, em vez de compreendê-lo melhor.",
+      "microStory": "",
+      "specialElement": {
+        "type": "dialogue_with_codification",
+        "content": "A Codificação não confirma o caso de Francisco; ela oferece um quadro mais amplo sobre a variedade das faculdades, dentro do qual o caso pode ser lido sem generalização."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 5,
+      "title": "Herança e eutanásia",
+      "learningGoal": "Apresentar o caso de herança e eutanásia e recusar o julgamento simplista.",
+      "content": "O capítulo **Herança e Eutanásia** reúne dois temas que costumam provocar julgamento rápido. A narrativa apresenta **casos** em que essas questões aparecem de forma concreta, com circunstâncias próprias. Repare que a obra não oferece uma sentença pronta sobre quem age assim ou assado: ela mostra situações. **Casos complexos** não admitem julgamento simplista nem generalização. Antes de concluir, precisamos perguntar o que a obra efetivamente apresenta — e o que ela deixa em aberto.",
+      "highlights": [
+        {
+          "title": "Dois temas, um cuidado",
+          "content": "Herança e eutanásia exigem **leitura sem simplismo**."
+        },
+        {
+          "title": "O que fica em aberto",
+          "content": "A obra mostra situações; ela **não sentencia** de antemão."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 30 — Herança e Eutanásia",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "tensão",
+      "commonMisunderstanding": "Concluir rapidamente sobre culpa ou inocência nos casos, sem respeitar as circunstâncias que a narrativa apresenta.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Narrar um caso não é o mesmo que formular um juízo moral sobre ele. A obra narra; o julgamento simplista é acréscimo do leitor."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 6,
+      "title": "O que a Doutrina diz — e o que não diz",
+      "learningGoal": "Distinguir o que a Codificação sustenta sobre responsabilidade moral e o que o caso narrado não permite afirmar.",
+      "content": "Por tema, a Codificação trata da **responsabilidade moral** e das **consequências dos atos**, sempre considerando a **intenção** e as circunstâncias. Isso não equivale a dizer que a obra de André Luiz esteja julgando os personagens do caso. Vamos notar a diferença: a Doutrina **sistematiza princípios**; a narrativa **apresenta situações**. A aproximação ocorre quanto à seriedade da responsabilidade moral. Mas o caso concreto permanece caso — e a obra não nos autoriza a transformá-lo em veredito sobre todos.",
+      "highlights": [
+        {
+          "title": "Princípio e caso",
+          "content": "A Doutrina formula **princípios**; a narrativa mostra **situações**."
+        },
+        {
+          "title": "Convergência em quê",
+          "content": "Aproximação quanto à **seriedade da responsabilidade moral**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 30 — Herança e Eutanásia",
+        "codificacao": "O Livro dos Espíritos, por tema (responsabilidade moral)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "discernimento",
+      "commonMisunderstanding": "Tomar a seriedade da responsabilidade moral como autorização para julgar os personagens do caso.",
+      "microStory": "",
+      "specialElement": {
+        "type": "comparative_study",
+        "content": "A Codificação e a narrativa se aproximam quanto à seriedade da responsabilidade moral, mas diferem na forma: uma sistematiza princípios; a outra narra casos com circunstâncias próprias."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 7,
+      "title": "O vampiro",
+      "learningGoal": "Apresentar o caso do vampiro e o limite de sua leitura.",
+      "content": "O capítulo **Vampiro** traz uma das imagens mais fortes da obra. A narrativa apresenta um **caso de influência** entre Espíritos, com contornos próprios. Aqui o risco de leitura é duplo: transformar a imagem em **regra geral** sobre todos os casos de influência, ou tratá-la como fantasia sem relação com a Doutrina. Nenhum dos dois caminhos respeita a obra. Vamos notar que a força da imagem não a torna princípio universal. Uma leitura possível é que o caso ilustra, de forma extrema, algo que a Codificação trata de modo sistemático.",
+      "highlights": [
+        {
+          "title": "Imagem forte, caso concreto",
+          "content": "A força da imagem não a transforma em **regra geral**."
+        },
+        {
+          "title": "Nem fantasia, nem dogma",
+          "content": "O caso pede leitura que respeite seu **caráter narrado**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 31 — Vampiro",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "apreensão",
+      "commonMisunderstanding": "Generalizar o caso do vampiro para todo tipo de influência espiritual, ou descartá-lo como exagero narrativo.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não diz que toda influência espiritual se dá como neste caso, nem apresenta o vampirismo como regra geral. Ela narra um caso."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 8,
+      "title": "Influência espiritual: o quadro doutrinário",
+      "learningGoal": "Relacionar o caso do vampiro com o tratamento sistemático da influência na Codificação, declarando o limite.",
+      "content": "Por tema, a Codificação trata da **influência dos Espíritos** sobre os encarnados e da **obsessão**, distinguindo graus e naturezas. O caso do vampiro pode ser lido dentro desse quadro mais amplo — mas não é o quadro que ele descreve. Repare que a aproximação ocorre quanto à **realidade da influência espiritual**; a diferença está na forma: a narrativa mostra um caso extremo, a Doutrina sistematiza o fenômeno. O que a obra **não diz** é que todo caso de influência assuma essa forma.",
+      "highlights": [
+        {
+          "title": "Aproximação precisa",
+          "content": "Convergência quanto à **realidade da influência espiritual**."
+        },
+        {
+          "title": "Limite preservado",
+          "content": "O caso extremo **não define** toda influência."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 31 — Vampiro",
+        "codificacao": "O Livro dos Espíritos, por tema (influência dos Espíritos)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "clareza",
+      "commonMisunderstanding": "Tomar o caso extremo como descrição padrão de toda influência espiritual.",
+      "microStory": "",
+      "specialElement": {
+        "type": "dialogue_with_codification",
+        "content": "A Codificação oferece o quadro sistemático da influência espiritual; o caso do vampiro pode ser lido dentro dele, sem que o caso se torne a regra."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 9,
+      "title": "O limite que os três casos ensinam",
+      "learningGoal": "Sintetizar o limite de leitura comum aos três casos e a distinção entre narrar e doutrinar.",
+      "content": "Os três casos — a **visão de Francisco**, **herança e eutanásia**, o **vampiro** — têm algo em comum: são **casos narrados**. A obra os apresenta como experiências e situações, não como definições doutrinárias. Vamos notar que o limite de leitura não diminui a obra: ele a torna mais **confiável**. Uma leitura possível é que respeitar esse limite é parte do próprio aprendizado que o serviço oferece a André Luiz — e a nós. Distinguir **narrar** de **doutrinar** é o fio que percorre toda esta aula.",
+      "highlights": [
+        {
+          "title": "Um limite comum",
+          "content": "Os três casos são **narrados**, não formulados como doutrina."
+        },
+        {
+          "title": "Limite que fortalece",
+          "content": "Respeitar o limite torna a leitura mais **confiável**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 29–31",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "síntese",
+      "commonMisunderstanding": "Pensar que reconhecer o limite de leitura enfraquece a obra, quando o que enfraquece é a generalização indevida.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Narrar um caso é diferente de doutrinar sobre ele. A obra faz o primeiro; a Codificação faz o segundo; confundir os dois é o erro que esta aula procura evitar."
+      }
+    },
+    {
+      "slideType": "application",
+      "slideNumber": 10,
+      "title": "Aprender a ver antes de julgar",
+      "learningGoal": "Aplicar o limite de leitura à própria postura diante de casos concretos.",
+      "content": "O que o serviço ensina a André Luiz também nos diz respeito. Diante de um caso que não compreendemos — uma escolha alheia, uma situação complexa —, a obra sugere um caminho: **ver antes de julgar**. Não se trata de suspender toda avaliação moral, mas de reconhecer que **casos complexos** não cabem em sentenças rápidas. A aplicação nasce do próprio movimento da narrativa: o aprendiz que observa, acompanha e só depois compreende. Repare que isso vale para os personagens da obra — e para nós, leitores.",
+      "highlights": [
+        {
+          "title": "Ver antes de julgar",
+          "content": "A narrativa propõe **observar** antes de concluir."
+        },
+        {
+          "title": "Ancorada na obra",
+          "content": "A aplicação nasce do **movimento do aprendiz** no serviço."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 28–31",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "compromisso",
+      "commonMisunderstanding": "Transformar 'ver antes de julgar' em indiferença moral, quando se trata de cuidado na avaliação.",
+      "microStory": "",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "A aplicação nasce do próprio serviço narrado: André Luiz aprende observando casos que ainda não compreende. O mesmo movimento pode orientar nossa leitura de situações complexas."
+      }
+    },
+    {
+      "slideType": "synthesis",
+      "slideNumber": 11,
+      "title": "O que levamos desta aula",
+      "learningGoal": "Retomar o percurso e consolidar a distinção entre caso narrado e princípio doutrinário.",
+      "content": "Começamos com André Luiz iniciando o **serviço** e vimos três casos que pedem leitura cuidadosa. Em todos, a obra **narra**; ela não formula doutrina a partir deles. A Codificação entra por tema — percepção, responsabilidade moral, influência espiritual — e ilumina sem transformar o caso em regra. Vamos guardar a distinção central: **caso narrado** não é **princípio universal**. É esse discernimento que nos permite estudar a obra com **fidelidade** e sem simplismo.",
+      "highlights": [
+        {
+          "title": "Distinção central",
+          "content": "**Caso narrado** não é **princípio universal**."
+        },
+        {
+          "title": "Fidelidade sem simplismo",
+          "content": "Discernir o limite permite estudar a obra com **rigor**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 27–31",
+        "codificacao": "O Livro dos Espíritos, por tema",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "consolidação",
+      "commonMisunderstanding": "Concluir que a obra 'não ensina nada' por ser narrativa, quando o que ela ensina exige leitura atenta.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "Retome mentalmente os três casos: em qual deles você sentiu mais vontade de concluir rapidamente? O que mudaria se você observasse antes?"
+      }
+    }
+  ],
+  "reflectionQuestions": [
+    {
+      "question": "Quando você lê um caso na obra, você tende a transformá-lo em regra geral ou a respeitar seu caráter de experiência narrada?",
+      "focus": "Autoconhecimento"
+    },
+    {
+      "question": "Diante de uma situação complexa que você não compreende, o que mudaria se você observasse antes de formar um juízo?",
+      "focus": "Aplicação prática"
+    },
+    {
+      "question": "Que diferença faz, na sua forma de estudar e de conviver, distinguir o que é caso narrado do que é princípio doutrinário?",
+      "focus": "Transformação moral"
+    }
+  ]
+}

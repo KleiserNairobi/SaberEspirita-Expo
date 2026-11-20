@@ -1,0 +1,318 @@
+{
+  "id": "NL-01",
+  "courseId": "nosso-lar-estudo-guiado",
+  "title": "Entre duas vidas",
+  "source": "Nosso Lar",
+  "chapter": "Caps. 1–2",
+  "durationMinutes": 45,
+  "forumEnabled": true,
+  "subtitle": "A perturbação narrada e a perturbação sistematizada",
+  "mainWork": {
+    "title": "Nosso Lar",
+    "author": "André Luiz",
+    "psychography": "Francisco Cândido Xavier"
+  },
+  "theme": "A perturbação narrada e a perturbação sistematizada por Kardec",
+  "objective": "Compreender o que a cena do despertar de André Luiz mostra como caso narrado e o que ela não autoriza concluir para todos, colocando-a ao lado da perturbação tal como Kardec a sistematiza.",
+  "cognitiveIntensity": {
+    "level": "intermediário",
+    "description": "Exige distinguir o relato de uma experiência particular da sistematização doutrinária da perturbação, sem confundir a cena narrada com regra geral nem transformar a leitura conjunta em afirmação de qualquer das fontes."
+  },
+  "premiumDifferential": "Coloca a experiência narrada nos capítulos 1–2 de Nosso Lar em diálogo com a perturbação sistematizada na Codificação, mostrando em que aspecto as fontes se aproximam e em que ponto o caso de André Luiz não pode ser universalizado.",
+  "narrativeStrategy": "Abre pela cena do despertar como pergunta, mantém a leitura lado a lado com a Codificação e encerra com questões abertas, preservando o caráter de experiência específica do narrador.",
+  "slides": [
+    {
+      "slideType": "opening",
+      "slideNumber": 1,
+      "title": "Um despertar sem referências",
+      "learningGoal": "Apresentar a cena inicial de André Luiz como pergunta, não como explicação pronta.",
+      "content": "Abrimos **Nosso Lar** pelo capítulo que a edição adotada intitula **Nas Zonas Inferiores**. É o despertar de **André Luiz**: um homem que se percebe em outra condição e ainda não dispõe de referências para compreendê-la. Antes de qualquer explicação doutrinária, a obra nos entrega uma **cena** — e é dela que nasce a pergunta desta aula: o que esse despertar **mostra** e o que ele **não autoriza concluir** para todos?",
+      "highlights": [
+        {
+          "title": "A cena antes da doutrina",
+          "content": "O capítulo apresenta um **despertar** e não um tratado: a pergunta nasce da experiência narrada."
+        },
+        {
+          "title": "Pergunta condutora",
+          "content": "O que o caso de **André Luiz** mostra como narrativa e o que ele não permite universalizar?"
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 1 — Nas Zonas Inferiores",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "estranheza",
+      "commonMisunderstanding": "Pensar que a cena inicial já é uma explicação doutrinária da condição após a morte.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "O capítulo 1 é o ponto de partida: a aula nasce da cena do despertar de André Luiz e não de uma exposição prévia sobre a perturbação."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 2,
+      "title": "O que o título do capítulo sustenta",
+      "learningGoal": "Delimitar com honestidade o que os capítulos 1–2 permitem afirmar e o que permanece em aberto.",
+      "content": "Repare que os títulos dos capítulos já dizem algo: **Nas Zonas Inferiores** e **Clarêncio**. O primeiro situa André Luiz em um **ambiente** que a obra descreve como inferior; o segundo introduz um **interlocutor**. Uma leitura possível é que a narrativa encena uma condição de **desorientação** e, em seguida, a chegada de **auxílio**. Detalhes de cena, falas e desdobramentos ficam em aberto: trabalhamos com o que o título sustenta, sem preencher o que a fonte não fornece.",
+      "highlights": [
+        {
+          "title": "Ambiente e interlocutor",
+          "content": "Os títulos indicam **zona inferior** e **Clarêncio**: uma condição e um auxílio que chega."
+        },
+        {
+          "title": "Limite declarado",
+          "content": "Descrevemos em termos gerais; **detalhes de cena** não são afirmados sem o trecho."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 1–2",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "cautela",
+      "commonMisunderstanding": "Completar a cena com detalhes que o trecho fornecido não apresenta.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não diz, nos trechos considerados, que todo Espírito desperte assim, nem que a perturbação tenha sempre a mesma forma. O que temos é o caso de André Luiz."
+      }
+    },
+    {
+      "slideType": "comparison",
+      "slideNumber": 3,
+      "title": "A perturbação em Kardec",
+      "learningGoal": "Apresentar a perturbação como tema sistematizado na Codificação, sem numeração de questões.",
+      "content": "Agora vamos colocar a cena ao lado da **Codificação**. Em **O Livro dos Espíritos**, a perturbação após a morte aparece como **tema**: a alma não passa de uma condição a outra com clareza imediata; há um estado em que a consciência ainda se recompõe. Note a diferença de **natureza** entre as fontes: aqui temos uma **sistematização doutrinária**, que fala em termos gerais; lá temos uma **experiência narrada**, que fala de um caso. As duas se aproximam quanto à **possibilidade de perturbação após a desencarnação**.",
+      "highlights": [
+        {
+          "title": "Convergência em quê",
+          "content": "A aproximação é específica: a **possibilidade de perturbação** após a desencarnação."
+        },
+        {
+          "title": "Naturezas distintas",
+          "content": "Kardec **sistematiza** em termos gerais; a obra **narra** um caso particular."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 1–2",
+        "codificacao": "O Livro dos Espíritos — perturbação após a morte",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "descoberta",
+      "commonMisunderstanding": "Dizer que as obras \"convergem\" sem especificar em que aspecto ocorre a aproximação.",
+      "microStory": "",
+      "specialElement": {
+        "type": "dialogue_with_codification",
+        "content": "A leitura conjunta permite compreender a perturbação como tema doutrinário e, ao mesmo tempo, reconhecer na cena de André Luiz um caso que ilustra sem esgotar o tema."
+      }
+    },
+    {
+      "slideType": "distinction",
+      "slideNumber": 4,
+      "title": "Caso narrado não é regra universal",
+      "learningGoal": "Distinguir experiência específica de princípio geral e preservar o caráter do relato.",
+      "content": "Este é o ponto que sustenta a aula. Quando lemos **Nosso Lar**, estamos diante do relato de **André Luiz** — uma experiência específica, com contornos próprios. Quando lemos a **Codificação**, estamos diante de uma **sistematização** que busca falar de todos. Confundir os dois planos produz um erro silencioso: transformar a cena de um personagem em **regra para todos os Espíritos**. A obra narra; a doutrina sistematiza. Vamos notar que essa diferença não é um problema — é justamente o que torna o estudo mais rico.",
+      "highlights": [
+        {
+          "title": "Dois planos",
+          "content": "**Relato** de um caso e **sistematização** doutrinária não são o mesmo tipo de afirmação."
+        },
+        {
+          "title": "Erro a evitar",
+          "content": "Converter a experiência de **André Luiz** em experiência de todos os Espíritos."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 1–2",
+        "codificacao": "O Livro dos Espíritos — perturbação após a morte",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "clareza",
+      "commonMisunderstanding": "Generalizar: \"após a morte, todos passam por...\" a partir de uma única narrativa.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Experiência específica x princípio geral: a cena de André Luiz ilustra a perturbação, mas não a define para todos os casos."
+      }
+    },
+    {
+      "slideType": "comparison",
+      "slideNumber": 5,
+      "title": "O que a obra não diz",
+      "learningGoal": "Declarar explicitamente os limites do que a narrativa autoriza afirmar.",
+      "content": "Em toda comparação, vale declarar o que a obra **não diz**. **Nosso Lar**, nos capítulos 1–2, não afirma que a perturbação seja **universal**, nem que tenha **duração fixa**, nem que todos despertem no mesmo tipo de ambiente. O que a narrativa apresenta é o **caso de André Luiz**. Uma leitura possível é que a obra ofereça **ilustração**, não **norma**. Repare que essa honestidade não enfraquece a cena: ela apenas impede que a experiência de um seja lida como destino de todos.",
+      "highlights": [
+        {
+          "title": "Ilustração, não norma",
+          "content": "A cena **ilustra** a perturbação; não estabelece regra para todos os Espíritos."
+        },
+        {
+          "title": "Limites explícitos",
+          "content": "A obra não fixa **duração**, **universalidade** nem forma única do despertar."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 1–2",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "honestidade",
+      "commonMisunderstanding": "Tomar a cena como descrição completa do que acontece com todos após a morte.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não universaliza a perturbação, não lhe atribui duração fixa e não descreve um despertar idêntico para todos. Isso permanece em aberto na narrativa."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 6,
+      "title": "Perturbação: tema, não definição da aula",
+      "learningGoal": "Evitar que uma síntese pedagógica adquira aparência de definição doutrinária.",
+      "content": "Cuidado com um atalho tentador. Podemos, nesta aula, dizer que a perturbação aparece como **dificuldade de se situar diante de uma nova condição** — mas isso é uma **síntese pedagógica**, não uma definição formal da Doutrina. A **Codificação** trata do tema em termos próprios; a **narrativa** mostra a perturbação em ato. Vamos notar a diferença: a síntese ajuda a organizar o aprendizado, mas não substitui a fonte. Quando a formulação é da aula, ela deve soar como da aula.",
+      "highlights": [
+        {
+          "title": "Síntese não é definição",
+          "content": "Formulação criada para ensinar não deve parecer **definição doutrinária**."
+        },
+        {
+          "title": "Cada coisa em seu lugar",
+          "content": "Kardec **sistematiza**; a narrativa **mostra**; a aula **organiza** o aprendizado."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 1–2",
+        "codificacao": "O Livro dos Espíritos — perturbação após a morte",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "rigor",
+      "commonMisunderstanding": "Apresentar uma simplificação didática como se fosse definição estabelecida pela Codificação.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "Vale perguntar: em que momento uma síntese feita para ensinar começa a parecer uma verdade que a fonte não formulou?"
+      }
+    },
+    {
+      "slideType": "application",
+      "slideNumber": 7,
+      "title": "Ler a obra sem devorar o caso",
+      "learningGoal": "Aplicar a distinção entre caso e princípio à própria leitura de obras narrativas espíritas.",
+      "content": "O que fazemos com isso na prática? Quando voltarmos a **Nosso Lar**, podemos ler a cena de André Luiz como **caso** — com atenção, sem reduzi-la a exemplo genérico. E quando estudarmos a **Codificação**, podemos buscar ali o **tema** que dá contexto ao caso. A aplicação nasce da própria estrutura da obra: há um **despertar narrado** e há um **interlocutor** que chega. Ler assim é deixar a obra falar primeiro e a doutrina iluminar depois, sem inverter a ordem.",
+      "highlights": [
+        {
+          "title": "Ordem da leitura",
+          "content": "Primeiro a **cena**; depois o **tema** doutrinário que a ilumina."
+        },
+        {
+          "title": "Ancoragem na obra",
+          "content": "A aplicação vem do **despertar narrado** e da chegada de **Clarêncio**, não de uma moral genérica."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 1–2",
+        "codificacao": "O Livro dos Espíritos — perturbação após a morte",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "apropriação",
+      "commonMisunderstanding": "Usar a doutrina para explicar a cena antes de deixar a cena apresentar sua própria pergunta.",
+      "microStory": "",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "Ao reencontrar narrativas mediúnicas, perguntar sempre: isto é o relato de um caso ou a formulação de um princípio? A resposta muda o modo de ler."
+      }
+    },
+    {
+      "slideType": "synthesis",
+      "slideNumber": 8,
+      "title": "Duas vidas, dois registros",
+      "learningGoal": "Sintetizar a relação entre narrativa e sistematização sem confundir os registros.",
+      "content": "Fechamos o percurso com uma imagem simples: **duas vidas** — a que a narrativa mostra e a que a doutrina sistematiza — pedem **dois registros** de leitura. **Nosso Lar** nos dá o **caso**; **O Livro dos Espíritos** nos dá o **tema**. A aproximação entre eles é real, mas específica: ambos admitem a **possibilidade de perturbação após a desencarnação**. O que os separa é a **natureza do discurso**: um narra, o outro sistematiza. Manter essa distinção é o que permite estudar as duas fontes sem trair nenhuma.",
+      "highlights": [
+        {
+          "title": "Aproximação específica",
+          "content": "Ambas admitem a **perturbação após a desencarnação** — e só nisso se aproximam."
+        },
+        {
+          "title": "Separação necessária",
+          "content": "**Narrar** e **sistematizar** são registros distintos que não se substituem."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 1–2",
+        "codificacao": "O Livro dos Espíritos — perturbação após a morte",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "síntese",
+      "commonMisunderstanding": "Concluir que, por se aproximarem, as fontes dizem a mesma coisa.",
+      "microStory": "",
+      "specialElement": {
+        "type": "comparative_study",
+        "content": "A comparação produziu compreensão nova: a perturbação pode ser estudada como tema doutrinário e reconhecida como experiência narrada, sem que uma leitura absorva a outra."
+      }
+    },
+    {
+      "slideType": "closing",
+      "slideNumber": 9,
+      "title": "Perguntas que ficam abertas",
+      "learningGoal": "Encerrar com questões abertas, sem resposta pronta, preservando o caso narrado.",
+      "content": "Deixamos a aula com perguntas, não com respostas fechadas. Se a cena de **André Luiz** é um caso, o que ela **ilumina** e o que ela **deixa em aberto** sobre a perturbação? Se a **Codificação** sistematiza o tema, como evitar que a sistematização apague o caráter **singular** da experiência? Repare que a força do estudo está justamente aqui: em sustentar as duas coisas ao mesmo tempo, sem reduzir uma à outra. As próximas aulas seguirão esse fio, sempre com a obra no centro.",
+      "highlights": [
+        {
+          "title": "Caso e tema juntos",
+          "content": "Sustentar **narrativa** e **doutrina** sem reduzir uma à outra."
+        },
+        {
+          "title": "O que permanece aberto",
+          "content": "O que a cena **ilumina** e o que ela **deixa em aberto** sobre a perturbação."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 1–2",
+        "codificacao": "O Livro dos Espíritos — perturbação após a morte",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "abertura",
+      "commonMisunderstanding": "Encerrar a aula com uma definição fechada da perturbação, como se tudo estivesse resolvido.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "As perguntas finais não têm resposta pronta: elas convidam a continuar o estudo com a obra aberta e a doutrina como interlocutora."
+      }
+    }
+  ],
+  "reflectionQuestions": [
+    {
+      "question": "Quando você lê uma narrativa espírita, você costuma tratá-la como caso particular ou já a lê como regra para todos? O que muda na sua leitura ao perceber essa diferença?",
+      "focus": "Autoconhecimento"
+    },
+    {
+      "question": "Na próxima vez que estudar um capítulo de Nosso Lar, que pergunta você levará consigo para distinguir o que é cena narrada do que é princípio doutrinário?",
+      "focus": "Aplicação prática"
+    },
+    {
+      "question": "Se a experiência de André Luiz não é a experiência de todos, como isso transforma a maneira como você acolhe o sofrimento e a desorientação do outro, sem impor a ele o seu próprio caminho?",
+      "focus": "Transformação moral"
+    }
+  ]
+}

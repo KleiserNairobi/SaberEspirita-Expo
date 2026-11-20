@@ -1,0 +1,391 @@
+{
+  "id": "NL-13",
+  "courseId": "nosso-lar-estudo-guiado",
+  "title": "Entre as trevas e a música",
+  "source": "Nosso Lar",
+  "chapter": "Caps. 43–45",
+  "durationMinutes": 50,
+  "forumEnabled": true,
+  "subtitle": "Umbral e trevas: lugares ou estados? Uma leitura lado a lado com a Codificação",
+  "mainWork": {
+    "title": "Nosso Lar",
+    "author": "André Luiz",
+    "psychography": "Francisco Cândido Xavier"
+  },
+  "theme": "Umbral e trevas: lugares ou estados",
+  "objective": "Examinar se Umbral e trevas são lugares ou estados e como a obra os distingue, comparando as passagens dos capítulos 43–45 com o tratamento que a Codificação dá aos estados de sofrimento do Espírito.",
+  "cognitiveIntensity": {
+    "level": "avançado",
+    "description": "Exige distinguir descrição narrativa de princípio doutrinário, separar o que a obra afirma do que apenas sugere, e comparar duas fontes de naturezas diferentes sem confundir experiência narrada com definição doutrinária. O aluno precisa sustentar a pergunta 'lugar ou estado?' sem resolvê-la apressadamente."
+  },
+  "premiumDifferential": "Coloca as descrições de Umbral (cap. 12, por Lísias) e de trevas (cap. 44, regiões mais inferiores e ambientes formados pela vibração compartilhada) lado a lado com o modo como a Codificação trata os estados de sofrimento do Espírito, mostrando em que ponto a comparação esclarece e em que ponto a obra narrativa não oferece mapa doutrinário.",
+  "narrativeStrategy": "Abre pela pergunta que a própria obra provoca — se as trevas são um lugar para onde se vai ou um estado em que se permanece — e conduz o aluno a observar o que Lísias efetivamente descreve, o que a Codificação sistematiza e onde a comparação termina.",
+  "slides": [
+    {
+      "slideType": "opening",
+      "slideNumber": 1,
+      "title": "Um lugar ou um estado?",
+      "learningGoal": "Apresentar a pergunta central da aula a partir da própria obra, antes de qualquer explicação.",
+      "content": "Quando **Lísias** fala das regiões mais inferiores, surge uma pergunta que a obra não resolve de imediato: as **trevas** são um lugar para onde se vai ou um estado em que se permanece? Repare que a narrativa descreve ambientes, mas também descreve **vibração compartilhada**. Vamos notar que essa dupla descrição é justamente o que torna a pergunta interessante — e o que exige cuidado antes de qualquer resposta apressada.",
+      "highlights": [
+        {
+          "title": "A pergunta da aula",
+          "content": "**Lugar ou estado?** A obra descreve ambientes, mas também fala de vibração compartilhada."
+        },
+        {
+          "title": "Cuidado inicial",
+          "content": "Não resolver a pergunta antes de observar **o que a obra realmente diz**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 43–44",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "curiosidade",
+      "commonMisunderstanding": "Pensar que a obra já respondeu definitivamente se trevas são lugar ou estado, quando ela descreve sem sistematizar.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "A pergunta nasce do próprio texto: Lísias chama de trevas as regiões mais inferiores e explica como os ambientes se formam pela vibração compartilhada (cap. 44)."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 2,
+      "title": "O que Lísias chama de trevas",
+      "learningGoal": "Delimitar o que a obra efetivamente apresenta sobre as trevas no capítulo 44.",
+      "content": "No capítulo 44, **Lísias** chama de **trevas** as regiões mais inferiores e explica como os ambientes se formam pela **vibração compartilhada**. Repare que a ênfase recai sobre o modo de formação do ambiente — não sobre uma localização geográfica precisa. A obra apresenta as trevas como **regiões**, mas o critério que Lísias oferece é vibratório. Essa é uma distinção que precisamos guardar.",
+      "highlights": [
+        {
+          "title": "O critério de Lísias",
+          "content": "As trevas são descritas como **regiões mais inferiores**, formadas pela **vibração compartilhada**."
+        },
+        {
+          "title": "O que isso sugere",
+          "content": "O critério apresentado é **vibratório**, não geográfico — mas a obra não sistematiza essa distinção."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 44 — As Trevas",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "atenção",
+      "commonMisunderstanding": "Ler 'regiões inferiores' como um mapa geográfico do mundo espiritual, ignorando o critério vibratório que a própria obra oferece.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "O capítulo 44 apresenta Lísias explicando que as trevas são as regiões mais inferiores e que os ambientes se formam pela vibração compartilhada."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 3,
+      "title": "O Umbral descrito no cap. 12",
+      "learningGoal": "Retomar a descrição do Umbral feita por Lísias no capítulo 12 para colocá-la lado a lado com as trevas do capítulo 44.",
+      "content": "Vale voltar ao **capítulo 12**, quando **Lísias** descreve o **Umbral** a André Luiz. Lá, o Umbral aparece como zona de transição, com regiões e estados associados à condição dos Espíritos que ali se demoram. Repare que a obra usa **imagens de lugar** — zonas, regiões — para descrever algo que também se manifesta como **condição do Espírito**. É essa dupla face que a aula precisa examinar.",
+      "highlights": [
+        {
+          "title": "Umbral no cap. 12",
+          "content": "Descrito por Lísias como **zona de transição**, com regiões associadas à condição dos Espíritos."
+        },
+        {
+          "title": "Dupla face",
+          "content": "A obra usa **imagens de lugar** para descrever o que também se manifesta como **condição**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 12 — O Umbral",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "reconhecimento",
+      "commonMisunderstanding": "Tomar a descrição do cap. 12 como um mapa definitivo do Umbral, esquecendo que se trata de uma explicação narrativa a André Luiz.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "O capítulo 12 traz a descrição do Umbral por Lísias, que servirá de ponto de comparação com as trevas do capítulo 44."
+      }
+    },
+    {
+      "slideType": "comparative",
+      "slideNumber": 4,
+      "title": "Umbral e trevas lado a lado",
+      "learningGoal": "Organizar a comparação entre Umbral (cap. 12) e trevas (cap. 44) em torno da pergunta 'lugar ou estado?'.",
+      "content": "Colocando as duas descrições **lado a lado**, o **Umbral** (cap. 12) aparece como zona de transição, com regiões e estados; as **trevas** (cap. 44) aparecem como regiões mais inferiores, formadas pela **vibração compartilhada**. Repare que ambas usam linguagem de lugar, mas ambas também descrevem **condição**. A obra não diz explicitamente qual das duas leituras é a correta — e é justamente aí que a comparação com a Codificação pode ajudar.",
+      "highlights": [
+        {
+          "title": "Umbral (cap. 12)",
+          "content": "**Zona de transição**, com regiões e estados associados à condição dos Espíritos."
+        },
+        {
+          "title": "Trevas (cap. 44)",
+          "content": "**Regiões mais inferiores**, formadas pela **vibração compartilhada**."
+        },
+        {
+          "title": "O que a obra não diz",
+          "content": "A obra **não afirma** explicitamente se são lugar ou estado — descreve ambas as faces."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 12 e 44",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "tensão intelectual",
+      "commonMisunderstanding": "Escolher apressadamente uma das leituras (lugar ou estado) sem notar que a obra sustenta as duas faces.",
+      "microStory": "",
+      "specialElement": {
+        "type": "comparative_study",
+        "content": "Comparação entre Umbral (cap. 12) e trevas (cap. 44): ambas usam linguagem de lugar, mas ambas descrevem condição. A obra não resolve explicitamente a pergunta."
+      },
+      "image": {
+        "url": "",
+        "caption": "Umbral e trevas: o que cada descrição apresenta e a pergunta que permanece",
+        "alt": "Quadro de duas colunas: à esquerda Umbral (cap. 12), zona de transição com regiões e estados; à direita trevas (cap. 44), regiões mais inferiores formadas pela vibração compartilhada; abaixo, a pergunta 'lugar ou estado?' e a nota de que a obra não diz explicitamente.",
+        "aspectRatio": 1.77
+      },
+      "imagePrompt": "Quadro lado a lado com duas colunas. Coluna esquerda, título 'Umbral (cap. 12)': itens 'zona de transição', 'regiões e estados', 'condição do Espírito'. Coluna direita, título 'Trevas (cap. 44)': itens 'regiões mais inferiores', 'vibração compartilhada', 'condição do Espírito'. Abaixo das duas colunas, uma faixa central com a pergunta 'Lugar ou estado?' e, abaixo dela, a nota 'A obra não diz explicitamente'. Sem setas entre as colunas; apenas o paralelo e a pergunta comum."
+    },
+    {
+      "slideType": "dialogue",
+      "slideNumber": 5,
+      "title": "O que a Codificação oferece",
+      "learningGoal": "Apresentar, por tema e sem numeração de questões, o modo como a Codificação trata os estados de sofrimento do Espírito e a relação entre lugar e estado.",
+      "content": "A **Codificação** trata dos **estados de sofrimento do Espírito** e da relação entre **lugar e estado**, sem fixar um mapa do mundo espiritual. Uma leitura possível é esta: o que a obra narrativa descreve como regiões pode ser compreendido, à luz da Codificação, como **estado do Espírito** que se expressa em ambiente correspondente. Repare que a aproximação é de **compreensão**, não de identidade — as fontes têm naturezas diferentes.",
+      "highlights": [
+        {
+          "title": "O foco da Codificação",
+          "content": "Trata dos **estados de sofrimento** e da relação **lugar/estado**, sem fixar mapa do mundo espiritual."
+        },
+        {
+          "title": "A aproximação",
+          "content": "Regiões narradas podem ser compreendidas como **estado que se expressa em ambiente** — é compreensão, não identidade."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 12 e 44",
+        "codificacao": "O Livro dos Espíritos — estados de sofrimento do Espírito; lugar ou estado",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "clareza",
+      "commonMisunderstanding": "Tomar a aproximação como se a Codificação confirmasse literalmente a descrição narrativa de Nosso Lar.",
+      "microStory": "",
+      "specialElement": {
+        "type": "dialogue_with_codification",
+        "content": "A Codificação trata dos estados de sofrimento do Espírito e da relação entre lugar e estado. A aproximação com a obra é de compreensão, não de identidade: as fontes têm naturezas diferentes."
+      }
+    },
+    {
+      "slideType": "distinction",
+      "slideNumber": 6,
+      "title": "Onde a comparação termina",
+      "learningGoal": "Declarar explicitamente o limite da comparação entre a narrativa e a Codificação.",
+      "content": "É preciso declarar com clareza: **estados narrados não são mapa doutrinário**. A obra descreve a experiência de **André Luiz** e as explicações de **Lísias**; a Codificação sistematiza princípios sobre a condição do Espírito. Repare que a comparação esclarece a pergunta 'lugar ou estado?', mas **não autoriza** transformar as regiões narradas em geografia do mundo espiritual. Onde a obra narra, a Doutrina não necessariamente define — e vice-versa.",
+      "highlights": [
+        {
+          "title": "Limite explícito",
+          "content": "**Estados narrados não são mapa doutrinário.** A obra narra; a Codificação sistematiza."
+        },
+        {
+          "title": "O que não se pode fazer",
+          "content": "Transformar as **regiões narradas** em geografia oficial do mundo espiritual."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 43–44",
+        "codificacao": "O Livro dos Espíritos — estados de sofrimento do Espírito",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "cautela",
+      "commonMisunderstanding": "Usar a Codificação para 'validar' literalmente as descrições de Nosso Lar, como se a obra narrativa fosse um tratado doutrinário.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "A obra narra experiência e explicação de personagem; a Codificação sistematiza princípios. A comparação esclarece a pergunta, mas não transforma a narrativa em mapa doutrinário."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 7,
+      "title": "O cap. 43: em conversação",
+      "learningGoal": "Situar o capítulo 43 no conjunto dos capítulos estudados e seu papel na transição para o tema das trevas.",
+      "content": "O **capítulo 43 — Em Conversação** prepara o terreno. Nele, a conversa entre personagens conduz às questões que o capítulo seguinte desenvolverá sobre as **regiões mais inferiores**. Repare que a obra constrói o tema por **diálogo**, não por tratado: o leitor acompanha a conversa e, com ela, vai formulando a pergunta. É por isso que a comparação com a Codificação precisa respeitar esse caráter narrativo.",
+      "highlights": [
+        {
+          "title": "Papel do cap. 43",
+          "content": "Prepara o tema por **conversa**, conduzindo às questões sobre as regiões mais inferiores."
+        },
+        {
+          "title": "Construção narrativa",
+          "content": "A obra constrói o tema por **diálogo**, não por tratado — o que pede cuidado na comparação."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 43 — Em Conversação",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "acompanhamento",
+      "commonMisunderstanding": "Ler o cap. 43 isoladamente como se fosse uma exposição doutrinária, sem notar seu papel de preparação narrativa.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "O capítulo 43, 'Em Conversação', prepara por diálogo o tema que o capítulo 44 desenvolverá sobre as trevas."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 8,
+      "title": "O cap. 45: no campo da música",
+      "learningGoal": "Apresentar o capítulo 45 e o contraste entre as trevas e o campo da música, sem universalizar a experiência narrada.",
+      "content": "O **capítulo 45 — No Campo da Música** introduz outro registro: o **campo da música** e o **noivado na espiritualidade**. Repare no contraste com o capítulo anterior: as trevas descrevem **regiões mais inferiores**; a música descreve outro campo de experiência. A obra não faz disso um tratado sobre os planos espirituais — apresenta **experiências narradas**. É importante não universalizar o que é apresentado como vivência de personagens.",
+      "highlights": [
+        {
+          "title": "Cap. 45",
+          "content": "Apresenta o **campo da música** e o **noivado na espiritualidade**, em contraste com as trevas."
+        },
+        {
+          "title": "Cuidado",
+          "content": "São **experiências narradas**, não um tratado sobre os planos espirituais."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 45 — No Campo da Música",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "contraste",
+      "commonMisunderstanding": "Transformar a descrição do campo da música em princípio universal sobre a espiritualidade.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "O capítulo 45 apresenta o campo da música e o noivado na espiritualidade, em contraste com as trevas do capítulo 44."
+      }
+    },
+    {
+      "slideType": "application",
+      "slideNumber": 9,
+      "title": "O que muda na prática",
+      "learningGoal": "Construir uma aplicação concreta a partir da pergunta 'lugar ou estado?', ancorada nas descrições da obra.",
+      "content": "Se as trevas são também **estado**, então o que a obra descreve como região pode ter correspondência em **condição interior** — e isso muda o modo de olhar para o sofrimento alheio. Repare que a aplicação nasce da própria descrição de **vibração compartilhada**: ambientes se formam pelo que se compartilha. Uma leitura possível é que a pergunta 'lugar ou estado?' não é só teórica — ela orienta como compreendemos a **presença** diante de quem sofre.",
+      "highlights": [
+        {
+          "title": "Da descrição à prática",
+          "content": "Se as trevas são também **estado**, a região narrada pode ter correspondência em **condição interior**."
+        },
+        {
+          "title": "Ancoragem na obra",
+          "content": "A aplicação nasce da **vibração compartilhada**: ambientes se formam pelo que se compartilha."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 44",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "responsabilidade",
+      "commonMisunderstanding": "Transformar a aplicação em receita moral genérica, sem vínculo com a descrição da obra.",
+      "microStory": "",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "A aplicação nasce da descrição de vibração compartilhada (cap. 44): se ambientes se formam pelo que se compartilha, a pergunta 'lugar ou estado?' orienta o modo de estar presente diante do sofrimento."
+      }
+    },
+    {
+      "slideType": "synthesis",
+      "slideNumber": 10,
+      "title": "O que a obra não diz",
+      "learningGoal": "Declarar explicitamente o que a obra não afirma, para encerrar a comparação com honestidade.",
+      "content": "Antes de concluir, é preciso dizer o que a obra **não diz**. Ela **não afirma** que Umbral e trevas sejam apenas estados, nem que sejam apenas lugares; **não oferece** um mapa do mundo espiritual; **não sistematiza** a relação entre região e condição. Repare que essa ausência não é falha — é a natureza de uma **obra narrativa**. Declarar o que a obra não diz é parte de lê-la com rigor.",
+      "highlights": [
+        {
+          "title": "Não afirma",
+          "content": "A obra **não diz** se são apenas estados ou apenas lugares — descreve as duas faces."
+        },
+        {
+          "title": "Não sistematiza",
+          "content": "**Não oferece mapa** nem sistematiza a relação entre região e condição."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 12, 43–45",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "honestidade intelectual",
+      "commonMisunderstanding": "Preencher as lacunas da obra com sistematizações que ela não faz, como se fossem afirmações dela.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não afirma se Umbral e trevas são apenas estados ou apenas lugares; não oferece mapa do mundo espiritual; não sistematiza a relação entre região e condição. Essa ausência é própria da natureza narrativa da obra."
+      }
+    },
+    {
+      "slideType": "reflection",
+      "slideNumber": 11,
+      "title": "Perguntas que permanecem",
+      "learningGoal": "Conduzir o aluno a formular suas próprias perguntas a partir da comparação, sem resposta pronta.",
+      "content": "A pergunta 'lugar ou estado?' não se encerra aqui. Repare que a obra nos deixa com uma **tensão produtiva**: descreve regiões, mas fala de vibração; narra experiências, mas não sistematiza. Uma leitura possível é que essa tensão nos convida a **pensar com a obra**, e não apenas sobre ela. As perguntas finais não têm resposta pronta — elas são o começo do estudo que continua.",
+      "highlights": [
+        {
+          "title": "Tensão produtiva",
+          "content": "A obra descreve regiões, mas fala de **vibração**; narra, mas **não sistematiza**."
+        },
+        {
+          "title": "Convite",
+          "content": "Pensar **com** a obra, e não apenas **sobre** ela."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 43–45",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "abertura",
+      "commonMisunderstanding": "Esperar que a aula entregue uma resposta definitiva para a pergunta 'lugar ou estado?'.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "A aula se encerra com a tensão entre descrição de regiões e vibração compartilhada, convidando o aluno a continuar o estudo sem resposta pronta."
+      }
+    }
+  ],
+  "reflectionQuestions": [
+    {
+      "question": "Quando você pensa em 'trevas', sua primeira imagem é de um lugar ou de um estado interior? O que essa imagem revela sobre como você compreende o sofrimento?",
+      "focus": "Autoconhecimento"
+    },
+    {
+      "question": "Se os ambientes se formam pela vibração compartilhada, como você poderia aplicar essa ideia concreta nas relações que vive hoje?",
+      "focus": "Aplicação prática"
+    },
+    {
+      "question": "O que mudaria na sua forma de olhar para quem sofre se você deixasse de perguntar 'onde essa pessoa está?' e passasse a perguntar 'em que estado ela se encontra?'",
+      "focus": "Transformação moral"
+    }
+  ]
+}

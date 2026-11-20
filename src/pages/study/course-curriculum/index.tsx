@@ -34,7 +34,7 @@ import { CourseMaterialsTab } from "@/pages/study/course-details/components/Cour
 import { AppStackParamList } from "@/routers/types";
 import { courseApiService } from "@/services/api/courseApiService";
 import { parseExerciseResults } from "@/services/api/userActivityApiService";
-import { useAuthStore } from "@/stores/authStore";
+import { useAuthStore, useIsPremium } from "@/stores/authStore";
 import { ILesson } from "@/types/course";
 import { loadBoolean, saveBoolean } from "@/utils/Storage";
 import { canAccessLesson, isLessonFreeTrial } from "@/utils/courseAccess";
@@ -161,6 +161,7 @@ export function CourseCurriculumScreen() {
   const feedbackSheetRef = useRef<BottomSheetModal>(null);
   const queryClient = useQueryClient();
   const { user, isGuest } = useAuthStore();
+  const isPremium = useIsPremium();
 
   // ✅ NOVO: Estado para esconder botão instantaneamente
   const [hasGloballySubmittedState, setHasGloballySubmittedState] = useState<boolean>(
@@ -306,7 +307,7 @@ export function CourseCurriculumScreen() {
     }
 
     // 2. Se a aula estiver bloqueada por regra de assinatura (Smart Gate)
-    const hasAccess = canAccessLesson(lesson, course, false);
+    const hasAccess = canAccessLesson(lesson, course, isPremium);
     if (!hasAccess) {
       return LessonStatus.LOCKED;
     }

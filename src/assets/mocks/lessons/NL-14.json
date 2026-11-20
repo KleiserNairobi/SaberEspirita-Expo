@@ -1,0 +1,349 @@
+{
+  "id": "NL-14",
+  "courseId": "nosso-lar-estudo-guiado",
+  "title": "O regresso à tarefa",
+  "source": "Nosso Lar",
+  "chapter": "Caps. 46–49",
+  "durationMinutes": 50,
+  "forumEnabled": true,
+  "subtitle": "Missão e reencarnação: três regressos e o que eles ensinam",
+  "mainWork": {
+    "title": "Nosso Lar",
+    "author": "André Luiz",
+    "psychography": "Francisco Cândido Xavier"
+  },
+  "theme": "Missão e reencarnação na narrativa",
+  "objective": "Examinar o que a decisão da mãe de reencarnar, a volta de Laura e o regresso ao lar dizem sobre missão e reencarnação.",
+  "cognitiveIntensity": {
+    "level": "avançado",
+    "description": "Exige articular três episódios narrativos distintos e distinguir, em cada um, o que é experiência particular e o que pode ser lido como princípio doutrinário. O aluno precisa comparar a narrativa com a Codificação sem universalizar casos e sem transformar missão narrada em categoria fixa."
+  },
+  "premiumDifferential": "Coloca três episódios de regresso — o sacrifício da mãe, a volta de Laura e o retorno de André ao lar — em diálogo com a Codificação sobre reencarnação, mostrando onde a narrativa ilustra princípios e onde cada caso permanece singular, sem universalizar a experiência narrada.",
+  "narrativeStrategy": "Abre pela pergunta que os três regressos provocam — por que voltar? — e conduz o aluno a observar cada caso separadamente, notar o que os aproxima e o que os distingue, para só então comparar com a doutrina da reencarnação. A metodologia fica invisível; o aluno descobre a obra.",
+  "slides": [
+    {
+      "slideType": "opening",
+      "slideNumber": 1,
+      "title": "Por que voltar?",
+      "learningGoal": "Apresentar a pergunta central dos três episódios de regresso.",
+      "content": "Os capítulos 46 a 49 de **Nosso Lar** reúnem três movimentos de retorno. Uma mãe decide **voltar à carne** para ajudar o marido. **Laura** retorna. E **André Luiz** regressa à casa. Antes de explicar qualquer coisa, vale guardar a pergunta que a obra provoca: o que move alguém a deixar uma condição já conquistada e **recomeçar**? Repare que cada caso tem motivo próprio — e é justamente aí que o estudo começa.",
+      "highlights": [
+        {
+          "title": "Três regressos, três motivos",
+          "content": "Os capítulos 46–49 não repetem o mesmo caso: cada retorno tem **motivação própria** que a narrativa apresenta."
+        },
+        {
+          "title": "A pergunta que fica",
+          "content": "Por que alguém **volta**? A obra responde por cenas, não por definições."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 46–49",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "curiosidade",
+      "commonMisunderstanding": "Pensar que todo regresso tem a mesma causa ou que a obra oferece uma teoria única da reencarnação.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "Os três regressos estão em capítulos consecutivos de Nosso Lar: o sacrifício da mãe (cap. 46), a volta de Laura (cap. 47) e o regresso de André à casa (cap. 49)."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 2,
+      "title": "O sacrifício da mãe",
+      "learningGoal": "Observar o primeiro regresso: a decisão materna de voltar à carne.",
+      "content": "No cap. 46, uma **mãe** decide voltar à carne para ajudar o **marido**. A narrativa não apresenta essa decisão como fuga nem como castigo: apresenta-a como **escolha orientada por vínculo e necessidade**. Vamos notar o que o texto mostra e o que não mostra. Ele mostra a decisão e seu motivo; não descreve o íntimo da personagem nem promete que todo regresso tenha esse formato. Uma leitura possível é que a obra narra um **caso concreto**, não uma regra geral.",
+      "highlights": [
+        {
+          "title": "Decisão, não fatalidade",
+          "content": "A volta da mãe aparece como **escolha motivada por vínculo**, não como imposição."
+        },
+        {
+          "title": "Caso, não regra",
+          "content": "A obra narra **um caso**; não define o que todo regresso deve ser."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 46 — Sacrifício de Mulher",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "ternura",
+      "commonMisunderstanding": "Tomar a decisão da mãe como modelo obrigatório de todo regresso reencarnatório.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "A narrativa apresenta uma decisão particular com motivo particular. Não é uma definição doutrinária do que seja missão nem do que deva mover toda reencarnação."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 3,
+      "title": "A volta de Laura",
+      "learningGoal": "Comparar o regresso de Laura com o da mãe, notando diferenças de motivo.",
+      "content": "No cap. 47, **Laura** retorna. Se o caso anterior girava em torno de **vínculo e necessidade**, o de Laura pede que o aluno observe o que a narrativa efetivamente diz sobre o seu retorno — e o que deixa em silêncio. Repare que a obra não uniformiza: dois regressos lado a lado, e **motivações distintas**. É exatamente essa diferença que impede tratar missão como categoria fixa. Cada episódio precisa ser lido pelo que apresenta, sem preenchimento inventado.",
+      "highlights": [
+        {
+          "title": "Dois casos, não um",
+          "content": "Mãe e Laura voltam, mas a obra **não iguala** os motivos."
+        },
+        {
+          "title": "Missão não é categoria fixa",
+          "content": "A narrativa mostra missões **singulares**, não um molde único."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 47 — A Volta de Laura",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "atenção",
+      "commonMisunderstanding": "Supor que Laura volta pelo mesmo motivo da mãe, sem que a obra o afirme.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não afirma que o retorno de Laura tenha a mesma causa do retorno da mãe, nem apresenta um princípio geral que explique todos os regressos."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 4,
+      "title": "O culto familiar",
+      "learningGoal": "Situar o cap. 48 e o tratamento pontual da mediunidade.",
+      "content": "O cap. 48 traz o **culto familiar** e a única cena de **comunicação com a Terra** nestes capítulos. Aqui a **mediunidade** aparece, mas de passagem: a obra não a sistematiza. Vamos notar o que isso significa para o estudo. Uma cena de comunicação não é um tratado sobre mediunidade; ela serve à narrativa. Por isso, evitamos transformar o episódio em aula de mediunidade. O foco da lição segue sendo **missão e reencarnação**, e o cap. 48 entra como contexto.",
+      "highlights": [
+        {
+          "title": "Mediunidade pontual",
+          "content": "A comunicação com a Terra aparece **de passagem**, sem sistematização."
+        },
+        {
+          "title": "Cena não é tratado",
+          "content": "Uma cena narrativa não define doutrina sobre **mediunidade**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 48 — Culto Familiar",
+        "codificacao": "Codificação — mediunidade (pontual)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "recolhimento",
+      "commonMisunderstanding": "Tratar a cena de comunicação do cap. 48 como exposição doutrinária completa sobre mediunidade.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "A mediunidade é tocada apenas pontualmente no cap. 48. A obra narra uma cena; não oferece sistematização doutrinária do tema."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 5,
+      "title": "O regresso de André à casa",
+      "learningGoal": "Observar o terceiro regresso e seu caráter de retorno ao lar.",
+      "content": "No cap. 49, **André Luiz** regressa à casa. Depois de dois casos que envolvem voltar à carne, este é um retorno de outra ordem: **regresso ao lar**. A narrativa mostra o personagem diante de um espaço que conhece, e é isso que o texto apresenta. Não convém atribuir a André sentimentos que a obra não descreve. O que podemos observar é o **movimento de retorno** e o que ele acrescenta ao conjunto dos três episódios. Uma leitura possível é que o lar, aqui, também é tarefa.",
+      "highlights": [
+        {
+          "title": "Outra ordem de retorno",
+          "content": "O regresso de André é **retorno ao lar**, distinto dos retornos à carne."
+        },
+        {
+          "title": "O que o texto mostra",
+          "content": "A obra apresenta o **movimento**; não inventa o íntimo do personagem."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 49 — Regressando à Casa",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "expectativa",
+      "commonMisunderstanding": "Atribuir a André Luiz pensamentos ou emoções que a narrativa não apresenta.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "O cap. 49 narra o regresso de André à casa. O texto apresenta o movimento de retorno; o íntimo do personagem não é descrito."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 6,
+      "title": "O que a Codificação acrescenta",
+      "learningGoal": "Colocar os três regressos em diálogo com a doutrina da reencarnação.",
+      "content": "Agora podemos perguntar o que a **Codificação** acrescenta. Em **O Livro dos Espíritos**, a reencarnação é apresentada como **lei** e como **oportunidade de progresso** — não como episódio isolado. A aproximação com a narrativa é específica: nos três casos, voltar aparece ligado a **necessidade e tarefa**. Mas repare na diferença de natureza: a obra **narra** casos; a Codificação **sistematiza** o princípio. As duas fontes se aproximam quanto à continuidade e ao recomeço, não quanto ao formato de cada caso.",
+      "highlights": [
+        {
+          "title": "Convergência específica",
+          "content": "Aproximação quanto à **continuidade e ao recomeço**, não quanto ao formato dos casos."
+        },
+        {
+          "title": "Narrar e sistematizar",
+          "content": "A obra narra; a Codificação **sistematiza** o princípio da reencarnação."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 46–49",
+        "codificacao": "O Livro dos Espíritos — reencarnação (por tema)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "clareza",
+      "commonMisunderstanding": "Dizer que as obras 'convergem' sem especificar em quê — ou tratar a narrativa como se fosse sistematização doutrinária.",
+      "microStory": "",
+      "specialElement": {
+        "type": "dialogue_with_codification",
+        "content": "A aproximação entre Nosso Lar e O Livro dos Espíritos ocorre quanto à continuidade da existência e à reencarnação como oportunidade de progresso. A diferença de natureza — narrativa versus sistematização — deve ser preservada."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 7,
+      "title": "Missão narrada não é categoria fixa",
+      "learningGoal": "Distinguir missão como tema narrado de missão como conceito doutrinário fixo.",
+      "content": "Uma tentação aqui é transformar **missão** em categoria pronta: 'todo regresso é missão', 'missão é sempre sacrifício'. A obra não faz isso. Ela mostra **três regressos com motivos distintos** e deixa o leitor observar. A Codificação, por sua vez, trata da reencarnação como lei e oportunidade — sem fixar um formato único de missão. Uma leitura possível é que 'missão', nesta aula, funciona como **fio narrativo**, não como definição doutrinária fechada. Guardar essa distinção é o que mantém o estudo honesto.",
+      "highlights": [
+        {
+          "title": "Fio narrativo, não definição",
+          "content": "Missão, aqui, organiza a leitura dos casos; **não é conceito fechado**."
+        },
+        {
+          "title": "Três motivos distintos",
+          "content": "A obra impede a redução de todo regresso a **um único formato**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 46–49",
+        "codificacao": "O Livro dos Espíritos — reencarnação (por tema)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "cautela",
+      "commonMisunderstanding": "Transformar 'missão' em categoria doutrinária fixa que a obra não formula.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Missão narrada não é categoria doutrinária fixa. A obra apresenta casos; a Codificação trata da reencarnação como lei e oportunidade, sem fixar um formato único de missão."
+      }
+    },
+    {
+      "slideType": "content",
+      "slideNumber": 8,
+      "title": "O que a obra não diz",
+      "learningGoal": "Declarar os limites do que pode ser afirmado a partir dos capítulos.",
+      "content": "Vale dizer com clareza o que a obra **não diz**. Ela não afirma que todo Espírito reencarna pelo mesmo motivo; não promete que todo regresso seja sacrifício; não apresenta o cap. 48 como tratado de mediunidade; e não descreve o íntimo dos personagens além do que narra. Esses silêncios não são falhas — são parte do **rigor** da leitura. Repare que respeitar o que não está dito protege o estudo de conclusões que a fonte não sustenta e mantém cada caso no seu lugar.",
+      "highlights": [
+        {
+          "title": "Silêncios que importam",
+          "content": "O que a obra **não afirma** também orienta a leitura."
+        },
+        {
+          "title": "Rigor é respeitar o limite",
+          "content": "Não universalizar casos é parte da **fidelidade à fonte**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 46–49",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "sobriedade",
+      "commonMisunderstanding": "Preencher silêncios da narrativa com conclusões doutrinárias que a obra não oferece.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não universaliza motivos de reencarnação, não trata a mediunidade sistematicamente no cap. 48 e não descreve o íntimo dos personagens além do narrado."
+      }
+    },
+    {
+      "slideType": "application",
+      "slideNumber": 9,
+      "title": "Regressos na própria vida",
+      "learningGoal": "Aplicar a leitura dos três regressos a situações concretas de retorno e recomeço.",
+      "content": "Os três episódios sugerem uma aplicação ancorada na obra. A mãe volta por **vínculo e necessidade**; Laura retorna com motivo próprio; André regressa ao **lar**. Em cada caso, voltar é responder a algo concreto — não a uma regra abstrata. Podemos transportar isso para os nossos próprios recomeços: antes de perguntar 'por que volto?', talvez valha perguntar 'a que necessidade concreta este retorno responde?'. A aplicação nasce do que a obra mostra, não de uma receita moral genérica.",
+      "highlights": [
+        {
+          "title": "Pergunta ancorada",
+          "content": "Antes de 'por que volto?', perguntar **a que necessidade** o retorno responde."
+        },
+        {
+          "title": "Recomeço concreto",
+          "content": "Cada regresso narrado responde a algo **concreto**, não a uma regra abstrata."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 46–49",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "reflexão",
+      "commonMisunderstanding": "Converter a aplicação em regra moral que poderia servir a qualquer aula, sem vínculo com os casos narrados.",
+      "microStory": "",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "A aplicação nasce dos três casos concretos: vínculo e necessidade (mãe), motivo próprio (Laura) e retorno ao lar (André). O aluno é convidado a perguntar a que necessidade concreta seus próprios recomeços respondem."
+      }
+    },
+    {
+      "slideType": "synthesis",
+      "slideNumber": 10,
+      "title": "Três regressos, uma lei",
+      "learningGoal": "Sintetizar a relação entre os três casos narrados e o princípio doutrinário.",
+      "content": "Fechando o percurso: **três regressos**, **motivos distintos**, e um princípio que a Codificação sistematiza — a **reencarnação como lei e oportunidade**. A obra não reduz os casos a um molde; a doutrina não depende de um caso para existir. O que ganhamos ao ler lado a lado é uma compreensão mais precisa: a narrativa **ilustra** a lei sem esgotá-la, e a lei **ilumina** os casos sem apagá-los. Guarde essa tensão — ela é o que torna o estudo de Nosso Lar mais rico do que a simples paráfrase.",
+      "highlights": [
+        {
+          "title": "Ilustrar sem esgotar",
+          "content": "A narrativa **ilustra** a lei; não a esgota."
+        },
+        {
+          "title": "Iluminar sem apagar",
+          "content": "A lei **ilumina** os casos sem apagar suas diferenças."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 46–49",
+        "codificacao": "O Livro dos Espíritos — reencarnação (por tema)",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "síntese",
+      "commonMisunderstanding": "Concluir que a obra 'prova' a doutrina ou que a doutrina 'explica' totalmente cada caso.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "A síntese preserva a tensão entre narrativa e doutrina: uma ilustra sem esgotar; a outra ilumina sem apagar as diferenças dos casos."
+      }
+    }
+  ],
+  "reflectionQuestions": [
+    {
+      "question": "Quando você precisa recomeçar em alguma área da vida, costuma perguntar primeiro 'por quê?' ou 'a que necessidade concreta este retorno responde?'",
+      "focus": "Autoconhecimento"
+    },
+    {
+      "question": "Nos seus retornos e recomeços recentes, qual tem sido o motivo predominante — vínculo, necessidade, tarefa — e como você o identificaria com clareza?",
+      "focus": "Aplicação prática"
+    },
+    {
+      "question": "Se missão não é um formato fixo, o que muda na forma como você olha para as tarefas que assume e para as pessoas a quem elas se dirigem?",
+      "focus": "Transformação moral"
+    }
+  ]
+}

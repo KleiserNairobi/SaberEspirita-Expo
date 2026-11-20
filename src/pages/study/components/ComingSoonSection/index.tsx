@@ -148,6 +148,7 @@ export const ComingSoonSection = React.memo(function ComingSoonSection({
         contentContainerStyle={styles.listContent}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
+          const isDraft = item.status === "DRAFT";
           const categoryName =
             (item.categoryId && CATEGORY_LABELS[item.categoryId]) ||
             "Lançamento";
@@ -187,10 +188,18 @@ export const ComingSoonSection = React.memo(function ComingSoonSection({
                   <Animated.View
                     style={[
                       styles.comingSoonBadge,
+                      isDraft && { backgroundColor: theme.colors.muted },
                       { transform: [{ scale: badgePulse }] },
                     ]}
                   >
-                    <Text style={styles.comingSoonText}>Em breve</Text>
+                    <Text
+                      style={[
+                        styles.comingSoonText,
+                        isDraft && { color: theme.colors.background },
+                      ]}
+                    >
+                      {isDraft ? "Rascunho" : "Em breve"}
+                    </Text>
                   </Animated.View>
 
                   <Text style={styles.categoryPill}>{categoryName}</Text>
@@ -215,7 +224,9 @@ export const ComingSoonSection = React.memo(function ComingSoonSection({
                   ) : null}
 
                   <View style={styles.ctaRow}>
-                    <Text style={styles.ctaText}>Conhecer detalhes</Text>
+                    <Text style={styles.ctaText}>
+                      {isDraft ? "Abrir curso" : "Conhecer detalhes"}
+                    </Text>
                     <ChevronRight size={14} color={theme.colors.primary} />
                   </View>
                 </View>

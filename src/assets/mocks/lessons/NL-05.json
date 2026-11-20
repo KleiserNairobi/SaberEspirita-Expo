@@ -1,0 +1,329 @@
+{
+  "id": "NL-05",
+  "courseId": "nosso-lar-estudo-guiado",
+  "title": "Aprender a receber",
+  "source": "Nosso Lar",
+  "chapter": "Caps. 12–14",
+  "durationMinutes": 50,
+  "forumEnabled": true,
+  "subtitle": "Pedir para servir, preparo interior e intercessões em favor de André Luiz",
+  "mainWork": {
+    "title": "Nosso Lar",
+    "author": "André Luiz",
+    "psychography": "Francisco Cândido Xavier"
+  },
+  "theme": "Pedir para servir, preparo interior e intercessões em favor de André Luiz",
+  "objective": "Examinar o que muda em quem pede para servir e ouve que o título profissional valia como uma \"ficha\" de acesso ao trabalho, a partir das respostas do Ministro do Auxílio e de Clarêncio.",
+  "cognitiveIntensity": {
+    "level": "intermediário",
+    "description": "Exige distinguir o que a narrativa mostra sobre o preparo de André do que a Codificação sistematiza sobre o valor moral do trabalho; exige ainda perceber que a intercessão narrada não é mecanismo automático, mas relação sustentada por mérito e afeto."
+  },
+  "premiumDifferential": "Coloca a cena do pedido de André para servir em diálogo com questões específicas da Codificação sobre lei do trabalho e valor moral da ação, mostrando onde há aproximação e onde a experiência narrada não pode ser universalizada em mecanismo doutrinário.",
+  "narrativeStrategy": "Abre pela pergunta que a obra provoca — o que acontece quando alguém quer servir e descobre que seu título não basta? — e conduz a leitura lado a lado entre a cena de Nosso Lar e a Codificação, deixando as distinções emergirem do próprio texto.",
+  "slides": [
+    {
+      "slideType": "opening",
+      "slideNumber": 1,
+      "title": "O pedido que não é atendido",
+      "learningGoal": "Apresentar a situação de André Luiz que abre a aula: ele pede para servir e a resposta não é imediata.",
+      "content": "André Luiz quer trabalhar. O pedido chega ao **Ministro do Auxílio**, e a resposta não é um sim imediato. Entre o desejo de servir e a tarefa concedida há um intervalo — e é nesse intervalo que a obra coloca sua pergunta. **Repare que** a narrativa não diz que André foi recusado; diz que algo precisava ser considerado. **Vamos notar** o que a cena efetivamente apresenta antes de interpretá-la.",
+      "highlights": [
+        {
+          "title": "O intervalo da resposta",
+          "content": "Entre o **pedido** e a **tarefa** há um espaço que a obra não apressa em preencher."
+        },
+        {
+          "title": "Não é recusa",
+          "content": "A narrativa mostra **espera**, não negação — distinção que muda toda a leitura."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 13 — No Gabinete do Ministro",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "expectativa",
+      "commonMisunderstanding": "Ler a espera como punição ou como sinal de que André não era digno do trabalho.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "A cena do Gabinete do Ministro (cap. 13) é o eixo da aula: o pedido de André e a resposta que ele recebe."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 2,
+      "title": "O que o título valia",
+      "learningGoal": "Examinar a afirmação de que o título profissional funcionava como uma ficha de acesso ao trabalho.",
+      "content": "Na resposta ao pedido, aparece a imagem do **título profissional** valendo como uma **\"ficha\"** de acesso. **Repare que** a obra não desqualifica a competência terrena de André; ela a situa. O título abre uma porta, mas não define o que se faz dentro dela. **Uma leitura possível** é que a ficha indica proveniência, não mérito final. A obra deixa em aberto o que transforma a ficha em trabalho efetivo.",
+      "highlights": [
+        {
+          "title": "Ficha, não diploma",
+          "content": "O **título** indica de onde se vem; não garante o que se fará."
+        },
+        {
+          "title": "Competência situada",
+          "content": "A obra **não anula** o valor do preparo terreno — ela o recoloca em outro registro."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 13 — No Gabinete do Ministro",
+        "codificacao": "O Livro dos Espíritos, q. 674–685",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "deslocamento",
+      "commonMisunderstanding": "Concluir que o conhecimento adquirido na Terra não tem valor no mundo espiritual.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Título profissional como ficha de acesso: a obra distingue o que se traz (proveniência) do que se faz com o que se traz (trabalho efetivo). Não é a mesma coisa."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 3,
+      "title": "Trabalho como lei, não castigo",
+      "learningGoal": "Colocar a cena do pedido de André em diálogo com a lei do trabalho na Codificação.",
+      "content": "**Vamos notar** o que a Codificação sistematiza sobre o trabalho. Em O Livro dos Espíritos, a lei do trabalho aparece como **necessidade natural** e caminho de aperfeiçoamento — não como pena. A aproximação com Nosso Lar ocorre **especificamente quanto ao valor moral da ação**: servir não é apenas ocupar-se, é construir-se. A diferença de natureza entre as fontes permanece: uma narra um caso, a outra formula um princípio.",
+      "highlights": [
+        {
+          "title": "Convergência precisa",
+          "content": "As fontes se aproximam **quanto ao valor moral do trabalho**, não quanto a estruturas de além-túmulo."
+        },
+        {
+          "title": "Narrar e sistematizar",
+          "content": "Nosso Lar **mostra** um pedido; a Codificação **formula** a lei."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 13",
+        "codificacao": "O Livro dos Espíritos, q. 674–676",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [
+        {
+          "id": "lei-do-trabalho",
+          "term": "Lei do Trabalho",
+          "definition": "Princípio doutrinário segundo o qual o trabalho é necessidade natural e meio de aperfeiçoamento moral e intelectual, não pena imposta ao Espírito.",
+          "category": "Doutrina Básica",
+          "references": [
+            "O Livro dos Espíritos, q. 674–685"
+          ],
+          "synonyms": []
+        }
+      ],
+      "emotion": "clareza",
+      "commonMisunderstanding": "Tratar o trabalho no mundo espiritual como continuação automática da profissão terrena.",
+      "microStory": "",
+      "specialElement": {
+        "type": "dialogue_with_codification",
+        "content": "A lei do trabalho na Codificação ilumina a cena do pedido: servir é caminho de aperfeiçoamento. Mas a aproximação é quanto ao valor moral da ação — não quanto a cargos ou estruturas de Nosso Lar."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 4,
+      "title": "Preparo que a cena não mostra",
+      "learningGoal": "Examinar o que a obra diz e o que não diz sobre o preparo interior de André.",
+      "content": "**Uma leitura possível** é que a espera sugere preparo interior. Mas **repare que** a obra não descreve esse preparo por dentro. Ela mostra a espera, a resposta, o encaminhamento. Não diz que André estava orgulhoso, nem que precisava aprender humildade. O que a obra **não diz** é tão importante quanto o que diz: o preparo aparece como condição narrada, não como diagnóstico psicológico do personagem.",
+      "highlights": [
+        {
+          "title": "O que a obra não diz",
+          "content": "A narrativa **não nomeia** o defeito moral de André — descreve a situação."
+        },
+        {
+          "title": "Condição, não diagnóstico",
+          "content": "O preparo é **condição** que a cena apresenta, não retrato íntimo do personagem."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 13",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "cautela",
+      "commonMisunderstanding": "Preencher as lacunas da narrativa com um diagnóstico psicológico inventado sobre o orgulho de André.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não afirma que André estava orgulhoso nem que sua soberba o impedia. Ela narra uma espera e uma resposta — sem psicologizar o personagem."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 5,
+      "title": "O Umbral segundo Lísias",
+      "learningGoal": "Situar a descrição do Umbral no cap. 12 e delimitar seu estatuto narrativo.",
+      "content": "O capítulo 12 termina com a dúvida sobre o preparo de André, e o **Umbral** é descrito por **Lísias**. **Vamos notar** um cuidado de leitura: a descrição é feita por um personagem, dentro da narrativa. Ela não deve ser tomada como **mapa doutrinário** das regiões espirituais. A obra apresenta uma experiência narrada; a Codificação, quando trata de erraticidade e perturbação, o faz em outro registro. Manter essa distinção é parte do estudo.",
+      "highlights": [
+        {
+          "title": "Descrição narrada",
+          "content": "O Umbral é **descrito por Lísias** — fala de personagem, não tratado doutrinário."
+        },
+        {
+          "title": "Naturezas distintas",
+          "content": "Narrativa e sistematização **não competem**: cada uma responde a perguntas diferentes."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 12 — O Umbral",
+        "codificacao": "O Livro dos Espíritos, q. 149–155",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "circunspeção",
+      "commonMisunderstanding": "Tomar a descrição de Lísias como mapa doutrinário definitivo das regiões espirituais.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Descrição narrativa do Umbral (fala de Lísias) não equivale a mapa doutrinário. A perturbação na Codificação é tratada como estado do Espírito — não como geografia."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 6,
+      "title": "As intercessões de Clarêncio",
+      "learningGoal": "Examinar o que Clarêncio revela sobre as intercessões feitas em favor de André.",
+      "content": "No capítulo 14, **Clarêncio** responde e revela que houve **intercessões** em favor de André. **Repare que** a obra apresenta isso como relação — alguém que se importa e age em favor de outro. Não é mecanismo automático nem troca de favores. A intercessão aparece sustentada por **afeto e mérito**, não por privilégio. É uma das cenas mais delicadas do livro, e também das mais fáceis de distorcer.",
+      "highlights": [
+        {
+          "title": "Relação, não mecanismo",
+          "content": "A intercessão é **ação de alguém em favor de outro** — não automatismo."
+        },
+        {
+          "title": "Afeto e mérito",
+          "content": "A obra sugere que a intercessão se sustenta em **vínculo e merecimento**, não em favoritismo."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 14 — Elucidações de Clarêncio",
+        "codificacao": "O Livro dos Espíritos, q. 459–472",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "gratidão",
+      "commonMisunderstanding": "Entender a intercessão como troca de favores ou como privilégio que dispensa o esforço próprio.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "A revelação de Clarêncio (cap. 14) é o ponto em que a obra mostra que o auxílio a André não foi improviso: houve quem intercedesse por ele."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 7,
+      "title": "Intercessão e merecimento",
+      "learningGoal": "Colocar a intercessão narrada em diálogo com a Codificação sobre preces e auxílio espiritual.",
+      "content": "**Vamos notar** o que a Codificação formula sobre preces e auxílio. Em O Livro dos Espíritos, a prece e a intercessão aparecem como auxílio real, mas **condicionado à disposição** de quem recebe. A aproximação com Nosso Lar ocorre **quanto à eficácia do auxílio que encontra receptividade**. A diferença: a Codificação formula a condição; a obra narra um caso em que ela se cumpriu. Não universalize o caso como regra.",
+      "highlights": [
+        {
+          "title": "Convergência delimitada",
+          "content": "As fontes se aproximam **quanto à receptividade** necessária ao auxílio."
+        },
+        {
+          "title": "Caso, não regra",
+          "content": "O que ocorreu com André **não é** o que ocorre com todos."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 14",
+        "codificacao": "O Livro dos Espíritos, q. 459–472",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "compreensão",
+      "commonMisunderstanding": "Concluir que a intercessão dispensa o esforço próprio ou que basta pedir para receber.",
+      "microStory": "",
+      "specialElement": {
+        "type": "comparative_study",
+        "content": "Codificação: a prece auxilia na medida da receptividade de quem recebe (q. 459–472). Nosso Lar: narra um caso em que essa receptividade se manifestou. Aproximação quanto à condição; diferença de registro (princípio × caso)."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 8,
+      "title": "Aprender a receber",
+      "learningGoal": "Reformular o tema da aula a partir das duas cenas: pedir para servir e ser intercedido.",
+      "content": "Duas cenas, um mesmo movimento: **André pede** para servir e **recebe** uma resposta que o situa; **Clarêncio revela** intercessões e André **recebe** um auxílio que não pediu. **Uma leitura possível** é que o título da aula se cumpre nos dois sentidos: aprender a receber a tarefa com suas condições e aprender a receber o auxílio sem transformá-lo em mérito próprio. Receber, aqui, é tão exigente quanto pedir.",
+      "highlights": [
+        {
+          "title": "Dois recebimentos",
+          "content": "André **recebe** a tarefa condicionada e **recebe** a intercessão não solicitada."
+        },
+        {
+          "title": "Receber é exigente",
+          "content": "Aceitar condições e aceitar auxílio **sem apropriar-se** são aprendizados distintos."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 13–14",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "reconhecimento",
+      "commonMisunderstanding": "Ler a intercessão como confirmação do valor de André, em vez de dom recebido.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "Pedir para servir e receber auxílio são duas faces do mesmo aprendizado: nenhuma delas se resolve por mérito isolado."
+      }
+    },
+    {
+      "slideType": "application",
+      "slideNumber": 9,
+      "title": "Quando o título não basta",
+      "learningGoal": "Transportar a distinção entre ficha e trabalho efetivo para situações concretas de serviço.",
+      "content": "**Repare que** a cena do título como ficha pode ser transportada para o serviço no centro espírita: alguém chega com experiência, formação, disposição — e descobre que a tarefa pede outra coisa. **A aplicação nasce daqui**: o que a obra mostra é que a ficha abre a porta, mas o trabalho se faz dentro dela. A pergunta que sobra não é \"tenho competência?\", mas \"o que a tarefa pede de mim que eu ainda não tenho?\".",
+      "highlights": [
+        {
+          "title": "Ficha e tarefa",
+          "content": "A **proveniência** abre a porta; o **trabalho** se faz dentro dela."
+        },
+        {
+          "title": "Pergunta que sobra",
+          "content": "Não \"o que trago?\", mas \"o que a tarefa pede que ainda não tenho?\""
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 13",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "provocação",
+      "commonMisunderstanding": "Transformar a cena em receita moral genérica sobre humildade.",
+      "microStory": "",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "A aplicação nasce da distinção entre ficha e trabalho efetivo, não de uma moral genérica. Retire a obra e a aplicação perde o eixo."
+      }
+    }
+  ],
+  "reflectionQuestions": [
+    {
+      "question": "Quando você pediu para servir e a resposta não foi imediata, o que você fez com a espera — e o que ela revelou sobre você?",
+      "focus": "Autoconhecimento"
+    },
+    {
+      "question": "Em que tarefa concreta você tem usado sua \"ficha\" como se ela bastasse, em vez de perguntar o que a tarefa pede de você?",
+      "focus": "Aplicação prática"
+    },
+    {
+      "question": "Se o auxílio que você recebeu não foi mérito isolado, o que muda na forma como você reconhece e retribui o que recebe?",
+      "focus": "Transformação moral"
+    }
+  ]
+}

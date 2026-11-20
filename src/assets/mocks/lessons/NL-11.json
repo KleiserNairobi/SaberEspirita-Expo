@@ -1,0 +1,309 @@
+{
+  "id": "NL-11",
+  "courseId": "nosso-lar-estudo-guiado",
+  "title": "Semear e colher",
+  "source": "Nosso Lar",
+  "chapter": "Caps. 37–40",
+  "durationMinutes": 50,
+  "forumEnabled": true,
+  "subtitle": "Mérito, bônus-hora e semeadura sem virar fórmula",
+  "mainWork": {
+    "title": "Nosso Lar",
+    "author": "André Luiz",
+    "psychography": "Francisco Cândido Xavier"
+  },
+  "theme": "Mérito, bônus-hora e semeadura em diálogo com causa e efeito",
+  "objective": "Compreender como mérito, bônus-hora e semeadura dialogam com causa e efeito sem virar fórmula.",
+  "cognitiveIntensity": {
+    "level": "avançado",
+    "description": "Exige articular três noções que a obra apresenta em registros distintos — preleção, caso narrado, escuta e síntese — e confrontá-las com a lei de causa e efeito da Codificação, distinguindo o que é princípio do que é experiência particular, sem transformar a narrativa em mecanismo de cálculo."
+  },
+  "premiumDifferential": "Coloca a semeadura narrada em Nosso Lar — com o bônus-hora, o caso Tobias e a fala da Senhora Laura — em diálogo com a lei de causa e efeito da Codificação, mostrando onde a aproximação existe e onde a obra não diz o que costumamos atribuir a ela.",
+  "narrativeStrategy": "Abre pela pergunta que os capítulos provocam — se colhemos o que semeamos, por que a conta nunca fecha — e conduz o aluno pelas quatro cenas até a distinção entre causa e efeito e fórmula de retribuição.",
+  "slides": [
+    {
+      "slideType": "opening",
+      "slideNumber": 1,
+      "title": "A conta que nunca fecha",
+      "learningGoal": "Apresentar a tensão entre semeadura e experiência vivida a partir dos capítulos estudados.",
+      "content": "Se colhemos o que semeamos, por que tanta gente colhe o que não lembra ter plantado? **Nosso Lar** chega a esse tema por quatro cenas: a **preleção da ministra**, o **caso Tobias**, a escuta da **Senhora Laura** e o capítulo que dá nome à lição. Repare que a obra não oferece uma calculadora espiritual. Ela mostra **pessoas** diante do que plantaram — e é dessa experiência narrada que a pergunta nasce.",
+      "highlights": [
+        {
+          "title": "Quatro cenas, uma pergunta",
+          "content": "A obra não sistematiza: **narra**. É do encontro entre as cenas que a compreensão se forma."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 37–40",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "inquietação",
+      "commonMisunderstanding": "Pensar que 'semear e colher' é uma contabilidade exata, em que cada sofrimento corresponde a uma falta identificável.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "A aula percorre os caps. 37 a 40: a preleção da ministra, o caso Tobias, a escuta da Senhora Laura e a síntese sobre a semeadura."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 2,
+      "title": "O bônus-hora retomado",
+      "learningGoal": "Situar a preleção da ministra como retomada do bônus-hora já conhecido pelo aluno.",
+      "content": "No **cap. 37**, a ministra retoma o **bônus-hora**. Vamos notar o que a cena faz: ela não apresenta o bônus como prêmio arbitrário, mas como **tempo conquistado**. Quem já estudou a obra reconhece o fio: o trabalho realizado em Nosso Lar se converte em **mérito**, e o mérito amplia a possibilidade de servir. A preleção organiza o que a narrativa vinha mostrando — sem transformar isso em **tabela de pontos**.",
+      "highlights": [
+        {
+          "title": "Mérito como conquista",
+          "content": "O bônus-hora aparece como **tempo conquistado pelo trabalho**, não como recompensa distribuída de fora."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 37 — A Preleção da Ministra",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "reconhecimento",
+      "commonMisunderstanding": "Tomar o bônus-hora como moeda de troca, quando a cena o apresenta como fruto de trabalho e de disposição ao serviço.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "A preleção da ministra retoma o bônus-hora; a aula preserva o caráter de retomada, sem reinventar a cena."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 3,
+      "title": "O caso Tobias",
+      "learningGoal": "Observar como o caso narrado apresenta a semeadura numa experiência particular.",
+      "content": "O **cap. 38** traz o **caso Tobias**. Aqui a obra faz o que sabe fazer: mostra um **caso**, não uma regra. Acompanhamos uma situação concreta de colheita — e o valor da cena está justamente em não ser **universal**. Se lermos Tobias como espelho de todo sofrimento alheio, perdemos o que a narrativa tem de mais honesto: ela apresenta **um percurso**, com contornos próprios, e não um modelo para julgar os outros.",
+      "highlights": [
+        {
+          "title": "Caso, não regra",
+          "content": "Tobias é **experiência narrada**; a obra não o apresenta como chave para explicar todo sofrimento."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 38 — O Caso Tobias",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "atenção",
+      "commonMisunderstanding": "Generalizar o caso Tobias e usá-lo para diagnosticar a causa do sofrimento de qualquer pessoa.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "A obra não diz que todo sofrimento tem causa identificável nesta ou naquela falta, nem oferece o caso Tobias como explicação geral."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 4,
+      "title": "Ouvindo a Senhora Laura",
+      "learningGoal": "Perceber o deslocamento de perspectiva: da explicação para a escuta.",
+      "content": "No **cap. 39**, a cena muda de registro: em vez de explicar, a obra **escuta**. A Senhora Laura traz uma experiência que não se encaixa facilmente em esquema. Repare que a narrativa não corre para fechar a conta — ela **sustenta a escuta**. Uma leitura possível é que, antes de qualquer doutrina sobre semeadura, a obra nos ensina a **ouvir** quem colhe, sem transformar a escuta em sentença sobre a vida do outro.",
+      "highlights": [
+        {
+          "title": "Escutar antes de explicar",
+          "content": "A cena desloca o foco: **ouvir a experiência** vem antes de encaixá-la em causa e efeito."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 39 — Ouvindo a Senhora Laura",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "empatia",
+      "commonMisunderstanding": "Achar que compreender causa e efeito autoriza explicar rapidamente a dor alheia.",
+      "microStory": "",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "A cena da escuta ancora uma aplicação concreta: diante de quem sofre, a obra sugere presença e escuta antes de explicação."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 5,
+      "title": "Quem semeia colherá",
+      "learningGoal": "Apresentar a síntese do cap. 40 sobre a semeadura.",
+      "content": "O **cap. 40** dá nome à lição: **quem semeia colherá**. Vamos notar o cuidado da formulação — a obra fala de **semeadura**, não de fatura. Semente é o que se planta com **intenção e trabalho**; colheita é o que amadurece no tempo, muitas vezes fora do nosso controle imediato. A imagem bíblica da semeadura não é usada aqui como ameaça, mas como **lei de continuidade** entre o que fazemos e o que nos forma.",
+      "highlights": [
+        {
+          "title": "Semente, não fatura",
+          "content": "A imagem é de **cultivo no tempo**, não de cobrança imediata e pontual."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 40 — Quem Semeia Colherá",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "serenidade",
+      "commonMisunderstanding": "Ler 'quem semeia colherá' como promessa de retribuição imediata e visível.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "O cap. 40 trata da semeadura; a aula preserva a imagem agrícola e o tempo do cultivo."
+      }
+    },
+    {
+      "slideType": "dialogue",
+      "slideNumber": 6,
+      "title": "A lei de causa e efeito",
+      "learningGoal": "Colocar a semeadura narrada em diálogo com a lei de causa e efeito na Codificação.",
+      "content": "Agora vamos ao **diálogo**. Em **O Livro dos Espíritos**, a lei de causa e efeito aparece como **princípio**: o que fazemos retorna sobre nós, não por castigo externo, mas pela própria natureza das ações. A aproximação com Nosso Lar ocorre quanto à **continuidade entre ação e consequência**. Mas há uma diferença de registro: a Codificação **sistematiza**; a obra **narra**. Isso não enfraquece a narrativa — mostra que a mesma lei pode ser vivida como **experiência** antes de ser pensada como conceito.",
+      "highlights": [
+        {
+          "title": "Convergem em quê?",
+          "content": "Na **continuidade entre ação e consequência**. Diferem no registro: uma **sistematiza**, outra **narra**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 37–40",
+        "codificacao": "O Livro dos Espíritos — lei de causa e efeito",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "clareza",
+      "commonMisunderstanding": "Supor que a Codificação 'confirma' cada cena de Nosso Lar, quando o que há é aproximação de princípio.",
+      "microStory": "",
+      "specialElement": {
+        "type": "dialogue_with_codification",
+        "content": "A lei de causa e efeito entra por tema, sem numeração. A aproximação é quanto à continuidade entre ação e consequência; a diferença está entre sistematizar e narrar."
+      }
+    },
+    {
+      "slideType": "deepening",
+      "slideNumber": 7,
+      "title": "Semear não é fórmula",
+      "learningGoal": "Distinguir lei de causa e efeito de mecanismo de cálculo.",
+      "content": "Uma leitura possível é esta: **causa e efeito** não é uma **fórmula** que permita calcular, de fora, a causa de cada sofrimento. A obra nos mostra **percursos** — Tobias, Laura — que não se deixam reduzir a equação. Se a lei explica tudo, ela explica mal; se a usamos para **julgar** o outro, ela deixa de ser compreensão e vira sentença. A narrativa preserva o que a fórmula perderia: o **tempo**, a **complexidade** e o **mistério** de cada história.",
+      "highlights": [
+        {
+          "title": "Lei, não calculadora",
+          "content": "A lei orienta a compreensão; a **fórmula** promete um cálculo que a obra não autoriza."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 38–40",
+        "codificacao": "O Livro dos Espíritos — lei de causa e efeito",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "prudência",
+      "commonMisunderstanding": "Usar causa e efeito para diagnosticar o sofrimento alheio como se fosse contabilidade visível.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Distinção central: lei de causa e efeito como princípio de compreensão, não como fórmula de cálculo do sofrimento alheio."
+      }
+    },
+    {
+      "slideType": "deepening",
+      "slideNumber": 8,
+      "title": "O que a obra não diz",
+      "learningGoal": "Declarar explicitamente os limites do que os capítulos sustentam.",
+      "content": "Vamos ser precisos sobre os **limites**. Os capítulos estudados **não dizem** que causa e efeito explica todo sofrimento; não dizem que o bônus-hora é moeda de troca; não apresentam o caso Tobias como regra geral; e não discutem, aqui, **livre-arbítrio** e **responsabilidade** como temas explícitos. Dizer o que a obra não diz não é diminuí-la — é **respeitá-la**. A força da narrativa está no que ela mostra, não no que gostaríamos que ela provasse.",
+      "highlights": [
+        {
+          "title": "Limite é rigor",
+          "content": "Reconhecer o que a obra **não afirma** protege a leitura de generalizações indevidas."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 37–40",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "honestidade",
+      "commonMisunderstanding": "Completar as lacunas da obra com explicações prontas, em vez de sustentar só o que o texto sustenta.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "Não explica todo sofrimento; não trata livre-arbítrio e responsabilidade como temas explícitos; não universaliza o caso Tobias; não transforma o bônus-hora em moeda."
+      }
+    },
+    {
+      "slideType": "application",
+      "slideNumber": 9,
+      "title": "A escuta como colheita",
+      "learningGoal": "Ancorar a aplicação na cena de escuta da Senhora Laura.",
+      "content": "Voltemos à cena que mais incomoda: **ouvir a Senhora Laura**. A aplicação nasce daí, não de um conselho genérico. Quando alguém nos traz um sofrimento que não conseguimos encaixar em causa e efeito, a obra sugere **escuta paciente**, sem sentença. Semear, nesse contexto, pode ser **escutar bem** — e colher, mais tarde, uma relação menos julgadora. Repare que a aplicação não é 'seja bom': é **sustentar presença** diante de quem colhe o que não sabemos explicar.",
+      "highlights": [
+        {
+          "title": "Presença antes de sentença",
+          "content": "A cena da escuta ancora a aplicação: **ouvir sem julgar** é a semeadura possível no presente."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 39 — Ouvindo a Senhora Laura",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "compaixão",
+      "commonMisunderstanding": "Transformar a aplicação em regra moral universal, quando ela nasce de uma cena específica de escuta.",
+      "microStory": "",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "A aplicação nasce da cena da escuta da Senhora Laura: presença e escuta antes de explicação sobre causa e efeito."
+      }
+    },
+    {
+      "slideType": "synthesis",
+      "slideNumber": 10,
+      "title": "Nem fórmula, nem acaso",
+      "learningGoal": "Sintetizar a lição sem transformar síntese em definição doutrinária.",
+      "content": "Nesta aula, podemos compreender **semeadura** como **lei de continuidade** entre o que fazemos e o que nos forma — não como fatura imediata, nem como acaso. **Mérito** e **bônus-hora** aparecem como fruto de trabalho, não de barganha. E a **lei de causa e efeito** ilumina sem reduzir. Se a síntese vale, é porque nasceu das cenas: Tobias, Laura, a ministra, o capítulo final. O que ela **não** é: uma definição fechada da Doutrina sobre o sofrimento.",
+      "highlights": [
+        {
+          "title": "Continuidade, não cálculo",
+          "content": "Semeadura como **lei de continuidade** entre ação e formação — síntese desta aula, não definição doutrinária."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 37–40",
+        "codificacao": "O Livro dos Espíritos — lei de causa e efeito",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "equilíbrio",
+      "commonMisunderstanding": "Confundir a síntese da aula com uma definição formal da Doutrina Espírita.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "A síntese é apresentada como compreensão desta aula, não como definição doutrinária; o aluno é convidado a retomar as cenas antes de concluir."
+      }
+    }
+  ],
+  "reflectionQuestions": [
+    {
+      "question": "Quando você tenta explicar um sofrimento seu pela semeadura, o que essa tentativa revela sobre a sua necessidade de controle?",
+      "focus": "Autoconhecimento"
+    },
+    {
+      "question": "Diante de alguém que colhe o que não consegue explicar, o que mudaria se você escutasse antes de oferecer causa e efeito?",
+      "focus": "Aplicação prática"
+    },
+    {
+      "question": "Se a semeadura é continuidade e não cálculo, que semente você tem plantado sem exigir colheita imediata?",
+      "focus": "Transformação moral"
+    }
+  ]
+}

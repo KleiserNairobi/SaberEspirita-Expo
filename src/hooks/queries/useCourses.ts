@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { courseApiService } from "@/services/api/courseApiService";
+import { MOCK_NOSSO_LAR_COURSE, courseApiService } from "@/services/api/courseApiService";
 import { useIsAdmin } from "@/stores/authStore";
 import { ICourse, ICourseMaterialsResponse } from "@/types/course";
 
@@ -34,8 +34,14 @@ export function useCourses() {
     queryKey: COURSES_KEYS.all,
     queryFn: fetchCourses,
     select: (courses) => {
-      if (isAdmin) return courses;
-      return (courses || []).filter((c) => c.status !== "DRAFT");
+      const list = courses || [];
+      if (isAdmin) {
+        if (!list.some((c) => c.id === MOCK_NOSSO_LAR_COURSE.id)) {
+          return [...list, MOCK_NOSSO_LAR_COURSE];
+        }
+        return list;
+      }
+      return list.filter((c) => c.status !== "DRAFT");
     },
     staleTime: 1000 * 60 * 15, // 15 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias
@@ -52,8 +58,14 @@ export function useFeaturedCourses() {
     queryKey: COURSES_KEYS.featured,
     queryFn: fetchFeaturedCourses,
     select: (courses) => {
-      if (isAdmin) return courses;
-      return (courses || []).filter((c) => c.status !== "DRAFT");
+      const list = courses || [];
+      if (isAdmin) {
+        if (!list.some((c) => c.id === MOCK_NOSSO_LAR_COURSE.id)) {
+          return [...list, MOCK_NOSSO_LAR_COURSE];
+        }
+        return list;
+      }
+      return list.filter((c) => c.status !== "DRAFT");
     },
     staleTime: 1000 * 60 * 3, // 3 minutos
     gcTime: 1000 * 60 * 60 * 24 * 7, // 7 dias

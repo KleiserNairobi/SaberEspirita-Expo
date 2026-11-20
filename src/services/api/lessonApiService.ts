@@ -1,10 +1,43 @@
+import mockNL01 from "@/assets/mocks/lessons/NL-01.json";
+import mockNL02 from "@/assets/mocks/lessons/NL-02.json";
+import mockNL03 from "@/assets/mocks/lessons/NL-03.json";
+import mockNL04 from "@/assets/mocks/lessons/NL-04.json";
+import mockNL05 from "@/assets/mocks/lessons/NL-05.json";
+import mockNL06 from "@/assets/mocks/lessons/NL-06.json";
+import mockNL07 from "@/assets/mocks/lessons/NL-07.json";
+import mockNL08 from "@/assets/mocks/lessons/NL-08.json";
+import mockNL09 from "@/assets/mocks/lessons/NL-09.json";
+import mockNL10 from "@/assets/mocks/lessons/NL-10.json";
+import mockNL11 from "@/assets/mocks/lessons/NL-11.json";
+import mockNL12 from "@/assets/mocks/lessons/NL-12.json";
+import mockNL13 from "@/assets/mocks/lessons/NL-13.json";
+import mockNL14 from "@/assets/mocks/lessons/NL-14.json";
+import mockNL15 from "@/assets/mocks/lessons/NL-15.json";
 import { ILesson, IReflectionQuestion, ISupplementaryMaterial } from "@/types/course";
 
 import apiClient from "./apiClient";
 import { resolveCdnUrl } from "./courseApiService";
 
-function normalizeLesson(raw: any): ILesson {
-  const order = raw.order ?? raw.orderIndex ?? 1;
+const NOSSO_LAR_MOCK_LESSONS = [
+  mockNL01,
+  mockNL02,
+  mockNL03,
+  mockNL04,
+  mockNL05,
+  mockNL06,
+  mockNL07,
+  mockNL08,
+  mockNL09,
+  mockNL10,
+  mockNL11,
+  mockNL12,
+  mockNL13,
+  mockNL14,
+  mockNL15,
+];
+
+function normalizeLesson(raw: any, fallbackOrder?: number): ILesson {
+  const order = raw.order ?? raw.orderIndex ?? fallbackOrder ?? 1;
   const rawReflections =
     raw.reflectionQuestions ||
     raw.reflections ||
@@ -24,6 +57,7 @@ function normalizeLesson(raw: any): ILesson {
   return {
     ...raw,
     order,
+    status: raw.status ?? "PUBLISHED",
     reflectionQuestions: reflectionQuestions.length > 0 ? reflectionQuestions : undefined,
     forumPrompt: raw.forumPrompt || reflectionQuestions?.[0]?.question || null,
     forumFocusTag: raw.forumFocusTag || reflectionQuestions?.[0]?.focus || null,
@@ -39,17 +73,26 @@ function normalizeLesson(raw: any): ILesson {
         slide.category ||
         undefined;
 
+      const rawImageUrl =
+        slide.image && typeof slide.image.url === "string"
+          ? slide.image.url.trim()
+          : "";
+      const normalizedImage = rawImageUrl
+        ? {
+            ...slide.image,
+            url: resolveCdnUrl(rawImageUrl) || rawImageUrl,
+          }
+        : undefined;
+
       return {
         ...slide,
         slideType,
         content: slide.content || "",
+        image: normalizedImage,
       };
     }),
   };
 }
-
-import mockCursoNossoLar from "@/assets/mocks/lessons/CursoNossoLar.json";
-import mockCursoNossoLarAula2 from "@/assets/mocks/lessons/CursoNossoLarAula2.json";
 
 export const lessonApiService = {
   /**
@@ -59,13 +102,10 @@ export const lessonApiService = {
     if (!courseId) return [];
     const cleanCourseId = courseId.trim().toLowerCase();
     if (cleanCourseId === "nosso-lar-estudo-guiado" || cleanCourseId.includes("nosso-lar")) {
-      return [
-        normalizeLesson(mockCursoNossoLar),
-        normalizeLesson(mockCursoNossoLarAula2),
-      ];
+      return NOSSO_LAR_MOCK_LESSONS.map((raw, index) => normalizeLesson(raw, index + 1));
     }
     const response = await apiClient.get<any[]>(`/courses/${courseId}/lessons`);
-    return (response.data || []).map(normalizeLesson);
+    return (response.data || []).map((raw, index) => normalizeLesson(raw, index + 1));
   },
 
   /**
@@ -74,15 +114,23 @@ export const lessonApiService = {
   async getLessonById(lessonId: string): Promise<ILesson | null> {
     if (!lessonId) return null;
     const cleanLessonId = lessonId.trim();
-    if (cleanLessonId === "LESSON-NL-M1-A02") {
-      return normalizeLesson(mockCursoNossoLarAula2);
+    const normalizedId = cleanLessonId.toUpperCase();
+
+    const mockIndex = NOSSO_LAR_MOCK_LESSONS.findIndex(
+      (item) => item.id.toUpperCase() === normalizedId
+    );
+    if (mockIndex >= 0) {
+      return normalizeLesson(NOSSO_LAR_MOCK_LESSONS[mockIndex], mockIndex + 1);
+    }
+
+    if (normalizedId === "LESSON-NL-M1-A02") {
+      return normalizeLesson(NOSSO_LAR_MOCK_LESSONS[1], 2);
     }
     if (
-      cleanLessonId === "LESSON-NL-M1-A01" ||
-      cleanLessonId === "nosso-lar-estudo-guiado" ||
-      cleanLessonId.includes("NL")
+      cleanLessonId.toLowerCase() === "nosso-lar-estudo-guiado" ||
+      normalizedId.startsWith("LESSON-NL")
     ) {
-      return normalizeLesson(mockCursoNossoLar);
+      return normalizeLesson(NOSSO_LAR_MOCK_LESSONS[0], 1);
     }
     const response = await apiClient.get<any>(`/lessons/${lessonId}`);
     if (!response.data) return null;

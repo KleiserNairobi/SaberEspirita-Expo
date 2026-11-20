@@ -603,13 +603,18 @@ export function useAuth() {
   return useAuthStore();
 }
 
+function isAdminRole(role?: string): boolean {
+  const normalized = role?.trim().toLowerCase();
+  return normalized === "admin" || normalized === "role_admin";
+}
+
 /**
  * Hook para checar se o usuário atual possui plano Premium ativo ou permissão de Administrador.
  */
 export function useIsPremium(): boolean {
   const user = useAuthStore((state) => state.user);
   if (!user) return false;
-  return Boolean(user.isPremium || user.role === "admin");
+  return Boolean(user.isPremium || isAdminRole(user.role));
 }
 
 /**
@@ -617,5 +622,5 @@ export function useIsPremium(): boolean {
  */
 export function useIsAdmin(): boolean {
   const user = useAuthStore((state) => state.user);
-  return Boolean(user && user.role === "admin");
+  return Boolean(user && isAdminRole(user.role));
 }

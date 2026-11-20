@@ -16,10 +16,10 @@ import { AppStackParamList } from "@/routers/types";
 import apiClient from "@/services/api/apiClient";
 import { statsApiService } from "@/services/api/statsApiService";
 import { resolveCdnUrl } from "@/services/api/courseApiService";
+import { ZoomableImage } from "@/components/ZoomableImage";
 import { IBooklet } from "@/types/booklet";
 import { shareCertificate } from "@/utils/sharing";
 
-import { ZoomableImage } from "./components/ZoomableImage";
 import { createStyles } from "./styles";
 
 type BookletViewerRouteProp = RouteProp<AppStackParamList, "BookletViewer">;

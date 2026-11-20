@@ -1,0 +1,352 @@
+{
+  "id": "NL-04",
+  "courseId": "nosso-lar-estudo-guiado",
+  "title": "Uma hierarquia narrada",
+  "source": "Nosso Lar",
+  "chapter": "Caps. 9–11",
+  "durationMinutes": 45,
+  "forumEnabled": true,
+  "subtitle": "Decisões do governador e a escala espírita: onde a comparação termina",
+  "mainWork": {
+    "title": "Nosso Lar",
+    "author": "André Luiz",
+    "psychography": "Francisco Cândido Xavier"
+  },
+  "theme": "Hierarquia de tarefas numa colônia e escala espírita de Kardec",
+  "objective": "Comparar as decisões do governador sobre a alimentação e a ordem dos ministérios com a escala espírita, dizendo onde a comparação termina.",
+  "cognitiveIntensity": {
+    "level": "intermediário",
+    "description": "Exige distinguir hierarquia administrativa de colônia — ordem de tarefas, decisão sobre alimentação, rigor de funções — da escala espírita de Kardec, que classifica os Espíritos por grau de evolução moral e intelectual. O aluno precisa sustentar duas ordens de grandeza diferentes e identificar o ponto exato em que a analogia deixa de funcionar."
+  },
+  "premiumDifferential": "Coloca lado a lado a hierarquia de tarefas que Nosso Lar narra (cap. 11: ordem e hierarquia rigorosas, nenhum destaque por favor) e a escala espírita da Codificação, mostrando em que aspecto as duas se aproximam e onde a comparação termina: uma organiza funções numa colônia, outra classifica Espíritos por evolução.",
+  "narrativeStrategy": "Abre pela resistência à medida sobre alimentação no cap. 9, deixa a pergunta nascer da cena, acompanha a explicação do cap. 11 sobre a origem dos ministérios e o rigor da hierarquia, e só então traz a escala espírita — não para confirmar a narrativa, mas para medir até onde a comparação alcança.",
+  "slides": [
+    {
+      "slideType": "opening",
+      "slideNumber": 1,
+      "title": "Quando uma medida encontra resistência",
+      "learningGoal": "Apresentar a cena do cap. 9 e instalar a pergunta sobre como uma colônia decide e por que uma decisão encontra resistência.",
+      "content": "O cap. 9 abre com um **problema de alimentação**: o governo de Nosso Lar lida com **resistências** a uma medida. Repare que a obra não apresenta um mundo onde tudo já está resolvido — há decisão, há divergência, há um governador que precisa lidar com isso. A pergunta que fica não é sobre comida, mas sobre **como uma colônia se organiza** para decidir. E aí surge a questão desta aula: o que essa **hierarquia narrada** tem a ver com a escala espírita de Kardec?",
+      "highlights": [
+        {
+          "title": "Resistência a uma medida",
+          "content": "O governo lida com **resistências** — a colônia não é um lugar sem atrito decisório."
+        },
+        {
+          "title": "Pergunta da aula",
+          "content": "O que a **hierarquia narrada** tem a ver com a escala espírita?"
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 9 — Problema de Alimentação",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "curiosidade",
+      "commonMisunderstanding": "Pensar que, por ser uma colônia espiritual, tudo ali funciona sem decisão, sem divergência e sem resistência.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "A cena do cap. 9 apresenta o governo lidando com resistências a uma medida sobre a alimentação — não um mundo sem atrito, mas uma organização que decide."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 2,
+      "title": "O que a obra mostra e o que não mostra",
+      "learningGoal": "Delimitar o que o cap. 9 efetivamente apresenta sobre a decisão, sem inventar o interior dos personagens nem universalizar o episódio.",
+      "content": "Vamos notar o que a obra **efetivamente apresenta**: um governo, uma medida sobre alimentação, resistências. O texto **não diz** quem resiste, por quais motivos íntimos, nem que essa resistência seja vício moral de alguém. Uma leitura possível é que a narrativa está interessada em mostrar **como a colônia administra** uma decisão, não em julgar consciências. Esse cuidado importa: o episódio é **experiência narrada**, não princípio universal sobre como todo Espírito reage a toda medida.",
+      "highlights": [
+        {
+          "title": "O que a obra diz",
+          "content": "Governo, medida sobre alimentação, **resistências** — sem detalhar motivos íntimos."
+        },
+        {
+          "title": "O que a obra não diz",
+          "content": "Não afirma que a resistência seja **vício moral** nem que o caso valha para todos."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 9 — Problema de Alimentação",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "cautela",
+      "commonMisunderstanding": "Transformar a resistência narrada em diagnóstico moral dos personagens ou em regra sobre todos os Espíritos.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "O cap. 9 não detalha motivos íntimos dos que resistem, não os qualifica moralmente e não apresenta o episódio como regra geral."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 3,
+      "title": "No Bosque das Águas",
+      "learningGoal": "Situar o cap. 10 na sequência narrativa e perceber como a obra alterna cena e explicação.",
+      "content": "O cap. 10 — **No Bosque das Águas** — aparece entre a decisão do cap. 9 e a explicação do cap. 11. Repare que a obra **alterna cena e explicação**: primeiro mostra o governo lidando com uma medida, depois conduz o leitor a outro espaço, e só então, no capítulo seguinte, explica a **origem dos ministérios**. Essa alternância importa para o nosso estudo: a hierarquia não é apresentada como um organograma abstrato, mas como algo que a narrativa **vai revelando** enquanto André Luiz percorre a colônia.",
+      "highlights": [
+        {
+          "title": "Cena e explicação",
+          "content": "A obra **alterna** narrativa e explicação — a hierarquia é revelada no percurso."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 10 — No Bosque das Águas",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "expectativa",
+      "commonMisunderstanding": "Ler o cap. 10 isolado, sem perceber que ele prepara a explicação sobre os ministérios que vem no cap. 11.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "O cap. 10 situa-se entre a decisão do cap. 9 e a explicação do cap. 11; a obra alterna cena e explicação."
+      }
+    },
+    {
+      "slideType": "development",
+      "slideNumber": 4,
+      "title": "A origem dos ministérios",
+      "learningGoal": "Apresentar o que o cap. 11 afirma sobre a origem dos ministérios e o rigor da hierarquia.",
+      "content": "No cap. 11 — **Notícias do Plano** — a obra explica a **origem dos ministérios** e afirma que **ordem e hierarquia são rigorosas** e que **nenhum destaque é dado por favor**. Vamos notar o peso dessas duas afirmações: a hierarquia não é frouxa, e a posição de alguém não se deve a preferência pessoal. O texto está descrevendo a **organização de tarefas** de uma colônia — quem responde pelo quê, com que rigor. Guarde bem esse ponto, porque é dele que a comparação com a escala espírita vai partir.",
+      "highlights": [
+        {
+          "title": "Ordem e hierarquia rigorosas",
+          "content": "A obra afirma **rigor** na ordem e na hierarquia da colônia."
+        },
+        {
+          "title": "Nenhum destaque por favor",
+          "content": "A posição não se deve a **preferência pessoal** — não há favor."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 11 — Notícias do Plano",
+        "codificacao": "",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "atenção",
+      "commonMisunderstanding": "Confundir 'hierarquia rigorosa' com hierarquia de valor moral dos Espíritos — o texto fala de organização de tarefas.",
+      "microStory": "",
+      "specialElement": {
+        "type": "source_in_focus",
+        "content": "O cap. 11 explica a origem dos ministérios e afirma que ordem e hierarquia são rigorosas e que nenhum destaque é dado por favor."
+      }
+    },
+    {
+      "slideType": "comparison",
+      "slideNumber": 5,
+      "title": "Duas ordens de grandeza",
+      "learningGoal": "Colocar lado a lado a hierarquia de tarefas da colônia e a escala espírita, nomeando o critério de cada uma.",
+      "content": "Agora vamos colocar as duas leituras lado a lado. De um lado, **Nosso Lar** narra uma hierarquia de **tarefas**: ministérios, funções, rigor na ordem, nenhum destaque por favor. De outro, a **escala espírita** de Kardec classifica os Espíritos por **grau de evolução moral e intelectual**. Repare que os critérios são diferentes: uma organiza **funções numa colônia**; a outra ordena **Espíritos segundo progresso**. A aproximação existe, mas precisamos dizer exatamente **em quê** ela ocorre — e é isso que faremos a seguir.",
+      "highlights": [
+        {
+          "title": "Hierarquia de tarefas",
+          "content": "Nosso Lar: **ministérios e funções**, rigor na ordem, sem favor."
+        },
+        {
+          "title": "Escala espírita",
+          "content": "Kardec: classificação por **evolução moral e intelectual**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 11 — Notícias do Plano",
+        "codificacao": "O Livro dos Espíritos — escala espírita, ordens e hierarquia dos Espíritos",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "comparação",
+      "commonMisunderstanding": "Tomar as duas hierarquias como se fossem a mesma coisa, só porque ambas usam a palavra 'hierarquia'.",
+      "microStory": "",
+      "specialElement": {
+        "type": "comparative_study",
+        "content": "Nosso Lar organiza tarefas numa colônia (ministérios, rigor, sem favor); a escala espírita classifica Espíritos por evolução moral e intelectual. Os critérios são distintos."
+      }
+    },
+    {
+      "slideType": "comparison",
+      "slideNumber": 6,
+      "title": "Convergem em quê?",
+      "learningGoal": "Especificar o ponto exato de aproximação entre as duas fontes, sem declarar convergência genérica.",
+      "content": "Quando dizemos que há aproximação, precisamos responder: **convergem em quê?** Uma leitura possível é que ambas as fontes apresentam o mundo espiritual como **ordenado**, não como improviso ou privilégio: em Nosso Lar, a ordem é rigorosa e ninguém se destaca por favor; na escala espírita, a posição decorre do **grau de evolução**, não de arbítrio. A aproximação ocorre, portanto, quanto à **ideia de ordem não arbitrária**. Mas atenção: isso é uma relação que nós fazemos — não é afirmação de nenhuma das duas fontes sobre a outra.",
+      "highlights": [
+        {
+          "title": "Convergência específica",
+          "content": "Ambas apresentam ordem **não arbitrária** — em quê: ausência de favor e grau de evolução."
+        },
+        {
+          "title": "Relação, não afirmação",
+          "content": "A aproximação é **nossa leitura**, não tese das fontes."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 11 — Notícias do Plano",
+        "codificacao": "O Livro dos Espíritos — escala espírita, ordens e hierarquia dos Espíritos",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "rigor",
+      "commonMisunderstanding": "Dizer apenas 'as obras convergem' sem especificar o aspecto — aqui, a ordem não arbitrária.",
+      "microStory": "",
+      "specialElement": {
+        "type": "comparative_study",
+        "content": "A convergência é específica: ambas apresentam ordem não arbitrária — em Nosso Lar, sem favor; na escala espírita, por grau de evolução. A relação é da aula, não das fontes."
+      }
+    },
+    {
+      "slideType": "distinction",
+      "slideNumber": 7,
+      "title": "Onde a comparação termina",
+      "learningGoal": "Declarar o limite da comparação: hierarquia de tarefas não é escala espírita.",
+      "content": "Aqui está o ponto decisivo desta aula: **hierarquia de tarefas numa colônia não é a escala espírita de Kardec**. Nosso Lar fala de **funções e responsabilidades** na organização de uma colônia — quem cuida do quê, com rigor. A escala espírita fala de **grau de evolução** dos Espíritos. Uma coisa é o cargo na administração; outra é o progresso moral e intelectual do Espírito. Se confundirmos as duas, passamos a ler a narrativa como se ela fosse um tratado de classificação espiritual — e ela **não diz isso**.",
+      "highlights": [
+        {
+          "title": "Limite da comparação",
+          "content": "**Hierarquia de tarefas** não é **escala espírita** — funções não são graus de evolução."
+        },
+        {
+          "title": "O que a obra não diz",
+          "content": "Nosso Lar **não afirma** que os ministérios sejam graus da escala espírita."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 11 — Notícias do Plano",
+        "codificacao": "O Livro dos Espíritos — escala espírita, ordens e hierarquia dos Espíritos",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "clareza",
+      "commonMisunderstanding": "Ler os ministérios de Nosso Lar como se fossem os graus da escala espírita de Kardec.",
+      "microStory": "",
+      "specialElement": {
+        "type": "what_the_work_does_not_say",
+        "content": "Nosso Lar não afirma que a hierarquia de tarefas da colônia corresponda à escala espírita nem que os ministérios sejam graus de evolução."
+      }
+    },
+    {
+      "slideType": "synthesis",
+      "slideNumber": 8,
+      "title": "Quadro lado a lado",
+      "learningGoal": "Sustentar o quadro comparativo entre hierarquia de tarefas e escala espírita, com a linha final que marca o limite.",
+      "content": "Vamos fixar o quadro. **Hierarquia de tarefas (Nosso Lar, cap. 11):** organiza funções na colônia; critério é a **responsabilidade administrativa**; marca o rigor da ordem e a ausência de favor. **Escala espírita (Kardec):** classifica Espíritos; critério é o **grau de evolução moral e intelectual**; marca o progresso do Espírito. A aproximação: ambas excluem o **arbítrio**. A linha final: **função não é grau** — a comparação termina onde uma descreve organização de colônia e a outra ordena Espíritos por evolução.",
+      "highlights": [
+        {
+          "title": "Critérios distintos",
+          "content": "Responsabilidade administrativa **versus** grau de evolução moral e intelectual."
+        },
+        {
+          "title": "Linha final",
+          "content": "**Função não é grau** — aqui a comparação termina."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 11 — Notícias do Plano",
+        "codificacao": "O Livro dos Espíritos — escala espírita, ordens e hierarquia dos Espíritos",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "síntese",
+      "commonMisunderstanding": "Tomar o quadro como se as duas colunas descrevessem a mesma realidade em linguagens diferentes.",
+      "microStory": "",
+      "specialElement": {
+        "type": "essential_distinction",
+        "content": "Quadro: hierarquia de tarefas (funções, responsabilidade administrativa, rigor, sem favor) × escala espírita (classificação por evolução moral e intelectual). Aproximação: ordem não arbitrária. Limite: função não é grau."
+      },
+      "image": {
+        "url": "https://cdn.saberespirita.app.br/booklets/NLAula04.webp",
+        "caption": "Duas colunas: hierarquia de tarefas e escala espírita; a linha final marca o limite.",
+        "alt": "Quadro de duas colunas: à esquerda, hierarquia de tarefas de Nosso Lar com funções e responsabilidade administrativa; à direita, escala espírita com grau de evolução moral e intelectual; abaixo, linha horizontal marcando onde a comparação termina.",
+        "aspectRatio": 1.33
+      },
+      "imagePrompt": "Quadro comparativo de duas colunas. Coluna esquerda, título 'Hierarquia de tarefas — Nosso Lar, cap. 11': itens 'organiza funções na colônia', 'critério: responsabilidade administrativa', 'rigor na ordem', 'nenhum destaque por favor'. Coluna direita, título 'Escala espírita — Kardec': itens 'classifica Espíritos', 'critério: grau de evolução moral e intelectual', 'marca o progresso do Espírito'. Entre as colunas, faixa central com o rótulo 'aproximação: ordem não arbitrária'. Abaixo das duas colunas, linha horizontal espessa com o rótulo 'limite: função não é grau — a comparação termina aqui'."
+    },
+    {
+      "slideType": "application",
+      "slideNumber": 9,
+      "title": "Quando confundimos função e valor",
+      "learningGoal": "Aplicar a distinção a uma situação concreta de leitura da obra e da vida, ancorada no cap. 11.",
+      "content": "Pense em como lemos a própria vida. Se confundimos **função e valor**, passamos a medir pessoas pelo cargo que ocupam — na colônia ou aqui. O cap. 11 ajuda a separar as coisas: a hierarquia de tarefas é **rigorosa e sem favor**, mas ela organiza **serviço**, não confere dignidade maior a quem serve. Uma leitura possível é que o critério do valor está em outra ordem — a do **progresso moral** —, e essa é justamente a escala espírita. A aplicação nasce daqui: não transportar para a vida a confusão que a comparação nos ensinou a desfazer.",
+      "highlights": [
+        {
+          "title": "Função não confere valor",
+          "content": "O cargo organiza **serviço**; não mede dignidade nem evolução."
+        },
+        {
+          "title": "Ancoragem no cap. 11",
+          "content": "A hierarquia é **rigorosa e sem favor** — mas é de tarefas, não de valor."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, cap. 11 — Notícias do Plano",
+        "codificacao": "O Livro dos Espíritos — escala espírita, ordens e hierarquia dos Espíritos",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "revisão",
+      "commonMisunderstanding": "Concluir que quem ocupa função de destaque na colônia está necessariamente em grau superior na escala espírita.",
+      "microStory": "",
+      "specialElement": {
+        "type": "practical_application",
+        "content": "A distinção do cap. 11 (hierarquia de tarefas, sem favor) sustenta a aplicação: não medir pessoas pelo cargo, pois função organiza serviço e não confere valor."
+      }
+    },
+    {
+      "slideType": "reflection",
+      "slideNumber": 10,
+      "title": "O que fica desta aula",
+      "learningGoal": "Conduzir o aluno a revisar a própria leitura da obra e a separar, em si, função e valor.",
+      "content": "Fica uma pergunta que não precisa de resposta imediata: em que momentos você já leu a **hierarquia de Nosso Lar** como se ela fosse a escala espírita? Repare que a obra ganha quando deixamos cada coisa no seu lugar — a colônia **narra tarefas**; Kardec **sistematiza graus de evolução**. O aluno premium não é o que acumula comparações, mas o que sabe **onde cada comparação termina**. Leve isso para a leitura dos próximos capítulos: pergunte sempre o que a obra diz e o que ela **não diz**.",
+      "highlights": [
+        {
+          "title": "Pergunta que fica",
+          "content": "Em que momentos você já confundiu **hierarquia de tarefas** com escala espírita?"
+        },
+        {
+          "title": "Critério de leitura",
+          "content": "Perguntar sempre o que a obra diz e o que ela **não diz**."
+        }
+      ],
+      "references": {
+        "obraPrincipal": "Nosso Lar, caps. 9–11",
+        "codificacao": "O Livro dos Espíritos — escala espírita, ordens e hierarquia dos Espíritos",
+        "complementar": "",
+        "biblica": ""
+      },
+      "glossary": [],
+      "emotion": "revisão",
+      "commonMisunderstanding": "Achar que o estudo comparado termina quando se encontram semelhanças — ele só se completa quando se marca o limite.",
+      "microStory": "",
+      "specialElement": {
+        "type": "guided_reflection",
+        "content": "O aluno é convidado a revisar sua própria leitura da obra e a praticar a pergunta 'o que a obra diz e o que ela não diz'."
+      }
+    }
+  ],
+  "reflectionQuestions": [
+    {
+      "question": "Em que momentos você já leu a hierarquia de Nosso Lar como se ela descrevesse o valor moral dos Espíritos? O que o levou a essa leitura?",
+      "focus": "Autoconhecimento"
+    },
+    {
+      "question": "Na sua vida, como você distingue o que é função (serviço que se organiza) do que é valor (progresso moral real)? Dê um exemplo concreto.",
+      "focus": "Aplicação prática"
+    },
+    {
+      "question": "Se função não confere valor, o que muda na forma como você avalia pessoas e a si mesmo — e o que isso pede de mudança efetiva?",
+      "focus": "Transformação moral"
+    }
+  ]
+}

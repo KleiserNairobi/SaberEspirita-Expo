@@ -61,6 +61,7 @@ export const PremiumSlideRenderer = memo(function PremiumSlideRenderer({
           <SlideContent
             title={slide.title}
             content={slide.content}
+            image={slide.image}
             imagePrompt={slide.imagePrompt}
             fontSize={fontSize}
             slideType={slideType}

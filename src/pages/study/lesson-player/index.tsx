@@ -49,11 +49,12 @@ import {
   getStoredCommunityLevelRaw,
   setStoredCommunityLevel,
 } from "@/services/community/communityLevelService";
-import { useAuthStore } from "@/stores/authStore";
+import { useAuthStore, useIsPremium } from "@/stores/authStore";
 import { useReaderPreferencesStore } from "@/stores/readerPreferencesStore";
 import { IGlossaryTerm } from "@/types/glossary";
-import { shareLessonSlide } from "@/utils/sharing";
 import { isLessonFreeTrial } from "@/utils/courseAccess";
+import { prefetchImages } from "@/utils/imagePrefetch";
+import { shareLessonSlide } from "@/utils/sharing";
 import {
   clearLessonSlideProgress,
   getLessonSlideProgress,
@@ -75,6 +76,7 @@ export function LessonPlayerScreen() {
   const { theme } = useAppTheme();
   const { width } = useResponsiveLayout();
   const { user, isGuest } = useAuthStore();
+  const isPremium = useIsPremium();
   const styles = createStyles(theme);
   const insets = useSafeAreaInsets();
   const route = useRoute<LessonPlayerRouteProp>();
@@ -211,6 +213,16 @@ export function LessonPlayerScreen() {
       }, 100);
     }
   }, [courseId, lesson, lessonId, totalSlides, user?.uid]);
+
+  React.useEffect(() => {
+    if (!lesson?.slides?.length) return;
+    const urls = lesson.slides
+      .map((slide) => slide.image?.url?.trim())
+      .filter((url): url is string => Boolean(url));
+    if (urls.length > 0) {
+      prefetchImages(urls);
+    }
+  }, [lesson?.slides]);
 
   // ✅ Prefetch da próxima aula
   const { data: allLessons } = useLessons(courseId);
@@ -413,7 +425,7 @@ export function LessonPlayerScreen() {
       }
 
       // Se for aula de degustação em curso premium, convida o usuário para o plano Premium
-      const isTrial = lesson && isLessonFreeTrial(lesson, course);
+      const isTrial = !isPremium && Boolean(lesson && isLessonFreeTrial(lesson, course));
       if (isTrial) {
         setIsProcessing(false);
         setTimeout(() => {
