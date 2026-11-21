@@ -1,5 +1,7 @@
 import React from "react";
 
+import { Platform } from "react-native";
+
 import { Image } from "expo-image";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -100,7 +102,7 @@ export function ZoomableImage({
           source={{ uri }}
           style={styles.image}
           contentFit="contain"
-          transition={300}
+          transition={Platform.OS === "ios" ? 300 : 0}
           accessibilityLabel={accessibilityLabel}
           onLoadEnd={onLoadEnd}
           onError={onError}

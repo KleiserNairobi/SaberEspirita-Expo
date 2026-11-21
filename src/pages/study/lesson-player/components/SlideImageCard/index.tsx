@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 
-import { ActivityIndicator, Modal, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Modal,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { Image, ImageLoadEventData } from "expo-image";
 import { ImageOff, Maximize2, X, ZoomIn } from "lucide-react-native";
@@ -57,7 +64,10 @@ export function SlideImageCard({ image }: SlideImageCardProps) {
     setIsLoading(false);
     setHasError(false);
     if (event.source.width > 0 && event.source.height > 0) {
-      setNaturalAspectRatio(event.source.width / event.source.height);
+      const loadedRatio = event.source.width / event.source.height;
+      if (Math.abs(loadedRatio - resolvedAspectRatio) > 0.01) {
+        setNaturalAspectRatio(loadedRatio);
+      }
     }
   };
 
@@ -71,8 +81,6 @@ export function SlideImageCard({ image }: SlideImageCardProps) {
     setIsLoading(true);
     setRetryKey((prev) => prev + 1);
   };
-
-  const showFooter = Boolean(caption) || !hasError;
 
   return (
     <>
@@ -90,7 +98,7 @@ export function SlideImageCard({ image }: SlideImageCardProps) {
             source={{ uri: imageUrl }}
             style={styles.image}
             contentFit="contain"
-            transition={200}
+            transition={Platform.OS === "ios" ? 200 : 0}
             cachePolicy="memory-disk"
             accessibilityLabel={accessibleDescription}
             onLoad={handleLoad}
@@ -118,23 +126,22 @@ export function SlideImageCard({ image }: SlideImageCardProps) {
           )}
         </TouchableOpacity>
 
-        {showFooter && (
-          <View style={styles.footerContainer}>
-            {Boolean(caption) && <Text style={styles.captionText}>{caption}</Text>}
+        {!hasError && (
+          <TouchableOpacity
+            style={styles.expandBar}
+            onPress={() => setIsLightboxOpen(true)}
+            activeOpacity={0.75}
+            accessibilityRole="button"
+            accessibilityLabel="Toque para ampliar a imagem"
+          >
+            <Maximize2 size={13} color={theme.colors.primary} />
+            <Text style={styles.expandBarText}>Toque para ampliar</Text>
+          </TouchableOpacity>
+        )}
 
-            {!hasError && (
-              <TouchableOpacity
-                style={styles.expandAction}
-                onPress={() => setIsLightboxOpen(true)}
-                activeOpacity={0.75}
-                hitSlop={{ top: 8, bottom: 8, left: 12, right: 8 }}
-                accessibilityRole="button"
-                accessibilityLabel="Toque para ampliar a imagem"
-              >
-                <Maximize2 size={13} color={theme.colors.primary} />
-                <Text style={styles.expandActionText}>Toque para ampliar</Text>
-              </TouchableOpacity>
-            )}
+        {Boolean(caption) && (
+          <View style={styles.captionContainer}>
+            <Text style={styles.captionText}>{caption}</Text>
           </View>
         )}
       </View>

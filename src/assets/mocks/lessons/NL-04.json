@@ -268,7 +268,7 @@
         "url": "https://cdn.saberespirita.app.br/booklets/NLAula04.webp",
         "caption": "Duas colunas: hierarquia de tarefas e escala espírita; a linha final marca o limite.",
         "alt": "Quadro de duas colunas: à esquerda, hierarquia de tarefas de Nosso Lar com funções e responsabilidade administrativa; à direita, escala espírita com grau de evolução moral e intelectual; abaixo, linha horizontal marcando onde a comparação termina.",
-        "aspectRatio": 1.33
+        "aspectRatio": 0.56
       },
       "imagePrompt": "Quadro comparativo de duas colunas. Coluna esquerda, título 'Hierarquia de tarefas — Nosso Lar, cap. 11': itens 'organiza funções na colônia', 'critério: responsabilidade administrativa', 'rigor na ordem', 'nenhum destaque por favor'. Coluna direita, título 'Escala espírita — Kardec': itens 'classifica Espíritos', 'critério: grau de evolução moral e intelectual', 'marca o progresso do Espírito'. Entre as colunas, faixa central com o rótulo 'aproximação: ordem não arbitrária'. Abaixo das duas colunas, linha horizontal espessa com o rótulo 'limite: função não é grau — a comparação termina aqui'."
     },

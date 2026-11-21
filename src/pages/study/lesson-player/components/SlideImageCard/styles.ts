@@ -56,26 +56,29 @@ export const createStyles = (theme: ITheme) =>
     retryButtonText: {
       ...theme.text("xs", "semibold", theme.colors.primary),
     },
-    footerContainer: {
+    expandBar: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: theme.spacing.xs,
+      backgroundColor: `${theme.colors.primary}0D`,
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
       paddingHorizontal: theme.spacing.md,
       paddingVertical: theme.spacing.sm,
-      gap: theme.spacing.xs,
+    },
+    expandBarText: {
+      ...theme.text("xs", "medium", theme.colors.primary),
+    },
+    captionContainer: {
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
     },
     captionText: {
       ...theme.readingText(14, "italic", theme.colors.textSecondary, 20),
       textAlign: "left",
-    },
-    expandAction: {
-      flexDirection: "row",
-      alignItems: "center",
-      alignSelf: "flex-end",
-      gap: theme.spacing.xs,
-      paddingTop: 2,
-    },
-    expandActionText: {
-      ...theme.text("xs", "medium", theme.colors.primary),
     },
     lightboxRoot: {
       flex: 1,

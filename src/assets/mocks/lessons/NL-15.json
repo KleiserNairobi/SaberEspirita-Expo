@@ -303,7 +303,7 @@
         "url": "",
         "caption": "Os três pares de distinção que formam o crivo de leitura",
         "alt": "Quadro com três colunas de pares: narrativa e princípio, caso e regra, comparação e carimbo",
-        "aspectRatio": 1.33
+        "aspectRatio": 0.56
       },
       "imagePrompt": "Quadro de síntese em três colunas paralelas. Coluna 1: 'Narrativa' e 'Princípio', com uma linha separando o que é cena do que é doutrina. Coluna 2: 'Caso' e 'Regra', separando o que vale para um personagem do que vale para todos. Coluna 3: 'Comparação' e 'Carimbo', separando o que ilumina do que apenas rotula. Rótulos em português; cada par disposto lado a lado, com uma seta ou traço indicando a distinção entre os dois termos."
     },
