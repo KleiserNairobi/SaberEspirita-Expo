@@ -16,6 +16,14 @@ export interface AuthRegisterDTO {
   deviceId?: string;
 }
 
+export interface SocialLoginDTO {
+  provider: "google" | "apple";
+  idToken: string;
+  name?: string | null;
+  photoUrl?: string | null;
+  deviceId?: string;
+}
+
 export interface UserProfileDTO {
   id?: string;
   userId?: string;
@@ -88,19 +96,13 @@ export const authApiService = {
   /**
    * Realiza login social (Google ou Apple) enviando o idToken nativo do provedor.
    */
-  async socialLogin(
-    provider: "google" | "apple",
-    idToken: string,
-    name?: string | null,
-    photoUrl?: string | null,
-    deviceId?: string
-  ): Promise<AuthResponseDTO> {
+  async socialLogin(data: SocialLoginDTO): Promise<AuthResponseDTO> {
     const response = await apiClient.post<AuthResponseDTO>("/auth/social-login", {
-      provider,
-      idToken,
-      name,
-      photoUrl,
-      deviceId,
+      provider: data.provider,
+      idToken: data.idToken,
+      name: data.name,
+      photoUrl: data.photoUrl,
+      deviceId: data.deviceId,
     });
     const jwt = response.data?.accessToken || response.data?.token;
     if (jwt) {

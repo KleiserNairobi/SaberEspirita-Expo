@@ -305,13 +305,13 @@ export const useAuthStore = create<AuthState>()(
             deviceIdPayload = JSON.stringify(devIds);
           } catch {}
 
-          const res = await authApiService.socialLogin(
-            "google",
+          const res = await authApiService.socialLogin({
+            provider: "google",
             idToken,
             name,
             photoUrl,
-            deviceIdPayload
-          );
+            deviceId: deviceIdPayload,
+          });
           const appUser = profileToAppUser(
             res.user,
             res.userId,
@@ -375,12 +375,13 @@ export const useAuthStore = create<AuthState>()(
             deviceIdPayload = JSON.stringify(devIds);
           } catch {}
 
-          const res = await authApiService.socialLogin(
-            "apple",
-            credential.identityToken,
+          const res = await authApiService.socialLogin({
+            provider: "apple",
+            idToken: credential.identityToken,
             name,
-            deviceIdPayload
-          );
+            photoUrl: null,
+            deviceId: deviceIdPayload,
+          });
           const appUser = profileToAppUser(
             res.user,
             res.userId,
