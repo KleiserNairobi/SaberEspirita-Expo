@@ -375,7 +375,7 @@ export function CourseCurriculumScreen() {
         setMessageConfig({
           type: "warning",
           title: "Exercícios Pendentes",
-          message: `Você ainda precisa completar ${missingCount} ${missingCount === 1 ? "exercício" : "exercícios"} com nota ≥ ${minGrade} para desbloquear o certificado. Complete os exercícios de fixação e tente novamente.`,
+          message: `Você ainda precisa completar ${missingCount} ${missingCount === 1 ? "exercício" : "exercícios"} com nota ≥ ${minGrade}% para desbloquear o certificado. Complete os exercícios de fixação e tente novamente.`,
           primaryButton: {
             label: "ENTENDI",
             onPress: () => {

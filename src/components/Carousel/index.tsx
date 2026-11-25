@@ -62,7 +62,8 @@ const CarouselItem = React.memo(function CarouselItem({
 }: CarouselItemProps) {
   const { theme } = useAppTheme();
   const styles = createStyles(theme);
-  const finalRating = item.averageRating ?? item.rating;
+  const rawRating = Number(item.averageRating ?? item.rating ?? 0);
+  const finalRating = Number.isFinite(rawRating) ? rawRating : 0;
 
   const inputRange = [
     (index - 1) * itemSize,

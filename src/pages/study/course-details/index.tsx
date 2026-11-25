@@ -230,6 +230,9 @@ export function CourseDetailsScreen() {
     );
   }
 
+  const numericRating = Number(course.averageRating ?? course.rating ?? 0);
+  const hasValidRating = Number.isFinite(numericRating) && numericRating > 0;
+
   return (
     <View style={styles.container}>
       <HeroHeader
@@ -277,13 +280,13 @@ export function CourseDetailsScreen() {
           </View>
 
           {/* Média de Avaliação (se houver) */}
-          {(course.averageRating ?? course.rating) && (
+          {hasValidRating && (
             <>
               <Text style={styles.metadataSeparator}>•</Text>
               <View style={styles.metadataItem}>
                 <Star size={12} color={theme.colors.muted} fill={theme.colors.muted} />
                 <Text style={styles.metadataText}>
-                  {Number(course.averageRating ?? course.rating).toFixed(1)}/5
+                  {numericRating.toFixed(1)}/5
                 </Text>
               </View>
             </>
@@ -429,16 +432,12 @@ export function CourseDetailsScreen() {
                   <Star
                     size={16}
                     color={theme.colors.primary}
-                    fill={
-                      (course.averageRating ?? course.rating)
-                        ? theme.colors.primary
-                        : "none"
-                    }
+                    fill={hasValidRating ? theme.colors.primary : "none"}
                   />
                 </View>
                 <Text style={styles.statText}>
-                  {(course.averageRating ?? course.rating)
-                    ? `${Number(course.averageRating ?? course.rating).toFixed(1)}/5`
+                  {hasValidRating
+                    ? `${numericRating.toFixed(1)}/5`
                     : "Seja o primeiro"}
                 </Text>
               </View>
@@ -463,7 +462,7 @@ export function CourseDetailsScreen() {
                     <Text style={styles.requirementBullet}>•</Text>
                     <Text style={styles.requirementText}>
                       {course.certification?.requiredExercisesPercent ?? 100}% dos
-                      exercícios com nota ≥ {course.certification?.minimumGrade ?? 70}
+                      exercícios com nota ≥ {course.certification?.minimumGrade ?? 70}%
                     </Text>
                   </View>
                 </View>

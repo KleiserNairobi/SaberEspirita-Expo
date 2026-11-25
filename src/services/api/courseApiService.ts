@@ -39,6 +39,12 @@ export function resolveCdnUrl(url?: string | null): string | undefined {
   return `${CDN_BASE_URL}/${cleanPath}`;
 }
 
+function normalizeMinGrade(value: any): number {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return 70;
+  return numeric > 0 && numeric <= 10 ? numeric * 10 : numeric;
+}
+
 function parseCertification(cert: any): ICourse["certification"] {
   if (!cert) {
     return {
@@ -53,7 +59,7 @@ function parseCertification(cert: any): ICourse["certification"] {
       const parsed = JSON.parse(cert);
       return {
         enabled: parsed.enabled ?? true,
-        minimumGrade: parsed.minimumGrade ?? 70,
+        minimumGrade: normalizeMinGrade(parsed.minimumGrade),
         requiredLessonsPercent: parsed.requiredLessonsPercent ?? 100,
         requiredExercisesPercent: parsed.requiredExercisesPercent ?? 100,
       };
@@ -68,7 +74,7 @@ function parseCertification(cert: any): ICourse["certification"] {
   }
   return {
     enabled: cert.enabled ?? true,
-    minimumGrade: cert.minimumGrade ?? 70,
+    minimumGrade: normalizeMinGrade(cert.minimumGrade),
     requiredLessonsPercent: cert.requiredLessonsPercent ?? 100,
     requiredExercisesPercent: cert.requiredExercisesPercent ?? 100,
   };
@@ -191,11 +197,20 @@ export const courseApiService = {
   /**
    * Obtém a lista de feedbacks/avaliações de um curso.
    */
-  async getCourseFeedbacks(courseId: string): Promise<ICourseFeedbackResponse[]> {
-    const response = await apiClient.get<ICourseFeedbackResponse[]>(
-      `/courses/${courseId}/feedbacks`
-    );
-    return response.data || [];
+  async getCourseFeedbacks(
+    courseId: string,
+    size = 100
+  ): Promise<ICourseFeedbackResponse[]> {
+    const response = await apiClient.get<any>(`/courses/${courseId}/feedbacks`, {
+      params: { size },
+    });
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+    if (Array.isArray(response.data?.content)) {
+      return response.data.content;
+    }
+    return [];
   },
 
   /**

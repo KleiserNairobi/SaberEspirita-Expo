@@ -141,16 +141,25 @@ export function CourseCertificateScreen() {
     (progress as any)?.validationCode ||
     "";
 
-  const finalGrade =
-    existingCert?.finalGrade ||
-    (exerciseResultsList.length > 0
+  const calculatedGrade =
+    exerciseResultsList.length > 0
       ? Math.round(
           exerciseResultsList.reduce(
             (acc: number, curr: any) => acc + (curr?.bestScore || 0),
             0
           ) / exerciseResultsList.length
         )
-      : 100);
+      : 100;
+
+  const progressFinalGrade =
+    progress?.finalGrade != null && Number(progress.finalGrade) > 0
+      ? Math.round(Number(progress.finalGrade))
+      : undefined;
+
+  const finalGrade =
+    existingCert?.finalGrade != null
+      ? Math.round(Number(existingCert.finalGrade))
+      : (progressFinalGrade ?? calculatedGrade);
 
   const workloadHours = Math.round((course?.workloadMinutes || 60) / 60);
 
@@ -467,7 +476,7 @@ export function CourseCertificateScreen() {
                 {"\n"}• {requiredLessonsPercent}% das aulas concluídas (
                 {completedLessonsCount}/{totalLessons})
                 {totalExercises > 0 &&
-                  `\n• ${requiredExercisesPercent}% dos exercícios com nota ≥ ${course.certification?.minimumGrade ?? 70} (${completedExercises}/${totalExercises})`}
+                  `\n• ${requiredExercisesPercent}% dos exercícios com nota ≥ ${course.certification?.minimumGrade ?? 70}% (${completedExercises}/${totalExercises})`}
               </Text>
             </View>
 

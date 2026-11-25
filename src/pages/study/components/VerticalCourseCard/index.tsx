@@ -37,7 +37,8 @@ export const VerticalCourseCard = React.memo(function VerticalCourseCard({
 
   const isComingSoon = course.status === "COMING_SOON";
   const isDraft = course.status === "DRAFT";
-  const finalRating = course.averageRating ?? course.rating;
+  const rawRating = Number(course.averageRating ?? course.rating ?? 0);
+  const finalRating = Number.isFinite(rawRating) ? rawRating : 0;
 
   const rawLevel = String(course.difficultyLevel || "").toLowerCase();
   const displayLevel =

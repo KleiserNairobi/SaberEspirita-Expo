@@ -8,14 +8,17 @@ export const RATING_KEYS = {
 async function fetchCourseRating(courseId: string): Promise<number | null> {
   try {
     const feedbacks = await courseApiService.getCourseFeedbacks(courseId);
-    if (feedbacks && feedbacks.length > 0) {
-      const total = feedbacks.reduce((acc, f) => acc + f.rating, 0);
-      return Math.floor((total / feedbacks.length) * 10) / 10;
+    const valid = (feedbacks || []).filter(
+      (f) => typeof f?.rating === "number" && Number.isFinite(f.rating) && f.rating >= 1 && f.rating <= 5
+    );
+    if (valid.length > 0) {
+      const total = valid.reduce((acc, f) => acc + f.rating, 0);
+      return Math.round((total / valid.length) * 10) / 10;
     }
   } catch (error) {
     console.warn(`useCourseRating(${courseId}): Erro ao buscar avaliacoes:`, error);
   }
-  return 0;
+  return null;
 }
 
 export function useCourseRating(courseId: string) {
