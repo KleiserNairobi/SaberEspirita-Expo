@@ -13,7 +13,8 @@ async function fetchCourseRating(courseId: string): Promise<number | null> {
     );
     if (valid.length > 0) {
       const total = valid.reduce((acc, f) => acc + f.rating, 0);
-      return Math.round((total / valid.length) * 10) / 10;
+      const rawAvg = total / valid.length;
+      return rawAvg >= 5 ? 5.0 : Math.min(4.9, Math.round(rawAvg * 10) / 10);
     }
   } catch (error) {
     console.warn(`useCourseRating(${courseId}): Erro ao buscar avaliacoes:`, error);
